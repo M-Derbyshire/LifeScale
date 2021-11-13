@@ -1,4 +1,5 @@
 @import '../../stdStyles/stdColors.scss';
+@import '../../stdStyles/stdBorders.scss';
 
 
 .App {
@@ -12,14 +13,14 @@
 			padding: 1em;
 			color: $stdPrimaryTxtColor;
 			background-color: $stdPrimaryBackColor;
-			border: 2px solid $stdPrimaryBorderColor;
+			@include stdPrimaryBorder;
 		}
 		
 		p {
 			padding: 1em;
 			color: $stdSecondaryTxtColor;
 			background-color: $stdSecondaryBackColor;
-			border: 2px solid $stdSecondaryBorderColor;
+			@include stdSecondaryBorder;
 		}
 	}
 }

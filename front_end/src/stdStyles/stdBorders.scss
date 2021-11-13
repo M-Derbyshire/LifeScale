@@ -1,0 +1,14 @@
+@import './stdColors.scss';
+
+@mixin stdBorder($color: #000000, $weight: 1px) {
+	border: $weight solid $color;
+	border-radius: 1vw;
+}
+
+@mixin stdPrimaryBorder {
+	@include stdBorder(2px, $stdPrimaryBorderColor);
+}
+
+@mixin stdSecondaryBorder {
+	@include stdBorder(1px, $stdSecondaryBorderColor);
+}
