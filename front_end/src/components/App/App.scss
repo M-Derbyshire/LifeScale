@@ -1,5 +1,6 @@
 @import '../../stdStyles/stdColors.scss';
 @import '../../stdStyles/stdBorders.scss';
+@import '../../stdStyles/stdFonts.scss';
 
 
 .App {
@@ -14,6 +15,8 @@
 			color: $stdPrimaryTxtColor;
 			background-color: $stdPrimaryBackColor;
 			@include stdPrimaryBorder;
+			
+			font-family: stdHeavyFont;
 		}
 		
 		p {
@@ -21,6 +24,8 @@
 			color: $stdSecondaryTxtColor;
 			background-color: $stdSecondaryBackColor;
 			@include stdSecondaryBorder;
+			
+			font-family: stdPrimaryFont;
 		}
 	}
 }
