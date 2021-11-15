@@ -15,7 +15,7 @@ class SaveMessage extends Component<SaveMessageProps> {
 	{
 		return (
 			<div className="SaveMessage">
-				test
+				<span className="message">{this.props.message}</span>
 			</div>
 		);
 	}
