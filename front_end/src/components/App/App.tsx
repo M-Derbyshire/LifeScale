@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.scss';
-import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import RequestPasswordForm from '../RequestPasswordForm/RequestPasswordForm';
 
 function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<BadSaveMessage message="test1" removeMessageCallback={()=>console.log("here")} />
+			<RequestPasswordForm email="test1@test.com" setEmail={(email:string)=>console.log("here")} />
 		</div>
 	</div>
 	);
