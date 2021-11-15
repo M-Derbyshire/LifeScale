@@ -70,3 +70,38 @@ test("PasswordFormPartial will maintain the changed password confirmation value"
 	expect(passwordConfirmation.value).toEqual(newVal);
 	
 });
+
+
+
+test("PasswordFormPartial will call the setPasswordIsConfirmed prop with correct values when changing confirmation password", () => {
+	
+	const mockSetState = jest.fn();
+	const { container } = render(<PasswordFormPartial password={""} setPassword={dummySetState} setPasswordIsConfirmed={mockSetState} />);
+	
+	const passwordConfirmation = container.querySelector(".confirmPasswordInput");
+	
+	fireEvent.change(passwordConfirmation, { target: { value: "testValNoMatch" } }); // call 1 - false
+	
+	fireEvent.change(passwordConfirmation, { target: { value: "" } }); // call 2 - true
+	
+	expect(mockSetState).toHaveBeenNthCalledWith(1, false);
+	expect(mockSetState).toHaveBeenNthCalledWith(2, true);
+	
+});
+
+test("PasswordFormPartial will call the setPasswordIsConfirmed prop with correct values when changing password", () => {
+	
+	const mockSetState = jest.fn();
+	
+	//Since we can't use useState in a test, you need to leave the default password as "test". If you don't, the second 
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={mockSetState} />);
+	
+	const password = container.querySelector(".passwordInput");
+	
+	fireEvent.change(password, { target: { value: "testValNoMatch" } }); // call 1 - false
+	fireEvent.change(password, { target: { value: "" } }); // call 2 - true
+	
+	expect(mockSetState).toHaveBeenNthCalledWith(1, false);
+	expect(mockSetState).toHaveBeenNthCalledWith(2, true);
+	
+});

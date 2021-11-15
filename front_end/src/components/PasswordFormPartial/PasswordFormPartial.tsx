@@ -30,6 +30,22 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 	}
 	
 	
+	
+	handleSetPassword(password:string)
+	{
+		this.props.setPassword(password);
+		this.props.setPasswordIsConfirmed(password === this.state.confirmedPassword);
+	}
+	
+	handleSetConfirmedPassword(password:string)
+	{
+		this.setState({ confirmedPassword: password });
+		this.props.setPasswordIsConfirmed(password === this.props.password);
+	}
+	
+	
+	
+	
 	render()
 	{
 		const passwordElemId = "passwordFormPassword";
@@ -39,12 +55,11 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 			<div className="PasswordFormPartial">
 				
 				<label htmlFor={passwordElemId}>Password: </label>
-				<input id={passwordElemId} className="passwordInput" type="password" value={this.props.password} onChange={(e) => this.props.setPassword(e.target.value)} />
+				<input id={passwordElemId} className="passwordInput" type="password" value={this.props.password} onChange={(e) => this.handleSetPassword(e.target.value)} />
 				<br/>
 				<label htmlFor={confirmElemId}>Confirm Password: </label>
-				<input id={confirmElemId} className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} onChange={(e) => this.setState({ 
-					confirmedPassword: e.target.value
-				})} />
+				<input id={confirmElemId} className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} 
+					onChange={(e) => this.handleSetConfirmedPassword(e.target.value)} />
 				
 			</div>
 		);
