@@ -49,6 +49,6 @@ test("SaveMessage will have the correct className", () => {
 	
 	const saveMessage = container.firstChild;
 	
-	expect(saveMessage).toHaveClass(".SaveMessage");
+	expect(saveMessage).toHaveClass("SaveMessage");
 	
 });

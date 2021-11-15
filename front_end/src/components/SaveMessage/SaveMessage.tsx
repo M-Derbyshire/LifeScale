@@ -17,7 +17,7 @@ class SaveMessage extends Component<SaveMessageProps> {
 	
 	render()
 	{
-		const classList = ".SaveMessage" + ((this.className) ? ` .${this.className}` : "");
+		const classList = "SaveMessage" + ((this.className) ? ` ${this.className}` : "");
 		
 		return (
 			<div className={classList} style={{ borderColor:this.foreColor, color: this.foreColor, backgroundColor: this.backColor }}>

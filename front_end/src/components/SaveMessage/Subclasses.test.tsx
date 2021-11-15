@@ -31,7 +31,7 @@ test.each([
 	
 	const saveMessage = container.firstChild;
 	
-	expect(saveMessage).toHaveClass(".SaveMessage");
-	expect(saveMessage).toHaveClass(`.${name}`);
+	expect(saveMessage).toHaveClass("SaveMessage");
+	expect(saveMessage).toHaveClass(name);
 	
 });
