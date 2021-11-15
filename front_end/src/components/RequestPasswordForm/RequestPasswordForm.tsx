@@ -7,9 +7,14 @@ interface IRequestPasswordFormProps {
 
 const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 	
+	const emailElemId = "emailForPasswordReset";
+	
 	return (
 		<div className="RequestPasswordForm">
-			
+			<form>
+				<label htmlFor={emailElemId}>Email: </label>
+				<input type="email"></input>
+			</form>
 		</div>
 	);
 	
