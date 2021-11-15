@@ -10,7 +10,7 @@ test.each([
 	["email2@email.com"]
 ])("LoginForm renders the email prop as the email", (email) => {
 	
-	const { container } = render(<LoginForm email={email}  />);
+	const { container } = render(<LoginForm email={email} password="123" setEmail={dummySetState} setPassword={dummySetState} onSubmit={dummyOnSubmit}  />);
 	
 	const emailInput = container.querySelector("form input[type=email]");
 	
@@ -30,6 +30,37 @@ test("LoginForm will use the setEmail prop as the email onChange event", () => {
 	const emailInput = container.querySelector("form input[type=email]");
 	
 	fireEvent.change(emailInput, { target: { value: newVal } });
+	
+	expect(mockCB).toHaveBeenCalledWith(newVal);
+});
+
+
+
+test.each([
+	["password1"],
+	["password2"]
+])("LoginForm renders the password prop as the password", (password) => {
+	
+	const { container } = render(<LoginForm email="test@test.com" password={password} setEmail={dummySetState} setPassword={dummySetState} onSubmit={dummyOnSubmit}  />);
+	
+	const passwordInput = container.querySelector("form input[type=password]");
+	
+	expect(passwordInput).not.toBeNull();
+	expect(passwordInput.value).toEqual(password);
+	
+});
+
+
+test("LoginForm will use the setPassword prop as the password onChange event", () => {
+	
+	const mockCB = jest.fn();
+	const newVal = "password1";
+	
+	const { container } = render(<LoginForm email="test@test.com" password="password" setEmail={dummySetState} setPassword={mockCB} onSubmit={dummyOnSubmit} />);
+	
+	const passwordInput = container.querySelector("form input[type=password]");
+	
+	fireEvent.change(passwordInput, { target: { value: newVal } });
 	
 	expect(mockCB).toHaveBeenCalledWith(newVal);
 });
