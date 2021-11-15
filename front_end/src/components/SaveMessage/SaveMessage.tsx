@@ -8,13 +8,13 @@ type SaveMessageProps = {
 
 class SaveMessage extends Component<SaveMessageProps> {
 	
-	foreColor:string = "initial";
-	backColor:string = "initial";
+	foreColor:string = "default";
+	backColor:string = "default";
 	
 	render()
 	{
 		return (
-			<div className="SaveMessage">
+			<div className="SaveMessage" style={{ borderColor:this.foreColor, color: this.foreColor, backgroundColor: this.backColor }}>
 				<span className="close" onClick={this.props.removeMessageCallback}>X</span>
 				<br/>
 				<span className="message">{this.props.message}</span>
