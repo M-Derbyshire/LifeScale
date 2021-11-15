@@ -31,9 +31,17 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 	
 	render()
 	{
+		const passwordElemId = "passwordFormPassword";
+		const confirmElemId = "passwordFormConfirm";
 		
 		return (
 			<div className="PasswordFormPartial">
+				
+				<label htmlFor={passwordElemId}>Password: </label>
+				<input id={passwordElemId} className="passwordInput" type="password" />
+				<br/>
+				<label htmlFor={confirmElemId}>Confirm Password: </label>
+				<input id={confirmElemId} className="confirmPasswordInput" type="password" />
 				
 			</div>
 		);
