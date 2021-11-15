@@ -38,6 +38,24 @@ test.each([
 	
 });
 
+test("PasswordFormPartial will call the setPassword prop with the given password change", ()=> {
+	
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={mockSetState} setPasswordIsConfirmed={dummySetState} />);
+	
+	const password = container.querySelector(".passwordInput");
+	
+	
+	const newVal = "test1";
+	fireEvent.change(password, { target: { value: newVal } });
+	
+	expect(mockSetState).toHaveBeenCalledWith(newVal);
+	
+});
+
+
+
 test("PasswordFormPartial will maintain the changed password confirmation value", ()=> {
 	
 	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} />);
@@ -47,7 +65,7 @@ test("PasswordFormPartial will maintain the changed password confirmation value"
 	expect(passwordConfirmation.value).toEqual("");
 	
 	
-	const newVal = "test1"
+	const newVal = "test1";
 	fireEvent.change(passwordConfirmation, { target: { value: newVal } });
 	expect(passwordConfirmation.value).toEqual(newVal);
 	
