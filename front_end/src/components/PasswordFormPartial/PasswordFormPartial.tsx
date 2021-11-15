@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 type PasswordFormPartialProps = {
 	password:string;
 	setPassword:(password:string)=>void;
+	setPasswordIsConfirmed:(isconfirmed:boolean)=>void;
 };
 
 type PasswordFormPartialState = {
@@ -12,8 +13,8 @@ type PasswordFormPartialState = {
 /*
 	This is a form partial for password setting/resetting.
 	
-	It will only change the password state to the password if both inputs match (password confirmation). Otherwise it will 
-	set the state to empty.
+	If the password and confirmation password don't match, it will run the setPasswordIsConfirmed prop with a value of false. Otherwise,
+	a value of true
 	
 	This will display a BadSaveMessage if the passwords don't match
 */

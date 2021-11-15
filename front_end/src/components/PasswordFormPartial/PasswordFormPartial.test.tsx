@@ -1,11 +1,11 @@
 import PasswordFormPartial from './PasswordFormPartial';
 import { render } from '@testing-library/react';
 
-const dummySetPassword = (password)=>{};
+const dummySetState = (x)=>{};
 
 test("PasswordFormPartial will render the password field", ()=> {
 	
-	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetPassword} />);
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} />);
 	
 	const password = container.querySelector(".passwordInput");
 	
@@ -15,7 +15,7 @@ test("PasswordFormPartial will render the password field", ()=> {
 
 test("PasswordFormPartial will render the password confirmation field", ()=> {
 	
-	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetPassword} />);
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} />);
 	
 	const passwordConfirmation = container.querySelector(".confirmPasswordInput");
 	
