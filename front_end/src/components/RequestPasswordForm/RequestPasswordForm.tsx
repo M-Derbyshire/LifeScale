@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 interface IRequestPasswordFormProps {
 	email:string;
 	setEmail:(email:string)=>void;
+	onSubmit:()=>void;
 }
 
 const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
@@ -11,9 +12,11 @@ const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 	
 	return (
 		<div className="RequestPasswordForm">
-			<form>
+			<form onSubmit={props.onSubmit}>
 				<label htmlFor={emailElemId}>Email: </label>
 				<input type="email"></input>
+				
+				<input type="submit" value="Request Password" />
 			</form>
 		</div>
 	);
