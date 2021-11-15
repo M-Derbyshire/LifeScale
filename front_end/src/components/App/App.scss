@@ -9,23 +9,5 @@
 		padding: 1em;
 		width: 50%;
 		height: 50%;
-		
-		h1 {
-			padding: 1em;
-			color: $stdPrimaryTxtColor;
-			background-color: $stdPrimaryBackColor;
-			@include stdPrimaryBorder;
-			
-			font-family: stdHeavyFont;
-		}
-		
-		p {
-			padding: 1em;
-			color: $stdSecondaryTxtColor;
-			background-color: $stdSecondaryBackColor;
-			@include stdSecondaryBorder;
-			
-			font-family: stdPrimaryFont;
-		}
 	}
 }
