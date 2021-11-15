@@ -6,7 +6,7 @@ function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<RequestPasswordForm email="test1@test.com" setEmail={(email:string)=>console.log("here")} onSubmit={()=>console.log("here")} />
+			<RequestPasswordForm email="test1@test.com" setEmail={(email:string)=>console.log(email)} onSubmit={()=>console.log("here")} />
 		</div>
 	</div>
 	);

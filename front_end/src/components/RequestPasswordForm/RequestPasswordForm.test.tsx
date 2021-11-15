@@ -44,3 +44,17 @@ test.each([
 	expect(emailInput.value).toEqual(email);
 	
 });
+
+test("RequestPasswordForm will use the setEmail prop as the email onChange event", () => {
+	
+	const mockCB = jest.fn();
+	const newVal = "test1@test.com";
+	
+	const { container } = render(<RequestPasswordForm email="test@test.com" setEmail={mockCB} onSubmit={dummySubmitCB} />);
+	
+	const emailInput = container.querySelector("form input[type=email]");
+	
+	fireEvent.change(emailInput, { target: { value: newVal } });
+	
+	expect(mockCB).toHaveBeenCalledWith(newVal);
+});
