@@ -13,12 +13,14 @@ class SaveMessage extends Component<SaveMessageProps> {
 	
 	foreColor:string = "default";
 	backColor:string = "default";
-	className:string = "SaveMessage";
+	className:string|undefined;
 	
 	render()
 	{
+		const classList = ".SaveMessage" + ((this.className) ? ` .${this.className}` : "");
+		
 		return (
-			<div className={this.className} style={{ borderColor:this.foreColor, color: this.foreColor, backgroundColor: this.backColor }}>
+			<div className={classList} style={{ borderColor:this.foreColor, color: this.foreColor, backgroundColor: this.backColor }}>
 				{this.props.removeMessageCallback && <span className="close" onClick={this.props.removeMessageCallback}>X</span>}
 				<br/>
 				<span className="message">{this.props.message}</span>

@@ -25,12 +25,13 @@ test.each([
 test.each([
 	[GoodSaveMessage, "GoodSaveMessage"],
 	[BadSaveMessage, "BadSaveMessage"]
-])("Subclasses will have the correct className", (Sub, name) => {
+])("Subclasses will have the correct className, as well as SaveMessage", (Sub, name) => {
 	
 	const { container } = render(<Sub message="test" />);
 	
-	const saveMessage = container.querySelector(`.${name}`);
+	const saveMessage = container.firstChild;
 	
-	expect(saveMessage).not.toBeNull();
+	expect(saveMessage).toHaveClass(".SaveMessage");
+	expect(saveMessage).toHaveClass(`.${name}`);
 	
 });

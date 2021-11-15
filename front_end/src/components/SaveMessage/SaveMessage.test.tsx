@@ -47,8 +47,8 @@ test("SaveMessage will have the correct className", () => {
 	
 	const { container } = render(<SaveMessage message="test" />);
 	
-	const saveMessage = container.querySelector(".SaveMessage");
+	const saveMessage = container.firstChild;
 	
-	expect(saveMessage).not.toBeNull();
+	expect(saveMessage).toHaveClass(".SaveMessage");
 	
 });
