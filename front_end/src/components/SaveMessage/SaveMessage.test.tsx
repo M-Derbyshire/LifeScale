@@ -42,3 +42,13 @@ test("SaveMessage close button will not be displayed if the callback is provided
 	expect(close).toBeNull();
 	
 });
+
+test("SaveMessage will have the correct className", () => {
+	
+	const { container } = render(<SaveMessage message="test" />);
+	
+	const saveMessage = container.querySelector(".SaveMessage");
+	
+	expect(saveMessage).not.toBeNull();
+	
+});
