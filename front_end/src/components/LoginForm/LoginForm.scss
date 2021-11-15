@@ -1,20 +1,5 @@
-@import '../../stdStyles/stdColors.scss';
-@import '../../stdStyles/stdBorders.scss';
+@import '../../stdStyles/stdForms.scss';
 
 .LoginForm {
-	
-	@include stdPrimaryBorder;
-	padding: 1em;
-	
-	color: $stdPrimaryTxtColor;
-	background-color: $stdPrimaryBackColor;
-	
-	input {
-		margin: 0.25em auto;
-	}
-	
-	input[type=submit] {
-		margin-top: 1.5em;
-	}
-	
+	@include stdForm;
 }
