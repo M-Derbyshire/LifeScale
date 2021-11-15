@@ -18,7 +18,7 @@ class SaveMessage extends Component<SaveMessageProps> {
 	{
 		return (
 			<div className="SaveMessage" style={{ borderColor:this.foreColor, color: this.foreColor, backgroundColor: this.backColor }}>
-				<span className="close" onClick={this.props.removeMessageCallback}>X</span>
+				{this.props.removeMessageCallback && <span className="close" onClick={this.props.removeMessageCallback}>X</span>}
 				<br/>
 				<span className="message">{this.props.message}</span>
 			</div>

@@ -32,3 +32,13 @@ test("SaveMessage close button will call the given removeMessageCallback when cl
 	
 	expect(mockCB).toHaveBeenCalled();
 });
+
+test("SaveMessage close button will not be displayed if the callback is provided", () => {
+	
+	const { container } = render(<SaveMessage message="test" />);
+	
+	const close = container.querySelector(".close");
+	
+	expect(close).toBeNull();
+	
+});
