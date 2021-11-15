@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.scss';
-import RequestPasswordForm from '../RequestPasswordForm/RequestPasswordForm';
+import LoginForm from '../LoginForm/LoginForm';
 
 function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<RequestPasswordForm email="test1@test.com" setEmail={(email:string)=>console.log(email)} onSubmit={()=>console.log("here")} />
+			<LoginForm email="test1@test.com" password="password1" setEmail={(email:string)=>{}} setPassword={(password:string)=>{}} onSubmit={()=>console.log("here")} />
 		</div>
 	</div>
 	);
