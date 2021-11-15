@@ -1,0 +1,28 @@
+@import '../../stdStyles/stdColors.scss';
+@import '../../stdStyles/stdBorders.scss';
+
+
+.SaveMessage {
+	
+	@include stdSecondaryBorder;
+	
+	color: $stdSecondaryTxtColor;
+	background-color: $stdSecondaryBackColor;
+	
+	width:fit-content;
+	min-width: 25vw;
+	
+	padding: 0.5em;
+	
+	.close {
+		float: right;
+		font-size: small;
+		
+		cursor:pointer;
+		user-select: none;
+		-webkit-user-select: none; /* Chrome/Safari */        
+		-moz-user-select: none; /* Firefox */
+		-ms-user-select: none; /* IE10+ */
+	}
+	
+}

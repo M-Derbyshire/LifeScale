@@ -16,6 +16,7 @@ class SaveMessage extends Component<SaveMessageProps> {
 		return (
 			<div className="SaveMessage">
 				<span className="close" onClick={this.props.removeMessageCallback}>X</span>
+				<br/>
 				<span className="message">{this.props.message}</span>
 			</div>
 		);
