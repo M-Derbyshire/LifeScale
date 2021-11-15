@@ -93,7 +93,8 @@ test("PasswordFormPartial will call the setPasswordIsConfirmed prop with correct
 	
 	const mockSetState = jest.fn();
 	
-	//Since we can't use useState in a test, you need to leave the default password as "test". If you don't, the second 
+	//Since we can't use useState in a test, you need to leave the default password as "test". If you set to an empty string, the second call to mockSetState
+	//will not be called, as the value will already be an empty string
 	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={mockSetState} />);
 	
 	const password = container.querySelector(".passwordInput");
