@@ -6,6 +6,9 @@ type SaveMessageProps = {
 	removeMessageCallback?:()=>void;
 };
 
+/*
+	This is a base class for the good/bad save messages. They should be used instead of this
+*/
 class SaveMessage extends Component<SaveMessageProps> {
 	
 	foreColor:string = "default";
