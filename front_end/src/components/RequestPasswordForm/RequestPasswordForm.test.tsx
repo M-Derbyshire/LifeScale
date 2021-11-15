@@ -30,3 +30,17 @@ test("RequestPasswordForm will call the onSubmit handler prop when submitted", (
 	expect(mockCB).toHaveBeenCalled();
 	
 });
+
+test.each([
+	["email1@email.com"],
+	["email2@email.com"]
+])("RequestPasswordForm renders the email prop as the email", (email) => {
+	
+	const { container } = render(<RequestPasswordForm email={email} setEmail={dummySetEmail} onSubmit={dummySubmitCB} />);
+	
+	const emailInput = container.querySelector("form input[type=email]");
+	
+	expect(emailInput).not.toBeNull();
+	expect(emailInput.value).toEqual(email);
+	
+});
