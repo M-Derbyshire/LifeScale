@@ -6,7 +6,6 @@ type PasswordFormPartialProps = {
 };
 
 type PasswordFormPartialState = {
-	password:string;
 	confirmedPassword:string;
 };
 
@@ -25,7 +24,6 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 		super(props);
 		
 		this.state = {
-			password: props.password,
 			confirmedPassword: ""
 		};
 	}
