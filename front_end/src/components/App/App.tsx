@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.scss';
-import SaveMessage from '../SaveMessage/SaveMessage';
+import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 
 function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<SaveMessage message="test1" removeMessageCallback={()=>console.log("here")} />
+			<GoodSaveMessage message="test1" removeMessageCallback={()=>console.log("here")} />
 		</div>
 	</div>
 	);
