@@ -4,6 +4,7 @@ type PasswordFormPartialProps = {
 	password:string;
 	setPassword:(password:string)=>void;
 	setPasswordIsConfirmed:(isconfirmed:boolean)=>void;
+	passwordLabel?:string;
 };
 
 type PasswordFormPartialState = {
@@ -17,6 +18,9 @@ type PasswordFormPartialState = {
 	a value of true
 	
 	This will display a BadSaveMessage if the passwords don't match
+	
+	The passwordLabel prop will determine what the form labels say (maybe you want it to say "New Password", instead of just "Password"). The confirmation label
+	will always start with "Confirm". The default passwordLabel is "Password"
 */
 export default class PasswordFormPartial extends Component<PasswordFormPartialProps, PasswordFormPartialState> {
 	
@@ -51,13 +55,15 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 		const passwordElemId = "passwordFormPassword";
 		const confirmElemId = "passwordFormConfirm";
 		
+		const labelText = (this.props.passwordLabel && this.props.passwordLabel !== "") ? this.props.passwordLabel : "Password";
+		
 		return (
 			<div className="PasswordFormPartial">
 				
-				<label htmlFor={passwordElemId}>Password: </label>
+				<label htmlFor={passwordElemId}>{labelText}: </label>
 				<input id={passwordElemId} className="passwordInput" type="password" value={this.props.password} onChange={(e) => this.handleSetPassword(e.target.value)} />
 				<br/>
-				<label htmlFor={confirmElemId}>Confirm Password: </label>
+				<label htmlFor={confirmElemId}>Confirm {labelText}: </label>
 				<input id={confirmElemId} className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} 
 					onChange={(e) => this.handleSetConfirmedPassword(e.target.value)} />
 				

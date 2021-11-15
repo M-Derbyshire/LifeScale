@@ -106,3 +106,48 @@ test("PasswordFormPartial will call the setPasswordIsConfirmed prop with correct
 	expect(mockSetState).toHaveBeenNthCalledWith(2, true);
 	
 });
+
+
+
+
+
+
+
+test("PasswordFormPartial - If no passwordLabel prop is provided, the labels will just use 'Password'", () => {
+	
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} />);
+	
+	const passwordLabel = container.querySelector("label[for=passwordFormPassword]");
+	const confirmationLabel = container.querySelector("label[for=passwordFormConfirm]");
+	
+	expect(passwordLabel.textContent).toEqual("Password: ");
+	expect(confirmationLabel.textContent).toEqual("Confirm Password: ");
+	
+});
+
+test.each([
+	["test"],
+	["New Password"]
+])("If passwordLabel prop is provided, the labels in PasswordFormPartial will use it", (labelText) => {
+	
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} passwordLabel={labelText} />);
+	
+	const passwordLabel = container.querySelector("label[for=passwordFormPassword]");
+	const confirmationLabel = container.querySelector("label[for=passwordFormConfirm]");
+	
+	expect(passwordLabel.textContent).toEqual(`${labelText}: `);
+	expect(confirmationLabel.textContent).toEqual(`Confirm ${labelText}: `);
+	
+});
+
+test("If passwordLabel prop isset to an empty string, the labels in PasswordFormPartial will use the default 'Password'", () => {
+	
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} passwordLabel={""} />);
+	
+	const passwordLabel = container.querySelector("label[for=passwordFormPassword]");
+	const confirmationLabel = container.querySelector("label[for=passwordFormConfirm]");
+	
+	expect(passwordLabel.textContent).toEqual("Password: ");
+	expect(confirmationLabel.textContent).toEqual("Confirm Password: ");
+	
+});
