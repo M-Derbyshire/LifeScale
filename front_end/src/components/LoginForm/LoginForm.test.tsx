@@ -64,3 +64,22 @@ test("LoginForm will use the setPassword prop as the password onChange event", (
 	
 	expect(mockCB).toHaveBeenCalledWith(newVal);
 });
+
+
+
+test("LoginForm will call the onSubmit handler prop when submitted", () => {
+	
+	const mockCB = jest.fn();
+	
+	const { container } = render(<LoginForm email="test@test.com" password="password" setEmail={dummySetState} setPassword={dummySetState} onSubmit={mockCB} />);
+	
+	//Checking this to make sure it's there, as fireEvent.submit() should actually be used (virtual dom doesn't implement submit)
+	const submit = container.querySelector("form input[type=submit]");
+	expect(submit).not.toBeNull();
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	expect(mockCB).toHaveBeenCalled();
+	
+});
