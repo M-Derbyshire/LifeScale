@@ -39,7 +39,7 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 			<div className="PasswordFormPartial">
 				
 				<label htmlFor={passwordElemId}>Password: </label>
-				<input id={passwordElemId} className="passwordInput" type="password" />
+				<input id={passwordElemId} className="passwordInput" type="password" value={this.props.password} />
 				<br/>
 				<label htmlFor={confirmElemId}>Confirm Password: </label>
 				<input id={confirmElemId} className="confirmPasswordInput" type="password" />
