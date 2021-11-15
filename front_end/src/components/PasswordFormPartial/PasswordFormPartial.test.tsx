@@ -109,6 +109,20 @@ test("PasswordFormPartial will call the setPasswordIsConfirmed prop with correct
 
 
 
+test("PasswordFormPartial will render a BadSaveMessage if the passwords don't match", () => {
+	
+	const { container } = render(<PasswordFormPartial password={"match"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} />);
+	const passwordConfirmation = container.querySelector(".confirmPasswordInput");
+	
+	expect(container.querySelector(".BadSaveMessage")).not.toBeNull();
+	
+	fireEvent.change(passwordConfirmation, { target: { value: "match" } });
+	expect(container.querySelector(".BadSaveMessage")).toBeNull();
+	
+	fireEvent.change(passwordConfirmation, { target: { value: "testValNoMatch" } });
+	expect(container.querySelector(".BadSaveMessage")).not.toBeNull();
+	
+});
 
 
 

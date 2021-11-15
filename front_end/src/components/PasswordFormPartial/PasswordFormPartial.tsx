@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 type PasswordFormPartialProps = {
 	password:string;
@@ -54,6 +55,7 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 	{
 		const passwordElemId = "passwordFormPassword";
 		const confirmElemId = "passwordFormConfirm";
+		const passwordMismatchMessage = "The password confirmation must match the given password.";
 		
 		const labelText = (this.props.passwordLabel && this.props.passwordLabel !== "") ? this.props.passwordLabel : "Password";
 		
@@ -66,7 +68,7 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 				<label htmlFor={confirmElemId}>Confirm {labelText}: </label>
 				<input id={confirmElemId} className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} 
 					onChange={(e) => this.handleSetConfirmedPassword(e.target.value)} />
-				
+				{(this.props.password !== this.state.confirmedPassword) && <BadSaveMessage message={passwordMismatchMessage} />}
 			</div>
 		);
 	}
