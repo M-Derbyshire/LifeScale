@@ -1,5 +1,5 @@
 import PasswordFormPartial from './PasswordFormPartial';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
 const dummySetState = (x)=>{};
 
@@ -35,5 +35,20 @@ test.each([
 	const password = container.querySelector(".passwordInput");
 	
 	expect(password.value).toEqual(passwordText);
+	
+});
+
+test("PasswordFormPartial will maintain the changed password confirmation value", ()=> {
+	
+	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} />);
+	
+	const passwordConfirmation = container.querySelector(".confirmPasswordInput");
+	
+	expect(passwordConfirmation.value).toEqual("");
+	
+	
+	const newVal = "test1"
+	fireEvent.change(passwordConfirmation, { target: { value: newVal } });
+	expect(passwordConfirmation.value).toEqual(newVal);
 	
 });
