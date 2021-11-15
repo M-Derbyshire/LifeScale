@@ -17,3 +17,18 @@ test.each([
 	expect(msg.textContent).toEqual(messageText);
 	
 });
+
+test("SaveMessage close button will call the given removeMessageCallback when clicked", () => {
+	
+	const mockCB = jest.fn();
+	
+	const { container } = render(<SaveMessage message="test" removeMessageCallback={mockCB} />);
+	
+	const close = container.querySelector(".close");
+	
+	expect(close).not.toBeNull();
+	
+	fireEvent.click(close);
+	
+	expect(mockCB).toHaveBeenCalled();
+});
