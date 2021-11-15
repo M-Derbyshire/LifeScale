@@ -6,6 +6,9 @@ interface IRequestPasswordFormProps {
 	onSubmit:()=>void;
 }
 
+/*
+	Display layer component to display a form for users to request a new password
+*/
 const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 	
 	const emailElemId = "emailForPasswordReset";
