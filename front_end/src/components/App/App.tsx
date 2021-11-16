@@ -1,15 +1,16 @@
 import React from 'react';
 import './App.scss';
-import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
+import SingleActionForm from '../SingleActionForm/SingleActionForm';
 
 function App() {
 	
 	const dummySetStrState = (x:string)=>console.log(x);
+	const dummySetNumState = (x:number)=>console.log(x);
 	
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<UserDetailsFormPartial email="email@email.com" setEmail={dummySetStrState} forename="testF" setForename={dummySetStrState} surname="testS" setSurname={dummySetStrState} />
+			<SingleActionForm name="test" weight={1} setName={dummySetStrState} setWeight={dummySetNumState} onSubmit={()=>console.log("here")} />
 		</div>
 	</div>
 	);
