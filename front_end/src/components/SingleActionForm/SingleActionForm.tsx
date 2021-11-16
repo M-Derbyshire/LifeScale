@@ -14,7 +14,7 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 	
 	return (
 		<div className="SingleActionForm">
-			<form>
+			<form onSubmit={props.onSubmit}>
 				
 				<label>
 					Name: <input type="text" className="singleActionNameInput" value={props.name} onChange={(e)=>props.setName(e.target.value)} />
@@ -30,6 +30,9 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 						value={props.weight} 
 						onChange={(e)=>props.setWeight( (Number(e.target.value) < 0) ? 0 : Math.round(Number(e.target.value)) )} />
 				</label>
+				<br/>
+				
+				<input type="submit" value="Save" />
 				
 			</form>
 		</div>

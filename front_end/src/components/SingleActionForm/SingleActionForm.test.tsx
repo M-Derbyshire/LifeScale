@@ -96,3 +96,23 @@ test.each([
 	expect(mockCB).not.toHaveBeenCalledWith(newVal);
 	expect(mockCB).toHaveBeenCalledWith(expectedVal);
 });
+
+
+
+
+test("SingleActionForm will call the onSubmit handler prop when submitted", () => {
+	
+	const mockCB = jest.fn();
+	
+	const { container } = render(<SingleActionForm name="test" setName={dummySetState} weight="1" setWeight={dummySetState} onSubmit={mockCB} />);
+	
+	//Checking this to make sure it's there, as fireEvent.submit() should actually be used (virtual dom doesn't implement submit)
+	const submit = container.querySelector("form input[type=submit]");
+	expect(submit).not.toBeNull();
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	expect(mockCB).toHaveBeenCalled();
+	
+});
