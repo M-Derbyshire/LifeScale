@@ -17,7 +17,7 @@ const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 		<div className="UserDetailsFormPartial">
 			
 			<label htmlFor={emailElemId}>Email: </label>
-			<input id={emailElemId} type="email" value={props.email} />
+			<input id={emailElemId} type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
 			
 			
 			

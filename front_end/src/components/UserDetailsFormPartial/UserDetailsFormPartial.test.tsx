@@ -22,3 +22,24 @@ test.each([
 	expect(emailInput).not.toBeNull();
 	expect(emailInput.value).toEqual(emailText);
 });
+
+test("UserDetailsFormPartial will call the setEmail callback when changing the email field", () => {
+	
+	const newVal = "newVal@test.com";
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<UserDetailsFormPartial 
+		email="test@test.com" 
+		forename="test" 
+		surname="test" 
+		setForename={dummySetStrState} 
+		setSurname={dummySetStrState} 
+		setEmail={mockSetState} />);
+	
+	const emailInput = container.querySelector("input[type=email]");
+	
+	fireEvent.change(emailInput, { target: { value: newVal } });
+	
+	expect(mockSetState).toHaveBeenCalledWith(newVal);
+	
+});
