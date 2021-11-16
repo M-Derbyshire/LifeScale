@@ -41,6 +41,16 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			</label>
 			<br/>
 			
+			<label>
+				Desired Weight: <input 
+					type="number" 
+					className="categoryDesiredWeightInput" 
+					min="0" 
+					step="1"
+					value={props.desiredWeight} 
+					onChange={(e)=>props.setDesiredWeight( (Number(e.target.value) < 0) ? 0 : Math.round(Number(e.target.value)) )} />
+			</label>
+			
 		</div>
 	);
 	

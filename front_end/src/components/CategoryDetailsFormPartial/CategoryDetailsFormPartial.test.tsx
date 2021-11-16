@@ -90,3 +90,90 @@ test("CategoryDetailsFormPartial will call the setName callback when changing th
 	expect(mockSetState).toHaveBeenCalledWith(newVal);
 	
 });
+
+
+
+test.each([
+	["1"],
+	["2"]
+])("CategoryDetailsFormPartial renders the desiredWeight prop as the desiredWeight", (weightText) => {
+	
+	const { container } = render(<CategoryDetailsFormPartial 
+		name="test"
+		setName={dummySetState}
+		color="red"
+		setColor={dummySetState}
+		desiredWeight={weightText}
+		setDesiredWeight={dummySetState} />);
+	
+	const weightInput = container.querySelector(".categoryDesiredWeightInput");
+	
+	expect(weightInput).not.toBeNull();
+	expect(weightInput.value).toEqual(weightText);
+	
+});
+
+test("CategoryDetailsFormPartial will use the setDesiredWeight prop as the desiredWeight onChange event", () => {
+	
+	const mockCB = jest.fn();
+	const newVal = 2;
+	
+	const { container } = render(<CategoryDetailsFormPartial 
+		name="test"
+		setName={dummySetState}
+		color="red"
+		setColor={dummySetState}
+		desiredWeight={1}
+		setDesiredWeight={mockCB} />);
+	
+	const weightInput = container.querySelector(".categoryDesiredWeightInput");
+	
+	fireEvent.change(weightInput, { target: { value: newVal } });
+	
+	expect(mockCB).toHaveBeenCalledWith(newVal);
+});
+
+test("CategoryDetailsFormPartial will not allow weight to be a negative number (and will set the state to 0 instead)", () => {
+	
+	const mockCB = jest.fn();
+	const newVal = -1;
+	
+	const { container } = render(<CategoryDetailsFormPartial 
+		name="test"
+		setName={dummySetState}
+		color="red"
+		setColor={dummySetState}
+		desiredWeight={1}
+		setDesiredWeight={mockCB} />);
+	
+	const weightInput = container.querySelector(".categoryDesiredWeightInput");
+	
+	fireEvent.change(weightInput, { target: { value: newVal } });
+	
+	expect(mockCB).toHaveBeenCalledWith(0);
+	expect(mockCB).not.toHaveBeenCalledWith(newVal);
+});
+
+test.each([
+	[1.2, 1],
+	[1.5, 2],
+	[1.7, 2]
+])("CategoryDetailsFormPartial will not allow weight to be a decimal number (will round the number instead)", (newVal, expectedVal) => {
+	
+	const mockCB = jest.fn();
+	
+	const { container } = render(<CategoryDetailsFormPartial 
+		name="test"
+		setName={dummySetState}
+		color="red"
+		setColor={dummySetState}
+		desiredWeight={1}
+		setDesiredWeight={mockCB} />);
+	
+	const weightInput = container.querySelector(".categoryDesiredWeightInput");
+	
+	fireEvent.change(weightInput, { target: { value: newVal } });
+	
+	expect(mockCB).not.toHaveBeenCalledWith(newVal);
+	expect(mockCB).toHaveBeenCalledWith(expectedVal);
+});
