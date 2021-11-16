@@ -78,3 +78,21 @@ test("SingleActionForm will not allow weight to be a negative number (and will s
 	expect(mockCB).toHaveBeenCalledWith(0);
 	expect(mockCB).not.toHaveBeenCalledWith(newVal);
 });
+
+test.each([
+	[1.2, 1],
+	[1.5, 2],
+	[1.7, 2]
+])("SingleActionForm will not allow weight to be a decimal number (will round the number instead)", (newVal, expectedVal) => {
+	
+	const mockCB = jest.fn();
+	
+	const { container } = render(<SingleActionForm name="test" setName={dummySetState} weight="1" setWeight={mockCB} onSubmit={dummySubmitCB} />);
+	
+	const weightInput = container.querySelector(".singleActionWeightInput");
+	
+	fireEvent.change(weightInput, { target: { value: newVal } });
+	
+	expect(mockCB).not.toHaveBeenCalledWith(newVal);
+	expect(mockCB).toHaveBeenCalledWith(expectedVal);
+});
