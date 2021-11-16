@@ -131,11 +131,11 @@ test("PasswordFormPartial - If no passwordLabel prop is provided, the labels wil
 	
 	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} />);
 	
-	const passwordLabel = container.querySelector("label[for=passwordFormPassword]");
-	const confirmationLabel = container.querySelector("label[for=passwordFormConfirm]");
+	const passwordLabel = container.querySelector(".passwordInputLabel");
+	const confirmationLabel = container.querySelector(".confirmPasswordInputLabel");
 	
-	expect(passwordLabel.textContent).toEqual("Password: ");
-	expect(confirmationLabel.textContent).toEqual("Confirm Password: ");
+	expect(passwordLabel.textContent).toEqual(expect.stringContaining("Password: "));
+	expect(confirmationLabel.textContent).toEqual(expect.stringContaining("Confirm Password: "));
 	
 });
 
@@ -146,11 +146,11 @@ test.each([
 	
 	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} passwordLabel={labelText} />);
 	
-	const passwordLabel = container.querySelector("label[for=passwordFormPassword]");
-	const confirmationLabel = container.querySelector("label[for=passwordFormConfirm]");
+	const passwordLabel = container.querySelector(".passwordInputLabel");
+	const confirmationLabel = container.querySelector(".confirmPasswordInputLabel");
 	
-	expect(passwordLabel.textContent).toEqual(`${labelText}: `);
-	expect(confirmationLabel.textContent).toEqual(`Confirm ${labelText}: `);
+	expect(passwordLabel.textContent).toEqual(expect.stringContaining(`${labelText}: `));
+	expect(confirmationLabel.textContent).toEqual(expect.stringContaining(`Confirm ${labelText}: `));
 	
 });
 
@@ -158,10 +158,10 @@ test("If passwordLabel prop isset to an empty string, the labels in PasswordForm
 	
 	const { container } = render(<PasswordFormPartial password={"test"} setPassword={dummySetState} setPasswordIsConfirmed={dummySetState} passwordLabel={""} />);
 	
-	const passwordLabel = container.querySelector("label[for=passwordFormPassword]");
-	const confirmationLabel = container.querySelector("label[for=passwordFormConfirm]");
+	const passwordLabel = container.querySelector(".passwordInputLabel");
+	const confirmationLabel = container.querySelector(".confirmPasswordInputLabel");
 	
-	expect(passwordLabel.textContent).toEqual("Password: ");
-	expect(confirmationLabel.textContent).toEqual("Confirm Password: ");
+	expect(passwordLabel.textContent).toEqual(expect.stringContaining("Password: "));
+	expect(confirmationLabel.textContent).toEqual(expect.stringContaining("Confirm Password: "));
 	
 });

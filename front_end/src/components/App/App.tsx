@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
+import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
 
 function App() {
 	
@@ -9,7 +9,7 @@ function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<UserDetailsFormPartial email="test@test.com" setEmail={dummySetStrState} forename="test@test.com" setForename={dummySetStrState} surname="test@test.com" setSurname={dummySetStrState} />
+			<PasswordFormPartial password="test" setPassword={dummySetStrState} setPasswordIsConfirmed={(x:boolean)=>{}} />
 		</div>
 	</div>
 	);

@@ -53,8 +53,6 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 	
 	render()
 	{
-		const passwordElemId = "passwordFormPassword";
-		const confirmElemId = "passwordFormConfirm";
 		const passwordMismatchMessage = "The password confirmation must match the given password.";
 		
 		const labelText = (this.props.passwordLabel && this.props.passwordLabel !== "") ? this.props.passwordLabel : "Password";
@@ -62,12 +60,16 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 		return (
 			<div className="PasswordFormPartial">
 				
-				<label htmlFor={passwordElemId}>{labelText}: </label>
-				<input id={passwordElemId} className="passwordInput" type="password" value={this.props.password} onChange={(e) => this.handleSetPassword(e.target.value)} />
+				<label className="passwordInputLabel">
+					{labelText}: <input className="passwordInput" type="password" value={this.props.password} onChange={(e) => this.handleSetPassword(e.target.value)} />
+				</label>
 				<br/>
-				<label htmlFor={confirmElemId}>Confirm {labelText}: </label>
-				<input id={confirmElemId} className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} 
-					onChange={(e) => this.handleSetConfirmedPassword(e.target.value)} />
+				
+				<label className="confirmPasswordInputLabel">
+					Confirm {labelText}: <input className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} 
+											onChange={(e) => this.handleSetConfirmedPassword(e.target.value)} />
+				</label>
+				
 				{(this.props.password !== this.state.confirmedPassword) && <BadSaveMessage message={passwordMismatchMessage} />}
 			</div>
 		);
