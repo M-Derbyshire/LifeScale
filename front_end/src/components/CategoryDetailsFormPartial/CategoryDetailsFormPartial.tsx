@@ -24,6 +24,23 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			</label>
 			<br/>
 			
+			<label>
+				Color: <select 
+						className="categoryColorInput" 
+						value={props.color} 
+						onChange={(e)=>props.setColor(e.target.value)}>
+							<option value="red">Red</option>
+							<option value="green">Green</option>
+							<option value="blue">Blue</option>
+							<option value="cyan">Cyan</option>
+							<option value="yellow">Yellow</option>
+							<option value="pink">Pink</option>
+							<option value="purple">Purple</option>
+							<option value="orange">Orange</option>
+						</select>
+			</label>
+			<br/>
+			
 		</div>
 	);
 	
