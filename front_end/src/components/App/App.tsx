@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
+import LoginForm from '../LoginForm/LoginForm';
 
 function App() {
 	
@@ -9,7 +9,7 @@ function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<PasswordFormPartial password="test" setPassword={dummySetStrState} setPasswordIsConfirmed={(x:boolean)=>{}} />
+			<LoginForm email="test" setEmail={dummySetStrState} password="test" setPassword={dummySetStrState} onSubmit={()=>{}} />
 		</div>
 	</div>
 	);

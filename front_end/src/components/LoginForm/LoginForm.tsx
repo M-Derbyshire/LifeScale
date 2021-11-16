@@ -14,18 +14,18 @@ interface ILoginFormProps {
 */
 const LoginForm:FC<ILoginFormProps> = (props) => {
 	
-	const emailElemId = "emailForLogin";
-	const passwordElemId = "passwordForLogin";
-	
 	return (
 		<div className="LoginForm">
 			<form onSubmit={props.onSubmit}>
 				
-				<label htmlFor={emailElemId}>Email: </label>
-				<input id={emailElemId} type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+				<label>
+					Email: <input type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+				</label>
 				<br/>
-				<label htmlFor={passwordElemId}>Password: </label>
-				<input id={passwordElemId} type="password" value={props.password} onChange={(e)=>props.setPassword(e.target.value)} />
+				
+				<label>
+					Password: <input type="password" value={props.password} onChange={(e)=>props.setPassword(e.target.value)} />
+				</label>
 				
 				<br />
 				<input type="submit" value="Login" />
