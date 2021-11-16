@@ -22,7 +22,12 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 				<br/>
 				
 				<label>
-					Weight: <input type="number" className="singleActionWeightInput" value={props.weight} onChange={(e)=>props.setWeight(Number(e.target.value))} />
+					Weight: <input 
+						type="number" 
+						className="singleActionWeightInput" 
+						min="0" 
+						value={props.weight} 
+						onChange={(e)=>props.setWeight( (Number(e.target.value) < 0) ? 0 : Number(e.target.value) )} />
 				</label>
 				
 			</form>

@@ -63,3 +63,18 @@ test("SingleActionForm will use the setWeight prop as the weight onChange event"
 	
 	expect(mockCB).toHaveBeenCalledWith(newVal);
 });
+
+test("SingleActionForm will not allow weight to be a negative number (and will set the state to 0 instead)", () => {
+	
+	const mockCB = jest.fn();
+	const newVal = -1;
+	
+	const { container } = render(<SingleActionForm name="test" setName={dummySetState} weight="1" setWeight={mockCB} onSubmit={dummySubmitCB} />);
+	
+	const weightInput = container.querySelector(".singleActionWeightInput");
+	
+	fireEvent.change(weightInput, { target: { value: newVal } });
+	
+	expect(mockCB).toHaveBeenCalledWith(0);
+	expect(mockCB).not.toHaveBeenCalledWith(newVal);
+});
