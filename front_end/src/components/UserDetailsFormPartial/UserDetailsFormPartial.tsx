@@ -11,9 +11,15 @@ interface IUserDetailsFormPartialProps {
 
 const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 	
+	const emailElemId = "userDetailEmailInput";
 	
 	return (
 		<div className="UserDetailsFormPartial">
+			
+			<label htmlFor={emailElemId}>Email: </label>
+			<input id={emailElemId} type="email" value={props.email} />
+			
+			
 			
 		</div>
 	);
