@@ -9,6 +9,9 @@ interface IUserDetailsFormPartialProps {
 	setSurname:(name:string)=>void;
 }
 
+/*
+	Used to display and set basic user account details (not including password set/reset)
+*/
 const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 	
 	const emailElemId = "userDetailEmailInput";
