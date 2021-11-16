@@ -12,14 +12,13 @@ interface ISingleActionFormProps {
 
 const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 	
-	const nameInputElemId = "singleActionNameInput";
-	
 	return (
 		<div className="SingleActionForm">
 			<form>
 				
-				<label htmlFor={nameInputElemId}>Name: </label>
-				<input type="text" className="singleActionNameInput" id={nameInputElemId} value={props.name} onChange={(e)=>props.setName(e.target.value)} />
+				<label>
+					Name: <input type="text" className="singleActionNameInput" value={props.name} onChange={(e)=>props.setName(e.target.value)} />
+				</label>
 				<br/>
 				
 			</form>
