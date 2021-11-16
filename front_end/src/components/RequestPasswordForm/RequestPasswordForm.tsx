@@ -12,17 +12,17 @@ interface IRequestPasswordFormProps {
 */
 const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 	
-	const emailElemId = "emailForPasswordReset";
-	
 	return (
 		<div className="RequestPasswordForm">
 			
 			<h1>Request New Password</h1>
 			
 			<form onSubmit={props.onSubmit}>
-				<label htmlFor={emailElemId}>Email: </label>
-				<input id={emailElemId} type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+				<label>
+					Email: <input type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+				</label>
 				<br />
+				
 				<input type="submit" value="Request New Password" />
 			</form>
 		</div>
