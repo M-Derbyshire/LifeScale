@@ -1,0 +1,5 @@
+@import '../../stdStyles/stdForms.scss';
+
+.SingleActionForm {
+	@include stdForm;
+}
