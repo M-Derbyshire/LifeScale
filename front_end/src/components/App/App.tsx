@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import LoginForm from '../LoginForm/LoginForm';
+import CategoryDetailsFormPartial from '../CategoryDetailsFormPartial/CategoryDetailsFormPartial';
 
 function App() {
 	
@@ -9,7 +9,7 @@ function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<LoginForm email="test" setEmail={dummySetStrState} password="test" setPassword={dummySetStrState} onSubmit={()=>{}} />
+			<CategoryDetailsFormPartial name="test" setName={dummySetStrState} color="#000000" setColor={dummySetStrState} desiredWeight={1} setDesiredWeight={(x:number)=>{}} />
 		</div>
 	</div>
 	);
