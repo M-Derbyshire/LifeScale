@@ -14,23 +14,22 @@ interface IUserDetailsFormPartialProps {
 */
 const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 	
-	const emailElemId = "userDetailEmailInput";
-	const forenameElemId = "userDetailForenameInput";
-	const surnameElemId = "userDetailSurnameInput";
-	
 	return (
 		<div className="UserDetailsFormPartial">
 			
-			<label htmlFor={emailElemId}>Email: </label>
-			<input id={emailElemId} type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+			<label>
+				Email: <input type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+			</label>
 			<br/>
 			
-			<label htmlFor={forenameElemId}>Forename: </label>
-			<input className="userForenameInput" id={forenameElemId} type="text" value={props.forename} onChange={(e)=>props.setForename(e.target.value)} />
+			<label>
+				Forename: <input className="userForenameInput" type="text" value={props.forename} onChange={(e)=>props.setForename(e.target.value)} />
+			</label>
 			<br/>
 			
-			<label htmlFor={surnameElemId}>Surname: </label>
-			<input className="userSurnameInput" id={surnameElemId} type="text" value={props.surname} onChange={(e)=>props.setSurname(e.target.value)} />
+			<label>
+				Surname: <input className="userSurnameInput" type="text" value={props.surname} onChange={(e)=>props.setSurname(e.target.value)} />
+			</label>
 			
 		</div>
 	);

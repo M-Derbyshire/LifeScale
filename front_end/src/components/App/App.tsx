@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import RequestPasswordForm from '../RequestPasswordForm/RequestPasswordForm';
+import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
 
 function App() {
 	
@@ -9,7 +9,7 @@ function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<RequestPasswordForm email="test@test.com" setEmail={dummySetStrState} onSubmit={()=>console.log("here")} />
+			<UserDetailsFormPartial email="test@test.com" setEmail={dummySetStrState} forename="test@test.com" setForename={dummySetStrState} surname="test@test.com" setSurname={dummySetStrState} />
 		</div>
 	</div>
 	);
