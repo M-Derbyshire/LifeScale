@@ -12,7 +12,8 @@ interface IUserDetailsFormPartialProps {
 const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 	
 	const emailElemId = "userDetailEmailInput";
-	const forenameElemId = "userDetailForenameInput"
+	const forenameElemId = "userDetailForenameInput";
+	const surnameElemId = "userDetailSurnameInput";
 	
 	return (
 		<div className="UserDetailsFormPartial">
@@ -24,6 +25,9 @@ const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 			<label htmlFor={forenameElemId}>Forename: </label>
 			<input className="userForenameInput" id={forenameElemId} type="text" value={props.forename} onChange={(e)=>props.setForename(e.target.value)} />
 			<br/>
+			
+			<label htmlFor={surnameElemId}>Surname: </label>
+			<input className="userSurnameInput" id={surnameElemId} type="text" value={props.surname} onChange={(e)=>props.setSurname(e.target.value)} />
 			
 		</div>
 	);

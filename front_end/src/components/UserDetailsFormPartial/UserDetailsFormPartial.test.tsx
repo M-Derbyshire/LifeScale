@@ -86,3 +86,47 @@ test("UserDetailsFormPartial will call the setforename callback when changing th
 	expect(mockSetState).toHaveBeenCalledWith(newVal);
 	
 });
+
+
+
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("UserDetailsFormPartial will set the surname input value to the given surname prop", (surnameText) => {
+	
+	const { container } = render(<UserDetailsFormPartial 
+		email="test@test.com" 
+		forename="test" 
+		surname={surnameText} 
+		setForename={dummySetStrState} 
+		setSurname={dummySetStrState} 
+		setEmail={dummySetStrState} />);
+	
+	const surnameInput = container.querySelector(".userSurnameInput");
+	
+	expect(surnameInput).not.toBeNull();
+	expect(surnameInput.value).toEqual(surnameText);
+});
+
+test("UserDetailsFormPartial will call the setSurname callback when changing the surname field", () => {
+	
+	const newVal = "newVal";
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<UserDetailsFormPartial 
+		email="test@test.com" 
+		forename="test" 
+		surname="test" 
+		setForename={dummySetStrState} 
+		setSurname={mockSetState} 
+		setEmail={dummySetStrState} />);
+	
+	const surnameInput = container.querySelector(".userSurnameInput");
+	
+	fireEvent.change(surnameInput, { target: { value: newVal } });
+	
+	expect(mockSetState).toHaveBeenCalledWith(newVal);
+	
+});
