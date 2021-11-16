@@ -15,6 +15,15 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 	return (
 		<div className="CategoryDetailsFormPartial">
 			
+			<label>
+				Name: <input 
+						className="categoryNameInput" 
+						type="text" 
+						value={props.name} 
+						onChange={(e)=>props.setName(e.target.value)} />
+			</label>
+			<br/>
+			
 		</div>
 	);
 	
