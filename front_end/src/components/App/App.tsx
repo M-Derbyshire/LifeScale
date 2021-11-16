@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.scss';
-import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
+import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
 
 function App() {
 	
-	const [passwordState, setPassword] = useState("test");
+	const dummySetStrState = (x:string)=>console.log(x);
 	
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<PasswordFormPartial password={passwordState} setPassword={setPassword} setPasswordIsConfirmed={(isConfirmed)=>console.log(isConfirmed)} />
+			<UserDetailsFormPartial email="email@email.com" setEmail={dummySetStrState} forename="testF" setForename={dummySetStrState} surname="testS" setSurname={dummySetStrState} />
 		</div>
 	</div>
 	);
