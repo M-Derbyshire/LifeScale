@@ -10,6 +10,9 @@ interface ISingleActionFormProps {
 	onSubmit:()=>void;
 }
 
+/*
+	Used to display and save an action (not a usage of an action, but the details of the action-type itself)
+*/
 const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 	
 	return (
