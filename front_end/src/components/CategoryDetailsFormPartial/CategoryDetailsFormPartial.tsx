@@ -9,7 +9,9 @@ interface ICategoryDetailsFormPartialProps {
 	setDesiredWeight:(weight:number)=>void;
 }
 
-
+/*
+	Used to display and set basic category details (not including setting actions)
+*/
 const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) => {
 	
 	return (
