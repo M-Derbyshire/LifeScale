@@ -25,4 +25,9 @@ $cardBackgroundColor: #ff0000;
 	
 	font-size: 2em;
 	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+	
 }
