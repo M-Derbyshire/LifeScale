@@ -8,7 +8,7 @@ interface IAddItemCardProps {
 const AddItemCard:FC<IAddItemCardProps> = (props) => {
 	
 	return (
-		<div className="AddItemCard">
+		<div className="AddItemCard" onClick={props.onClick}>
 			<span>+</span>
 		</div>
 	);
