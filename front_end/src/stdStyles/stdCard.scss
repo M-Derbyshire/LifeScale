@@ -1,0 +1,16 @@
+@import './stdBorders.scss';
+
+$cardBorderColor: #000000;
+$cardTextColor: #dddddd;
+$cardBackgroundColor: #ff0000;
+
+@mixin stdCard {
+	
+	@include stdBorder($cardBorderColor);
+	
+	color: $cardTextColor;
+	background-color: $cardBackgroundColor;
+	
+	width: 10vw;
+	height: 10vh;
+}
