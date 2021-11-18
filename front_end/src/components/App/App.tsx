@@ -1,15 +1,15 @@
 import React from 'react';
 import './App.scss';
-import CategoryDetailsFormPartial from '../CategoryDetailsFormPartial/CategoryDetailsFormPartial';
+import AddItemCard from '../AddItemCard/AddItemCard';
 
 function App() {
 	
-	const dummySetStrState = (x:string)=>console.log(x);
+	const dummyEmpty = ()=>console.log("here");
 	
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<CategoryDetailsFormPartial name="test" setName={dummySetStrState} color="#000000" setColor={dummySetStrState} desiredWeight={1} setDesiredWeight={(x:number)=>{}} />
+			<AddItemCard onClick={dummyEmpty} />
 		</div>
 	</div>
 	);
