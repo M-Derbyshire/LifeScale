@@ -2,4 +2,8 @@
 
 .AddItemCard {
 	@include stdCard;
+	
+	span {
+		@include stdCardSingleCharacterSpan;
+	}
 }
