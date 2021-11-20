@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import ScaleDetailsFormPartial from '../ScaleDetailsFormPartial/ScaleDetailsFormPartial';
+import ErrorMessageDisplay from '../ErrorMessageDisplay/ErrorMessageDisplay';
 
 function App() {
 	
@@ -9,13 +9,7 @@ function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<ScaleDetailsFormPartial 
-				name="test" 
-				setName={dummyEmpty} 
-				usesTimespans={true}
-				setUsesTimespans={dummyEmpty}
-				dayCount={7}
-				setDayCount={dummyEmpty} />
+			<ErrorMessageDisplay message="Really long test error that happened ans was really bad and all and not reall that good and all that" />
 		</div>
 	</div>
 	);
