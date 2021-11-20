@@ -49,7 +49,7 @@ test("CategoryDetailsFormPartial will call the setName callback when changing th
 test.each([
 	["green"],
 	["yellow"]
-])("CategoryDetailsFormPartial will set the name input value to the given name prop", (optionVal) => {
+])("CategoryDetailsFormPartial will set the color input value to the given color prop", (optionVal) => {
 	
 	const { container } = render(<CategoryDetailsFormPartial 
 		name="test"
@@ -65,7 +65,7 @@ test.each([
 	expect(colorInput.value).toEqual(optionVal);
 });
 
-test("CategoryDetailsFormPartial will call the setName callback when changing the name field", () => {
+test("CategoryDetailsFormPartial will call the setColor callback when changing the color field", () => {
 	
 	//If this test breaks after you've changed the default option, change this (we need to check the default isn't
 	//changed to the value we're trying to change the input to here)
