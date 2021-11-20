@@ -10,7 +10,7 @@ const EditableItemCard:FC<IEditableItemCardProps> = (props) => {
 	
 	return (
 		<div className="EditableItemCard">
-			
+			<span className="itemName">{props.name}</span>
 		</div>
 	);
 	
