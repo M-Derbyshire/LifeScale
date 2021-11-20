@@ -1,15 +1,21 @@
 import React from 'react';
 import './App.scss';
-import EditableItemCard from '../EditableItemCard/EditableItemCard';
+import ScaleDetailsFormPartial from '../ScaleDetailsFormPartial/ScaleDetailsFormPartial';
 
 function App() {
 	
-	const dummyEmpty = ()=>console.log("here");
+	const dummyEmpty = (x:any)=>console.log("here");
 	
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<EditableItemCard name="test" editCallback={dummyEmpty} />
+			<ScaleDetailsFormPartial 
+				name="test" 
+				setName={dummyEmpty} 
+				usesTimespans={true}
+				setUsesTimespans={dummyEmpty}
+				dayCount={7}
+				setDayCount={dummyEmpty} />
 		</div>
 	</div>
 	);
