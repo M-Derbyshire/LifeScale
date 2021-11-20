@@ -7,8 +7,8 @@
 		font-size: 1.5em;
 	}
 	
+	// Position relative on the parent will allow us to put the child to the bottom of the div
 	position: relative;
-	
 	button {
 		font-size: large;
 		position: absolute;
