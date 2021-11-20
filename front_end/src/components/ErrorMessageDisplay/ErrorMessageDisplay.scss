@@ -1,0 +1,21 @@
+@import '../../stdStyles/stdFonts.scss';
+@import '../../stdStyles/stdBorders.scss';
+
+.ErrorMessageDisplay {
+	
+	$componentForeColor: #aa0000;
+	$componentBackColor: #ff9999;
+	
+	@include stdBorder($componentForeColor, 4px);
+	
+	padding: 1em;
+	
+	color: $componentForeColor;
+	background-color: $componentBackColor;
+	
+	h1 {
+		font-family: stdHeavyFont;
+		margin: 0;
+	}
+	
+}
