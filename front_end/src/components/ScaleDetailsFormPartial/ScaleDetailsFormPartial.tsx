@@ -38,6 +38,14 @@ const ScaleDetailsFormPartial:FC<IScaleDetailsFormPartialProps> = (props) => {
 			</label>
 			<br/>
 			
+			<label>
+				<input 
+					type="checkBox" 
+					className="scaleUsesTimespansInput"
+					checked={props.usesTimespans}
+					onChange={(e)=>props.setUsesTimespans(e.target.checked)} /> Scale Actions should have timespans?
+			</label>
+			
 		</div>
 	);
 	

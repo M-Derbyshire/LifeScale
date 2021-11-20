@@ -130,3 +130,48 @@ test.each([
 	expect(mockCB).not.toHaveBeenCalledWith(newVal);
 	expect(mockCB).toHaveBeenCalledWith(expectedVal);
 });
+
+
+
+
+test.each([
+	[true],
+	[false]
+])("ScaleDetailsFormPartial will set the usesTimespans input value to the given usesTimespans prop", (usesTimespans) => {
+	
+	const { container } = render(<ScaleDetailsFormPartial 
+		name="test" 
+		setName={dummySetState} 
+		usesTimespans={usesTimespans}
+		setUsesTimespans={dummySetState}
+		dayCount={7}
+		setDayCount={dummySetState} />);
+	
+	const timeInput = container.querySelector(".scaleUsesTimespansInput");
+	
+	expect(timeInput).not.toBeNull();
+	expect(timeInput.checked).toEqual(usesTimespans);
+});
+
+test.each([
+	[true],
+	[false]
+])("ScaleDetailsFormPartial will call the setUsesTimespans callback when changing the usesTimespans field", (newVal) => {
+	
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<ScaleDetailsFormPartial 
+		name="test" 
+		setName={dummySetState} 
+		usesTimespans={!newVal}
+		setUsesTimespans={mockSetState}
+		dayCount={7}
+		setDayCount={dummySetState} />);
+	
+	const timeInput = container.querySelector(".scaleUsesTimespansInput");
+	
+	fireEvent.click(timeInput);
+	
+	expect(mockSetState).toHaveBeenCalledWith(newVal);
+	
+});
