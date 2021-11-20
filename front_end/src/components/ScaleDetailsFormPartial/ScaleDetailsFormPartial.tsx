@@ -18,6 +18,15 @@ const ScaleDetailsFormPartial:FC<IScaleDetailsFormPartialProps> = (props) => {
 	return (
 		<div className="ScaleDetailsFormPartial">
 			
+			<label>
+				Name: <input 
+						className="scaleNameInput" 
+						type="text" 
+						value={props.name} 
+						onChange={(e)=>props.setName(e.target.value)} />
+			</label>
+			<br/>
+			
 		</div>
 	);
 	
