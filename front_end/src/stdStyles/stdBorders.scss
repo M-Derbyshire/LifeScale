@@ -6,9 +6,9 @@
 }
 
 @mixin stdPrimaryBorder {
-	@include stdBorder(2px, $stdPrimaryBorderColor);
+	@include stdBorder($stdPrimaryBorderColor, 2px);
 }
 
 @mixin stdSecondaryBorder {
-	@include stdBorder(1px, $stdSecondaryBorderColor);
+	@include stdBorder($stdSecondaryBorderColor, 1px);
 }
