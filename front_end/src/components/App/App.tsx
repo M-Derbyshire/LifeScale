@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import AddItemCard from '../AddItemCard/AddItemCard';
+import EditableItemCard from '../EditableItemCard/EditableItemCard';
 
 function App() {
 	
@@ -9,7 +9,7 @@ function App() {
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<AddItemCard onClick={dummyEmpty} />
+			<EditableItemCard name="test" editCallback={dummyEmpty} />
 		</div>
 	</div>
 	);
