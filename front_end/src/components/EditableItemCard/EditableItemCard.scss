@@ -1,0 +1,5 @@
+@import '../../stdStyles/stdCard.scss';
+
+.EditableItemCard {
+	@include stdCard;
+}
