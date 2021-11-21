@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import './CategoryDetailsFormPartial.scss';
 
 interface ICategoryDetailsFormPartialProps {
 	name:string;
@@ -26,7 +27,7 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			</label>
 			<br/>
 			
-			<label>
+			<label className="categoryColorInputLabel" style={{ borderColor: props.color }}>
 				Color: <select 
 						className="categoryColorInput" 
 						value={props.color} 
