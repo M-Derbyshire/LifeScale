@@ -15,6 +15,11 @@ const constructDateTimeStamp = (date:Date, timeStamp:string) => new Date(
 );
 
 
+
+/*
+	Used to display and set a range of timespans. The times are provided/set as Date objects (when setting state, 
+	the original state's date will be used as the date, and the new time as the time)
+*/
 const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 	
 	return (
