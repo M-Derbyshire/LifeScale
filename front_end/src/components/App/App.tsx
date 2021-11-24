@@ -1,15 +1,17 @@
 import React from 'react';
 import './App.scss';
-import ErrorMessageDisplay from '../ErrorMessageDisplay/ErrorMessageDisplay';
+import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 
 function App() {
 	
-	const dummyEmpty = (x:any)=>console.log("here");
+	const dummyEmpty = (x:any)=>console.log(x);
+	const date = new Date();
+	
 	
 	return (
 	<div className="App">
 		<div className="displayTest">
-			<ErrorMessageDisplay message="Really long test error that happened ans was really bad and all and not reall that good and all that" />
+			<TimespanFormPartial startTime={date} endTime={date} setStartTime={dummyEmpty} setEndTime={dummyEmpty} />
 		</div>
 	</div>
 	);
