@@ -22,10 +22,20 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 			
 			<label>
 				From: <input 
-							type="time" 
-							className="startTimeInput" 
-							value={getFormattedTimeStamp(props.startTime)}
-							onChange={(e) => props.setStartTime(constructDateTimeStamp(props.startTime, e.target.value))} />
+						type="time" 
+						className="startTimeInput" 
+						value={getFormattedTimeStamp(props.startTime)}
+						onChange={(e) => props.setStartTime(constructDateTimeStamp(props.startTime, e.target.value))} />
+			</label>
+			
+			<br/>
+			
+			<label>
+				To: <input 
+						type="time" 
+						className="endTimeInput" 
+						value={getFormattedTimeStamp(props.startTime)}
+						onChange={(e) => props.setEndTime(constructDateTimeStamp(props.endTime, e.target.value))} />
 			</label>
 			
 		</div>

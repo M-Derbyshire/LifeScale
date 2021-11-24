@@ -37,3 +37,28 @@ test.each([
 	expect(mockCB).toHaveBeenCalledWith(newDateTime);
 	
 });
+
+
+test.each([
+	["01:00"],
+	["02:00"],
+])("TimespanFormPartial will set the end date/time stamp when the input is changed", (timeStr) => {
+	
+	const newDate = "2021-01-01";
+	const newDateTime = new Date(`${newDate} ${timeStr}`);
+	
+	const mockCB = jest.fn();
+	
+	const { container } = render(<TimespanFormPartial 
+									startTime={new Date()}
+									endTime={new Date(newDate + " " + "00:00")}
+									setStartTime={dummySetDate}
+									setEndTime={mockCB} />);
+	
+	const endInput = container.querySelector(".endTimeInput");
+	
+	fireEvent.change(endInput, { target: { value: timeStr } });
+	
+	expect(mockCB).toHaveBeenCalledWith(newDateTime);
+	
+});
