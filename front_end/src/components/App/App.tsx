@@ -1,19 +1,18 @@
 import React from 'react';
 import './App.scss';
-import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
+import ActionStatistic from '../ActionStatistic/ActionStatistic';
 
 function App() {
 	
 	const dummyEmpty = (x:any)=>console.log(x);
-	const date = new Date();
 	
 	
 	return (
-	<div className="App">
-		<div className="displayTest">
-			<TimespanFormPartial startTime={date} endTime={date} setStartTime={dummyEmpty} setEndTime={dummyEmpty} />
+		<div className="App">
+			<div className="displayTest">
+				<ActionStatistic label="test label" percentage={25} />
+			</div>
 		</div>
-	</div>
 	);
 }
 

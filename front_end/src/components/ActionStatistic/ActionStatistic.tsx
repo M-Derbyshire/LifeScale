@@ -11,7 +11,7 @@ const ActionStatistic:FC<IActionStatisticProps> = (props) => {
 	
 	return (
 		<div className="ActionStatistic">
-			
+			<span className="ActionLabel">{props.label}: </span>
 		</div>
 	);
 	
