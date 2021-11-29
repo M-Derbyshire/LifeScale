@@ -11,7 +11,8 @@ const ActionStatistic:FC<IActionStatisticProps> = (props) => {
 	
 	return (
 		<div className="ActionStatistic">
-			<span className="ActionLabel">{props.label}: </span>
+			<span className="actionLabel">{props.label}: </span>
+			<span className="actionPercentage">{props.percentage}%</span>
 		</div>
 	);
 	
