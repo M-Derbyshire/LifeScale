@@ -8,7 +8,7 @@ test.each([
 	
 	render(<ActionStatistic label={labelText} percentage={1} />)
 	
-	const labelElem = screen.getByText(labelText);
+	const labelElem = screen.getByText(labelText + ":");
 	
 	expect(labelElem).not.toBeNull();
 	
