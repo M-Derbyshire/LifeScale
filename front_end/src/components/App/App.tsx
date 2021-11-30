@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import ActionStatistic from '../ActionStatistic/ActionStatistic';
+import ScalesNavList from '../ScalesNavList/ScalesNavList';
 
 function App() {
 	
@@ -10,7 +10,7 @@ function App() {
 	return (
 		<div className="App">
 			<div className="displayTest">
-				<ActionStatistic label="test label" percentage={25} />
+				<ScalesNavList scaleLinks={[]} />
 			</div>
 		</div>
 	);
