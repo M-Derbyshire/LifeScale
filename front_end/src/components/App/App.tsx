@@ -10,7 +10,10 @@ function App() {
 	return (
 		<div className="App">
 			<div className="displayTest">
-				<ScalesNavList scaleLinks={[]} />
+				<ScalesNavList scaleLinks={[
+					{ label: "test1", url: "/test1" },
+					{ label: "test2", url: "/test2" }
+				]} />
 			</div>
 		</div>
 	);
