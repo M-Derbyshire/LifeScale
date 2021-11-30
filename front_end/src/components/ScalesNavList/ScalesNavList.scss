@@ -1,0 +1,36 @@
+@import '../../stdStyles/stdBorders.scss';
+@import '../../stdStyles/stdColors.scss';
+
+.ScalesNavList {
+	
+	@include stdPrimaryBorder;
+	padding: 1em;
+	
+	background-color: $stdSecondaryBackColor;
+	
+	width: fit-content;
+	min-width: 15vw;
+	
+	ul {
+		padding: 0;
+		margin: 0;
+		
+		list-style: none;
+		
+		li a {
+			color: $stdSecondaryTxtColor;
+			&:hover {
+				background-color: darken($stdSecondaryBackColor, 5);
+			}
+			
+			@include stdSecondaryBorder;
+			padding: 0.5em;
+			margin: 0.5em 0;
+			
+			display:block;
+			
+			text-align: center;
+		}
+	}
+	
+}
