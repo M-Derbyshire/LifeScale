@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import ScalesNavList from '../ScalesNavList/ScalesNavList';
+import ScaleBalanceDisplay from '../ScaleBalanceDisplay/ScaleBalanceDisplay';
 
 function App() {
 	
@@ -10,9 +10,10 @@ function App() {
 	return (
 		<div className="App">
 			<div className="displayTest">
-				<ScalesNavList scaleLinks={[
-					{ label: "test1", url: "/test1" },
-					{ label: "test2", url: "/test2" }
+				<ScaleBalanceDisplay scaleItems={[
+					{ label: "test1", weight: 1, color: "red" },
+					{ label: "test2", weight: 2, color: "blue" },
+					{ label: "test3", weight: 3, color: "green" },
 				]} />
 			</div>
 		</div>
