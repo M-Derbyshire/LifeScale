@@ -14,7 +14,10 @@ interface IScaleBalanceDisplayProps {
 	scaleItems:IScaleItem[];
 }
 
-
+/*
+	Used to display different items (say, categories) on a scale -- items take up more/less visual space
+	based on how heavy their weight is (so more space for heavier, less for lighter).
+*/
 class ScaleBalanceDisplay extends Component<IScaleBalanceDisplayProps> {
 	
 	
