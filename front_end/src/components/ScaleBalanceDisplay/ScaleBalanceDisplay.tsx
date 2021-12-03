@@ -21,13 +21,25 @@ interface IScaleBalanceDisplayProps {
 class ScaleBalanceDisplay extends Component<IScaleBalanceDisplayProps> {
 	
 	
+	mapScaleItemToElement(scaleItem:IScaleItem):ReactElement
+	{
+		return (
+			<div className="scaleBalanceItem" key={scaleItem.label} style={{
+				backgroundColor: scaleItem.color,
+				flexGrow: scaleItem.weight
+			}}>
+				{scaleItem.label}
+			</div>
+		);
+	}
+	
 	
 	render()
 	{
 		
 		return (
 			<div className="ScaleBalanceDisplay">
-				
+				{this.props.scaleItems.map(this.mapScaleItemToElement)}
 			</div>
 		);
 	}
