@@ -69,3 +69,73 @@ test.each([
 	expect(mockCB).not.toHaveBeenCalledWith(newVal);
 	expect(mockCB).toHaveBeenCalledWith(expectedVal);
 });
+
+
+
+
+
+test.each([
+	[120],
+	[240],
+	[350],
+	[90]
+])("TimespanFormPartial will display the hour count, based on the minutes", (mins) => {
+	
+	const { container } = render(<TimespanFormPartial minutes={mins} setMinutes={emptySetState} />);
+	
+	const hourInput = container.querySelector(".timespanHourInput");
+	
+	expect(hourInput.value).toEqual((mins / 60).toString());
+	
+});
+
+test.each([
+	[120],
+	[240],
+	[350],
+	[90]
+])("TimespanFormPartial will call the setMinutes prop with the hour value, multiplied by 60, when setting the hour input", (newMins) => {
+	
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<TimespanFormPartial minutes={0} setMinutes={mockSetState} />);
+	
+	const hourInput = container.querySelector(".timespanHourInput");
+	
+	fireEvent.change(hourInput, { target: { value: newMins } });
+	
+	expect(mockSetState).toHaveBeenCalledWith(newMins * 60);
+	
+});
+
+test("TimespanFormPartial will not allow hours to be a negative number (and will set the state to 0 instead)", () => {
+	
+	const mockCB = jest.fn();
+	const newVal = -1;
+	
+	const { container } = render(<TimespanFormPartial minutes={1} setMinutes={mockCB} />);
+	
+	const hourInput = container.querySelector(".timespanHourInput");
+	
+	fireEvent.change(hourInput, { target: { value: newVal } });
+	
+	expect(mockCB).toHaveBeenCalledWith(0);
+	expect(mockCB).not.toHaveBeenCalledWith(newVal);
+});
+
+test.each([
+	[1.51, 91], //will round up
+	[1.24, 74], //will round down
+])("TimespanFormPartial will not allow minutes result from hours onChange to be a decimal (will round instead)", (newVal, expectedVal) => {
+	
+	const mockCB = jest.fn();
+	
+	const { container } = render(<TimespanFormPartial minutes={1} setMinutes={mockCB} />);
+	
+	const hourInput = container.querySelector(".timespanHourInput");
+	
+	fireEvent.change(hourInput, { target: { value: newVal } });
+	
+	expect(mockCB).not.toHaveBeenCalledWith(newVal);
+	expect(mockCB).toHaveBeenCalledWith(expectedVal);
+});
