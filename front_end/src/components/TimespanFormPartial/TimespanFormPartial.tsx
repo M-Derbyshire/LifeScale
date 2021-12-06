@@ -36,7 +36,7 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 					min="0"
 					max="24"
 					value={props.minutes / 60}
-					onChange={(e) => props.setMinutes( (Number(e.target.value) < 0) ? 0 : Math.round(Number(e.target.value * 60)) )} />
+					onChange={(e) => props.setMinutes( (Number(e.target.value) < 0) ? 0 : Math.round(Number(e.target.value) * 60) )} />
 			</label>
 			
 		</div>
