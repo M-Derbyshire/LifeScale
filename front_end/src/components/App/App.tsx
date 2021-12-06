@@ -10,7 +10,7 @@ function App() {
 	return (
 		<div className="App">
 			<div className="displayTest">
-				<TimespanFormPartial  />
+				<TimespanFormPartial minutes={120} setMinutes={dummyEmpty} />
 			</div>
 		</div>
 	);
