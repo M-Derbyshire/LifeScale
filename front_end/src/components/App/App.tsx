@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import ScaleBalanceDisplay from '../ScaleBalanceDisplay/ScaleBalanceDisplay';
+import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 
 function App() {
 	
@@ -10,11 +10,7 @@ function App() {
 	return (
 		<div className="App">
 			<div className="displayTest">
-				<ScaleBalanceDisplay scaleItems={[
-					{ label: "test1", weight: 1, color: "red" },
-					{ label: "test2", weight: 2, color: "blue" },
-					{ label: "test3", weight: 3, color: "green" },
-				]} />
+				<TimespanFormPartial  />
 			</div>
 		</div>
 	);
