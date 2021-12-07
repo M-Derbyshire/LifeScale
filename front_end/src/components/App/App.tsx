@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
 import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
+import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 
 function App() {
 	
@@ -10,7 +11,9 @@ function App() {
 	return (
 		<div className="App">
 			<div className="displayTest">
-				<TimespanFormPartial minutes={120} setMinutes={dummyEmpty} />
+				<LoadedContentWrapper render={
+					<TimespanFormPartial minutes={120} setMinutes={dummyEmpty} />
+				} />
 			</div>
 		</div>
 	);
