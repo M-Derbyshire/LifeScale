@@ -15,3 +15,15 @@ test.each([
 	expect(errorDisplay.textContent).toEqual(expect.stringContaining(message));
 	
 });
+
+test("LoadedContentWrapper will render the given render prop, if given one", () => {
+	
+	
+	const childClassName = "testChild";
+	const { container } = render(<LoadedContentWrapper render={<div className={childClassName}>test</div>} />);
+	
+	const childElem = container.querySelector(`.${childClassName}`);
+	
+	expect(childElem).not.toBeNull();
+	
+});

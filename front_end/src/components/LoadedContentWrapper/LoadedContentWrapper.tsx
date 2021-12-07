@@ -15,6 +15,8 @@ const LoadedContentWrapper:FC<ILoadedContentWrapperProps> = (props) => {
 			
 			{props.errorMessage && <ErrorMessageDisplay message={props.errorMessage} />}
 			
+			{props.render}
+			
 		</div>
 	);
 	
