@@ -27,3 +27,13 @@ test("LoadedContentWrapper will render the given render prop, if given one", () 
 	expect(childElem).not.toBeNull();
 	
 });
+
+test("LoadedContentWrapper will render the 'currently loading' display, if no props given", ()=> {
+	
+	const { container } = render(<LoadedContentWrapper />);
+	
+	const currentlyLoadingDisplay = container.querySelector(".currentlyLoadingDisplay");
+	
+	expect(currentlyLoadingDisplay).not.toBeNull();
+	
+});

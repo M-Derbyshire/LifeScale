@@ -1,0 +1,13 @@
+
+.LoadedContentWrapper {
+	
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	
+	.currentlyLoadingDisplay {
+		font-size: x-large;
+		font-weight: bold;
+	}
+	
+}
