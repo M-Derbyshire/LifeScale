@@ -16,6 +16,19 @@ test.each([
 	
 });
 
+test("LoadedContentWrapper will not render a 'currently loading' display, when passed an errorMessage prop", () => {
+	
+	const { container } = render(<LoadedContentWrapper errorMessage={"test"} />);
+	
+	const currentlyLoadingDisplay = container.querySelector(".currentlyLoadingDisplay");
+	
+	expect(currentlyLoadingDisplay).toBeNull();
+	
+});
+
+
+
+
 test("LoadedContentWrapper will render the given render prop, if given one", () => {
 	
 	
@@ -27,6 +40,19 @@ test("LoadedContentWrapper will render the given render prop, if given one", () 
 	expect(childElem).not.toBeNull();
 	
 });
+
+test("LoadedContentWrapper will not render a 'currently loading' display, when given a render prop", () => {
+	
+	const { container } = render(<LoadedContentWrapper render={<div>test</div>} />);
+	
+	const currentlyLoadingDisplay = container.querySelector(".currentlyLoadingDisplay");
+	
+	expect(currentlyLoadingDisplay).toBeNull();
+	
+});
+
+
+
 
 test("LoadedContentWrapper will render the 'currently loading' display, if no props given", ()=> {
 	
