@@ -1,3 +1,5 @@
+@import '../../stdStyles/stdColors.scss';
+
 
 .LoginPage {
 	
@@ -22,6 +24,14 @@
 			
 			& > * {
 				margin: 0.25em 0.5em;
+			}
+			
+			& > a {
+				color: $stdPrimaryTxtColor;
+				
+				&:hover {
+					color: lighten($stdPrimaryTxtColor, 10);
+				}
 			}
 			
 		}
