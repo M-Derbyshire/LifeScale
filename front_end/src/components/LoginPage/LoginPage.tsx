@@ -23,19 +23,19 @@ const LoginPage:FC<ILoginPageProps> = (props) => {
 	
 	return (
 		<div className="LoginPage">
-			
-			<LoginForm 
-				email={props.email} 
-				setEmail={props.setEmail} 
-				password={props.password} 
-				setPassword={props.setPassword}
-				onSubmit={props.loginHandler} />
-			
-			<div className="LoginPageLinksContainer">
-				<Link to={props.registerUserLinkPath}>Register</Link>
-				<Link to={props.forgotPasswordLinkPath}>Forgot Password</Link>
+			<div className="loginPageContentContainer">
+				<LoginForm 
+					email={props.email} 
+					setEmail={props.setEmail} 
+					password={props.password} 
+					setPassword={props.setPassword}
+					onSubmit={props.loginHandler} />
+				
+				<div className="LoginPageLinksContainer">
+					<Link to={props.registerUserLinkPath}>Register</Link>
+					<Link to={props.forgotPasswordLinkPath}>Forgot Password</Link>
+				</div>
 			</div>
-			
 		</div>
 	);
 	
