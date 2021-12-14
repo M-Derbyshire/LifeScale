@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
+import LoginPage from '../LoginPage/LoginPage';
 
 function App() {
 	
@@ -10,7 +10,14 @@ function App() {
 	return (
 		<div className="App">
 			<div className="displayTest">
-				<LoadedContentWrapper />
+				<LoginPage 
+					username="test"
+					password="test"
+					setUsername={dummyEmpty}
+					setPassword={dummyEmpty}
+					loginHandler={() => dummyEmpty("none")}
+					registerUserLinkPath="/register"
+					forgotPasswordLinkPath="/forgot" />
 			</div>
 		</div>
 	);
