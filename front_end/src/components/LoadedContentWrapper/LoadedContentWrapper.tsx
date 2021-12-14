@@ -24,7 +24,7 @@ const LoadedContentWrapper:FC<ILoadedContentWrapperProps> = (props) => {
 			
 			{props.errorMessage && <ErrorMessageDisplay message={props.errorMessage} />}
 			
-			{props.render}
+			{!props.errorMessage && props.render}
 			
 			{!props.render && !props.errorMessage && <div className="currentlyLoadingDisplay">
 				Loading...

@@ -26,6 +26,18 @@ test("LoadedContentWrapper will not render a 'currently loading' display, when p
 	
 });
 
+test("LoadedContentWrapper will not render the render prop, when passed an errorMessage prop", () => {
+	
+	const { container } = render(<LoadedContentWrapper 
+									errorMessage={"test"} 
+									render={<div className="content">content</div>} />);
+	
+	const content = container.querySelector(".content");
+	
+	expect(content).toBeNull();
+	
+});
+
 
 
 
