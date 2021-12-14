@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Link } from 'react-router-dom';
 import './LoginPage.scss';
 import LoginForm from '../LoginForm/LoginForm';
 
@@ -30,7 +31,9 @@ const LoginPage:FC<ILoginPageProps> = (props) => {
 				setPassword={props.setPassword}
 				onSubmit={props.loginHandler} />
 			
-			
+			<div className="LoginPageLinksContainer">
+				<Link to={props.registerUserLinkPath}>Register</Link>
+			</div>
 			
 		</div>
 	);
