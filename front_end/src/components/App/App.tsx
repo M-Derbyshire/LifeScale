@@ -9,16 +9,14 @@ function App() {
 	
 	return (
 		<div className="App">
-			<div className="displayTest">
-				<LoginPage 
-					email="test"
-					password="test"
-					setEmail={dummyEmpty}
-					setPassword={dummyEmpty}
-					loginHandler={() => dummyEmpty("none")}
-					registerUserLinkPath="/register"
-					forgotPasswordLinkPath="/forgot" />
-			</div>
+			<LoginPage 
+				email="test"
+				password="test"
+				setEmail={dummyEmpty}
+				setPassword={dummyEmpty}
+				loginHandler={() => dummyEmpty("none")}
+				registerUserLinkPath="/register"
+				forgotPasswordLinkPath="/forgot" />
 		</div>
 	);
 }
