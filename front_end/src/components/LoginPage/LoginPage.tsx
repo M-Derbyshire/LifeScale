@@ -23,6 +23,15 @@ const LoginPage:FC<ILoginPageProps> = (props) => {
 	return (
 		<div className="LoginPage">
 			
+			<LoginForm 
+				email={props.email} 
+				setEmail={props.setEmail} 
+				password={props.password} 
+				setPassword={props.setPassword}
+				onSubmit={props.loginHandler} />
+			
+			
+			
 		</div>
 	);
 	
