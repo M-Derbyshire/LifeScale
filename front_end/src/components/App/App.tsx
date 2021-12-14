@@ -11,9 +11,9 @@ function App() {
 		<div className="App">
 			<div className="displayTest">
 				<LoginPage 
-					username="test"
+					email="test"
 					password="test"
-					setUsername={dummyEmpty}
+					setEmail={dummyEmpty}
 					setPassword={dummyEmpty}
 					loginHandler={() => dummyEmpty("none")}
 					registerUserLinkPath="/register"

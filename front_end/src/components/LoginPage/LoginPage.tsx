@@ -3,8 +3,8 @@ import './LoginPage.scss';
 import LoginForm from '../LoginForm/LoginForm';
 
 interface ILoginPageProps {
-	username:string;
-	setUsername:(username:string)=>void;
+	email:string;
+	setEmail:(username:string)=>void;
 	password:string;
 	setPassword:(password:string)=>void;
 	
