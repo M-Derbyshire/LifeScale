@@ -44,3 +44,25 @@ test.each([
 	expect(registerLink).toHaveAttribute("href", testPath);
 	
 });
+
+test.each([
+	["/test1"],
+	["/test2"]
+])("LoginPage will render a link to go to the forgot password route with the given path prop", (testPath) => {
+	
+	render(<Router>
+			<LoginPage 
+				email="email@email.com"
+				password="test"
+				setEmail={dummySetState}
+				setPassword={dummySetState}
+				loginHandler={()=>{}}
+				registerUserLinkPath={"/test"}
+				forgotPasswordLinkPath={testPath} />
+			</Router>);
+	
+	const forgotLink = screen.getByText("forgot", {exact: false});
+	
+	expect(forgotLink).toHaveAttribute("href", testPath);
+	
+});

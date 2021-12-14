@@ -33,6 +33,7 @@ const LoginPage:FC<ILoginPageProps> = (props) => {
 			
 			<div className="LoginPageLinksContainer">
 				<Link to={props.registerUserLinkPath}>Register</Link>
+				<Link to={props.forgotPasswordLinkPath}>Forgot Password</Link>
 			</div>
 			
 		</div>
