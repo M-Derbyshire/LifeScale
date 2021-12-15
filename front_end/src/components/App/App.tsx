@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import LoginPage from '../LoginPage/LoginPage';
+import CreateUserForm from '../CreateUserForm/CreateUserForm';
 
 function App() {
 	
@@ -9,14 +9,9 @@ function App() {
 	
 	return (
 		<div className="App">
-			<LoginPage 
-				email="test"
-				password="test"
-				setEmail={dummyEmpty}
-				setPassword={dummyEmpty}
-				loginHandler={() => dummyEmpty("none")}
-				registerUserLinkPath="/register"
-				forgotPasswordLinkPath="/forgot" />
+			<CreateUserForm 
+				user={ {id:"test", email:"test@test.com", password:"test", forename:"test", surname: "test"} }
+				setUser={dummyEmpty} />
 		</div>
 	);
 }
