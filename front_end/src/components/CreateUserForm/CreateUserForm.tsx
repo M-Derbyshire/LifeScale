@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './CreateUserForm.scss';
 import IUser from '../../interfaces/IUser';
+import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
 
 
 interface ICreateUserFormProps {
@@ -24,6 +25,14 @@ interface ICreateUserFormState {
 export default class CreateUserForm extends Component<ICreateUserFormProps, ICreateUserFormState> {
 	
 	
+	//This will handle the changing of the user state (Such as deciding what to set as 
+	//the password, based on whether or not it's been confirmed)
+	setUserState(newUser:IUser)
+	{
+		
+		this.props.setUser(newUser);
+	}
+	
 	
 	render()
 	{
@@ -36,7 +45,15 @@ export default class CreateUserForm extends Component<ICreateUserFormProps, ICre
 				</header>
 				
 				<form onSubmit={this.props.onSubmit}>
-				
+					
+					<UserDetailsFormPartial 
+						email={this.props.user.email}
+						forename={this.props.user.forename}
+						surname={this.props.user.surname}
+						setEmail={(newEmail) => this.setUserState({ ...this.props.user, email: newEmail})}
+						setForename={(newForename) => this.setUserState({ ...this.props.user, forename: newForename})}
+						setSurname={(newSurname) => this.setUserState({ ...this.props.user, surname: newSurname})} />
+					
 				</form>
 				
 			</div>
