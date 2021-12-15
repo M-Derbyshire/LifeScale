@@ -14,7 +14,7 @@ test("CreateUserForm will render a UserDetailsFormPartial", () => {
 										forename:"test", 
 										surname: "test"
 									} }
-									setUser={dummySetState} onSubmit={dummySubmit} />);
+									setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
 	
 	const formPartial = container.querySelector(".UserDetailsFormPartial");
 	
@@ -27,7 +27,7 @@ test.each([
 	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
 ])("CreateUserForm will pass the user details to UserDetailsFormPartial", (testUser) => {
 	
-	render(<CreateUserForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} />);
+	render(<CreateUserForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
 	
 	const emailInput = screen.getByDisplayValue(testUser.email);
 	expect(emailInput).not.toBeNull();
@@ -51,7 +51,7 @@ test.each([
 	
 	const mockSetUser = jest.fn();
 	
-	render(<CreateUserForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} />);
+	render(<CreateUserForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
 	
 	
 	const emailInput = screen.getByDisplayValue(initialUser.email);
@@ -68,5 +68,71 @@ test.each([
 	fireEvent.change(surnameInput, { target: { value: newUserValues.surname } });
 	expect(mockSetUser).toHaveBeenCalledWith({ ...initialUser, surname: newUserValues.surname });
 	mockSetUser.mockClear();
+	
+});
+
+
+
+test.each([
+	[{ id:"test", email:"test1@test1.com", password:"testPassword1", forename:"testFor1", surname:"testSur1" }],
+	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
+])("CreateUserForm will pass the user password to PasswordFormPartial", (testUser) => {
+	
+	render(<CreateUserForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
+	
+	const passwordInput = screen.getByDisplayValue(testUser.password);
+	expect(passwordInput).not.toBeNull();
+	
+});
+
+test.each([
+	[{ id:"test", email:"test1@test1.com", password:"testPassword1", forename:"testFor1", surname:"testSur1" }],
+	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
+])("CreateUserForm will set the password state when changing password input in PasswordFormPartial", (newUserValues) => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const mockSetUser = jest.fn();
+	
+	render(<CreateUserForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
+	
+	
+	const passwordInput = screen.getByDisplayValue(initialUser.password);
+	fireEvent.change(passwordInput, { target: { value: newUserValues.password } });
+	expect(mockSetUser).toHaveBeenCalledWith({ ...initialUser, password: newUserValues.password });
+	mockSetUser.mockClear();
+	
+});
+
+test("CreateUserForm will set the password confirmed when changing password inputs in PasswordFormPartial", () => {
+	
+	//These all need to be set, so the password confirmation input isn't blank
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const newPassword = "testPass2";
+	
+	const mockSetUser = jest.fn();
+	
+	render(<CreateUserForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				setPasswordIsConfirmed={mockSetUser} />);
+	
+	const confirmedPasswordInput = screen.getByDisplayValue("");
+	fireEvent.change(confirmedPasswordInput, { target: { value: newPassword } });
+	mockSetUser.mockClear();
+	
+	const passwordInput = screen.getByDisplayValue(initialUser.password);
+	fireEvent.change(passwordInput, { target: { value: "1234" } });
+	expect(mockSetUser).toHaveBeenCalledWith(false);
+	mockSetUser.mockClear();
+	
+	fireEvent.change(passwordInput, { target: { value: newPassword } });
+	expect(mockSetUser).toHaveBeenCalledWith(true);
 	
 });

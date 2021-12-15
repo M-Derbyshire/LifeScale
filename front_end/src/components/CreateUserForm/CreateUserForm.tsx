@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './CreateUserForm.scss';
 import IUser from '../../interfaces/IUser';
 import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
+import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
 
 
 interface ICreateUserFormProps {
@@ -44,6 +45,11 @@ export default class CreateUserForm extends Component<ICreateUserFormProps> {
 						setEmail={(newEmail) => this.props.setUser({ ...this.props.user, email: newEmail})}
 						setForename={(newForename) => this.props.setUser({ ...this.props.user, forename: newForename})}
 						setSurname={(newSurname) => this.props.setUser({ ...this.props.user, surname: newSurname})} />
+					
+					<PasswordFormPartial 
+						password={this.props.user.password} 
+						setPassword={(newPassword) => this.props.setUser({ ...this.props.user, password: newPassword})}
+						setPasswordIsConfirmed={this.props.setPasswordIsConfirmed} />
 					
 					<input type="submit" value="Register" />
 					
