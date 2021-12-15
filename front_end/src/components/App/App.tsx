@@ -12,7 +12,7 @@ function App() {
 		<div className="App">
 			<CreateUserForm 
 				user={ {id:"test", email:"test@test.com", password:"test", forename:"test", surname: "test"} }
-				setUser={dummyEmpty} onSubmit={dummySubmit} />
+				setUser={dummyEmpty} onSubmit={dummySubmit} passwordIsConfirmed={true} setPasswordIsConfirmed={dummyEmpty} />
 		</div>
 	);
 }
