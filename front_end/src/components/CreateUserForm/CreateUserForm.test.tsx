@@ -136,3 +136,30 @@ test("CreateUserForm will set the password confirmed when changing password inpu
 	expect(mockSetUser).toHaveBeenCalledWith(true);
 	
 });
+
+
+
+test.each([
+	["test message 1"],
+	["test message 2"]
+])("CreateUserForm will display the given badSaveErrorMessage prop in a BadSaveMessage", (message) => {
+	
+	//The password here has to be blank, so that the BadSaveMessage from the password form isn't caught
+	const user = { 
+		id:"test", email:"test@test.com", password:"", forename:"testFor", surname:"testSur" 
+	};
+	
+	
+	const { container } = render(<CreateUserForm 
+									user={user} 
+									setUser={dummySetState} 
+									onSubmit={dummySubmit} 
+									setPasswordIsConfirmed={dummySetState}
+									badSaveErrorMessage={message} />);
+	
+	const errorMessage = container.querySelector(".BadSaveMessage");
+	
+	expect(errorMessage).not.toBeNull();
+	expect(errorMessage.textContent).toEqual(expect.stringContaining(message));
+	
+});

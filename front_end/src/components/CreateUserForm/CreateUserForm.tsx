@@ -3,13 +3,18 @@ import './CreateUserForm.scss';
 import IUser from '../../interfaces/IUser';
 import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
 import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 
 interface ICreateUserFormProps {
 	user:IUser;
 	setUser:(user:IUser)=>void;
+	
 	passwordIsConfirmed:boolean;
 	setPasswordIsConfirmed:(isConfirmed:boolean)=>void;
+	
+	badSaveErrorMessage?:string;
+	
 	onSubmit:()=>void;
 }
 
@@ -50,6 +55,9 @@ export default class CreateUserForm extends Component<ICreateUserFormProps> {
 						password={this.props.user.password} 
 						setPassword={(newPassword) => this.props.setUser({ ...this.props.user, password: newPassword})}
 						setPasswordIsConfirmed={this.props.setPasswordIsConfirmed} />
+					
+					{this.props.badSaveErrorMessage && 
+						<BadSaveMessage message={this.props.badSaveErrorMessage} />}
 					
 					<input type="submit" value="Register" />
 					
