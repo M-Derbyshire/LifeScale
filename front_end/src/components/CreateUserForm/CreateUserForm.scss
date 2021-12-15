@@ -1,0 +1,7 @@
+@import '../../stdStyles/stdForms.scss';
+
+.CreateUserForm {
+	@include stdForm;
+	
+	margin: 1em;
+}
