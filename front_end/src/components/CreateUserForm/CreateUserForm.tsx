@@ -30,7 +30,9 @@ export default class CreateUserForm extends Component<ICreateUserFormProps, ICre
 		return (
 			<div className="CreateUserForm">
 				
-				<h1>Create New User</h1>
+				<header>
+					<h1>Create New User</h1>
+				</header>
 				
 			</div>
 		);
