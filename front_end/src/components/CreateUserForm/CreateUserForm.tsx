@@ -54,6 +54,8 @@ export default class CreateUserForm extends Component<ICreateUserFormProps, ICre
 						setForename={(newForename) => this.setUserState({ ...this.props.user, forename: newForename})}
 						setSurname={(newSurname) => this.setUserState({ ...this.props.user, surname: newSurname})} />
 					
+					<input type="submit" value="Register" />
+					
 				</form>
 				
 			</div>
