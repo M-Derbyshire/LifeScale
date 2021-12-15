@@ -59,7 +59,7 @@ export default class CreateUserForm extends Component<ICreateUserFormProps> {
 					{this.props.badSaveErrorMessage && 
 						<BadSaveMessage message={this.props.badSaveErrorMessage} />}
 					
-					<input type="submit" value="Register" />
+					<input type="submit" value="Register" disabled={!this.props.passwordIsConfirmed} />
 					
 				</form>
 				

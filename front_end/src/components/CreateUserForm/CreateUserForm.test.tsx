@@ -108,7 +108,7 @@ test.each([
 
 test("CreateUserForm will set the password confirmed when changing password inputs in PasswordFormPartial", () => {
 	
-	//These all need to be set, so the password confirmation input isn't blank
+	//These all need to be set, so the password input isn't blank (meaning confirmed password is the only blank one)
 	const initialUser = { 
 		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
 	};
@@ -161,5 +161,43 @@ test.each([
 	
 	expect(errorMessage).not.toBeNull();
 	expect(errorMessage.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+
+
+test("CreateUserForm will enable the submit button if the password is confirmed", () => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const { container } = render(<CreateUserForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				passwordIsConfirmed={true}
+				setPasswordIsConfirmed={dummySetState} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
+	
+});
+
+test("CreateUserForm will disable the submit button if the password is not confirmed", () => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const { container } = render(<CreateUserForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				passwordIsConfirmed={false}
+				setPasswordIsConfirmed={dummySetState} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).toBeDisabled();
 	
 });
