@@ -6,6 +6,7 @@ import IUser from '../../interfaces/IUser';
 interface ICreateUserFormProps {
 	user:IUser;
 	setUser:(user:IUser)=>void;
+	onSubmit:()=>void;
 }
 
 interface ICreateUserFormState {
@@ -33,6 +34,10 @@ export default class CreateUserForm extends Component<ICreateUserFormProps, ICre
 				<header>
 					<h1>Create New User</h1>
 				</header>
+				
+				<form onSubmit={this.props.onSubmit}>
+				
+				</form>
 				
 			</div>
 		);
