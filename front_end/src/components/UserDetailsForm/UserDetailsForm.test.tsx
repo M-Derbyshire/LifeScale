@@ -148,3 +148,26 @@ test("UserDetailsForm will disable the submit button if the disableSubmit prop i
 	expect(submitButton).toBeDisabled();
 	
 });
+
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("UserDetailsForm will set the submit button text to the given submitButtontext prop", (buttonText) => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const { container } = render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				submitButtonText={buttonText} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	
+	expect(submitButton.value).toEqual(buttonText);
+	
+});
