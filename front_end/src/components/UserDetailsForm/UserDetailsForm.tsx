@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './UserDetailsForm.scss';
 import IUser from '../../interfaces/IUser';
 import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
-import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 
