@@ -9,11 +9,12 @@ interface IUserDetailsFormProps {
 	user:IUser;
 	setUser:(user:IUser)=>void;
 	
-	badSaveErrorMessage?:string;
+	headingText:string;
 	
 	onSubmit:()=>void;
 	disableSubmit?:boolean;
 	submitButtonText:string;
+	badSaveErrorMessage?:string;
 }
 
 
@@ -37,7 +38,7 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 			<div className="UserDetailsForm">
 				
 				<header>
-					<h1>Create New User</h1>
+					<h1>{this.props.headingText}</h1>
 				</header>
 				
 				<form onSubmit={this.props.onSubmit}>

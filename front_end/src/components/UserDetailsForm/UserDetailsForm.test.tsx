@@ -14,7 +14,7 @@ test("UserDetailsForm will render a UserDetailsFormPartial", () => {
 										forename:"test", 
 										surname: "test"
 									} }
-									setUser={dummySetState} onSubmit={dummySubmit} />);
+									setUser={dummySetState} onSubmit={dummySubmit} headingText="test"  />);
 	
 	const formPartial = container.querySelector(".UserDetailsFormPartial");
 	
@@ -27,7 +27,7 @@ test.each([
 	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
 ])("UserDetailsForm will pass the user details to UserDetailsFormPartial", (testUser) => {
 	
-	render(<UserDetailsForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} />);
+	render(<UserDetailsForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} headingText="test"  />);
 	
 	const emailInput = screen.getByDisplayValue(testUser.email);
 	expect(emailInput).not.toBeNull();
@@ -51,7 +51,7 @@ test.each([
 	
 	const mockSetUser = jest.fn();
 	
-	render(<UserDetailsForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} />);
+	render(<UserDetailsForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} headingText="test"  />);
 	
 	
 	const emailInput = screen.getByDisplayValue(initialUser.email);
@@ -88,6 +88,7 @@ test.each([
 									user={user} 
 									setUser={dummySetState} 
 									onSubmit={dummySubmit} 
+									headingText="test" 
 									badSaveErrorMessage={message} />);
 	
 	const errorMessage = container.querySelector(".BadSaveMessage");
@@ -108,6 +109,7 @@ test("UserDetailsForm will enable the submit button if no disableSubmit prop is 
 	const { container } = render(<UserDetailsForm 
 				user={initialUser} 
 				setUser={dummySetState} 
+				headingText="test" 
 				onSubmit={dummySubmit} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
@@ -125,6 +127,7 @@ test("UserDetailsForm will enable the submit button if the disableSubmit prop is
 				user={initialUser} 
 				setUser={dummySetState} 
 				onSubmit={dummySubmit}
+				headingText="test" 
 				disableSubmit={false} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
@@ -142,6 +145,7 @@ test("UserDetailsForm will disable the submit button if the disableSubmit prop i
 				user={initialUser} 
 				setUser={dummySetState} 
 				onSubmit={dummySubmit} 
+				headingText="test" 
 				disableSubmit={true} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
@@ -164,10 +168,34 @@ test.each([
 				user={initialUser} 
 				setUser={dummySetState} 
 				onSubmit={dummySubmit} 
+				headingText="test" 
 				submitButtonText={buttonText} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	
 	expect(submitButton.value).toEqual(buttonText);
+	
+});
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("UserDetailsForm will set the h1 text to the given headingText prop", (headText) => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const { container } = render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				headingText={headText}
+				submitButtonText="test" />);
+	
+	const heading = container.querySelector("h1");
+	
+	expect(heading.textContent).toEqual(headText);
 	
 });
