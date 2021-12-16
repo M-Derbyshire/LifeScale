@@ -13,6 +13,7 @@ interface IUserDetailsFormProps {
 	badSaveErrorMessage?:string;
 	
 	onSubmit:()=>void;
+	disableSubmit?:boolean;
 }
 
 
@@ -53,7 +54,7 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 					{this.props.badSaveErrorMessage && 
 						<BadSaveMessage message={this.props.badSaveErrorMessage} />}
 					
-					<input type="submit" value="Register" disabled={false} />
+					<input type="submit" value="Register" disabled={this.props.disableSubmit} />
 					
 				</form>
 				

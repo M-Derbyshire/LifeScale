@@ -100,38 +100,52 @@ test.each([
 
 
 
-// test("UserDetailsForm will enable the submit button if the password is confirmed", () => {
+test("UserDetailsForm will enable the submit button if no disableSubmit prop is passed in", () => {
 	
-// 	const initialUser = { 
-// 		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
-// 	};
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
 	
-// 	const { container } = render(<UserDetailsForm 
-// 				user={initialUser} 
-// 				setUser={dummySetState} 
-// 				onSubmit={dummySubmit} 
-// 				passwordIsConfirmed={true}
-// 				setPasswordIsConfirmed={dummySetState} />);
+	const { container } = render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} />);
 	
-// 	const submitButton = container.querySelector("input[type=submit]");
-// 	expect(submitButton).not.toBeDisabled();
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
 	
-// });
+});
 
-// test("UserDetailsForm will disable the submit button if the password is not confirmed", () => {
+test("UserDetailsForm will enable the submit button if the disableSubmit prop is passed false", () => {
 	
-// 	const initialUser = { 
-// 		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
-// 	};
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
 	
-// 	const { container } = render(<UserDetailsForm 
-// 				user={initialUser} 
-// 				setUser={dummySetState} 
-// 				onSubmit={dummySubmit} 
-// 				passwordIsConfirmed={false}
-// 				setPasswordIsConfirmed={dummySetState} />);
+	const { container } = render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit}
+				disableSubmit={false} />);
 	
-// 	const submitButton = container.querySelector("input[type=submit]");
-// 	expect(submitButton).toBeDisabled();
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
 	
-// });
+});
+
+test("UserDetailsForm will disable the submit button if the disableSubmit prop is passed true", () => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const { container } = render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				disableSubmit={true} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).toBeDisabled();
+	
+});
