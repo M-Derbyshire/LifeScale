@@ -1,12 +1,12 @@
-import CreateUserForm from './CreateUserForm';
+import UserDetailsForm from './UserDetailsForm';
 import { render, fireEvent, screen } from '@testing-library/react';
 
 const dummySetState = (x)=>{};
 const dummySubmit = ()=>{};
 
-test("CreateUserForm will render a UserDetailsFormPartial", () => {
+test("UserDetailsForm will render a UserDetailsFormPartial", () => {
 	
-	const { container } = render(<CreateUserForm 
+	const { container } = render(<UserDetailsForm 
 									user={ {
 										id:"test", 
 										email:"test@test.com",
@@ -25,9 +25,9 @@ test("CreateUserForm will render a UserDetailsFormPartial", () => {
 test.each([
 	[{ id:"test", email:"test1@test1.com", password:"testPassword1", forename:"testFor1", surname:"testSur1" }],
 	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
-])("CreateUserForm will pass the user details to UserDetailsFormPartial", (testUser) => {
+])("UserDetailsForm will pass the user details to UserDetailsFormPartial", (testUser) => {
 	
-	render(<CreateUserForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
+	render(<UserDetailsForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
 	
 	const emailInput = screen.getByDisplayValue(testUser.email);
 	expect(emailInput).not.toBeNull();
@@ -43,7 +43,7 @@ test.each([
 test.each([
 	[{ id:"test", email:"test1@test1.com", password:"testPassword1", forename:"testFor1", surname:"testSur1" }],
 	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
-])("CreateUserForm will set the user object when changing inputs in UserDetailsFormPartial", (newUserValues) => {
+])("UserDetailsForm will set the user object when changing inputs in UserDetailsFormPartial", (newUserValues) => {
 	
 	const initialUser = { 
 		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
@@ -51,7 +51,7 @@ test.each([
 	
 	const mockSetUser = jest.fn();
 	
-	render(<CreateUserForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
+	render(<UserDetailsForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
 	
 	
 	const emailInput = screen.getByDisplayValue(initialUser.email);
@@ -74,75 +74,9 @@ test.each([
 
 
 test.each([
-	[{ id:"test", email:"test1@test1.com", password:"testPassword1", forename:"testFor1", surname:"testSur1" }],
-	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
-])("CreateUserForm will pass the user password to PasswordFormPartial", (testUser) => {
-	
-	render(<CreateUserForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
-	
-	const passwordInput = screen.getByDisplayValue(testUser.password);
-	expect(passwordInput).not.toBeNull();
-	
-});
-
-test.each([
-	[{ id:"test", email:"test1@test1.com", password:"testPassword1", forename:"testFor1", surname:"testSur1" }],
-	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
-])("CreateUserForm will set the password state when changing password input in PasswordFormPartial", (newUserValues) => {
-	
-	const initialUser = { 
-		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
-	};
-	
-	const mockSetUser = jest.fn();
-	
-	render(<CreateUserForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
-	
-	
-	const passwordInput = screen.getByDisplayValue(initialUser.password);
-	fireEvent.change(passwordInput, { target: { value: newUserValues.password } });
-	expect(mockSetUser).toHaveBeenCalledWith({ ...initialUser, password: newUserValues.password });
-	mockSetUser.mockClear();
-	
-});
-
-test("CreateUserForm will set the password confirmed when changing password inputs in PasswordFormPartial", () => {
-	
-	//These all need to be set, so the password input isn't blank (meaning confirmed password is the only blank one)
-	const initialUser = { 
-		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
-	};
-	
-	const newPassword = "testPass2";
-	
-	const mockSetUser = jest.fn();
-	
-	render(<CreateUserForm 
-				user={initialUser} 
-				setUser={dummySetState} 
-				onSubmit={dummySubmit} 
-				setPasswordIsConfirmed={mockSetUser} />);
-	
-	const confirmedPasswordInput = screen.getByDisplayValue("");
-	fireEvent.change(confirmedPasswordInput, { target: { value: newPassword } });
-	mockSetUser.mockClear();
-	
-	const passwordInput = screen.getByDisplayValue(initialUser.password);
-	fireEvent.change(passwordInput, { target: { value: "1234" } });
-	expect(mockSetUser).toHaveBeenCalledWith(false);
-	mockSetUser.mockClear();
-	
-	fireEvent.change(passwordInput, { target: { value: newPassword } });
-	expect(mockSetUser).toHaveBeenCalledWith(true);
-	
-});
-
-
-
-test.each([
 	["test message 1"],
 	["test message 2"]
-])("CreateUserForm will display the given badSaveErrorMessage prop in a BadSaveMessage", (message) => {
+])("UserDetailsForm will display the given badSaveErrorMessage prop in a BadSaveMessage", (message) => {
 	
 	//The password here has to be blank, so that the BadSaveMessage from the password form isn't caught
 	const user = { 
@@ -150,7 +84,7 @@ test.each([
 	};
 	
 	
-	const { container } = render(<CreateUserForm 
+	const { container } = render(<UserDetailsForm 
 									user={user} 
 									setUser={dummySetState} 
 									onSubmit={dummySubmit} 
@@ -166,38 +100,38 @@ test.each([
 
 
 
-test("CreateUserForm will enable the submit button if the password is confirmed", () => {
+// test("UserDetailsForm will enable the submit button if the password is confirmed", () => {
 	
-	const initialUser = { 
-		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
-	};
+// 	const initialUser = { 
+// 		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+// 	};
 	
-	const { container } = render(<CreateUserForm 
-				user={initialUser} 
-				setUser={dummySetState} 
-				onSubmit={dummySubmit} 
-				passwordIsConfirmed={true}
-				setPasswordIsConfirmed={dummySetState} />);
+// 	const { container } = render(<UserDetailsForm 
+// 				user={initialUser} 
+// 				setUser={dummySetState} 
+// 				onSubmit={dummySubmit} 
+// 				passwordIsConfirmed={true}
+// 				setPasswordIsConfirmed={dummySetState} />);
 	
-	const submitButton = container.querySelector("input[type=submit]");
-	expect(submitButton).not.toBeDisabled();
+// 	const submitButton = container.querySelector("input[type=submit]");
+// 	expect(submitButton).not.toBeDisabled();
 	
-});
+// });
 
-test("CreateUserForm will disable the submit button if the password is not confirmed", () => {
+// test("UserDetailsForm will disable the submit button if the password is not confirmed", () => {
 	
-	const initialUser = { 
-		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
-	};
+// 	const initialUser = { 
+// 		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+// 	};
 	
-	const { container } = render(<CreateUserForm 
-				user={initialUser} 
-				setUser={dummySetState} 
-				onSubmit={dummySubmit} 
-				passwordIsConfirmed={false}
-				setPasswordIsConfirmed={dummySetState} />);
+// 	const { container } = render(<UserDetailsForm 
+// 				user={initialUser} 
+// 				setUser={dummySetState} 
+// 				onSubmit={dummySubmit} 
+// 				passwordIsConfirmed={false}
+// 				setPasswordIsConfirmed={dummySetState} />);
 	
-	const submitButton = container.querySelector("input[type=submit]");
-	expect(submitButton).toBeDisabled();
+// 	const submitButton = container.querySelector("input[type=submit]");
+// 	expect(submitButton).toBeDisabled();
 	
-});
+// });

@@ -10,9 +10,6 @@ interface IUserDetailsFormProps {
 	user:IUser;
 	setUser:(user:IUser)=>void;
 	
-	passwordIsConfirmed:boolean;
-	setPasswordIsConfirmed:(isConfirmed:boolean)=>void;
-	
 	badSaveErrorMessage?:string;
 	
 	onSubmit:()=>void;
@@ -51,15 +48,12 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 						setForename={(newForename) => this.props.setUser({ ...this.props.user, forename: newForename})}
 						setSurname={(newSurname) => this.props.setUser({ ...this.props.user, surname: newSurname})} />
 					
-					<PasswordFormPartial 
-						password={this.props.user.password} 
-						setPassword={(newPassword) => this.props.setUser({ ...this.props.user, password: newPassword})}
-						setPasswordIsConfirmed={this.props.setPasswordIsConfirmed} />
+					
 					
 					{this.props.badSaveErrorMessage && 
 						<BadSaveMessage message={this.props.badSaveErrorMessage} />}
 					
-					<input type="submit" value="Register" disabled={!this.props.passwordIsConfirmed} />
+					<input type="submit" value="Register" disabled={false} />
 					
 				</form>
 				
