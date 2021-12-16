@@ -18,10 +18,11 @@ interface IUserDetailsFormProps {
 
 
 /*
-	This is used to create a new user in the system. The container should provide an IUser, with blank or 
+	This is used to create and edit users in the system. The container should provide an IUser, with blank or 
 	default data (the ID can be whatever the container decides -- probably a blank string).
 	
-	If the password entered here is not confirmed, then the IUser will have a blank string as a password.
+	The container can also enter a password form to be rendered (will differ depending on if it's a creation, or
+	password change)
 	
 	(This was originally a more complex component, with a state interface. So, now it's simpler, maybe 
 	turn into a functional component in the future)
