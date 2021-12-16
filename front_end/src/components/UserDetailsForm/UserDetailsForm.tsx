@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import './CreateUserForm.scss';
+import './UserDetailsForm.scss';
 import IUser from '../../interfaces/IUser';
 import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
 import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 
-interface ICreateUserFormProps {
+interface IUserDetailsFormProps {
 	user:IUser;
 	setUser:(user:IUser)=>void;
 	
@@ -28,14 +28,14 @@ interface ICreateUserFormProps {
 	(This was originally a more complex component, with a state interface. So, now it's simpler, maybe 
 	turn into a functional component in the future)
 */
-export default class CreateUserForm extends Component<ICreateUserFormProps> {
+export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 	
 	
 	render()
 	{
 		
 		return (
-			<div className="CreateUserForm">
+			<div className="UserDetailsForm">
 				
 				<header>
 					<h1>Create New User</h1>
