@@ -14,7 +14,7 @@ test("UserDetailsForm will render a UserDetailsFormPartial", () => {
 										forename:"test", 
 										surname: "test"
 									} }
-									setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
+									setUser={dummySetState} onSubmit={dummySubmit} />);
 	
 	const formPartial = container.querySelector(".UserDetailsFormPartial");
 	
@@ -27,7 +27,7 @@ test.each([
 	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
 ])("UserDetailsForm will pass the user details to UserDetailsFormPartial", (testUser) => {
 	
-	render(<UserDetailsForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
+	render(<UserDetailsForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} />);
 	
 	const emailInput = screen.getByDisplayValue(testUser.email);
 	expect(emailInput).not.toBeNull();
@@ -51,7 +51,7 @@ test.each([
 	
 	const mockSetUser = jest.fn();
 	
-	render(<UserDetailsForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} setPasswordIsConfirmed={dummySetState} />);
+	render(<UserDetailsForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} />);
 	
 	
 	const emailInput = screen.getByDisplayValue(initialUser.email);
@@ -88,7 +88,6 @@ test.each([
 									user={user} 
 									setUser={dummySetState} 
 									onSubmit={dummySubmit} 
-									setPasswordIsConfirmed={dummySetState}
 									badSaveErrorMessage={message} />);
 	
 	const errorMessage = container.querySelector(".BadSaveMessage");
