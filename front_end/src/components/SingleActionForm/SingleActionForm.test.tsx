@@ -144,3 +144,23 @@ test("SingleActionForm will render a delete button if onDelete prop given", () =
 	expect(deleteButton).not.toBeNull();
 	
 });
+
+test("SingleActionForm delete button will call onDelete prop", () => {
+	
+	const mockDelete = jest.fn();
+	
+	render(<SingleActionForm 
+		name="test" 
+		setName={dummySetState} 
+		weight="1" 
+		setWeight={dummySetState} 
+		onSubmit={dummySubmitCB} 
+		onDelete={mockDelete} />);
+	
+	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	expect(mockDelete).toHaveBeenCalled();
+	
+});

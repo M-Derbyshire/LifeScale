@@ -36,8 +36,9 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 				</label>
 				<br/>
 				
+				{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
 				<input type="submit" value="Save" />
-				{props.onDelete && <button onClick={props.onDelete}>Delete</button>}
+				{props.onDelete && <button type="button" onClick={props.onDelete}>Delete</button>} 
 				
 			</form>
 		</div>
