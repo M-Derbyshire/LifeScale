@@ -1,5 +1,5 @@
 import SingleActionForm from './SingleActionForm';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 const dummySetState = (x)=>{};
 const dummySubmitCB = ()=>{};
@@ -114,5 +114,33 @@ test("SingleActionForm will call the onSubmit handler prop when submitted", () =
 	fireEvent.submit(form);
 	
 	expect(mockCB).toHaveBeenCalled();
+	
+});
+
+
+
+test("SingleActionForm will not render a delete button if no onDelete prop given", () => {
+	
+	render(<SingleActionForm name="test" setName={dummySetState} weight="1" setWeight={dummySetState} onSubmit={dummySubmitCB} />);
+	
+	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	
+	expect(deleteButton).toBeNull();
+	
+});
+
+test("SingleActionForm will render a delete button if onDelete prop given", () => {
+	
+	render(<SingleActionForm 
+		name="test" 
+		setName={dummySetState} 
+		weight="1" 
+		setWeight={dummySetState} 
+		onSubmit={dummySubmitCB} 
+		onDelete={dummySubmitCB} />);
+	
+	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	
+	expect(deleteButton).not.toBeNull();
 	
 });

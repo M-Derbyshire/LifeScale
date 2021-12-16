@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import CreateUserForm from '../CreateUserForm/CreateUserForm';
+import SingleActionForm from '../SingleActionForm/SingleActionForm';
 
 function App() {
 	
@@ -10,9 +10,8 @@ function App() {
 	
 	return (
 		<div className="App">
-			<CreateUserForm 
-				user={ {id:"test", email:"test@test.com", password:"test", forename:"test", surname: "test"} }
-				setUser={dummyEmpty} onSubmit={dummySubmit} passwordIsConfirmed={true} setPasswordIsConfirmed={dummyEmpty} />
+			<SingleActionForm name={"test"} weight={1}
+				setName={dummyEmpty} setWeight={dummyEmpty} onSubmit={dummySubmit} onDelete={dummySubmit} />
 		</div>
 	);
 }

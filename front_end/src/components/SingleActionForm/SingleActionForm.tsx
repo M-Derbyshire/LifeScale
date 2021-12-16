@@ -8,6 +8,7 @@ interface ISingleActionFormProps {
 	weight:number;
 	setWeight:(weight:number)=>void;
 	onSubmit:()=>void;
+	onDelete?:()=>void;
 }
 
 /*
@@ -36,6 +37,7 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 				<br/>
 				
 				<input type="submit" value="Save" />
+				{props.onDelete && <button onClick={props.onDelete}>Delete</button>}
 				
 			</form>
 		</div>
