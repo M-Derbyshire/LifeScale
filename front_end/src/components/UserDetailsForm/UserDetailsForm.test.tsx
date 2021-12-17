@@ -199,3 +199,27 @@ test.each([
 	expect(heading.textContent).toEqual(headText);
 	
 });
+
+
+test("If a passwordForm prop is passed, UserDetailsForm will render it", () => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	
+	const testDivClassname = "testPasswordForm";
+	
+	const { container } = render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				headingText="test"
+				submitButtonText="test"
+				passwordForm={<div className={testDivClassname}></div>} />);
+	
+	const passwordForm = container.querySelector(`.${testDivClassname}`);
+	
+	expect(passwordForm).not.toBeNull();
+	
+});

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
 import './UserDetailsForm.scss';
 import IUser from '../../interfaces/IUser';
 import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
@@ -10,6 +10,8 @@ interface IUserDetailsFormProps {
 	setUser:(user:IUser)=>void;
 	
 	headingText:string;
+	
+	passwordForm?:ReactElement;
 	
 	onSubmit:()=>void;
 	disableSubmit?:boolean;
@@ -51,6 +53,12 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 						setForename={(newForename) => this.props.setUser({ ...this.props.user, forename: newForename})}
 						setSurname={(newSurname) => this.props.setUser({ ...this.props.user, surname: newSurname})} />
 					
+					
+					{/* We're checking explicitly before rendering the area div, 
+					to make sure styles aren't applied regardless of the content being there */}
+					{this.props.passwordForm && <div className="passwordFormArea">
+						{this.props.passwordForm}
+					</div>}
 					
 					
 					{this.props.badSaveErrorMessage && 
