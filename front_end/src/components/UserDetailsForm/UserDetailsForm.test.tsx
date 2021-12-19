@@ -223,3 +223,58 @@ test("If a passwordForm prop is passed, UserDetailsForm will render it", () => {
 	expect(passwordForm).not.toBeNull();
 	
 });
+
+
+test("UserDetailsForm will render content in a LoadedContentWrapper", () => {
+	
+	const initialUser = { 
+		id:"test", email:"test@test.com", password:"testPassword", forename:"testFor", surname:"testSur" 
+	};
+	
+	const { container } = render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				headingText="test"
+				submitButtonText="test" />);
+	
+	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
+	const emailInput = screen.getByDisplayValue(initialUser.email);
+	
+	expect(contentWrapper).not.toBeNull();
+	expect(emailInput).not.toBeNull();
+	
+});
+
+test.each([
+	["message 1"],
+	["message 2"]
+])("UserDetailsForm will render passed badLoadErrorMessage prop in a LoadedContentWrapper", (messageText) => {
+	
+	const { container } = render(<UserDetailsForm 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				headingText="test"
+				submitButtonText="test"
+				badLoadErrorMessage={messageText} />);
+	
+	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
+	const messageElem = screen.getByText(messageText);
+	
+	expect(contentWrapper).not.toBeNull();
+	expect(messageElem).not.toBeNull();
+	
+});
+
+test("UserDetailsForm will not render anything in LoadedContentWrapper, when not passed a IUser or badSaveMessage", () => {
+	
+	const { container } = render(<UserDetailsForm 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				headingText="test"
+				submitButtonText="test" />);
+	
+	const loadingDisplay = container.querySelector(`.currentlyLoadingDisplay`);
+	
+	expect(loadingDisplay).not.toBeNull();
+});

@@ -11,7 +11,7 @@ function App() {
 	return (
 		<div className="App">
 			<UserDetailsForm 
-				user={ {id:"test", email:"test@test.com", password:"test", forename:"test", surname: "test"} }
+				badLoadErrorMessage="test"
 				setUser={dummyEmpty} onSubmit={dummySubmit} submitButtonText="Save" headingText="Edit User" />
 		</div>
 	);
