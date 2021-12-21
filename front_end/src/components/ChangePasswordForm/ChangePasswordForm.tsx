@@ -34,6 +34,8 @@ const ChangePasswordForm:FC<IChangePasswordFormProps> = (props) => {
 				setPasswordIsConfirmed={props.setNewPasswordIsConfirmed}
 				passwordLabel="New Password" />
 			
+			<button type="button" onClick={props.onSubmit}>Change Password</button>
+			
 		</div>
 	);
 	

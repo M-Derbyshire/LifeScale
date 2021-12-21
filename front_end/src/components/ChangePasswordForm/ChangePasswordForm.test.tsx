@@ -106,3 +106,24 @@ test("ChangePasswordForm will pass the setNewPasswordIsConfirmed state to Passwo
 	expect(mockSetState).toHaveBeenCalledWith(true);
 	
 });
+
+
+
+test("ChangePasswordForm render a button (not a submit input, as this may be rendered within another form), and call onSubmit prop onclick", () => {
+	
+	const mockOnSubmit = jest.fn();
+	
+	const { container } = render(<ChangePasswordForm 
+									currentPassword={"test"}
+									setCurrentPassword={dummySetState}
+									newPassword={"test"}
+									setNewPassword={dummySetState}
+									setNewPasswordIsConfirmed={dummySetState}
+									onSubmit={mockOnSubmit} />);
+	
+	const submitButton = container.querySelector("button[type=button]");
+	fireEvent.click(submitButton);
+	
+	expect(mockOnSubmit).toHaveBeenCalled();
+	
+});
