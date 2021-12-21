@@ -21,6 +21,17 @@ test("UserNavBar will render the given scale links", () => {
 	
 });
 
-// also renders a create link somewhere, with the right to
+test.each([
+	["/testCreate1"],
+	["/testCreate2"]
+])("UserNavBar will render a link to the create scale route", (route) => {
+	
+	render(<Router><UserNavBar createScaleURL={route} editUserURL="" scaleLinks={[]} /></Router>);
+	
+	const createLink = screen.getByText(/create/i);
+	
+	expect(createLink).toHaveAttribute("href", route);
+	
+});
 
 // renders the edit user link

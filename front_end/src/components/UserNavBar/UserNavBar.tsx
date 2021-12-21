@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Link } from 'react-router-dom';
 import './UserNavBar.scss';
 import IScaleLink from '../../interfaces/UI/IScaleLink';
 import ScalesNavList from '../ScalesNavList/ScalesNavList';
@@ -16,6 +17,10 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	
 	return (
 		<div className="UserNavBar">
+			
+			<Link className="createScaleLink" to={props.createScaleURL}>Create New Scale</Link>
+			
+			<hr />
 			
 			<ScalesNavList scaleLinks={props.scaleLinks} />
 			
