@@ -127,3 +127,23 @@ test("ChangePasswordForm render a button (not a submit input, as this may be ren
 	expect(mockOnSubmit).toHaveBeenCalled();
 	
 });
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("If given a badSaveErrorMessage prop, ChangePasswordForm will render the message", (errorMessage) => {
+	
+	render(<ChangePasswordForm 
+				currentPassword={"test"}
+				setCurrentPassword={dummySetState}
+				newPassword={"test"}
+				setNewPassword={dummySetState}
+				setNewPasswordIsConfirmed={dummySetState}
+				onSubmit={dummySetState}
+				badSaveErrorMessage={errorMessage} />);
+	
+	const errorDisplay = screen.getByText(errorMessage);
+	expect(errorDisplay).not.toBeNull();
+	
+});
