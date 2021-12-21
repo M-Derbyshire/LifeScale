@@ -1,0 +1,33 @@
+@import '../../stdStyles/stdBorders.scss';
+@import '../../stdStyles/stdColors.scss';
+
+.UserNavBar {
+	
+	margin: 1em;
+	padding: 0.5em;
+	max-width: 25vw;
+	
+	background-color: $stdSecondaryBackColor;
+	color: $stdPrimaryTxtColor;
+	
+	@include stdPrimaryBorder;
+	
+	.stdLink {
+		@include stdSecondaryBorder;
+		color: $stdSecondaryTxtColor;
+		background-color: darken($stdSecondaryBackColor, 5);
+		padding: 0.5em;
+		margin: 0.5em 0;
+		display:block;
+		text-align: center;
+		
+		&:hover {
+			background-color: darken($stdSecondaryBackColor, 10);
+		}
+	}
+	
+	hr {
+		border-top: 2px solid $stdPrimaryBorderColor;
+	}
+	
+}

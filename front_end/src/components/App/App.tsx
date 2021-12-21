@@ -10,7 +10,7 @@ function App() {
 	
 	return (
 		<div className="App">
-			<UserNavBar scaleLinks={[{label:"test", url:"test"}]} editUserURL="/test" createScaleURL="/create" />
+			<UserNavBar scaleLinks={[{label:"test", url:"test"},{label:"test", url:"test1"}]} editUserURL="/test" createScaleURL="/create" />
 		</div>
 	);
 }
