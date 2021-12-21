@@ -16,7 +16,7 @@ function App() {
 				setUser={dummyEmpty} onSubmit={dummySubmit} submitButtonText="Save" headingText="Edit User"
 				passwordForm={
 					<ChangePasswordForm 
-						currentPassword="test" newPassword="test" newPasswordIsConfirmed={true} 
+						currentPassword="test" newPassword="test"
 						setCurrentPassword={dummyEmpty} setNewPassword={dummyEmpty} 
 						setNewPasswordIsConfirmed={dummyEmpty} onSubmit={dummySubmit} />
 				} />

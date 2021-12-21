@@ -1,5 +1,5 @@
 import ChangePasswordForm from './ChangePasswordForm';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 const dummySetState = (x) => {};
 const dummySubmit = ()=>{};
@@ -14,7 +14,6 @@ test.each([
 									setCurrentPassword={dummySetState}
 									newPassword="test"
 									setNewPassword={dummySetState}
-									newPasswordIsConfirmed={true}
 									setNewPasswordIsConfirmed={dummySetState}
 									onSubmit={dummySubmit} />);
 	
@@ -34,7 +33,6 @@ test("ChangePasswordForm will set the currentPassword state when changing the cu
 									setCurrentPassword={mockSetState}
 									newPassword="test"
 									setNewPassword={dummySetState}
-									newPasswordIsConfirmed={true}
 									setNewPasswordIsConfirmed={dummySetState}
 									onSubmit={dummySubmit} />);
 	
@@ -43,5 +41,68 @@ test("ChangePasswordForm will set the currentPassword state when changing the cu
 	fireEvent.change(currentPasswordInput, { target: { value: newValue } });
 	
 	expect(mockSetState).toHaveBeenCalledWith(newValue);
+	
+});
+
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("ChangePasswordForm will render a PasswordFormPartial, and pass it the new password", (newPassword) => {
+	
+	const { container } = render(<ChangePasswordForm 
+									currentPassword={"test"}
+									setCurrentPassword={dummySetState}
+									newPassword={newPassword}
+									setNewPassword={dummySetState}
+									setNewPasswordIsConfirmed={dummySetState}
+									onSubmit={dummySubmit} />);
+	
+	const PasswordFormPartial = container.querySelector(".PasswordFormPartial");
+	expect(PasswordFormPartial).not.toBeNull();
+	
+	const newPasswordInput = screen.getByDisplayValue(newPassword);
+	expect(newPasswordInput).not.toBeNull();
+	
+});
+
+test("ChangePasswordForm will pass the setNewPassword state to PasswordFormPartial", () => {
+	
+	const newValue = "newValue";
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<ChangePasswordForm 
+									currentPassword={"test"}
+									setCurrentPassword={dummySetState}
+									newPassword={"testNewPassword"}
+									setNewPassword={mockSetState}
+									setNewPasswordIsConfirmed={dummySetState}
+									onSubmit={dummySubmit} />);
+	
+	const newPasswordInput = screen.getByDisplayValue("testNewPassword");
+	fireEvent.change(newPasswordInput, { target: { value: newValue } });
+	
+	expect(mockSetState).toHaveBeenCalledWith(newValue);
+	
+});
+
+test("ChangePasswordForm will pass the setNewPasswordIsConfirmed state to PasswordFormPartial", () => {
+	
+	const newValue = "newValue";
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<ChangePasswordForm 
+									currentPassword={"test"}
+									setCurrentPassword={dummySetState}
+									newPassword={newValue}
+									setNewPassword={dummySetState}
+									setNewPasswordIsConfirmed={mockSetState}
+									onSubmit={dummySubmit} />);
+	
+	const confirmPasswordInput = container.querySelector(".confirmPasswordInput");
+	fireEvent.change(confirmPasswordInput, { target: { value: newValue } });
+	
+	expect(mockSetState).toHaveBeenCalledWith(true);
 	
 });

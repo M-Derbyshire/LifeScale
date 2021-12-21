@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import './ChangePasswordForm.scss';
+import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
 
 interface IChangePasswordFormProps {
 	currentPassword:string;
 	setCurrentPassword:(password:string)=>void;
 	newPassword:string;
 	setNewPassword:(password:string)=>void;
-	newPasswordIsConfirmed:boolean;
 	setNewPasswordIsConfirmed:(confirmed:boolean)=>void
 	
 	onSubmit:()=>void;
@@ -27,6 +27,12 @@ const ChangePasswordForm:FC<IChangePasswordFormProps> = (props) => {
 									value={props.currentPassword} 
 									onChange={(e) => props.setCurrentPassword(e.target.value)} />
 			</label>
+			
+			<PasswordFormPartial
+				password={props.newPassword}
+				setPassword={props.setNewPassword}
+				setPasswordIsConfirmed={props.setNewPasswordIsConfirmed}
+				passwordLabel="New Password" />
 			
 		</div>
 	);
