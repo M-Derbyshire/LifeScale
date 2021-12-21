@@ -11,7 +11,12 @@ interface IUserNavBarProps {
 }
 
 
-
+/*
+	Navigation, once logged into the app. This provides links to edit user details, create scales, and view 
+	scales.
+	
+	If the scales list is still being loaded, the scaleLinks prop should be an empty array
+*/
 const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	
 	
