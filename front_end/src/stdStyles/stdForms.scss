@@ -26,3 +26,15 @@
 	}
 	
 }
+
+@mixin stdInnerForm {
+	
+	@include stdForm;
+	
+	@include stdSecondaryBorder;
+	padding: 1em;
+	
+	color: $stdSecondaryTxtColor;
+	background-color: $stdSecondaryBackColor;
+	
+}
