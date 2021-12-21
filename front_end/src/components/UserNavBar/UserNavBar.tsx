@@ -18,9 +18,11 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	return (
 		<div className="UserNavBar">
 			
-			<Link className="createScaleLink" to={props.createScaleURL}>Create New Scale</Link>
+			<Link className="editUserLink" to={props.editUserURL}>Edit My Details</Link>
 			
-			<hr />
+			<hr/>
+			
+			<Link className="createScaleLink" to={props.createScaleURL}>Create New Scale</Link>
 			
 			<ScalesNavList scaleLinks={props.scaleLinks} />
 			

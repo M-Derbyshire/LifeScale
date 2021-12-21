@@ -34,4 +34,15 @@ test.each([
 	
 });
 
-// renders the edit user link
+test.each([
+	["/testEdit1"],
+	["/testEdit2"]
+])("UserNavBar will render a link to the edit user route", (route) => {
+	
+	render(<Router><UserNavBar createScaleURL="" editUserURL={route} scaleLinks={[]} /></Router>);
+	
+	const editLink = screen.getByText(/edit/i);
+	
+	expect(editLink).toHaveAttribute("href", route);
+	
+});
