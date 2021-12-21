@@ -20,6 +20,13 @@ const ChangePasswordForm:FC<IChangePasswordFormProps> = (props) => {
 	
 	return (
 		<div className="ChangePasswordForm">
+		
+			<label className="currentPasswordInputLabel">
+				Current Password: <input className="currentPasswordInput" 
+									type="password"
+									value={props.currentPassword} 
+									onChange={(e) => props.setCurrentPassword(e.target.value)} />
+			</label>
 			
 		</div>
 	);
