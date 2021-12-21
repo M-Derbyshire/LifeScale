@@ -1,12 +1,7 @@
 import React, { Component, ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import './ScalesNavList.scss';
-
-
-interface IScaleLink {
-	label:string;
-	url:string;
-}
+import IScaleLink from '../../interfaces/UI/IScaleLink';
 
 interface IScalesNavListProps {
 	scaleLinks:IScaleLink[];
@@ -43,4 +38,3 @@ class ScalesNavList extends Component<IScalesNavListProps> {
 }
 
 export default ScalesNavList;
-export type { IScaleLink };
