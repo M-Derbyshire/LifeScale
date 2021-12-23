@@ -1,10 +1,13 @@
+import IScale from './IScale';
+
 
 interface IUser {
-	id:string; //Using string, in case these are used with UUIDs in a no-sql system, in the future
+	id:string;
 	email:string;
 	password:string;
 	forename:string;
 	surname:string;
+	scales:IScale[];
 }
 
 export default IUser;

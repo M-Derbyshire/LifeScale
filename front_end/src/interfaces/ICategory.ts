@@ -1,10 +1,12 @@
+import IAction from './IAction';
+
 
 interface ICategory {
 	id:string;
 	name:string;
 	color:string;
 	desiredWeight:number;
-	scaleID:string;
+	actions:IAction[];
 }
 
 export default ICategory;
