@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import UserNavBar from '../UserNavBar/UserNavBar';
+import RecordActionForm from '../RecordActionForm/RecordActionForm';
 
 function App() {
 	
@@ -10,7 +10,19 @@ function App() {
 	
 	return (
 		<div className="App">
-			<UserNavBar scaleLinks={[{label:"test", url:"test"},{label:"test", url:"test1"}]} editUserURL="/test" createScaleURL="/create" />
+			<RecordActionForm 
+				categories={[{id:"", name:"1", color:"", desiredWeight:1, actions:[]}, {id:"", name:"2", color:"", desiredWeight:1, actions:[]}]}
+				selectedCategory={{id:"", name:"1", color:"", desiredWeight:1, actions:[]}}
+				setSelectedCategory={dummyEmpty}
+				
+				actions={[{id:"", name:"1", weight:1, timespans:[]}, {id:"", name:"1", weight:1, timespans:[]}]}
+				selectedAction={{id:"", name:"1", weight:1, timespans:[]}}
+				setSelectedAction={dummyEmpty}
+				
+				timespan={{id:"1", date: new Date(), minuteCount:1}}
+				setTimespan={dummyEmpty}
+				
+				onSubmit={dummySubmit} />
 		</div>
 	);
 }
