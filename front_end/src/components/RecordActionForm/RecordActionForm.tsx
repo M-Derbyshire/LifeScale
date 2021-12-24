@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { Component } from 'react';
 import './RecordActionForm.scss';
 import ICategory from '../../interfaces/ICategory';
 import IAction from '../../interfaces/IAction';
@@ -23,14 +23,16 @@ interface IRecordActionFormProps {
 /*
 	Used to record an occurrence of an action
 */
-const RecordActionForm:FC<IRecordActionFormProps> = (props) => {
+export default class RecordActionForm extends Component<IRecordActionFormProps>
+{
 	
-	return (
-		<div className="RecordActionForm">
-			
-		</div>
-	);
+	render()
+	{
+		return (
+			<div className="RecordActionForm">
+				
+			</div>
+		);
+	}
 	
 };
-
-export default RecordActionForm;
