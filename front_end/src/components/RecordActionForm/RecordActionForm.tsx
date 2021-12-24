@@ -29,7 +29,12 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 	{
 		return (
 			<div className="RecordActionForm">
-				
+				<form onSubmit={this.props.onSubmit}>
+					
+					
+					<input type="submit" value="Record Action" />
+					
+				</form>
 			</div>
 		);
 	}

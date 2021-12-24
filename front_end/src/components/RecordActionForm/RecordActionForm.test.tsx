@@ -1,0 +1,57 @@
+import RecordActionForm from './RecordActionForm';
+import { render, fireEvent } from '@testing-library/react';
+
+const dummyEmpty = (x)=>{};
+const dummySubmit = ()=>{};
+
+const dummyTimespan = {
+	id: "hasjkhdakjshd",
+	date: new Date(),
+	minuteCount: 2
+};
+
+const dummyCategories = [
+	{
+		id:"klasjdja", 
+		name:"1", 
+		color:"red", 
+		desiredWeight:1, 
+		actions:[
+			{id:"lksd", name:"1", weight:1, timespans:[]},
+			{id:"sAS", name:"2", weight:2, timespans:[]},
+			{id:"werwer", name:"3", weight:3, timespans:[]}
+		]
+	},
+	{
+		id:"dskaskas", 
+		name:"2", 
+		color:"blue", 
+		desiredWeight:2, 
+		actions:[
+			{id:"kjlj", name:"4", weight:1, timespans:[]},
+			{id:"zcczc", name:"5", weight:2, timespans:[]},
+			{id:"pioi", name:"6", weight:3, timespans:[]}
+		]
+	},
+];
+
+test("RecordActionForm will call the onSubmit prop when submitted", () => {
+	
+	const mockSubmit = jest.fn();
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategory={dummyCategories[0]}
+									setSelectedCategory={dummyEmpty}
+									selectedAction={dummyCategories[0].actions[0]}
+									setSelectedAction={dummyEmpty}
+									timespan={dummyTimespan}
+									setTimespan={dummyEmpty}
+									onSubmit={mockSubmit} />);
+	
+	const formElement = container.querySelector("form");
+	fireEvent.submit(formElement);
+	
+	expect(mockSubmit).toHaveBeenCalled();
+	
+});
