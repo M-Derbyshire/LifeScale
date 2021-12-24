@@ -11,11 +11,10 @@ function App() {
 	return (
 		<div className="App">
 			<RecordActionForm 
-				categories={[{id:"", name:"1", color:"", desiredWeight:1, actions:[]}, {id:"", name:"2", color:"", desiredWeight:1, actions:[]}]}
+				categories={[{id:"", name:"1", color:"", desiredWeight:1, actions:[{id:"", name:"1", weight:1, timespans:[]}, {id:"", name:"1", weight:1, timespans:[]}]}, {id:"", name:"2", color:"", desiredWeight:1, actions:[{id:"", name:"1", weight:1, timespans:[]}, {id:"", name:"1", weight:1, timespans:[]}]}]}
 				selectedCategory={{id:"", name:"1", color:"", desiredWeight:1, actions:[]}}
 				setSelectedCategory={dummyEmpty}
 				
-				actions={[{id:"", name:"1", weight:1, timespans:[]}, {id:"", name:"1", weight:1, timespans:[]}]}
 				selectedAction={{id:"", name:"1", weight:1, timespans:[]}}
 				setSelectedAction={dummyEmpty}
 				

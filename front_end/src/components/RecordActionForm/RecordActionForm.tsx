@@ -9,7 +9,6 @@ interface IRecordActionFormProps {
 	selectedCategory:ICategory;
 	setSelectedCategory:(category:ICategory)=>void;
 	
-	actions:IAction[]
 	selectedAction:IAction;
 	setSelectedAction:(action:IAction)=>void;
 	
