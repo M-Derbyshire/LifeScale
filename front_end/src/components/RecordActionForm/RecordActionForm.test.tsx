@@ -41,10 +41,10 @@ test("RecordActionForm will call the onSubmit prop when submitted", () => {
 	
 	const { container } = render(<RecordActionForm 
 									categories={dummyCategories}
-									selectedCategory={dummyCategories[0]}
-									setSelectedCategory={dummyEmpty}
-									selectedAction={dummyCategories[0].actions[0]}
-									setSelectedAction={dummyEmpty}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
 									timespan={dummyTimespan}
 									setTimespan={dummyEmpty}
 									onSubmit={mockSubmit} />);

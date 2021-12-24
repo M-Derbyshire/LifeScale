@@ -7,16 +7,17 @@ function App() {
 	const dummyEmpty = (x:any)=>console.log(x);
 	const dummySubmit = ()=>console.log("submitted");
 	
+	const dummyCategories = [{id:"1", name:"1", color:"", desiredWeight:1, actions:[{id:"1", name:"1", weight:1, timespans:[]}, {id:"2", name:"1", weight:1, timespans:[]}]}, {id:"2", name:"2", color:"", desiredWeight:1, actions:[{id:"3", name:"1", weight:1, timespans:[]}, {id:"4", name:"1", weight:1, timespans:[]}]}];
 	
 	return (
 		<div className="App">
 			<RecordActionForm 
-				categories={[{id:"", name:"1", color:"", desiredWeight:1, actions:[{id:"", name:"1", weight:1, timespans:[]}, {id:"", name:"1", weight:1, timespans:[]}]}, {id:"", name:"2", color:"", desiredWeight:1, actions:[{id:"", name:"1", weight:1, timespans:[]}, {id:"", name:"1", weight:1, timespans:[]}]}]}
-				selectedCategory={{id:"", name:"1", color:"", desiredWeight:1, actions:[]}}
-				setSelectedCategory={dummyEmpty}
+				categories={dummyCategories}
+				selectedCategoryID={dummyCategories[1].id}
+				setSelectedCategoryID={dummyEmpty}
 				
-				selectedAction={{id:"", name:"1", weight:1, timespans:[]}}
-				setSelectedAction={dummyEmpty}
+				selectedActionID={dummyCategories[0].actions[0].id}
+				setSelectedActionID={dummyEmpty}
 				
 				timespan={{id:"1", date: new Date(), minuteCount:1}}
 				setTimespan={dummyEmpty}
