@@ -13,7 +13,7 @@ function App() {
 		<div className="App">
 			<RecordActionForm 
 				categories={dummyCategories}
-				selectedCategoryID={dummyCategories[1].id}
+				selectedCategoryID={dummyCategories[0].id}
 				setSelectedCategoryID={dummyEmpty}
 				
 				selectedActionID={dummyCategories[0].actions[0].id}

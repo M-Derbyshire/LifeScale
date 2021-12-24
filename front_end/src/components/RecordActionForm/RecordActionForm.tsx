@@ -26,12 +26,12 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 {
 	
 	// Used to map categories and actions to option elements
-	// mapItemToOptionElem(key:string, name:string, value:any)
-	// {
-	// 	return (
-	// 		<option key={key} value={value}>{name}</option>
-	// 	);
-	// }
+	mapItemToOptionElem(name:string, id:any)
+	{
+		return (
+			<option key={id} value={id}>{name}</option>
+		);
+	}
 	
 	render()
 	{
@@ -39,14 +39,18 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 			<div className="RecordActionForm">
 				<form onSubmit={this.props.onSubmit}>
 					
-					{/* <label>
+					<label>
 						Category: 
-						<select className="categorySelect" value={this.props.selectedCategory}>
+						<select className="categorySelect" 
+								value={this.props.selectedCategoryID} 
+								onChange={(e) => this.props.setSelectedCategoryID(e.target.value)}>
+							
 							{this.props.categories.map(
-								(cat, i) => this.mapItemToOptionElem(cat.id, cat.name, i)
+								(cat) => this.mapItemToOptionElem(cat.name, cat.id)
 							)}
+							
 						</select>
-					</label> */}
+					</label>
 					
 					<input type="submit" value="Record Action" />
 					
