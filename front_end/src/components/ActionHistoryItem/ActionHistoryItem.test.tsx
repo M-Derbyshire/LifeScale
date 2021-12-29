@@ -38,3 +38,21 @@ test.each([
 	expect(actionDisplay.textContent).toEqual(expect.stringContaining(actName));
 	
 });
+
+
+test.each([
+	["1/1/2021", "1/1/2021"], //These are in the date format that should be displayed
+	["12/29/2021", "29/12/2021"]
+])("ActionHistoryItem will display the given timespan date in the right format", (dateIn, dateDisplayed) => {
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName="test"
+									timespan={{ ...dummyTimespan, date: new Date(dateIn) }}
+									deleteHandler={dummyDeleteHandler} />);
+	
+	const dateDisplay = container.querySelector(".itemDateDisplay");
+	
+	expect(dateDisplay.textContent).toEqual(expect.stringContaining(dateDisplayed));
+	
+});

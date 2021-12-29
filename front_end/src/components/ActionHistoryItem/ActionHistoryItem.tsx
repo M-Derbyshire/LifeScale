@@ -10,6 +10,9 @@ interface IActionHistoryItemProps {
 	deleteHandler:()=>void;
 }
 
+const dateDisplayStringfromDate = (date:Date) => {
+	return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+};
 
 const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 	
@@ -23,6 +26,10 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 			
 			<div className="itemActionNameDisplay">
 				<span className="itemInfoLabel">Action: </span> {props.actionName}
+			</div>
+			
+			<div className="itemDateDisplay">
+				<span className="itemInfoLabel">Date: </span> {dateDisplayStringfromDate(props.timespan.date)}
 			</div>
 			
 		</div>
