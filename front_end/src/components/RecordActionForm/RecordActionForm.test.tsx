@@ -189,3 +189,52 @@ test("RecordActionForm will call the setSelectedActionID prop when changing acti
 	expect(mockSetSelectedAction).toHaveBeenCalledWith(idToSelect);
 	
 });
+
+
+
+
+test.each([
+	["1970-01-01"],
+	["1970-01-02"]
+])("RecordActionForm will display the given ITimespan date in a date input", (givenDate) => {
+	
+	const timespan = { date: new Date(givenDate), id: "test", minuteCount: 0 };
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={timespan}
+									setTimespan={dummyEmpty}
+									onSubmit={dummySubmit} />);
+	
+	const dateInput = container.querySelector("input[type=date]");
+	
+	expect(dateInput.value).toBe(givenDate);
+	
+});
+
+test("RecordActionForm will call the setTimespan prop, when changing the date, but without changing the time/id values", () => {
+	
+	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: 52 };
+	const newDate = "1971-02-02";
+	const mockSetTimespan = jest.fn();
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={timespan}
+									setTimespan={mockSetTimespan}
+									onSubmit={dummySubmit} />);
+	
+	const dateInput = container.querySelector("input[type=date]");
+	fireEvent.change(dateInput, { target: { value: newDate } });
+	
+	expect(mockSetTimespan).toHaveBeenCalledWith({ ...timespan, date: new Date(newDate) });
+	
+});

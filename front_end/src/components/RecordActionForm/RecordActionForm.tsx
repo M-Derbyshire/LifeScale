@@ -33,6 +33,17 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 		);
 	}
 	
+	convertDateToString(date:Date)
+	{
+		const day = date.getDate();
+		const month = date.getMonth() + 1;
+		
+		const paddedDay = (day < 10) ? `0${day}` : day;
+		const paddedMonth = (month < 10) ? `0${month}` : month;
+		
+		return `${date.getFullYear()}-${paddedMonth}-${paddedDay}`;
+	}
+	
 	render()
 	{
 		return (
@@ -64,6 +75,16 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 							)}
 							
 						</select>
+					</label>
+					
+					
+					<label>
+						Date:
+						<input 
+							type="date" 
+							className="actionDate" 
+							value={this.convertDateToString(this.props.timespan.date)}
+							onChange={(e) => this.props.setTimespan({ ...this.props.timespan, date: new Date(e.target.value) })} />
 					</label>
 					
 					<input type="submit" value="Record Action" />
