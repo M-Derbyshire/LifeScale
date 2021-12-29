@@ -20,3 +20,21 @@ test.each([
 	expect(categoryDisplay.textContent).toEqual(expect.stringContaining(catName));
 	
 });
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("ActionHistoryItem will display the given actionName", (actName) => {
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName={actName}
+									timespan={dummyTimespan}
+									deleteHandler={dummyDeleteHandler} />);
+	
+	const actionDisplay = container.querySelector(".itemActionNameDisplay");
+	
+	expect(actionDisplay.textContent).toEqual(expect.stringContaining(actName));
+	
+});
