@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './RecordActionForm.scss';
 import ICategory from '../../interfaces/ICategory';
-import IAction from '../../interfaces/IAction';
 import ITimespan from '../../interfaces/ITimespan';
 import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 
