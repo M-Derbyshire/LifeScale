@@ -2,6 +2,12 @@
 
 .ActionHistoryItem {
 	
+	display: flex;
+	flex-wrap: wrap;
+	
+	& > * {
+		margin: 1em;
+	}
 	
 	.itemInfoLabel {
 		font-weight: bold;
