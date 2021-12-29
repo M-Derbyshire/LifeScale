@@ -48,6 +48,11 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 	{
 		return (
 			<div className="RecordActionForm">
+				
+				<header>
+					<h2>Record Action</h2>
+				</header>
+				
 				<form onSubmit={this.props.onSubmit}>
 					
 					<label>
