@@ -3,14 +3,20 @@
 .RecordActionForm {
 	@include stdForm;
 	
-	display: flex;
-	flex-wrap: wrap;
-	
-	label, .TimespanFormPartial {
-		display: inline-block;
-	}
-	
-	label, input[type=submit] {
-		margin: 0.5em;
+	//The adding flex to the container, and not the form itself, as the form itself
+	//starts to mess with the sizing of the submit, and the vertical positioning of the 
+	//inputs (this is cleaner as well)
+	.formContainer {
+		
+		display: flex;
+		flex-wrap: wrap;
+		
+		label, .TimespanFormPartial {
+			display: inline-block;
+		}
+		
+		label, input[type=submit] {
+			margin: 0.5em;
+		}
 	}
 }
