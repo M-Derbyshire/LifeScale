@@ -56,3 +56,79 @@ test.each([
 	expect(dateDisplay.textContent).toEqual(expect.stringContaining(dateDisplayed));
 	
 });
+
+
+
+test.each([
+	[undefined],
+	[false]
+])("If usesTimespan prop is false or undefined, the minute/hour displays will not be displayed", (usesTimespan) => {
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName="test"
+									timespan={dummyTimespan}
+									usesTimespan={usesTimespan}
+									deleteHandler={dummyDeleteHandler} />);
+	
+	const minuteDisplay = container.querySelector(".itemMinutesDisplay");
+	expect(minuteDisplay).toBeNull();
+	
+	const hourDisplay = container.querySelector(".itemHoursDisplay");
+	expect(hourDisplay).toBeNull();
+	
+});
+
+test("If usesTimespan prop is true, the minute/hour displays will be displayed", () => {
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName="test"
+									timespan={dummyTimespan}
+									usesTimespan={true}
+									deleteHandler={dummyDeleteHandler} />);
+	
+	const minuteDisplay = container.querySelector(".itemMinutesDisplay");
+	expect(minuteDisplay).not.toBeNull();
+	
+	const hourDisplay = container.querySelector(".itemHoursDisplay");
+	expect(hourDisplay).not.toBeNull();
+	
+});
+
+test.each([
+	[1],
+	[60]
+])("If usesTimespan prop is true, the minute count will be will be displayed", (minCount) => {
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName="test"
+									timespan={{ ...dummyTimespan, minuteCount: minCount }}
+									usesTimespan={true}
+									deleteHandler={dummyDeleteHandler} />);
+	
+	const minuteDisplay = container.querySelector(".itemMinutesDisplay");
+	
+	expect(minuteDisplay.textContent).toEqual(expect.stringContaining(minCount.toString()));
+	
+});
+
+test.each([
+	[1],
+	[2.5],
+	[2.555]
+])("If usesTimespan prop is true, the hour count will be will be displayed (rounded to 2 decimal places)", (hourCount) => {
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName="test"
+									timespan={{ ...dummyTimespan, minuteCount: hourCount * 60 }}
+									usesTimespan={true}
+									deleteHandler={dummyDeleteHandler} />);
+	
+	const hourDisplay = container.querySelector(".itemHoursDisplay");
+	
+	expect(hourDisplay.textContent).toEqual(expect.stringContaining(hourCount.toFixed(2)));
+	
+});

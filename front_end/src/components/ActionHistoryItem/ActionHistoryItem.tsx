@@ -32,6 +32,14 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 				<span className="itemInfoLabel">Date: </span> {dateDisplayStringfromDate(props.timespan.date)}
 			</div>
 			
+			{ props.usesTimespan && <div className="itemMinutesDisplay">
+				<span className="itemInfoLabel">Time spent (in minutes): </span> {props.timespan.minuteCount}
+			</div>}
+			
+			{ props.usesTimespan && <div className="itemHoursDisplay">
+				<span className="itemInfoLabel">Time spent (in hours): </span> {(props.timespan.minuteCount / 60).toFixed(2)}
+			</div>}
+			
 		</div>
 	);
 	
