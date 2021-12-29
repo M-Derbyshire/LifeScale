@@ -5,8 +5,8 @@ import ITimespan from '../../interfaces/ITimespan';
 interface IActionHistoryItemProps {
 	categoryName:string;
 	actionName:string;
-	timeSpan:ITimespan;
-	usesTimespans:boolean;
+	timespan:ITimespan;
+	usesTimespans?:boolean;
 }
 
 
