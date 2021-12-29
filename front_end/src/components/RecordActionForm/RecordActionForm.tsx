@@ -52,6 +52,20 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						</select>
 					</label>
 					
+					
+					<label>
+						Action: 
+						<select className="actionSelect" 
+								value={this.props.selectedActionID} 
+								onChange={(e) => this.props.setSelectedActionID(e.target.value)}>
+							
+							{this.props.categories.find(cat => cat.id === this.props.selectedCategoryID)!.actions.map(
+								(act) => this.mapItemToOptionElem(act.name, act.id)
+							)}
+							
+						</select>
+					</label>
+					
 					<input type="submit" value="Record Action" />
 					
 				</form>

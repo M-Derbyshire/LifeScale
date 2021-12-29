@@ -58,6 +58,9 @@ test("RecordActionForm will call the onSubmit prop when submitted", () => {
 });
 
 
+
+
+
 test("RecordActionForm will render the categories as options", () => {
 	
 	const { container } = render(<RecordActionForm 
@@ -118,5 +121,71 @@ test("RecordActionForm will call the setSelectedCategoryID prop when changing ca
 	userEvent.selectOptions(categorySelect, idToSelect);
 	
 	expect(mockSetSelectedCategory).toHaveBeenCalledWith(idToSelect);
+	
+});
+
+
+
+
+test("RecordActionForm will render the actions as options", () => {
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={dummyTimespan}
+									setTimespan={dummyEmpty}
+									onSubmit={dummySubmit} />);
+	
+	const actionOptions = container.querySelectorAll(".actionSelect option");
+	
+	dummyCategories[0].actions.forEach((act, i) => {
+		expect(actionOptions[i].value).toBe(act.id);
+		expect(actionOptions[i].textContent).toBe(act.name);
+	});
+	
+});
+
+test.each(dummyCategories[0].actions)("RecordActionForm will set the selected action to the given ID prop", (selectedAct) => {
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={selectedAct.id}
+									setSelectedActionID={dummyEmpty}
+									timespan={dummyTimespan}
+									setTimespan={dummyEmpty}
+									onSubmit={dummySubmit} />);
+	
+	const actionSelect = container.querySelector(".actionSelect");
+	
+	expect(actionSelect.value).toBe(selectedAct.id);
+	
+});
+
+test("RecordActionForm will call the setSelectedActionID prop when changing actions", () => {
+	
+	const selectedID = dummyCategories[0].actions[0].id;
+	const idToSelect = dummyCategories[0].actions[1].id;
+	
+	const mockSetSelectedAction = jest.fn();
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={selectedID}
+									setSelectedActionID={mockSetSelectedAction}
+									timespan={dummyTimespan}
+									setTimespan={dummyEmpty}
+									onSubmit={dummySubmit} />);
+	
+	const actionSelect = container.querySelector(".actionSelect");
+	userEvent.selectOptions(actionSelect, idToSelect);
+	
+	expect(mockSetSelectedAction).toHaveBeenCalledWith(idToSelect);
 	
 });
