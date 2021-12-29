@@ -1,5 +1,5 @@
 import RecordActionForm from './RecordActionForm';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const dummyEmpty = (x)=>{};
@@ -237,4 +237,51 @@ test("RecordActionForm will call the setTimespan prop, when changing the date, b
 	
 	expect(mockSetTimespan).toHaveBeenCalledWith({ ...timespan, date: new Date(newDate) });
 	
+});
+
+
+test.each([
+	[678],
+	[345]
+])("RecordActionForm will render a TimespanFormPartial, with the given timespan prop's minuteCount", (minuteCount) => {
+	
+	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: minuteCount };
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={timespan}
+									setTimespan={dummyEmpty}
+									onSubmit={dummySubmit} />);
+	
+	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
+	expect(timespanFormPartial).not.toBeNull();
+	
+	const minuteInput = screen.getByDisplayValue(minuteCount);
+	expect(minuteInput).not.toBeNull();
+});
+
+test("RecordActionForm will pass the set timespan prop to TimespanFormPartial, but only the minuteCount will be affected", () => {
+	
+	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: 10 };
+	const newMinuteCount = 20;
+	const mockSetTimespan = jest.fn();
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={timespan}
+									setTimespan={mockSetTimespan}
+									onSubmit={dummySubmit} />);
+	
+	const minuteInput = screen.getByDisplayValue(timespan.minuteCount);
+	fireEvent.change(minuteInput, { target: { value: newMinuteCount } });
+	
+	expect(mockSetTimespan).toHaveBeenCalledWith({ ...timespan, minuteCount: newMinuteCount });
 });

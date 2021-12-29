@@ -19,7 +19,7 @@ function App() {
 				selectedActionID={dummyCategories[0].actions[0].id}
 				setSelectedActionID={dummyEmpty}
 				
-				timespan={{id:"1", date: new Date("01/01/1970 00:00:00"), minuteCount:1}}
+				timespan={{id:"1", date: new Date("01/01/1970 00:00:00"), minuteCount:60}}
 				setTimespan={dummyEmpty}
 				
 				onSubmit={dummySubmit} />

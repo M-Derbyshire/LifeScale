@@ -3,6 +3,7 @@ import './RecordActionForm.scss';
 import ICategory from '../../interfaces/ICategory';
 import IAction from '../../interfaces/IAction';
 import ITimespan from '../../interfaces/ITimespan';
+import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 
 interface IRecordActionFormProps {
 	categories:ICategory[];
@@ -86,6 +87,10 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 							value={this.convertDateToString(this.props.timespan.date)}
 							onChange={(e) => this.props.setTimespan({ ...this.props.timespan, date: new Date(e.target.value) })} />
 					</label>
+					
+					<TimespanFormPartial 
+						minutes={this.props.timespan.minuteCount}
+						setMinutes={(mins:number) => this.props.setTimespan({...this.props.timespan, minuteCount: mins})} />
 					
 					<input type="submit" value="Record Action" />
 					
