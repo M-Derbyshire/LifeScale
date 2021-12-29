@@ -79,13 +79,13 @@ test.each([
 	[240],
 	[350],
 	[90]
-])("TimespanFormPartial will display the hour count, based on the minutes", (mins) => {
+])("TimespanFormPartial will display the hour count, based on the minutes, to 2 decimal places", (mins) => {
 	
 	const { container } = render(<TimespanFormPartial minutes={mins} setMinutes={emptySetState} />);
 	
 	const hourInput = container.querySelector(".timespanHourInput");
 	
-	expect(hourInput.value).toEqual((mins / 60).toString());
+	expect(hourInput.value).toEqual((mins / 60).toFixed(2).toString());
 	
 });
 
