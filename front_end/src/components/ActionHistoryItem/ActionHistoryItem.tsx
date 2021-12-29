@@ -40,6 +40,8 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 				<span className="itemInfoLabel">Time spent (in hours): </span> {(props.timespan.minuteCount / 60).toFixed(2)}
 			</div>}
 			
+			<button onClick={props.deleteHandler}>Delete</button>
+			
 		</div>
 	);
 	

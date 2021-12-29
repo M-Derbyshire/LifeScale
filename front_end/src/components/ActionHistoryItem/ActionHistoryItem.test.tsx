@@ -132,3 +132,23 @@ test.each([
 	expect(hourDisplay.textContent).toEqual(expect.stringContaining(hourCount.toFixed(2)));
 	
 });
+
+
+
+test("ActionHistoryItem delete button will call the given deleteHandler", () => {
+	
+	const mockDeleteHandler = jest.fn();
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName="test"
+									timespan={dummyTimespan}
+									usesTimespan={true}
+									deleteHandler={mockDeleteHandler} />);
+	
+	const deleteButton = container.querySelector("button");
+	fireEvent.click(deleteButton);
+	
+	expect(mockDeleteHandler).toHaveBeenCalled();
+	
+});
