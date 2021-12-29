@@ -6,7 +6,8 @@ interface IActionHistoryItemProps {
 	categoryName:string;
 	actionName:string;
 	timespan:ITimespan;
-	usesTimespans?:boolean;
+	usesTimespan?:boolean;
+	deleteHandler:()=>void;
 }
 
 
