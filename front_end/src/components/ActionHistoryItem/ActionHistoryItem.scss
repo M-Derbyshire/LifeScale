@@ -1,6 +1,11 @@
-
+@import '../../stdStyles/stdBorders.scss';
+@import '../../stdStyles/stdColors.scss';
 
 .ActionHistoryItem {
+	
+	@include stdSecondaryBorder;
+	background-color: $stdSecondaryBackColor;
+	color: $stdSecondaryTxtColor;
 	
 	display: flex;
 	flex-wrap: wrap;
