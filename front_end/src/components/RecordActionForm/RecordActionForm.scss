@@ -1,0 +1,16 @@
+@import '../../stdStyles/stdForms.scss';
+
+.RecordActionForm {
+	@include stdForm;
+	
+	display: flex;
+	flex-wrap: wrap;
+	
+	label, .TimespanFormPartial {
+		display: inline-block;
+	}
+	
+	label, input[type=submit] {
+		margin: 0.5em;
+	}
+}

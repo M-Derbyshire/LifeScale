@@ -51,10 +51,9 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 				<form onSubmit={this.props.onSubmit}>
 					
 					<label>
-						Category: 
-						<select className="categorySelect" 
-								value={this.props.selectedCategoryID} 
-								onChange={(e) => this.props.setSelectedCategoryID(e.target.value)}>
+						Category: <select className="categorySelect" 
+										value={this.props.selectedCategoryID} 
+										onChange={(e) => this.props.setSelectedCategoryID(e.target.value)}>
 							
 							{this.props.categories.map(
 								(cat) => this.mapItemToOptionElem(cat.name, cat.id)
@@ -65,10 +64,9 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 					
 					
 					<label>
-						Action: 
-						<select className="actionSelect" 
-								value={this.props.selectedActionID} 
-								onChange={(e) => this.props.setSelectedActionID(e.target.value)}>
+						Action: <select className="actionSelect" 
+									value={this.props.selectedActionID} 
+									onChange={(e) => this.props.setSelectedActionID(e.target.value)}>
 							
 							{this.props.categories.find(cat => cat.id === this.props.selectedCategoryID)!.actions.map(
 								(act) => this.mapItemToOptionElem(act.name, act.id)
@@ -79,12 +77,11 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 					
 					
 					<label>
-						Date:
-						<input 
-							type="date" 
-							className="actionDate" 
-							value={this.convertDateToString(this.props.timespan.date)}
-							onChange={(e) => this.props.setTimespan({ ...this.props.timespan, date: new Date(e.target.value) })} />
+						Date: <input 
+								type="date" 
+								className="actionDate" 
+								value={this.convertDateToString(this.props.timespan.date)}
+								onChange={(e) => this.props.setTimespan({ ...this.props.timespan, date: new Date(e.target.value) })} />
 					</label>
 					
 					<TimespanFormPartial 
