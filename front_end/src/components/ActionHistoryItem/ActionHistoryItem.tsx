@@ -17,6 +17,10 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 	return (
 		<div className="ActionHistoryItem">
 			
+			<div className="itemCategoryNameDisplay">
+				<span className="itemInfoLabel">Category: </span> {props.categoryName}
+			</div>
+			
 		</div>
 	);
 	
