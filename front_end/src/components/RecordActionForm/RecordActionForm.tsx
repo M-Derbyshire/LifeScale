@@ -12,6 +12,7 @@ interface IRecordActionFormProps {
 	selectedActionID:string;
 	setSelectedActionID:(action:string)=>void;
 	
+	usesTimespans?:boolean
 	timespan:ITimespan;
 	setTimespan:(timespan:ITimespan)=>void;
 	
@@ -89,9 +90,9 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 								onChange={(e) => this.props.setTimespan({ ...this.props.timespan, date: new Date(e.target.value) })} />
 					</label>
 					
-					<TimespanFormPartial 
+					{this.props.usesTimespans && <TimespanFormPartial 
 						minutes={this.props.timespan.minuteCount}
-						setMinutes={(mins:number) => this.props.setTimespan({...this.props.timespan, minuteCount: mins})} />
+						setMinutes={(mins:number) => this.props.setTimespan({...this.props.timespan, minuteCount: mins})} />}
 					
 					<input type="submit" value="Record Action" />
 					

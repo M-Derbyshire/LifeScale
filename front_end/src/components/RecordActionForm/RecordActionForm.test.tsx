@@ -243,9 +243,51 @@ test("RecordActionForm will call the setTimespan prop, when changing the date, b
 test.each([
 	[678],
 	[345]
-])("RecordActionForm will render a TimespanFormPartial, with the given timespan prop's minuteCount", (minuteCount) => {
+])("If usesTimespans is true, RecordActionForm will render a TimespanFormPartial, with the given timespan prop's minuteCount", (minuteCount) => {
 	
 	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: minuteCount };
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={timespan}
+									setTimespan={dummyEmpty}
+									usesTimespans={true}
+									onSubmit={dummySubmit} />);
+	
+	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
+	expect(timespanFormPartial).not.toBeNull();
+	
+	const minuteInput = screen.getByDisplayValue(minuteCount);
+	expect(minuteInput).not.toBeNull();
+});
+
+test("If usesTimespans is false, RecordActionForm will not render a TimespanFormPartial", () => {
+	
+	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: 1 };
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={timespan}
+									setTimespan={dummyEmpty}
+									usesTimespans={false}
+									onSubmit={dummySubmit} />);
+	
+	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
+	expect(timespanFormPartial).toBeNull();
+	
+});
+
+test("If usesTimespans prop is not given, RecordActionForm will not render a TimespanFormPartial", () => {
+	
+	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: 1 };
 	
 	const { container } = render(<RecordActionForm 
 									categories={dummyCategories}
@@ -258,10 +300,8 @@ test.each([
 									onSubmit={dummySubmit} />);
 	
 	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
-	expect(timespanFormPartial).not.toBeNull();
+	expect(timespanFormPartial).toBeNull();
 	
-	const minuteInput = screen.getByDisplayValue(minuteCount);
-	expect(minuteInput).not.toBeNull();
 });
 
 test("RecordActionForm will pass the set timespan prop to TimespanFormPartial, but only the minuteCount will be affected", () => {
@@ -278,6 +318,7 @@ test("RecordActionForm will pass the set timespan prop to TimespanFormPartial, b
 									setSelectedActionID={dummyEmpty}
 									timespan={timespan}
 									setTimespan={mockSetTimespan}
+									usesTimespans={true}
 									onSubmit={dummySubmit} />);
 	
 	const minuteInput = screen.getByDisplayValue(timespan.minuteCount);
