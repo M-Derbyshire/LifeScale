@@ -9,8 +9,7 @@ function App() {
 	
 	return (
 		<div className="App">
-			<AmendActionHistoryPage 
-				loadingError="test" />
+			<AmendActionHistoryPage scaleName="test" />
 		</div>
 	);
 }

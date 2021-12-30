@@ -14,3 +14,17 @@ test.each([
 	expect(contentWrapper.textContent).toEqual(expect.stringContaining(message));
 	
 });
+
+test.each([
+	["test1"],
+	["test2"]
+])("AmendActionHistoryPage will display the scaleName prop in a header", (name) => {
+	
+	const { container } = render(<AmendActionHistoryPage scaleName={name} />);
+	
+	const heading = container.querySelector("h1");
+	
+	expect(heading).not.toBeNull();
+	expect(heading.textContent).toEqual(expect.stringContaining(name));
+	
+});

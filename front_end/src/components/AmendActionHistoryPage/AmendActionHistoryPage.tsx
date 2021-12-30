@@ -32,6 +32,10 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 		return (
 			<div className="AmendActionHistoryPage">
 				
+				<header>
+					<h1>Amend Action History{this.props.scaleName && ` - ${this.props.scaleName}`}:</h1>
+				</header>
+				
 				<LoadedContentWrapper errorMessage={this.props.loadingError} render={this.props.items && (<div className="loadedContent">
 					
 					{/* RecordActionFormContainer will go around here */}
