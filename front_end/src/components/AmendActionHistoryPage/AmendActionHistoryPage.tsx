@@ -8,6 +8,7 @@ interface IAmendActionHistoryPageProps {
 	scaleName?:string;
 	items?:IActionHistoryItem[];
 	loadingError?:string;
+	backButtonHandler:()=>void;
 }
 
 
@@ -34,6 +35,7 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 				
 				<header>
 					<h1>Amend Action History{this.props.scaleName && ` - ${this.props.scaleName}`}:</h1>
+					<button className="actionHistoryBackButton" onClick={this.props.backButtonHandler}>Back</button>
 				</header>
 				
 				<LoadedContentWrapper errorMessage={this.props.loadingError} render={this.props.items && (<div className="loadedContent">

@@ -9,7 +9,7 @@ function App() {
 	
 	return (
 		<div className="App">
-			<AmendActionHistoryPage scaleName="test" />
+			<AmendActionHistoryPage backButtonHandler={dummySubmit} scaleName="test" />
 		</div>
 	);
 }
