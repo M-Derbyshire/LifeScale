@@ -8,3 +8,5 @@ interface IActionHistoryItem {
 	deleteHandler:()=>void;
 	deleteErrorMessage?:string;
 }
+
+export default IActionHistoryItem;
