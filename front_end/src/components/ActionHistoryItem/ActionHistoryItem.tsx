@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import './ActionHistoryItem.scss';
-import ITimespan from '../../interfaces/ITimespan';
 import ErrorMessageDisplay from '../ErrorMessageDisplay/ErrorMessageDisplay';
 import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 
