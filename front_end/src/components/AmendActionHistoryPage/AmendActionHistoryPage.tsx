@@ -4,8 +4,9 @@ import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 
 
 interface IAmendActionHistoryPageProps {
-	scaleName:string;
-	items:IActionHistoryItem[];
+	scaleName?:string;
+	items?:IActionHistoryItem[];
+	loadingError?:string;
 }
 
 
