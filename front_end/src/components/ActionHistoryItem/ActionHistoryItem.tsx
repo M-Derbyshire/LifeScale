@@ -2,14 +2,11 @@ import React, { FC } from 'react';
 import './ActionHistoryItem.scss';
 import ITimespan from '../../interfaces/ITimespan';
 import ErrorMessageDisplay from '../ErrorMessageDisplay/ErrorMessageDisplay';
+import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 
 interface IActionHistoryItemProps {
-	categoryName:string;
-	actionName:string;
-	timespan:ITimespan;
+	actionHistoryItem:IActionHistoryItem;
 	usesTimespan?:boolean;
-	deleteHandler:()=>void;
-	deleteErrorMessage?:string;
 }
 
 const dateDisplayStringfromDate = (date:Date) => {
@@ -29,32 +26,32 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 			<div className="historyItemDetailsContainer">
 				
 				<div className="itemCategoryNameDisplay">
-					<span className="itemInfoLabel">Category: </span> {props.categoryName}
+					<span className="itemInfoLabel">Category: </span> {props.actionHistoryItem.categoryName}
 				</div>
 				
 				<div className="itemActionNameDisplay">
-					<span className="itemInfoLabel">Action: </span> {props.actionName}
+					<span className="itemInfoLabel">Action: </span> {props.actionHistoryItem.actionName}
 				</div>
 				
 				<div className="itemDateDisplay">
-					<span className="itemInfoLabel">Date: </span> {dateDisplayStringfromDate(props.timespan.date)}
+					<span className="itemInfoLabel">Date: </span> {dateDisplayStringfromDate(props.actionHistoryItem.timespan.date)}
 				</div>
 				
 				{ props.usesTimespan && <div className="itemMinutesDisplay">
-					<span className="itemInfoLabel">Time spent (in minutes): </span> {props.timespan.minuteCount}
+					<span className="itemInfoLabel">Time spent (in minutes): </span> {props.actionHistoryItem.timespan.minuteCount}
 				</div>}
 				
 				{ props.usesTimespan && <div className="itemHoursDisplay">
-					<span className="itemInfoLabel">Time spent (in hours): </span> {(props.timespan.minuteCount / 60).toFixed(2)}
+					<span className="itemInfoLabel">Time spent (in hours): </span> {(props.actionHistoryItem.timespan.minuteCount / 60).toFixed(2)}
 				</div>}
 				
-				<button onClick={props.deleteHandler}>Delete</button>
+				<button onClick={props.actionHistoryItem.deleteHandler}>Delete</button>
 				
 			</div>
 			
-			{ props.deleteErrorMessage && <div>
+			{ props.actionHistoryItem.deleteErrorMessage && <div>
 				<br />
-				<ErrorMessageDisplay message={props.deleteErrorMessage} />
+				<ErrorMessageDisplay message={props.actionHistoryItem.deleteErrorMessage} />
 			</div>}
 			
 		</div>

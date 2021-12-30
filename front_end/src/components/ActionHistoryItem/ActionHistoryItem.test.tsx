@@ -1,8 +1,14 @@
 import ActionHistoryItem from './ActionHistoryItem';
 import { render, fireEvent } from '@testing-library/react';
 
-const dummyTimespan = { date: new Date(), minuteCount: 60, id: "test" };
 const dummyDeleteHandler = () => {};
+const dummyTimespan = { date: new Date(), minuteCount: 60, id: "test" };
+const dummyAction = {
+	categoryName: "test",
+	actionName: "test",
+	timespan: dummyTimespan,
+	deleteHandler: dummyDeleteHandler
+};
 
 test.each([
 	["test1"],
@@ -10,10 +16,7 @@ test.each([
 ])("ActionHistoryItem will display the given categoryName", (catName) => {
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName={catName}
-									actionName="test"
-									timespan={dummyTimespan}
-									deleteHandler={dummyDeleteHandler} />);
+									actionHistoryItem={{...dummyAction, categoryName: catName}} />);
 	
 	const categoryDisplay = container.querySelector(".itemCategoryNameDisplay");
 	
@@ -28,10 +31,7 @@ test.each([
 ])("ActionHistoryItem will display the given actionName", (actName) => {
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName={actName}
-									timespan={dummyTimespan}
-									deleteHandler={dummyDeleteHandler} />);
+									actionHistoryItem={{...dummyAction, actionName: actName}} />);
 	
 	const actionDisplay = container.querySelector(".itemActionNameDisplay");
 	
@@ -46,10 +46,9 @@ test.each([
 ])("ActionHistoryItem will display the given timespan date in the right format", (dateIn, dateDisplayed) => {
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName="test"
-									timespan={{ ...dummyTimespan, date: new Date(dateIn) }}
-									deleteHandler={dummyDeleteHandler} />);
+									actionHistoryItem={
+										{...dummyAction, timespan: { ...dummyTimespan, date: new Date(dateIn) } }
+									} />);
 	
 	const dateDisplay = container.querySelector(".itemDateDisplay");
 	
@@ -64,12 +63,7 @@ test.each([
 	[false]
 ])("If usesTimespan prop is false or undefined, the minute/hour displays will not be displayed", (usesTimespan) => {
 	
-	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName="test"
-									timespan={dummyTimespan}
-									usesTimespan={usesTimespan}
-									deleteHandler={dummyDeleteHandler} />);
+	const { container } = render(<ActionHistoryItem actionHistoryItem={dummyAction} />);
 	
 	const minuteDisplay = container.querySelector(".itemMinutesDisplay");
 	expect(minuteDisplay).toBeNull();
@@ -82,11 +76,8 @@ test.each([
 test("If usesTimespan prop is true, the minute/hour displays will be displayed", () => {
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName="test"
-									timespan={dummyTimespan}
-									usesTimespan={true}
-									deleteHandler={dummyDeleteHandler} />);
+									actionHistoryItem={dummyAction}
+									usesTimespan={true} />);
 	
 	const minuteDisplay = container.querySelector(".itemMinutesDisplay");
 	expect(minuteDisplay).not.toBeNull();
@@ -102,11 +93,10 @@ test.each([
 ])("If usesTimespan prop is true, the minute count will be will be displayed", (minCount) => {
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName="test"
-									timespan={{ ...dummyTimespan, minuteCount: minCount }}
-									usesTimespan={true}
-									deleteHandler={dummyDeleteHandler} />);
+									actionHistoryItem={
+										{...dummyAction, timespan: { ...dummyTimespan, minuteCount: minCount } }
+									}
+									usesTimespan={true} />);
 	
 	const minuteDisplay = container.querySelector(".itemMinutesDisplay");
 	
@@ -121,11 +111,10 @@ test.each([
 ])("If usesTimespan prop is true, the hour count will be will be displayed (rounded to 2 decimal places)", (hourCount) => {
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName="test"
-									timespan={{ ...dummyTimespan, minuteCount: hourCount * 60 }}
-									usesTimespan={true}
-									deleteHandler={dummyDeleteHandler} />);
+									actionHistoryItem={
+										{...dummyAction, timespan: { ...dummyTimespan, minuteCount: hourCount * 60 } }
+									}
+									usesTimespan={true} />);
 	
 	const hourDisplay = container.querySelector(".itemHoursDisplay");
 	
@@ -140,11 +129,7 @@ test("ActionHistoryItem delete button will call the given deleteHandler", () => 
 	const mockDeleteHandler = jest.fn();
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName="test"
-									timespan={dummyTimespan}
-									usesTimespan={true}
-									deleteHandler={mockDeleteHandler} />);
+									actionHistoryItem={{...dummyAction, deleteHandler: mockDeleteHandler}} />);
 	
 	const deleteButton = container.querySelector("button");
 	fireEvent.click(deleteButton);
@@ -158,14 +143,10 @@ test("ActionHistoryItem delete button will call the given deleteHandler", () => 
 test.each([
 	["test1"],
 	["test2"]
-])("ActionHistoryItem will display an ErrorMessageDisplay with the given delete error text, if passed that prop", (message) => {
+])("ActionHistoryItem will display an ErrorMessageDisplay with the given delete error text, if passed that value in the actionHistoryItem prop", (message) => {
 	
 	const { container } = render(<ActionHistoryItem
-									categoryName="test"
-									actionName="test"
-									timespan={dummyTimespan}
-									deleteHandler={dummyDeleteHandler}
-									deleteErrorMessage={message} />);
+									actionHistoryItem={{...dummyAction, deleteErrorMessage: message}} />);
 	
 	const errorMessageDisplay = container.querySelector(".ErrorMessageDisplay");
 	expect(errorMessageDisplay).not.toBeNull();
