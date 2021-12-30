@@ -7,15 +7,19 @@
 	background-color: $stdSecondaryBackColor;
 	color: $stdSecondaryTxtColor;
 	
-	display: flex;
-	flex-wrap: wrap;
+	padding: 1em;
 	
-	& > * {
-		margin: 1em;
-	}
-	
-	.itemInfoLabel {
-		font-weight: bold;
+	.historyItemDetailsContainer {
+		display: flex;
+		flex-wrap: wrap;
+		
+		& > * {
+			margin: 1em;
+		}
+		
+		.itemInfoLabel {
+			font-weight: bold;
+		}
 	}
 	
 }

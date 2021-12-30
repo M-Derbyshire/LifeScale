@@ -152,3 +152,23 @@ test("ActionHistoryItem delete button will call the given deleteHandler", () => 
 	expect(mockDeleteHandler).toHaveBeenCalled();
 	
 });
+
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("ActionHistoryItem will display an ErrorMessageDisplay with the given delete error text, if passed that prop", (message) => {
+	
+	const { container } = render(<ActionHistoryItem
+									categoryName="test"
+									actionName="test"
+									timespan={dummyTimespan}
+									deleteHandler={dummyDeleteHandler}
+									deleteErrorMessage={message} />);
+	
+	const errorMessageDisplay = container.querySelector(".ErrorMessageDisplay");
+	expect(errorMessageDisplay).not.toBeNull();
+	expect(errorMessageDisplay.textContent).toEqual(expect.stringContaining(message));
+	
+});
