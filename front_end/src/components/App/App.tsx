@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import ActionHistoryItem from '../ActionHistoryItem/ActionHistoryItem';
+import AmendActionHistoryPage from '../AmendActionHistoryPage/AmendActionHistoryPage';
 
 function App() {
 	
@@ -9,12 +9,8 @@ function App() {
 	
 	return (
 		<div className="App">
-			<ActionHistoryItem 
-				categoryName="testCat" 
-				actionName="actName" 
-				timespan={{ date: new Date(), minuteCount: 60, id: "test" }}
-				usesTimespan={true}
-				deleteHandler={dummySubmit} />
+			<AmendActionHistoryPage 
+				loadingError="test" />
 		</div>
 	);
 }
