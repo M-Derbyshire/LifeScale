@@ -3,6 +3,15 @@ import { render, fireEvent } from '@testing-library/react';
 
 const dummyBackButtonHandler = ()=>{};
 
+const dummyDeleteHandler = () => {};
+const dummyTimespan = { date: new Date(), minuteCount: 60, id: "test" };
+const dummyAction = {
+	categoryName: "test",
+	actionName: "test",
+	timespan: dummyTimespan,
+	deleteHandler: dummyDeleteHandler
+};
+
 test.each([
 	["test1"],
 	["test2"]
@@ -47,4 +56,67 @@ test("AmendActionHistoryPage will call the backButtonHandler prop when back butt
 	
 	expect(mockBackHandler).toHaveBeenCalled();
 	
+});
+
+test("AmendActionHistoryPage will list the given items as ActionHistoryItem components", () => {
+	
+	const items = [
+		{ ...dummyAction, categoryName: "test-item1" },
+		{ ...dummyAction, categoryName: "test-item2" }
+	];
+	
+	const { container } = render(<AmendActionHistoryPage 
+									backButtonHandler={dummyBackButtonHandler}
+									items={items} />);
+	
+	const historyItems = container.querySelectorAll(".ActionHistoryItem");
+	
+	expect(historyItems.length).not.toBe(0);
+	
+	historyItems.forEach(
+		(item, i) => expect(item.textContent).toEqual(expect.stringContaining(items[i].categoryName))
+	);
+	
+});
+
+test.each([
+	[undefined],
+	[false],
+	[true]
+])("AmendActionHistoryPage will pass on the scaleUsesTimespans prop to ActionHistoryItem components", (isUsed) => {
+	
+	const items = [
+		{ ...dummyAction, categoryName: "test-item1" },
+		{ ...dummyAction, categoryName: "test-item2" }
+	];
+	
+	const { container } = render(<AmendActionHistoryPage 
+									backButtonHandler={dummyBackButtonHandler}
+									items={items}
+									scaleUsesTimespans={isUsed} />);
+	
+	const historyItems = container.querySelectorAll(".ActionHistoryItem");
+	
+	expect(historyItems.length).not.toBe(0);
+	
+	historyItems.forEach(
+		(item, i) => {
+			if (!!isUsed) 
+				expect(item.textContent).toEqual(expect.stringContaining(items[i].timespan.minuteCount.toString()))
+			else
+				expect(item.textContent).not.toEqual(expect.stringContaining(items[i].timespan.minuteCount.toString()))
+		}
+	);
+	
+});
+
+test("AmendActionHistoryPage will display a message if items is empty", () => {
+	
+	const { container } = render(<AmendActionHistoryPage 
+									backButtonHandler={dummyBackButtonHandler}
+									items={[]} />);
+	
+	const messageDisplay = container.querySelector(".noHistoryItemsMessage");
+	
+	expect(messageDisplay).not.toBeNull();
 });

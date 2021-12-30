@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import './AmendActionHistoryPage.scss';
 import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
+import ActionHistoryItem from '../ActionHistoryItem/ActionHistoryItem';
 
 
 interface IAmendActionHistoryPageProps {
 	scaleName?:string;
+	scaleUsesTimespans?:boolean,
 	items?:IActionHistoryItem[];
 	loadingError?:string;
 	backButtonHandler:()=>void;
@@ -20,10 +22,14 @@ interface IAmendActionHistoryPageProps {
 export default class AmendActionHistoryPage extends Component<IAmendActionHistoryPageProps> {
 	
 	
-	mapHistoryItemsToComponents(item:IActionHistoryItem)
+	mapHistoryItemToComponent(item:IActionHistoryItem, i:number)
 	{
-		
-		// return (<div/>);
+		return (
+			<ActionHistoryItem
+				key={`${item.categoryName}-${item.actionName}-${i}`}
+				actionHistoryItem={item}
+				usesTimespan={this.props.scaleUsesTimespans} />
+		);
 	}
 	
 	
@@ -43,7 +49,11 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 					{/* RecordActionFormContainer will go around here */}
 					
 					<div className="historyItemsArea">
+						{this.props.items.map(this.mapHistoryItemToComponent.bind(this))}
 						
+						{this.props.items.length === 0 && <span className="noHistoryItemsMessage">
+							There are no historical actions recorded for this scale.
+						</span>}
 					</div>
 					
 				</div>)} />
