@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
 import './AmendActionHistoryPage.scss';
-import ITimespan from '../../interfaces/ITimespan';
+import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 
-
-interface IActionHistoryItem {
-	categoryName:string;
-	actionName:string;
-	timespan:ITimespan;
-	deleteHandler:()=>void;
-	deleteErrorMessage?:string;
-}
 
 interface IAmendActionHistoryPageProps {
 	scaleName:string;
@@ -38,5 +30,3 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 	}
 	
 };
-
-export type { IActionHistoryItem };
