@@ -14,6 +14,10 @@ const dateDisplayStringfromDate = (date:Date) => {
 	return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
 };
 
+
+/*
+	Used to display an occurrence of an action
+*/
 const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 	
 	
