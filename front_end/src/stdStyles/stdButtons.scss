@@ -4,6 +4,7 @@
 @mixin stdPrimaryButton {
 	font-weight: bold;
 	font-size: 1em;
+	padding: 0.35em;
 	
 	@include stdBorder($stdSecondaryTxtColor, 2px);
 	color: $stdSecondaryTxtColor;
