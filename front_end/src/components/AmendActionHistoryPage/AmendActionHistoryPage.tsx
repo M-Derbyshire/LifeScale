@@ -22,11 +22,11 @@ interface IAmendActionHistoryPageProps {
 export default class AmendActionHistoryPage extends Component<IAmendActionHistoryPageProps> {
 	
 	
-	mapHistoryItemToComponent(item:IActionHistoryItem, i:number)
+	mapHistoryItemToComponent(item:IActionHistoryItem)
 	{
 		return (
 			<ActionHistoryItem
-				key={`${item.categoryName}-${item.actionName}-${i}`}
+				key={item.timespan.id}
 				actionHistoryItem={item}
 				usesTimespan={this.props.scaleUsesTimespans} />
 		);

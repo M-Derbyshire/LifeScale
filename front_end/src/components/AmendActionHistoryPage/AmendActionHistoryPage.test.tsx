@@ -12,6 +12,13 @@ const dummyAction = {
 	deleteHandler: dummyDeleteHandler
 };
 
+const dummyItems = [
+	{ ...dummyAction, categoryName: "test-item1", timespan: { ...dummyTimespan, id: "test1" } },
+	{ ...dummyAction, categoryName: "test-item2", timespan: { ...dummyTimespan, id: "test2" }  }
+];
+
+
+
 test.each([
 	["test1"],
 	["test2"]
@@ -60,21 +67,16 @@ test("AmendActionHistoryPage will call the backButtonHandler prop when back butt
 
 test("AmendActionHistoryPage will list the given items as ActionHistoryItem components", () => {
 	
-	const items = [
-		{ ...dummyAction, categoryName: "test-item1" },
-		{ ...dummyAction, categoryName: "test-item2" }
-	];
-	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
-									items={items} />);
+									items={dummyItems} />);
 	
 	const historyItems = container.querySelectorAll(".ActionHistoryItem");
 	
 	expect(historyItems.length).not.toBe(0);
 	
 	historyItems.forEach(
-		(item, i) => expect(item.textContent).toEqual(expect.stringContaining(items[i].categoryName))
+		(item, i) => expect(item.textContent).toEqual(expect.stringContaining(dummyItems[i].categoryName))
 	);
 	
 });
@@ -85,14 +87,9 @@ test.each([
 	[true]
 ])("AmendActionHistoryPage will pass on the scaleUsesTimespans prop to ActionHistoryItem components", (isUsed) => {
 	
-	const items = [
-		{ ...dummyAction, categoryName: "test-item1" },
-		{ ...dummyAction, categoryName: "test-item2" }
-	];
-	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
-									items={items}
+									items={dummyItems}
 									scaleUsesTimespans={isUsed} />);
 	
 	const historyItems = container.querySelectorAll(".ActionHistoryItem");
@@ -102,9 +99,9 @@ test.each([
 	historyItems.forEach(
 		(item, i) => {
 			if (!!isUsed) 
-				expect(item.textContent).toEqual(expect.stringContaining(items[i].timespan.minuteCount.toString()))
+				expect(item.textContent).toEqual(expect.stringContaining(dummyItems[i].timespan.minuteCount.toString()))
 			else
-				expect(item.textContent).not.toEqual(expect.stringContaining(items[i].timespan.minuteCount.toString()))
+				expect(item.textContent).not.toEqual(expect.stringContaining(dummyItems[i].timespan.minuteCount.toString()))
 		}
 	);
 	
