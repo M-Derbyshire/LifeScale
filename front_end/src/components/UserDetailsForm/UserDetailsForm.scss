@@ -1,4 +1,5 @@
 @import '../../stdStyles/stdForms.scss';
+@import '../../stdStyles/stdButtons.scss';
 
 .UserDetailsForm {
 	@include stdForm;
@@ -9,6 +10,11 @@
 	
 	.passwordFormArea {
 		margin: 2em 0;
+	}
+	
+	input[type=submit] {
+		@include stdPrimaryButton;
+		margin-top: 0.25em;
 	}
 	
 }

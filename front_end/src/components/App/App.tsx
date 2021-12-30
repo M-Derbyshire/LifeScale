@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
-import AmendActionHistoryPage from '../AmendActionHistoryPage/AmendActionHistoryPage';
+import UserDetailsForm from '../UserDetailsForm/UserDetailsForm';
+import ChangePasswordForm from '../ChangePasswordForm/ChangePasswordForm';
 
 function App() {
 	
@@ -9,7 +10,28 @@ function App() {
 	
 	return (
 		<div className="App">
-			<AmendActionHistoryPage backButtonHandler={dummySubmit} scaleName="test" />
+			<UserDetailsForm 
+				setUser={dummyEmpty}
+				user={{
+					id:"hdaskjdakjsdkha",
+					email:"test@test.com",
+					forename:"test1",
+					surname:"test2",
+					scales:[]
+				}}
+				headingText="test"
+				passwordForm={
+					<ChangePasswordForm
+						currentPassword="test"
+						setCurrentPassword={dummyEmpty}
+						newPassword="test"
+						setNewPassword={dummyEmpty}
+						setNewPasswordIsConfirmed={dummyEmpty}
+						
+						onSubmit={dummySubmit} />
+				}
+				onSubmit={dummySubmit}
+				submitButtonText="Save" />
 		</div>
 	);
 }
