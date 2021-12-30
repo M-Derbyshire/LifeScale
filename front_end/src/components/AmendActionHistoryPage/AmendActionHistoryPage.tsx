@@ -8,6 +8,7 @@ interface IActionHistoryItem {
 	actionName:string;
 	timespan:ITimespan;
 	deleteHandler:()=>void;
+	deleteErrorMessage?:string;
 }
 
 interface IAmendActionHistoryPageProps {
