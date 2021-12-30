@@ -1,0 +1,13 @@
+@import './stdColors.scss';
+@import './stdBorders.scss';
+
+@mixin stdPrimaryButton {
+	font-weight: bold;
+	font-size: 1em;
+	
+	@include stdBorder($stdSecondaryTxtColor, 2px);
+	color: $stdSecondaryTxtColor;
+	background-color: $stdSecondaryBackColor;
+	
+	cursor:pointer;
+}
