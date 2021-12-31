@@ -1,5 +1,10 @@
 @import '../../stdStyles/stdForms.scss';
+@import '../../stdStyles/stdButtons.scss';
 
 .SingleActionForm {
 	@include stdForm;
+	
+	input[type=submit], button {
+		@include stdPrimaryButton;
+	}
 }
