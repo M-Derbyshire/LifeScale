@@ -1,4 +1,5 @@
 @import '../../stdStyles/stdForms.scss';
+@import '../../stdStyles/stdButtons.scss';
 
 .RecordActionForm {
 	@include stdForm;
@@ -17,6 +18,10 @@
 		
 		label, input[type=submit] {
 			margin: 0.5em;
+		}
+		
+		input[type=submit] {
+			@include stdPrimaryButton;
 		}
 	}
 }
