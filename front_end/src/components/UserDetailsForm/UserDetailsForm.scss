@@ -12,9 +12,13 @@
 		margin: 2em 0;
 	}
 	
-	input[type=submit] {
+	input[type=submit], button {
 		@include stdPrimaryButton;
 		margin-top: 0.25em;
+	}
+	
+	header {
+		margin-bottom: 2em;
 	}
 	
 }

@@ -14,6 +14,8 @@ interface IUserDetailsFormProps {
 	badLoadErrorMessage?:string;
 	passwordForm?:ReactElement;
 	
+	backButtonHandler:()=>void;
+	
 	onSubmit:()=>void;
 	disableSubmit?:boolean;
 	submitButtonText:string;
@@ -42,6 +44,7 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 				
 				<header>
 					<h1>{this.props.headingText}</h1>
+					<button className="userDetailsBackButton" onClick={this.props.backButtonHandler}>Back</button>
 				</header>
 				
 				<LoadedContentWrapper errorMessage={this.props.badLoadErrorMessage} render={this.props.user && 

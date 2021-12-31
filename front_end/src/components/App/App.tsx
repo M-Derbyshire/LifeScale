@@ -31,7 +31,8 @@ function App() {
 						onSubmit={dummySubmit} />
 				}
 				onSubmit={dummySubmit}
-				submitButtonText="Save" />
+				submitButtonText="Save"
+				backButtonHandler={dummySubmit} />
 		</div>
 	);
 }

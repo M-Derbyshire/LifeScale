@@ -3,6 +3,7 @@ import { render, fireEvent, screen } from '@testing-library/react';
 
 const dummySetState = (x)=>{};
 const dummySubmit = ()=>{};
+const dummyBackHandler = ()=>{};
 
 test("UserDetailsForm will render a UserDetailsFormPartial", () => {
 	
@@ -14,7 +15,10 @@ test("UserDetailsForm will render a UserDetailsFormPartial", () => {
 										forename:"test", 
 										surname: "test"
 									} }
-									setUser={dummySetState} onSubmit={dummySubmit} headingText="test"  />);
+									setUser={dummySetState} 
+									onSubmit={dummySubmit} 
+									headingText="test"
+									backButtonHandler={dummyBackHandler}  />);
 	
 	const formPartial = container.querySelector(".UserDetailsFormPartial");
 	
@@ -27,7 +31,12 @@ test.each([
 	[{ id:"test", email:"test2@test2.com", password:"testPassword2", forename:"testFor2", surname:"testSur2" }]
 ])("UserDetailsForm will pass the user details to UserDetailsFormPartial", (testUser) => {
 	
-	render(<UserDetailsForm user={testUser} setUser={dummySetState} onSubmit={dummySubmit} headingText="test"  />);
+	render(<UserDetailsForm 
+				user={testUser} 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				headingText="test"
+				backButtonHandler={dummyBackHandler}  />);
 	
 	const emailInput = screen.getByDisplayValue(testUser.email);
 	expect(emailInput).not.toBeNull();
@@ -51,7 +60,12 @@ test.each([
 	
 	const mockSetUser = jest.fn();
 	
-	render(<UserDetailsForm user={initialUser} setUser={mockSetUser} onSubmit={dummySubmit} headingText="test"  />);
+	render(<UserDetailsForm 
+				user={initialUser} 
+				setUser={mockSetUser} 
+				onSubmit={dummySubmit} 
+				headingText="test"
+				backButtonHandler={dummyBackHandler}  />);
 	
 	
 	const emailInput = screen.getByDisplayValue(initialUser.email);
@@ -89,7 +103,8 @@ test.each([
 									setUser={dummySetState} 
 									onSubmit={dummySubmit} 
 									headingText="test" 
-									badSaveErrorMessage={message} />);
+									badSaveErrorMessage={message}
+									backButtonHandler={dummyBackHandler} />);
 	
 	const errorMessage = container.querySelector(".BadSaveMessage");
 	
@@ -110,7 +125,8 @@ test("UserDetailsForm will enable the submit button if no disableSubmit prop is 
 				user={initialUser} 
 				setUser={dummySetState} 
 				headingText="test" 
-				onSubmit={dummySubmit} />);
+				onSubmit={dummySubmit}
+				backButtonHandler={dummyBackHandler} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).not.toBeDisabled();
@@ -128,7 +144,8 @@ test("UserDetailsForm will enable the submit button if the disableSubmit prop is
 				setUser={dummySetState} 
 				onSubmit={dummySubmit}
 				headingText="test" 
-				disableSubmit={false} />);
+				disableSubmit={false}
+				backButtonHandler={dummyBackHandler} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).not.toBeDisabled();
@@ -146,7 +163,8 @@ test("UserDetailsForm will disable the submit button if the disableSubmit prop i
 				setUser={dummySetState} 
 				onSubmit={dummySubmit} 
 				headingText="test" 
-				disableSubmit={true} />);
+				disableSubmit={true}
+				backButtonHandler={dummyBackHandler} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).toBeDisabled();
@@ -169,7 +187,8 @@ test.each([
 				setUser={dummySetState} 
 				onSubmit={dummySubmit} 
 				headingText="test" 
-				submitButtonText={buttonText} />);
+				submitButtonText={buttonText}
+				backButtonHandler={dummyBackHandler} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	
@@ -192,7 +211,8 @@ test.each([
 				setUser={dummySetState} 
 				onSubmit={dummySubmit} 
 				headingText={headText}
-				submitButtonText="test" />);
+				submitButtonText="test"
+				backButtonHandler={dummyBackHandler} />);
 	
 	const heading = container.querySelector("h1");
 	
@@ -216,6 +236,7 @@ test("If a passwordForm prop is passed, UserDetailsForm will render it", () => {
 				onSubmit={dummySubmit} 
 				headingText="test"
 				submitButtonText="test"
+				backButtonHandler={dummyBackHandler}
 				passwordForm={<div className={testDivClassname}></div>} />);
 	
 	const passwordForm = container.querySelector(`.${testDivClassname}`);
@@ -236,7 +257,8 @@ test("UserDetailsForm will render content in a LoadedContentWrapper", () => {
 				setUser={dummySetState} 
 				onSubmit={dummySubmit} 
 				headingText="test"
-				submitButtonText="test" />);
+				submitButtonText="test"
+				backButtonHandler={dummyBackHandler} />);
 	
 	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
 	const emailInput = screen.getByDisplayValue(initialUser.email);
@@ -256,7 +278,8 @@ test.each([
 				onSubmit={dummySubmit} 
 				headingText="test"
 				submitButtonText="test"
-				badLoadErrorMessage={messageText} />);
+				badLoadErrorMessage={messageText}
+				backButtonHandler={dummyBackHandler} />);
 	
 	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
 	const messageElem = screen.getByText(messageText);
@@ -272,9 +295,28 @@ test("UserDetailsForm will not render anything in LoadedContentWrapper, when not
 				setUser={dummySetState} 
 				onSubmit={dummySubmit} 
 				headingText="test"
-				submitButtonText="test" />);
+				submitButtonText="test"
+				backButtonHandler={dummyBackHandler} />);
 	
 	const loadingDisplay = container.querySelector(`.currentlyLoadingDisplay`);
 	
 	expect(loadingDisplay).not.toBeNull();
+});
+
+
+test("UserDetailsForm will call the backButtonHandler prop if the back button is clicked", () => {
+	
+	const mockBackHandler = jest.fn();
+	
+	const { container } = render(<UserDetailsForm 
+				setUser={dummySetState} 
+				onSubmit={dummySubmit} 
+				headingText="test"
+				submitButtonText="test"
+				backButtonHandler={mockBackHandler} />);
+	
+	const backButton = container.querySelector(".userDetailsBackButton");
+	fireEvent.click(backButton);
+	
+	expect(mockBackHandler).toHaveBeenCalled();
 });
