@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import RecordActionForm from '../RecordActionForm/RecordActionForm';
+import ActionsForm from '../ActionsForm/ActionsForm';
 
 function App() {
 	
@@ -9,29 +9,29 @@ function App() {
 	
 	return (
 		<div className="App">
-			<RecordActionForm 
-				categories={[{
-					id:"klasjdja", 
-					name:"1", 
-					color:"red", 
-					desiredWeight:1, 
-					actions:[
-						{id:"lksd", name:"1", weight:1, timespans:[]},
-						{id:"sAS", name:"2", weight:2, timespans:[]},
-						{id:"werwer", name:"3", weight:3, timespans:[]}
-					]
+			<ActionsForm 
+				actions={[{
+					name: "test1",
+					setName: dummyEmpty,
+					weight: 2,
+					setWeight: dummyEmpty,
+					onSubmit: dummySubmit,
+					onDelete: dummySubmit
+				}, {
+					name: "test2",
+					setName: dummyEmpty,
+					weight: 2,
+					setWeight: dummyEmpty,
+					onSubmit: dummySubmit,
+					onDelete: dummySubmit
 				}]}
-				selectedCategoryID={"klasjdja"}
-				setSelectedCategoryID={dummyEmpty}
-				
-				selectedActionID="sAS"
-				setSelectedActionID={dummyEmpty}
-				
-				usesTimespans={true}
-				timespan={{ date: new Date("1970-01-01"), id: "test", minuteCount: 10 }}
-				setTimespan={dummyEmpty}
-				
-				onSubmit={dummySubmit} />
+				newAction={{
+					name: "new",
+					setName: dummyEmpty,
+					weight: 2,
+					setWeight: dummyEmpty,
+					onSubmit: dummySubmit
+				}} />
 		</div>
 	);
 }

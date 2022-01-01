@@ -21,6 +21,10 @@ export default class ActionsForm extends Component<IActionsFormProps, IActionsFo
 		return (
 			<div className="ActionsForm">
 				
+				<header>
+					<h2>Actions</h2>
+				</header>
+				
 			</div>
 		);
 	}
