@@ -13,11 +13,26 @@ interface IActionsFormState {
 	displayNewActionForm:boolean;
 }
 
+/*
+	Used to Create/Update/Delete actions
+*/
 export default class ActionsForm extends Component<IActionsFormProps, IActionsFormState> {
 	
 	
 	state:IActionsFormState = {
 		displayNewActionForm: false
+	}
+	
+	
+	mapActionToComponent(action:IActionFormItem)
+	{
+		return (<SingleActionForm 
+					key={`${action.name}-actionItem`}
+					name={action.name}
+					setName={action.setName}
+					weight={action.weight}
+					setWeight={action.setWeight}
+					onSubmit={action.onSubmit} />);
 	}
 	
 	render()
@@ -39,12 +54,9 @@ export default class ActionsForm extends Component<IActionsFormProps, IActionsFo
 				
 				<div className="actionsArea">
 					
-					{this.state.displayNewActionForm && <SingleActionForm 
-						name={this.props.newAction.name}
-						setName={this.props.newAction.setName}
-						weight={this.props.newAction.weight}
-						setWeight={this.props.newAction.setWeight}
-						onSubmit={this.props.newAction.onSubmit} />}
+					{this.state.displayNewActionForm && this.mapActionToComponent(this.props.newAction)}
+					
+					{this.props.actions.map(this.mapActionToComponent.bind(this))}
 					
 				</div>
 				

@@ -15,7 +15,7 @@ const dummyActions = [{
 }, {
 	name: "test2",
 	setName: dummySetState,
-	weight: 2,
+	weight: 3,
 	setWeight: dummySetState,
 	onSubmit: dummySubmit,
 	onDelete: dummySubmit
@@ -66,4 +66,20 @@ test("ActionsForm will disable the new action button, after it's been clicked", 
 	fireEvent.click(newButton);
 	
 	expect(newButton).toBeDisabled();
+});
+
+
+
+test("ActionsForm will render SingleActionForm components for each passed in action", () => {
+	
+	const { container } = render(<ActionsForm actions={dummyActions} newAction={dummyActions[0]} />);
+	
+	const actionForms = container.querySelectorAll(".SingleActionForm");
+	
+	expect(actionForms.length).toBe(dummyActions.length);
+	dummyActions.forEach((action, index) => {
+		expect(screen.getByDisplayValue(action.name)).not.toBeNull();
+		expect(screen.getByDisplayValue(action.weight.toString())).not.toBeNull();
+	});
+	
 });
