@@ -1,0 +1,34 @@
+@import '../../stdStyles/stdForms.scss';
+@import '../../stdStyles/stdButtons.scss';
+
+.ActionsForm {
+	
+	@include stdInnerForm;
+	padding: 0;
+	
+	.actionsArea {
+		margin: 0.25em;
+	}
+	
+	button, header {
+		margin: 1em;
+	}
+	
+	header {
+		
+		h2 {
+			margin: 0;
+		}
+		
+		margin-top: 1.5em;
+	}
+	
+	button {
+		@include stdPrimaryButton;
+	}
+	
+	.SingleActionForm {
+		margin: 0.5em 0;
+	}
+	
+}
