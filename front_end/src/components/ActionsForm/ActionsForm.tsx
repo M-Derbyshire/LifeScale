@@ -45,12 +45,11 @@ export default class ActionsForm extends Component<IActionsFormProps, IActionsFo
 					<h2>Actions</h2>
 				</header>
 				
-				<button 
+				{!this.state.displayNewActionForm && <button 
 					className="newActionButton" 
-					onClick={()=>this.setState({ displayNewActionForm: true })}
-					disabled={this.state.displayNewActionForm}>
+					onClick={()=>this.setState({ displayNewActionForm: true })} >
 						Add New Action
-				</button>
+				</button>}
 				
 				<div className="actionsArea">
 					

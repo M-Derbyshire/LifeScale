@@ -49,7 +49,7 @@ test.each([
 	expect(screen.getByDisplayValue(name)).not.toBeNull();
 });
 
-test("ActionsForm will disable the new action button, after it's been clicked", () => {
+test("ActionsForm will not render the new action button, after it's been clicked", () => {
 	
 	const mockNewAction = {
 		name: "test",
@@ -62,10 +62,14 @@ test("ActionsForm will disable the new action button, after it's been clicked", 
 	
 	const { container } = render(<ActionsForm actions={[]} newAction={mockNewAction} />);
 	
-	const newButton = container.querySelector(".newActionButton");
+	const buttonSelector = ".newActionButton";
+	
+	const newButton = container.querySelector(buttonSelector);
 	fireEvent.click(newButton);
 	
-	expect(newButton).toBeDisabled();
+	const newButtonAfterClick = container.querySelector(buttonSelector);
+	
+	expect(newButtonAfterClick).toBeNull();
 });
 
 
