@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import './LoginForm.scss';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 interface ILoginFormProps {
 	email:string;
@@ -7,6 +8,7 @@ interface ILoginFormProps {
 	password:string;
 	setPassword:(password:string)=>void;
 	onSubmit:()=>void;
+	badSaveErrorMessage?:string;
 }
 
 /*
@@ -28,6 +30,10 @@ const LoginForm:FC<ILoginFormProps> = (props) => {
 				</label>
 				
 				<br />
+				
+				{props.badSaveErrorMessage && 
+							<BadSaveMessage message={props.badSaveErrorMessage} />}
+				
 				<input type="submit" value="Login" />
 			</form>
 		</div>
