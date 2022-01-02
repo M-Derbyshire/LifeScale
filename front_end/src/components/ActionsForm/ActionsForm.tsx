@@ -32,7 +32,9 @@ export default class ActionsForm extends Component<IActionsFormProps, IActionsFo
 					setName={action.setName}
 					weight={action.weight}
 					setWeight={action.setWeight}
-					onSubmit={action.onSubmit} />);
+					onSubmit={action.onSubmit}
+					goodSaveMessage={action.goodSaveMessage}
+					badSaveErrorMessage={action.badSaveErrorMessage} />);
 	}
 	
 	render()

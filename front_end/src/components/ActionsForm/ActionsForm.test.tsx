@@ -11,14 +11,18 @@ const dummyActions = [{
 	weight: 2,
 	setWeight: dummySetState,
 	onSubmit: dummySubmit,
-	onDelete: dummySubmit
+	onDelete: dummySubmit,
+	goodSaveMessage: "test good message 1",
+	badSaveErrorMessage: "test bad message 1"
 }, {
 	name: "test2",
 	setName: dummySetState,
 	weight: 3,
 	setWeight: dummySetState,
 	onSubmit: dummySubmit,
-	onDelete: dummySubmit
+	onDelete: dummySubmit,
+	goodSaveMessage: "test good message 2",
+	badSaveErrorMessage: "test bad message 2"
 }];
 
 test.each([
@@ -84,6 +88,8 @@ test("ActionsForm will render SingleActionForm components for each passed in act
 	dummyActions.forEach((action, index) => {
 		expect(screen.getByDisplayValue(action.name)).not.toBeNull();
 		expect(screen.getByDisplayValue(action.weight.toString())).not.toBeNull();
+		expect(screen.getByText(action.badSaveErrorMessage)).not.toBeNull();
+		expect(screen.getByText(action.goodSaveMessage)).not.toBeNull();
 	});
 	
 });
