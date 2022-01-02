@@ -66,3 +66,29 @@ test.each([
 	expect(forgotLink).toHaveAttribute("href", testPath);
 	
 });
+
+
+
+test.each([
+	["test1-dhfsjdhfkjsdhf"],
+	["test2-ewurteurywuriy"]
+])("LoginPage will pass the bad login error message to the LoginForm", (message) => {
+	
+	const { container } = render(<Router>
+			<LoginPage 
+				email="email@email.com"
+				password="test"
+				setEmail={dummySetState}
+				setPassword={dummySetState}
+				loginHandler={()=>{}}
+				registerUserLinkPath={"/test"}
+				forgotPasswordLinkPath={"/test2"}
+				badLoginErrorMessage={message} />
+			</Router>);
+	
+	
+	const loginForm = container.querySelector(".LoginForm");
+	
+	expect(loginForm.textContent).toEqual(expect.stringContaining(message));
+	
+});

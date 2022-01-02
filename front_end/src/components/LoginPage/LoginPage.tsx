@@ -9,7 +9,8 @@ interface ILoginPageProps {
 	password:string;
 	setPassword:(password:string)=>void;
 	
-	loginHandler:()=>void
+	loginHandler:()=>void;
+	badLoginErrorMessage?:string;
 	
 	registerUserLinkPath:string; //The url path for the user registration route (should start with a forward-slash)
 	forgotPasswordLinkPath:string; //The url path for the forgotten password route (should start with a forward-slash)
@@ -29,7 +30,8 @@ const LoginPage:FC<ILoginPageProps> = (props) => {
 					setEmail={props.setEmail} 
 					password={props.password} 
 					setPassword={props.setPassword}
-					onSubmit={props.loginHandler} />
+					onSubmit={props.loginHandler}
+					badLoginErrorMessage={props.badLoginErrorMessage} />
 				
 				<div className="LoginPageLinksContainer">
 					<Link to={props.registerUserLinkPath}>Register</Link>
