@@ -21,7 +21,7 @@ interface IUserDetailsFormProps {
 	disableSubmit?:boolean;
 	submitButtonText:string;
 	badSaveErrorMessage?:string;
-	goodSaveErrorMessage?:string;
+	goodSaveMessage?:string;
 }
 
 
@@ -70,8 +70,8 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 						
 						{this.props.badSaveErrorMessage && 
 							<BadSaveMessage message={this.props.badSaveErrorMessage} />}
-						{this.props.goodSaveErrorMessage && 
-							<GoodSaveMessage message={this.props.goodSaveErrorMessage} />}
+						{this.props.goodSaveMessage && 
+							<GoodSaveMessage message={this.props.goodSaveMessage} />}
 						
 						<input type="submit" value={this.props.submitButtonText} disabled={this.props.disableSubmit} />
 						

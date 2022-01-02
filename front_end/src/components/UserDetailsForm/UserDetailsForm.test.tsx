@@ -117,7 +117,7 @@ test.each([
 test.each([
 	["test message 1"],
 	["test message 2"]
-])("UserDetailsForm will display the given goodSaveErrorMessage prop in a GoodSaveMessage", (message) => {
+])("UserDetailsForm will display the given goodSaveMessage prop in a GoodSaveMessage", (message) => {
 	
 	//The password here has to be blank, so that the BadSaveMessage from the password form isn't caught
 	const user = { 
@@ -130,7 +130,7 @@ test.each([
 									setUser={dummySetState} 
 									onSubmit={dummySubmit} 
 									headingText="test" 
-									goodSaveErrorMessage={message}
+									goodSaveMessage={message}
 									backButtonHandler={dummyBackHandler} />);
 	
 	const saveMessage = container.querySelector(".GoodSaveMessage");
