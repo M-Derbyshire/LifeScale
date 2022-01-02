@@ -326,3 +326,51 @@ test("RecordActionForm will pass the set timespan prop to TimespanFormPartial, b
 	
 	expect(mockSetTimespan).toHaveBeenCalledWith({ ...timespan, minuteCount: newMinuteCount });
 });
+
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("RecordActionForm will render the given badSaveErrorMessage prop", (message) => {
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={dummyTimespan}
+									setTimespan={dummyEmpty}
+									usesTimespans={true}
+									onSubmit={dummySubmit}
+									badSaveErrorMessage={message} />);
+	
+	const saveMessageDisplay = container.querySelector(".BadSaveMessage");
+	
+	expect(saveMessageDisplay).not.toBeNull();
+	expect(saveMessageDisplay.textContent).toEqual(expect.stringContaining(message));
+});
+
+test.each([
+	["test1"],
+	["test2"]
+])("RecordActionForm will render the given goodSaveMessage prop", (message) => {
+	
+	const { container } = render(<RecordActionForm 
+									categories={dummyCategories}
+									selectedCategoryID={dummyCategories[0].id}
+									setSelectedCategoryID={dummyEmpty}
+									selectedActionID={dummyCategories[0].actions[0].id}
+									setSelectedActionID={dummyEmpty}
+									timespan={dummyTimespan}
+									setTimespan={dummyEmpty}
+									usesTimespans={true}
+									onSubmit={dummySubmit}
+									goodSaveMessage={message} />);
+	
+	const saveMessageDisplay = container.querySelector(".GoodSaveMessage");
+	
+	expect(saveMessageDisplay).not.toBeNull();
+	expect(saveMessageDisplay.textContent).toEqual(expect.stringContaining(message));
+});

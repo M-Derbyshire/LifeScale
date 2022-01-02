@@ -3,6 +3,8 @@ import './RecordActionForm.scss';
 import ICategory from '../../interfaces/ICategory';
 import ITimespan from '../../interfaces/ITimespan';
 import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 
 interface IRecordActionFormProps {
 	categories:ICategory[];
@@ -17,6 +19,8 @@ interface IRecordActionFormProps {
 	setTimespan:(timespan:ITimespan)=>void;
 	
 	onSubmit:()=>void;
+	badSaveErrorMessage?:string;
+	goodSaveMessage?:string;
 }
 
 
@@ -94,6 +98,11 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						{this.props.usesTimespans && <TimespanFormPartial 
 							minutes={this.props.timespan.minuteCount}
 							setMinutes={(mins:number) => this.props.setTimespan({...this.props.timespan, minuteCount: mins})} />}
+						
+						{this.props.badSaveErrorMessage && 
+							<BadSaveMessage message={this.props.badSaveErrorMessage} />}
+						{this.props.goodSaveMessage && 
+							<GoodSaveMessage message={this.props.goodSaveMessage} />}
 						
 						<input type="submit" value="Record Action" />
 						
