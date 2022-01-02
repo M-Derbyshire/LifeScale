@@ -1,10 +1,14 @@
 import React, { FC } from 'react';
 import './RequestPasswordForm.scss';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 
 interface IRequestPasswordFormProps {
 	email:string;
 	setEmail:(email:string)=>void;
 	onSubmit:()=>void;
+	badSaveErrorMessage?:string;
+	goodSaveMessage?:string;
 }
 
 /*
@@ -22,6 +26,11 @@ const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 					Email: <input type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
 				</label>
 				<br />
+				
+				{props.badSaveErrorMessage && 
+							<BadSaveMessage message={props.badSaveErrorMessage} />}
+				{props.goodSaveMessage && 
+							<GoodSaveMessage message={props.goodSaveMessage} />}
 				
 				<input type="submit" value="Request New Password" />
 			</form>

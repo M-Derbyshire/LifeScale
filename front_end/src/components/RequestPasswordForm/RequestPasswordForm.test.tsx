@@ -58,3 +58,40 @@ test("RequestPasswordForm will use the setEmail prop as the email onChange event
 	
 	expect(mockCB).toHaveBeenCalledWith(newVal);
 });
+
+
+test.each([
+	["test"],
+	["test2"]
+])("RequestPasswordForm will render a BadSaveMessage when passed the message as a prop", (message) => {
+	
+	const { container } = render(<RequestPasswordForm 
+									email="test@test.com" 
+									setEmail={dummySetEmail} 
+									onSubmit={dummySubmitCB}
+									badSaveErrorMessage={message} />);
+	
+	const messageDisplay = container.querySelector(".BadSaveMessage");
+	
+	expect(messageDisplay).not.toBeNull();
+	expect(messageDisplay.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+test.each([
+	["test"],
+	["test2"]
+])("RequestPasswordForm will render a GoodSaveMessage when passed the message as a prop", (message) => {
+	
+	const { container } = render(<RequestPasswordForm 
+									email="test@test.com" 
+									setEmail={dummySetEmail} 
+									onSubmit={dummySubmitCB}
+									goodSaveMessage={message} />);
+	
+	const messageDisplay = container.querySelector(".GoodSaveMessage");
+	
+	expect(messageDisplay).not.toBeNull();
+	expect(messageDisplay.textContent).toEqual(expect.stringContaining(message));
+	
+});
