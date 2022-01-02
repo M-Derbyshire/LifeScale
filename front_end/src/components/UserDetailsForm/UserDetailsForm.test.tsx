@@ -87,6 +87,7 @@ test.each([
 
 
 
+
 test.each([
 	["test message 1"],
 	["test message 2"]
@@ -112,6 +113,34 @@ test.each([
 	expect(errorMessage.textContent).toEqual(expect.stringContaining(message));
 	
 });
+
+test.each([
+	["test message 1"],
+	["test message 2"]
+])("UserDetailsForm will display the given goodSaveErrorMessage prop in a GoodSaveMessage", (message) => {
+	
+	//The password here has to be blank, so that the BadSaveMessage from the password form isn't caught
+	const user = { 
+		id:"test", email:"test@test.com", password:"", forename:"testFor", surname:"testSur" 
+	};
+	
+	
+	const { container } = render(<UserDetailsForm 
+									user={user} 
+									setUser={dummySetState} 
+									onSubmit={dummySubmit} 
+									headingText="test" 
+									goodSaveErrorMessage={message}
+									backButtonHandler={dummyBackHandler} />);
+	
+	const saveMessage = container.querySelector(".GoodSaveMessage");
+	
+	expect(saveMessage).not.toBeNull();
+	expect(saveMessage.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+
 
 
 
