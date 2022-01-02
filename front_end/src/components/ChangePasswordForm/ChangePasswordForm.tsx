@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import './ChangePasswordForm.scss';
 import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 
 interface IChangePasswordFormProps {
 	currentPassword:string;
@@ -12,6 +13,7 @@ interface IChangePasswordFormProps {
 	
 	onSubmit:()=>void;
 	badSaveErrorMessage?:string;
+	goodSaveMessage?:string;
 }
 
 /*
@@ -38,6 +40,8 @@ const ChangePasswordForm:FC<IChangePasswordFormProps> = (props) => {
 			
 			{props.badSaveErrorMessage && 
 							<BadSaveMessage message={props.badSaveErrorMessage} />}
+			{props.goodSaveMessage && 
+							<GoodSaveMessage message={props.goodSaveMessage} />}
 			
 			<button type="button" onClick={props.onSubmit}>Change Password</button>
 			

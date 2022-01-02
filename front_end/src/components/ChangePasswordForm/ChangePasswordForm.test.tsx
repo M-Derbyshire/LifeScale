@@ -129,6 +129,8 @@ test("ChangePasswordForm render a button (not a submit input, as this may be ren
 });
 
 
+
+
 test.each([
 	["test1"],
 	["test2"]
@@ -144,6 +146,25 @@ test.each([
 				badSaveErrorMessage={errorMessage} />);
 	
 	const errorDisplay = screen.getByText(errorMessage);
+	expect(errorDisplay).not.toBeNull();
+	
+});
+
+test.each([
+	["test1"],
+	["test2"]
+])("If given a goodSaveMessage prop, ChangePasswordForm will render the message", (message) => {
+	
+	render(<ChangePasswordForm 
+				currentPassword={"test"}
+				setCurrentPassword={dummySetState}
+				newPassword={"test"}
+				setNewPassword={dummySetState}
+				setNewPasswordIsConfirmed={dummySetState}
+				onSubmit={dummySetState}
+				goodSaveMessage={message} />);
+	
+	const errorDisplay = screen.getByText(message);
 	expect(errorDisplay).not.toBeNull();
 	
 });
