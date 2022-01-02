@@ -1,5 +1,7 @@
 import React, { FC } from 'react';
 import './SingleActionForm.scss';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 
 
 interface ISingleActionFormProps {
@@ -9,6 +11,8 @@ interface ISingleActionFormProps {
 	setWeight:(weight:number)=>void;
 	onSubmit:()=>void;
 	onDelete?:()=>void;
+	badSaveErrorMessage?:string;
+	goodSaveMessage?:string;
 }
 
 /*
@@ -35,6 +39,11 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 						onChange={(e)=>props.setWeight( (Number(e.target.value) < 0) ? 0 : Math.round(Number(e.target.value)) )} />
 				</label>
 				<br/>
+				
+				{props.badSaveErrorMessage && 
+							<BadSaveMessage message={props.badSaveErrorMessage} />}
+				{props.goodSaveMessage && 
+							<GoodSaveMessage message={props.goodSaveMessage} />}
 				
 				{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
 				<input type="submit" value="Save" />

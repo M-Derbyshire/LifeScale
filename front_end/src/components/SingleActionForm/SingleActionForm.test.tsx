@@ -164,3 +164,45 @@ test("SingleActionForm delete button will call onDelete prop", () => {
 	expect(mockDelete).toHaveBeenCalled();
 	
 });
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("SingleActionForm will render the badSaveErrorMessage prop in a BadSaveMessage", (message) => {
+	
+	const { container } = render(<SingleActionForm 
+				name="test" 
+				setName={dummySetState} 
+				weight="1" 
+				setWeight={dummySetState} 
+				onSubmit={dummySubmitCB}
+				badSaveErrorMessage={message} />);
+	
+	const messageDisplay = container.querySelector(".BadSaveMessage")
+	
+	expect(messageDisplay).not.toBeNull();
+	expect(messageDisplay.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("SingleActionForm will render the goodSaveMessage prop in a GoodSaveMessage", (message) => {
+	
+	const { container } = render(<SingleActionForm 
+				name="test" 
+				setName={dummySetState} 
+				weight="1" 
+				setWeight={dummySetState} 
+				onSubmit={dummySubmitCB}
+				goodSaveMessage={message} />);
+	
+	const messageDisplay = container.querySelector(".GoodSaveMessage")
+	
+	expect(messageDisplay).not.toBeNull();
+	expect(messageDisplay.textContent).toEqual(expect.stringContaining(message));
+	
+});
