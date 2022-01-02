@@ -7,6 +7,8 @@ interface IActionFormItem {
 	setWeight:(weight:number)=>void;
 	onSubmit:()=>void;
 	onDelete?:()=>void;
+	badSaveErrorMessage?:string;
+	goodSaveMessage?:string;
 }
 
 
