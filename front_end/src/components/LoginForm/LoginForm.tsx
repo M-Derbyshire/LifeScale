@@ -8,7 +8,7 @@ interface ILoginFormProps {
 	password:string;
 	setPassword:(password:string)=>void;
 	onSubmit:()=>void;
-	badSaveErrorMessage?:string;
+	badLoginErrorMessage?:string;
 }
 
 /*
@@ -31,8 +31,8 @@ const LoginForm:FC<ILoginFormProps> = (props) => {
 				
 				<br />
 				
-				{props.badSaveErrorMessage && 
-							<BadSaveMessage message={props.badSaveErrorMessage} />}
+				{props.badLoginErrorMessage && 
+							<BadSaveMessage message={props.badLoginErrorMessage} />}
 				
 				<input type="submit" value="Login" />
 			</form>

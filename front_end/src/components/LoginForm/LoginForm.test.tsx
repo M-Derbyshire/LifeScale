@@ -88,7 +88,7 @@ test("LoginForm will call the onSubmit handler prop when submitted", () => {
 test.each([
 	["test1"],
 	["test2"]
-])("LoginForm renders a BadSaveMessage component for the given badSaveErrorMessage props", (message) => {
+])("LoginForm renders a BadSaveMessage component for the given badLoginErrorMessage props", (message) => {
 	
 	const { container } = render(<LoginForm 
 									email={"test@test.com"} 
@@ -96,7 +96,7 @@ test.each([
 									setEmail={dummySetState} 
 									setPassword={dummySetState} 
 									onSubmit={dummyOnSubmit}
-									badSaveErrorMessage={message} />);
+									badLoginErrorMessage={message} />);
 	
 	const saveMessage = container.querySelector(".BadSaveMessage");
 	
