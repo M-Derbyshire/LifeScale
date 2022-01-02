@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import './ActionHistoryItem.scss';
-import ErrorMessageDisplay from '../ErrorMessageDisplay/ErrorMessageDisplay';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 
 interface IActionHistoryItemProps {
@@ -50,7 +50,7 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 			
 			{ props.actionHistoryItem.deleteErrorMessage && <div>
 				<br />
-				<ErrorMessageDisplay message={props.actionHistoryItem.deleteErrorMessage} />
+				<BadSaveMessage message={props.actionHistoryItem.deleteErrorMessage} />
 			</div>}
 			
 		</div>

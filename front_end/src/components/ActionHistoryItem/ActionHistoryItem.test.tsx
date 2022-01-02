@@ -143,12 +143,12 @@ test("ActionHistoryItem delete button will call the given deleteHandler", () => 
 test.each([
 	["test1"],
 	["test2"]
-])("ActionHistoryItem will display an ErrorMessageDisplay with the given delete error text, if passed that value in the actionHistoryItem prop", (message) => {
+])("ActionHistoryItem will display a BadSaveMessage with the given delete error text, if passed that value in the actionHistoryItem prop", (message) => {
 	
 	const { container } = render(<ActionHistoryItem
 									actionHistoryItem={{...dummyAction, deleteErrorMessage: message}} />);
 	
-	const errorMessageDisplay = container.querySelector(".ErrorMessageDisplay");
+	const errorMessageDisplay = container.querySelector(".BadSaveMessage");
 	expect(errorMessageDisplay).not.toBeNull();
 	expect(errorMessageDisplay.textContent).toEqual(expect.stringContaining(message));
 	
