@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.scss';
-import AmendActionHistoryPage from '../AmendActionHistoryPage/AmendActionHistoryPage';
-import ITimespan from '../../interfaces/ITimespan';
+import CategoryDetailsForm from '../CategoryDetailsForm/CategoryDetailsForm';
 
 function App() {
 	
@@ -10,61 +9,56 @@ function App() {
 	
 	return (
 		<div className="App">
-			<AmendActionHistoryPage 
-				backButtonHandler={dummySubmit}
-				items={[
-					{
-						categoryName: "test1",
-						actionName: "test1",
-						timespan: {
-							id: "akjshfashfahss1",
-							date: new Date(),
-							minuteCount: 60
-						},
-						deleteHandler: dummySubmit
+			<CategoryDetailsForm 
+				categoryItem={{
+					name: "Test category",
+					setName: dummyEmpty,
+					color: "red",
+					setColor: dummyEmpty,
+					desiredWeight: 1,
+					setDesiredWeight: dummyEmpty,
+					
+					newAction: {
+						name: "test new act",
+						setName: dummyEmpty,
+						weight: 1,
+						setWeight: dummyEmpty,
+						onSubmit: dummySubmit,
+						onDelete: dummySubmit,
+						badSaveErrorMessage: "test bad save",
+						goodSaveMessage: "test good save"
 					},
-					{
-						categoryName: "test2",
-						actionName: "test2",
-						timespan: {
-							id: "lkdjasjdklajd",
-							date: new Date(),
-							minuteCount: 60
-						},
-						deleteHandler: dummySubmit
-					}
-				]}
-				newRecordedAction={{
-						categories: [{
-							id: "test1",
-							name: "testcat1",
-							color:"red",
-							desiredWeight:1,
-							actions:[{
-								id:"testact1",
-								name:"testact1",
-								weight:1,
-								timespans:[]
-							}]
-						}],
-						selectedCategoryID: "test1",
-						setSelectedCategoryID: (category:string)=>{},
-						
-						selectedActionID:"test1",
-						setSelectedActionID: (action:string)=>{},
-						
-						usesTimespans: true,
-						timespan: {
-							id: "dkajslasdj",
-							date: new Date(),
-							minuteCount: 60
-						},
-						setTimespan: (timespan:ITimespan)=>{},
-						
-						onSubmit: ()=>{},
-						badSaveErrorMessage: "testbaderror",
-						goodSaveMessage: "testgooderror"
-					}} />
+					actions: [{
+						name: "test act 1",
+						setName: dummyEmpty,
+						weight: 1,
+						setWeight: dummyEmpty,
+						onSubmit: dummySubmit,
+						onDelete: dummySubmit,
+						badSaveErrorMessage: "test bad save",
+						goodSaveMessage: "test good save"
+					}, {
+						name: "test act 2",
+						setName: dummyEmpty,
+						weight: 1,
+						setWeight: dummyEmpty,
+						onSubmit: dummySubmit,
+						onDelete: dummySubmit,
+						badSaveErrorMessage: "test bad save",
+						goodSaveMessage: "test good save"
+					}],
+					
+					onSubmit: dummySubmit,
+					onDelete: dummySubmit,
+					badSaveErrorMessage: "Test bad save",
+					goodSaveMessage: "Test good save"
+				}}
+	
+				headingText={"test header"}
+				badLoadErrorMessage={"test bad load"}
+				
+				backButtonHandler={dummySubmit}
+				disableSubmit={true} />
 		</div>
 	);
 }
