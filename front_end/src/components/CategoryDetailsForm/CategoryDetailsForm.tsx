@@ -28,7 +28,7 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 			</header>
 			
 			<LoadedContentWrapper errorMessage={props.badLoadErrorMessage} render={props.categoryItem && 
-				<form>
+				<form onSubmit={props.categoryItem.onSubmit}>
 					
 					<CategoryDetailsFormPartial 
 						name={props.categoryItem.name}
@@ -44,6 +44,9 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 						<BadSaveMessage message={props.categoryItem.badSaveErrorMessage} />}
 					{props.categoryItem.goodSaveMessage && 
 						<GoodSaveMessage message={props.categoryItem.goodSaveMessage} />}
+					
+					{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
+					<input type="submit" value="Save" disabled={props.categoryItem.disableSubmit} />
 					
 				</form>
 			} />

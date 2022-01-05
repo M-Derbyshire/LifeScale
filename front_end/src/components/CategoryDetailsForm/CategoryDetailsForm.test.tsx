@@ -232,3 +232,62 @@ test.each([
 	expect(saveMessage.textContent).toEqual(expect.stringContaining(message));
 	
 });
+
+
+
+
+test("CategoryDetailsForm will enable the submit button if no disableSubmit prop is passed in", () => {
+	
+	const mockCategoryItem = { ...dummyCategoryFormItem, disableSubmit: undefined};
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={mockCategoryItem}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
+	
+});
+
+test("CategoryDetailsForm will enable the submit button if the disableSubmit prop is passed false", () => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={{ ...dummyCategoryFormItem, disableSubmit: false}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
+	
+});
+
+test("CategoryDetailsForm will disable the submit button if the disableSubmit prop is passed true", () => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={{ ...dummyCategoryFormItem, disableSubmit: true}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).toBeDisabled();
+	
+});
+
+test("CategoryDetailsForm will call the onSubmit callback, if the submit button is clicked", () => {
+	
+	const mockSubmit = jest.fn();
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={{
+					...dummyCategoryFormItem, 
+					onSubmit: mockSubmit
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	expect(mockSubmit).toHaveBeenCalled();
+	
+});
