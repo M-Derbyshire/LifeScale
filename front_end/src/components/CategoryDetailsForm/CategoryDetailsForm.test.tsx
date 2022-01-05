@@ -154,13 +154,13 @@ test("CategoryDetailsForm will pass the category details to CategoryDetailsFormP
 	
 	const name = "testname";
 	const mockSetName = jest.fn();
-	const weight = 1;
+	const weight = 1000000;
 	const mockSetWeight = jest.fn();
 	const color = "red";
 	const mockSetColor = jest.fn();
 	
 	const newName = "testnewname";
-	const newWeight = 5;
+	const newWeight = 5000000;
 	const newColor = "blue";
 	
 	const { container } = render(<CategoryDetailsForm 
@@ -344,5 +344,47 @@ test("CategoryDetailsForm delete button will call onDelete prop", () => {
 	fireEvent.click(deleteButton);
 	
 	expect(mockDelete).toHaveBeenCalled();
+	
+});
+
+
+
+test("CategoryDetailsForm will render an ActionsForm", () => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const actionsForm = container.querySelector(".ActionsForm");
+	
+	expect(actionsForm).not.toBeNull();
+	
+});
+
+test("CategoryDetailsForm will pass the actions to ActionsForm", () => {
+	
+	render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	dummyCategoryFormItem.actions.forEach(
+		(act) => expect(screen.getByDisplayValue(act.name)).not.toBeNull()
+	);
+	
+});
+
+test("CategoryDetailsForm will pass the newAction to ActionsForm", () => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const newActionButton = container.querySelector(".newActionButton");
+	fireEvent.click(newActionButton);
+	
+	expect(screen.getByDisplayValue(dummyCategoryFormItem.newAction.name)).not.toBeNull()
 	
 });
