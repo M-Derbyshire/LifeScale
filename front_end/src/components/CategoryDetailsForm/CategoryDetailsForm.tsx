@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import './CategoryDetailsForm.scss';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
+import CategoryDetailsFormPartial from '../CategoryDetailsFormPartial/CategoryDetailsFormPartial';
 import ICategoryFormItem from '../../interfaces/UI/ICategoryFormItem';
 
 
@@ -27,7 +28,13 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 			<LoadedContentWrapper errorMessage={props.badLoadErrorMessage} render={props.categoryItem && 
 				<form>
 					
-					
+					<CategoryDetailsFormPartial 
+						name={props.categoryItem.name}
+						setName={props.categoryItem.setName}
+						color={props.categoryItem.color}
+						setColor={props.categoryItem.setColor}
+						desiredWeight={props.categoryItem.desiredWeight}
+						setDesiredWeight={props.categoryItem.setDesiredWeight} />
 					
 				</form>
 			} />

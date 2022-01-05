@@ -13,7 +13,7 @@ function App() {
 				categoryItem={{
 					name: "Test category",
 					setName: dummyEmpty,
-					color: "red",
+					color: "Red",
 					setColor: dummyEmpty,
 					desiredWeight: 1,
 					setDesiredWeight: dummyEmpty,
@@ -55,7 +55,6 @@ function App() {
 				}}
 	
 				headingText={"test header"}
-				badLoadErrorMessage={"test bad load"}
 				
 				backButtonHandler={dummySubmit}
 				disableSubmit={true} />

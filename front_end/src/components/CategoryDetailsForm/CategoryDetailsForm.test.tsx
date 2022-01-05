@@ -133,3 +133,38 @@ test("CategoryDetailsForm will not render anything in LoadedContentWrapper, when
 	
 	expect(loadingDisplay).not.toBeNull();
 });
+
+
+
+
+test("CategoryDetailsForm will render a CategoryDetailsFormPartial", () => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem} 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const formPartial = container.querySelector(".CategoryDetailsFormPartial");
+	
+	expect(formPartial).not.toBeNull();
+	
+});
+
+test("CategoryDetailsForm will pass the category details to CategoryDetailsFormPartial", () => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem} 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const nameInput = screen.getByDisplayValue(dummyCategoryFormItem.name);
+	expect(nameInput).not.toBeNull();
+	
+	//Color input
+	const colorInput = container.querySelector(".CategoryDetailsFormPartial select");
+	expect(colorInput.value).toBe(dummyCategoryFormItem.color);
+	
+	const desiredWeightInput = screen.getByDisplayValue(dummyCategoryFormItem.desiredWeight);
+	expect(desiredWeightInput).not.toBeNull();
+	
+});
