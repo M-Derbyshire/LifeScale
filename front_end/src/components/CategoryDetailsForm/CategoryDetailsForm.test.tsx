@@ -152,19 +152,41 @@ test("CategoryDetailsForm will render a CategoryDetailsFormPartial", () => {
 
 test("CategoryDetailsForm will pass the category details to CategoryDetailsFormPartial", () => {
 	
+	const name = "testname";
+	const mockSetName = jest.fn();
+	const weight = 1;
+	const mockSetWeight = jest.fn();
+	const color = "red";
+	const mockSetColor = jest.fn();
+	
+	const newName = "testnewname";
+	const newWeight = 5;
+	const newColor = "blue";
+	
 	const { container } = render(<CategoryDetailsForm 
-				categoryItem={dummyCategoryFormItem} 
+				categoryItem={{
+					...dummyCategoryFormItem, 
+					name, 
+					setName: mockSetName,
+					desiredWeight: weight, 
+					setDesiredWeight: mockSetWeight,
+					color,
+					setColor: mockSetColor
+				}}
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler} />);
 	
-	const nameInput = screen.getByDisplayValue(dummyCategoryFormItem.name);
-	expect(nameInput).not.toBeNull();
+	const nameInput = screen.getByDisplayValue(name);
+	fireEvent.change(nameInput, { target: { value: newName } });
+	expect(mockSetName).toHaveBeenCalledWith(newName);
 	
 	//Color input
 	const colorInput = container.querySelector(".CategoryDetailsFormPartial select");
-	expect(colorInput.value).toBe(dummyCategoryFormItem.color);
+	fireEvent.change(colorInput, { target: { value: newColor } });
+	expect(mockSetColor).toHaveBeenCalledWith(newColor);
 	
-	const desiredWeightInput = screen.getByDisplayValue(dummyCategoryFormItem.desiredWeight);
-	expect(desiredWeightInput).not.toBeNull();
+	const desiredWeightInput = screen.getByDisplayValue(weight);
+	fireEvent.change(desiredWeightInput, { target: { value: newWeight } });
+	expect(mockSetWeight).toHaveBeenCalledWith(newWeight);
 	
 });
