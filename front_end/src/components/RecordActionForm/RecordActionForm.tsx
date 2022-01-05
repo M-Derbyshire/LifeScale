@@ -1,26 +1,12 @@
 import React, { Component } from 'react';
 import './RecordActionForm.scss';
-import ICategory from '../../interfaces/ICategory';
-import ITimespan from '../../interfaces/ITimespan';
+import IRecordedActionFormItem from '../../interfaces/UI/IRecordedActionFormItem';
 import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 
 interface IRecordActionFormProps {
-	categories:ICategory[];
-	selectedCategoryID:string;
-	setSelectedCategoryID:(category:string)=>void;
-	
-	selectedActionID:string;
-	setSelectedActionID:(action:string)=>void;
-	
-	usesTimespans?:boolean
-	timespan:ITimespan;
-	setTimespan:(timespan:ITimespan)=>void;
-	
-	onSubmit:()=>void;
-	badSaveErrorMessage?:string;
-	goodSaveMessage?:string;
+	recordedAction: IRecordedActionFormItem;
 }
 
 
@@ -59,14 +45,16 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 				</header>
 				
 				<div className="formContainer">
-					<form onSubmit={this.props.onSubmit}>
+					<form onSubmit={this.props.recordedAction.onSubmit}>
 						
 						<label>
 							Category: <select className="categorySelect" 
-											value={this.props.selectedCategoryID} 
-											onChange={(e) => this.props.setSelectedCategoryID(e.target.value)}>
+											value={this.props.recordedAction.selectedCategoryID} 
+											onChange={
+												(e) => this.props.recordedAction.setSelectedCategoryID(e.target.value)
+											}>
 								
-								{this.props.categories.map(
+								{this.props.recordedAction.categories.map(
 									(cat) => this.mapItemToOptionElem(cat.name, cat.id)
 								)}
 								
@@ -76,10 +64,14 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						
 						<label>
 							Action: <select className="actionSelect" 
-										value={this.props.selectedActionID} 
-										onChange={(e) => this.props.setSelectedActionID(e.target.value)}>
+										value={this.props.recordedAction.selectedActionID} 
+										onChange={
+											(e) => this.props.recordedAction.setSelectedActionID(e.target.value)
+										}>
 								
-								{this.props.categories.find(cat => cat.id === this.props.selectedCategoryID)!.actions.map(
+								{this.props.recordedAction.categories.find(
+									cat => cat.id === this.props.recordedAction.selectedCategoryID
+								)!.actions.map(
 									(act) => this.mapItemToOptionElem(act.name, act.id)
 								)}
 								
@@ -91,18 +83,25 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 							Date: <input 
 									type="date" 
 									className="actionDate" 
-									value={this.convertDateToString(this.props.timespan.date)}
-									onChange={(e) => this.props.setTimespan({ ...this.props.timespan, date: new Date(e.target.value) })} />
+									value={this.convertDateToString(this.props.recordedAction.timespan.date)}
+									
+									onChange={(e) => this.props.recordedAction.setTimespan({
+										 ...this.props.recordedAction.timespan, 
+										 date: new Date(e.target.value) 
+									})} />
 						</label>
 						
-						{this.props.usesTimespans && <TimespanFormPartial 
-							minutes={this.props.timespan.minuteCount}
-							setMinutes={(mins:number) => this.props.setTimespan({...this.props.timespan, minuteCount: mins})} />}
+						{this.props.recordedAction.usesTimespans && <TimespanFormPartial 
+							minutes={this.props.recordedAction.timespan.minuteCount}
+							setMinutes={(mins:number) => this.props.recordedAction.setTimespan({
+								...this.props.recordedAction.timespan, 
+								minuteCount: mins
+							})} />}
 						
-						{this.props.badSaveErrorMessage && 
-							<BadSaveMessage message={this.props.badSaveErrorMessage} />}
-						{this.props.goodSaveMessage && 
-							<GoodSaveMessage message={this.props.goodSaveMessage} />}
+						{this.props.recordedAction.badSaveErrorMessage && 
+							<BadSaveMessage message={this.props.recordedAction.badSaveErrorMessage} />}
+						{this.props.recordedAction.goodSaveMessage && 
+							<GoodSaveMessage message={this.props.recordedAction.goodSaveMessage} />}
 						
 						<input type="submit" value="Record Action" />
 						

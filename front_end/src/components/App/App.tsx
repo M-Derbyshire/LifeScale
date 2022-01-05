@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
-import ActionsForm from '../ActionsForm/ActionsForm';
+import AmendActionHistoryPage from '../AmendActionHistoryPage/AmendActionHistoryPage';
+import ITimespan from '../../interfaces/ITimespan';
 
 function App() {
 	
@@ -9,29 +10,61 @@ function App() {
 	
 	return (
 		<div className="App">
-			<ActionsForm 
-				actions={[{
-					name: "test1",
-					setName: dummyEmpty,
-					weight: 2,
-					setWeight: dummyEmpty,
-					onSubmit: dummySubmit,
-					onDelete: dummySubmit
-				}, {
-					name: "test2",
-					setName: dummyEmpty,
-					weight: 2,
-					setWeight: dummyEmpty,
-					onSubmit: dummySubmit,
-					onDelete: dummySubmit
-				}]}
-				newAction={{
-					name: "new",
-					setName: dummyEmpty,
-					weight: 2,
-					setWeight: dummyEmpty,
-					onSubmit: dummySubmit
-				}} />
+			<AmendActionHistoryPage 
+				backButtonHandler={dummySubmit}
+				items={[
+					{
+						categoryName: "test1",
+						actionName: "test1",
+						timespan: {
+							id: "akjshfashfahss1",
+							date: new Date(),
+							minuteCount: 60
+						},
+						deleteHandler: dummySubmit
+					},
+					{
+						categoryName: "test2",
+						actionName: "test2",
+						timespan: {
+							id: "lkdjasjdklajd",
+							date: new Date(),
+							minuteCount: 60
+						},
+						deleteHandler: dummySubmit
+					}
+				]}
+				newRecordedAction={{
+						categories: [{
+							id: "test1",
+							name: "testcat1",
+							color:"red",
+							desiredWeight:1,
+							actions:[{
+								id:"testact1",
+								name:"testact1",
+								weight:1,
+								timespans:[]
+							}]
+						}],
+						selectedCategoryID: "test1",
+						setSelectedCategoryID: (category:string)=>{},
+						
+						selectedActionID:"test1",
+						setSelectedActionID: (action:string)=>{},
+						
+						usesTimespans: true,
+						timespan: {
+							id: "dkajslasdj",
+							date: new Date(),
+							minuteCount: 60
+						},
+						setTimespan: (timespan:ITimespan)=>{},
+						
+						onSubmit: ()=>{},
+						badSaveErrorMessage: "testbaderror",
+						goodSaveMessage: "testgooderror"
+					}} />
 		</div>
 	);
 }

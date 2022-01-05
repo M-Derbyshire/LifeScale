@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import './AmendActionHistoryPage.scss';
 import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
+import IRecordedActionFormItem from '../../interfaces/UI/IRecordedActionFormItem';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import ActionHistoryItem from '../ActionHistoryItem/ActionHistoryItem';
+import RecordActionForm from '../RecordActionForm/RecordActionForm';
 
 
 interface IAmendActionHistoryPageProps {
@@ -10,6 +12,7 @@ interface IAmendActionHistoryPageProps {
 	scaleUsesTimespans?:boolean,
 	items?:IActionHistoryItem[];
 	loadingError?:string;
+	newRecordedAction:IRecordedActionFormItem;
 	backButtonHandler:()=>void;
 }
 
@@ -17,7 +20,6 @@ interface IAmendActionHistoryPageProps {
 
 /*
 	Used to delete previous occurences of actions on a given scale, and to add new ones.
-	(Once RecordActionFormContainer has been completed, the recording functionality can be added to this)
 */
 export default class AmendActionHistoryPage extends Component<IAmendActionHistoryPageProps> {
 	
@@ -46,7 +48,7 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 				
 				<LoadedContentWrapper errorMessage={this.props.loadingError} render={this.props.items && (<div className="loadedContent">
 					
-					{/* RecordActionFormContainer will go around here */}
+					<RecordActionForm recordedAction={this.props.newRecordedAction} />
 					
 					<div className="historyItemsArea">
 						{this.props.items.map(this.mapHistoryItemToComponent.bind(this))}
