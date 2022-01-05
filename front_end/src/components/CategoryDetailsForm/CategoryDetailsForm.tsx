@@ -18,6 +18,10 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 	return (
 		<div className="CategoryDetailsForm">
 			
+			<header>
+				<h1>{props.headingText}</h1>
+			</header>
+			
 		</div>
 	);
 	
