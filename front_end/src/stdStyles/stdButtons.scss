@@ -17,4 +17,11 @@
 	user-select: none;
 	
 	cursor:pointer;
+	
+	&:disabled {
+		$disabledColor: scale-color($stdSecondaryTxtColor, $lightness: +40%);
+		
+		border-color: $disabledColor;
+		color: $disabledColor;
+	}
 }
