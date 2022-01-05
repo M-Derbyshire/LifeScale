@@ -1,5 +1,5 @@
 import CategoryDetailsForm from './CategoryDetailsForm';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 const dummyBackHandler = () => {};
 const dummySubmit = () => {};
@@ -71,7 +71,7 @@ test.each([
 });
 
 
-test("UserDetailsForm will call the backButtonHandler prop if the back button is clicked", () => {
+test("CategoryDetailsForm will call the backButtonHandler prop if the back button is clicked", () => {
 	
 	const mockBackHandler = jest.fn();
 	
@@ -84,4 +84,52 @@ test("UserDetailsForm will call the backButtonHandler prop if the back button is
 	fireEvent.click(backButton);
 	
 	expect(mockBackHandler).toHaveBeenCalled();
+});
+
+
+
+test("CategoryDetailsForm will render content in a LoadedContentWrapper", () => {
+	
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem} 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
+	const nameInput = screen.getByDisplayValue(dummyCategoryFormItem.name);
+	
+	expect(contentWrapper).not.toBeNull();
+	expect(nameInput).not.toBeNull();
+	
+});
+
+test.each([
+	["message 1"],
+	["message 2"]
+])("CategoryDetailsForm will render passed badLoadErrorMessage prop in a LoadedContentWrapper", (messageText) => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem} 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler}
+				badLoadErrorMessage={messageText} />);
+	
+	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
+	const messageElem = screen.getByText(messageText);
+	
+	expect(contentWrapper).not.toBeNull();
+	expect(messageElem).not.toBeNull();
+	
+});
+
+test("CategoryDetailsForm will not render anything in LoadedContentWrapper, when not passed a categoryItem or badLoadErrorMessage", () => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const loadingDisplay = container.querySelector(`.currentlyLoadingDisplay`);
+	
+	expect(loadingDisplay).not.toBeNull();
 });

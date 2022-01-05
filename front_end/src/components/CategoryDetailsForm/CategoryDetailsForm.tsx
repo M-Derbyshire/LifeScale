@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import './CategoryDetailsForm.scss';
+import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import ICategoryFormItem from '../../interfaces/UI/ICategoryFormItem';
 
 
 interface ICategoryDetailsFormProps {
-	categoryItem:ICategoryFormItem;
+	categoryItem?:ICategoryFormItem;
 	
 	headingText:string;
 	badLoadErrorMessage?:string;
@@ -22,6 +23,14 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 				<h1>{props.headingText}</h1>
 				<button className="categoryBackButton" onClick={props.backButtonHandler}>Back</button>
 			</header>
+			
+			<LoadedContentWrapper errorMessage={props.badLoadErrorMessage} render={props.categoryItem && 
+				<form>
+					
+					
+					
+				</form>
+			} />
 			
 		</div>
 	);
