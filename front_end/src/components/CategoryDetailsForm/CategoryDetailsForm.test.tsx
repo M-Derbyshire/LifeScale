@@ -190,3 +190,45 @@ test("CategoryDetailsForm will pass the category details to CategoryDetailsFormP
 	expect(mockSetWeight).toHaveBeenCalledWith(newWeight);
 	
 });
+
+
+
+test.each([
+	["test message 1"],
+	["test message 2"]
+])("CategoryDetailsForm will display the given badSaveErrorMessage prop in a BadSaveMessage", (message) => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={{
+					...dummyCategoryFormItem, 
+					badSaveErrorMessage: message
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const errorMessage = container.querySelector(".BadSaveMessage");
+	
+	expect(errorMessage).not.toBeNull();
+	expect(errorMessage.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+test.each([
+	["test message 1"],
+	["test message 2"]
+])("CategoryDetailsForm will display the given goodSaveMessage prop in a GoodSaveMessage", (message) => {
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={{
+					...dummyCategoryFormItem, 
+					goodSaveMessage: message
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const saveMessage = container.querySelector(".GoodSaveMessage");
+	
+	expect(saveMessage).not.toBeNull();
+	expect(saveMessage.textContent).toEqual(expect.stringContaining(message));
+	
+});

@@ -2,6 +2,8 @@ import React, { FC } from 'react';
 import './CategoryDetailsForm.scss';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import CategoryDetailsFormPartial from '../CategoryDetailsFormPartial/CategoryDetailsFormPartial';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 import ICategoryFormItem from '../../interfaces/UI/ICategoryFormItem';
 
 
@@ -35,6 +37,13 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 						setColor={props.categoryItem.setColor}
 						desiredWeight={props.categoryItem.desiredWeight}
 						setDesiredWeight={props.categoryItem.setDesiredWeight} />
+					
+					
+					
+					{props.categoryItem.badSaveErrorMessage && 
+						<BadSaveMessage message={props.categoryItem.badSaveErrorMessage} />}
+					{props.categoryItem.goodSaveMessage && 
+						<GoodSaveMessage message={props.categoryItem.goodSaveMessage} />}
 					
 				</form>
 			} />
