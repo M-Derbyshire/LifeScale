@@ -13,6 +13,9 @@
 		display: flex;
 		flex-wrap: wrap;
 		
+		 //The height of the container is based on the button, so center the text within that height
+		align-items: center;
+		
 		& > * {
 			margin: 1em;
 		}
