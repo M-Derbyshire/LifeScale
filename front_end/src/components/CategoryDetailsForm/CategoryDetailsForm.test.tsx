@@ -69,3 +69,19 @@ test.each([
 	expect(heading.textContent).toEqual(headText);
 	
 });
+
+
+test("UserDetailsForm will call the backButtonHandler prop if the back button is clicked", () => {
+	
+	const mockBackHandler = jest.fn();
+	
+	const { container } = render(<CategoryDetailsForm 
+				categoryItem={dummyCategoryFormItem} 
+				headingText={"test"}
+				backButtonHandler={mockBackHandler} />);
+	
+	const backButton = container.querySelector(".categoryBackButton");
+	fireEvent.click(backButton);
+	
+	expect(mockBackHandler).toHaveBeenCalled();
+});

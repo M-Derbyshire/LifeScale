@@ -20,6 +20,7 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 			
 			<header>
 				<h1>{props.headingText}</h1>
+				<button className="categoryBackButton" onClick={props.backButtonHandler}>Back</button>
 			</header>
 			
 		</div>
