@@ -24,4 +24,8 @@
 		border-color: $disabledColor;
 		color: $disabledColor;
 	}
+	
+	&:hover:not(:disabled) {
+		background-color: scale-color($stdSecondaryBackColor, $lightness: -5%);
+	}
 }
