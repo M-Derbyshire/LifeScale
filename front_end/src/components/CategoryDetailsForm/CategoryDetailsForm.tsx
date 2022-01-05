@@ -46,7 +46,7 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 						<GoodSaveMessage message={props.categoryItem.goodSaveMessage} />}
 					
 					{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
-					<input type="submit" value="Save" disabled={props.categoryItem.disableSubmit} />
+					<input type="submit" value="Save" disabled={props.disableSubmit} />
 					{props.categoryItem.onDelete && 
 						<button type="button" onClick={props.categoryItem.onDelete}>Delete</button>} 
 					

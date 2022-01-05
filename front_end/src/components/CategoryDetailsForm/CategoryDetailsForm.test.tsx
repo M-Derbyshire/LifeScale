@@ -238,10 +238,8 @@ test.each([
 
 test("CategoryDetailsForm will enable the submit button if no disableSubmit prop is passed in", () => {
 	
-	const mockCategoryItem = { ...dummyCategoryFormItem, disableSubmit: undefined};
-	
 	const { container } = render(<CategoryDetailsForm 
-				categoryItem={mockCategoryItem}
+				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler} />);
 	
@@ -253,9 +251,10 @@ test("CategoryDetailsForm will enable the submit button if no disableSubmit prop
 test("CategoryDetailsForm will enable the submit button if the disableSubmit prop is passed false", () => {
 	
 	const { container } = render(<CategoryDetailsForm 
-				categoryItem={{ ...dummyCategoryFormItem, disableSubmit: false}}
+				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				disableSubmit={false} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).not.toBeDisabled();
@@ -265,9 +264,10 @@ test("CategoryDetailsForm will enable the submit button if the disableSubmit pro
 test("CategoryDetailsForm will disable the submit button if the disableSubmit prop is passed true", () => {
 	
 	const { container } = render(<CategoryDetailsForm 
-				categoryItem={{ ...dummyCategoryFormItem, disableSubmit: true}}
+				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				disableSubmit={true} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).toBeDisabled();
