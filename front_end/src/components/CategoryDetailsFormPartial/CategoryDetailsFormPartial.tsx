@@ -27,8 +27,9 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			</label>
 			<br/>
 			
-			<label className="categoryColorInputLabel" style={{ borderColor: props.color }}>
+			<label className="categoryColorInputLabel">
 				Color: <select 
+						style={{ borderColor: props.color }}
 						className="categoryColorInput" 
 						value={props.color} 
 						onChange={(e)=>props.setColor(e.target.value)}>
