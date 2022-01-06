@@ -15,6 +15,8 @@ const CardDisplay:FC<ICardDisplayProps> = (props) => {
 				{props.emptyDisplayMessage}
 			</span>}
 			
+			{React.Children.map(props.children, child => child)}
+			
 		</div>
 	);
 	
