@@ -36,19 +36,26 @@ const dummyCategories = [
 	},
 ];
 
+
+const dummyRecordedAction = {
+	categories: dummyCategories,
+	selectedCategoryID: dummyCategories[0].id,
+	setSelectedCategoryID: dummyEmpty,
+	selectedActionID: dummyCategories[0].actions[0].id,
+	setSelectedActionID: dummyEmpty,
+	timespan: dummyTimespan,
+	setTimespan: dummyEmpty,
+	onSubmit: dummySubmit
+}
+
+
+
 test("RecordActionForm will call the onSubmit prop when submitted", () => {
 	
 	const mockSubmit = jest.fn();
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									onSubmit={mockSubmit} />);
+									recordedAction={{...dummyRecordedAction, onSubmit: mockSubmit}} />);
 	
 	const formElement = container.querySelector("form");
 	fireEvent.submit(formElement);
@@ -64,14 +71,7 @@ test("RecordActionForm will call the onSubmit prop when submitted", () => {
 test("RecordActionForm will render the categories as options", () => {
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+									recordedAction={dummyRecordedAction} />);
 	
 	const categoryOptions = container.querySelectorAll(".categorySelect option");
 	
@@ -85,14 +85,7 @@ test("RecordActionForm will render the categories as options", () => {
 test.each(dummyCategories)("RecordActionForm will set the selected category to the given ID prop", (selectedCat) => {
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={selectedCat.id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+									recordedAction={{...dummyRecordedAction, selectedCategoryID: selectedCat.id}} />);
 	
 	const categorySelect = container.querySelector(".categorySelect");
 	
@@ -108,14 +101,11 @@ test("RecordActionForm will call the setSelectedCategoryID prop when changing ca
 	const mockSetSelectedCategory = jest.fn();
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={selectedID}
-									setSelectedCategoryID={mockSetSelectedCategory}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+									recordedAction={{
+										...dummyRecordedAction, 
+										selectedCategoryID: selectedID,
+										setSelectedCategoryID: mockSetSelectedCategory
+									}} />);
 	
 	const categorySelect = container.querySelector(".categorySelect");
 	userEvent.selectOptions(categorySelect, idToSelect);
@@ -129,15 +119,7 @@ test("RecordActionForm will call the setSelectedCategoryID prop when changing ca
 
 test("RecordActionForm will render the actions as options", () => {
 	
-	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+	const { container } = render(<RecordActionForm recordedAction={dummyRecordedAction} />);
 	
 	const actionOptions = container.querySelectorAll(".actionSelect option");
 	
@@ -151,14 +133,10 @@ test("RecordActionForm will render the actions as options", () => {
 test.each(dummyCategories[0].actions)("RecordActionForm will set the selected action to the given ID prop", (selectedAct) => {
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={selectedAct.id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+									recordedAction={{
+										...dummyRecordedAction, 
+										selectedActionID: selectedAct.id
+									}} />);
 	
 	const actionSelect = container.querySelector(".actionSelect");
 	
@@ -174,14 +152,11 @@ test("RecordActionForm will call the setSelectedActionID prop when changing acti
 	const mockSetSelectedAction = jest.fn();
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={selectedID}
-									setSelectedActionID={mockSetSelectedAction}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+									recordedAction={{
+										...dummyRecordedAction, 
+										selectedActionID: selectedID,
+										setSelectedActionID: mockSetSelectedAction
+									}} />);
 	
 	const actionSelect = container.querySelector(".actionSelect");
 	userEvent.selectOptions(actionSelect, idToSelect);
@@ -201,14 +176,7 @@ test.each([
 	const timespan = { date: new Date(givenDate), id: "test", minuteCount: 0 };
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={timespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+									recordedAction={{...dummyRecordedAction, timespan}} />);
 	
 	const dateInput = container.querySelector("input[type=date]");
 	
@@ -223,14 +191,11 @@ test("RecordActionForm will call the setTimespan prop, when changing the date, b
 	const mockSetTimespan = jest.fn();
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={timespan}
-									setTimespan={mockSetTimespan}
-									onSubmit={dummySubmit} />);
+									recordedAction={{
+										...dummyRecordedAction, 
+										timespan, 
+										setTimespan: mockSetTimespan
+									}} />);
 	
 	const dateInput = container.querySelector("input[type=date]");
 	fireEvent.change(dateInput, { target: { value: newDate } });
@@ -248,15 +213,7 @@ test.each([
 	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: minuteCount };
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={timespan}
-									setTimespan={dummyEmpty}
-									usesTimespans={true}
-									onSubmit={dummySubmit} />);
+									recordedAction={{...dummyRecordedAction, timespan, usesTimespans: true}} />);
 	
 	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
 	expect(timespanFormPartial).not.toBeNull();
@@ -270,15 +227,8 @@ test("If usesTimespans is false, RecordActionForm will not render a TimespanForm
 	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: 1 };
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={timespan}
-									setTimespan={dummyEmpty}
-									usesTimespans={false}
-									onSubmit={dummySubmit} />);
+									recordedAction={{...dummyRecordedAction, timespan, usesTimespans: false}} />);
+	
 	
 	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
 	expect(timespanFormPartial).toBeNull();
@@ -290,14 +240,7 @@ test("If usesTimespans prop is not given, RecordActionForm will not render a Tim
 	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: 1 };
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={timespan}
-									setTimespan={dummyEmpty}
-									onSubmit={dummySubmit} />);
+									recordedAction={{...dummyRecordedAction, timespan, usesTimespans: undefined}} />);
 	
 	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
 	expect(timespanFormPartial).toBeNull();
@@ -311,15 +254,12 @@ test("RecordActionForm will pass the set timespan prop to TimespanFormPartial, b
 	const mockSetTimespan = jest.fn();
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={timespan}
-									setTimespan={mockSetTimespan}
-									usesTimespans={true}
-									onSubmit={dummySubmit} />);
+									recordedAction={{
+										...dummyRecordedAction, 
+										timespan,
+										setTimespan: mockSetTimespan,
+										usesTimespans: true
+									}} />);
 	
 	const minuteInput = screen.getByDisplayValue(timespan.minuteCount);
 	fireEvent.change(minuteInput, { target: { value: newMinuteCount } });
@@ -335,16 +275,7 @@ test.each([
 ])("RecordActionForm will render the given badSaveErrorMessage prop", (message) => {
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									usesTimespans={true}
-									onSubmit={dummySubmit}
-									badSaveErrorMessage={message} />);
+									recordedAction={{...dummyRecordedAction, badSaveErrorMessage: message}} />);
 	
 	const saveMessageDisplay = container.querySelector(".BadSaveMessage");
 	
@@ -358,16 +289,7 @@ test.each([
 ])("RecordActionForm will render the given goodSaveMessage prop", (message) => {
 	
 	const { container } = render(<RecordActionForm 
-									categories={dummyCategories}
-									selectedCategoryID={dummyCategories[0].id}
-									setSelectedCategoryID={dummyEmpty}
-									selectedActionID={dummyCategories[0].actions[0].id}
-									setSelectedActionID={dummyEmpty}
-									timespan={dummyTimespan}
-									setTimespan={dummyEmpty}
-									usesTimespans={true}
-									onSubmit={dummySubmit}
-									goodSaveMessage={message} />);
+									recordedAction={{...dummyRecordedAction, goodSaveMessage: message}} />);
 	
 	const saveMessageDisplay = container.querySelector(".GoodSaveMessage");
 	
