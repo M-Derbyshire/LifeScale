@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactChild } from 'react';
 import './CardDisplay.scss';
 
 interface ICardDisplayProps {
