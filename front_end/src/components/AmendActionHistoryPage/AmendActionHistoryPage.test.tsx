@@ -6,6 +6,7 @@ const dummyBackButtonHandler = ()=>{};
 const dummyDeleteHandler = () => {};
 const dummyTimespan = { date: new Date(), minuteCount: 60, id: "test" };
 const dummyAction = {
+	id: "test-act1",
 	categoryName: "test",
 	actionName: "test",
 	timespan: dummyTimespan,
@@ -17,6 +18,27 @@ const dummyItems = [
 	{ ...dummyAction, categoryName: "test-item2", timespan: { ...dummyTimespan, id: "test2" }  }
 ];
 
+const dummyNewRecordedAction = {
+	categories: [{
+		id: "test-cat1",
+		name:"test cat",
+		color:"red",
+		desiredWeight:1,
+		actions:[dummyAction]
+	}],
+	selectedCategoryID:"test-cat1",
+	setSelectedCategoryID:(category:string)=>{},
+	
+	selectedActionID: dummyAction.id,
+	setSelectedActionID:(action:string)=>{},
+	
+	timespan: dummyTimespan,
+	setTimespan:(timespan:ITimespan)=>{},
+	
+	onSubmit:()=>{}
+};
+
+
 
 
 test.each([
@@ -26,7 +48,8 @@ test.each([
 	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler} 
-									loadingError={message} />);
+									loadingError={message}
+									newRecordedAction={dummyNewRecordedAction} />);
 	
 	const contentWrapper = container.querySelector(".LoadedContentWrapper");
 	
@@ -42,7 +65,8 @@ test.each([
 	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler} 
-									scaleName={name} />);
+									scaleName={name}
+									newRecordedAction={dummyNewRecordedAction} />);
 	
 	const heading = container.querySelector("h1");
 	
@@ -56,7 +80,9 @@ test.each([
 test("AmendActionHistoryPage will call the backButtonHandler prop when back button is clicked", () => {
 	
 	const mockBackHandler = jest.fn();
-	const { container } = render(<AmendActionHistoryPage backButtonHandler={mockBackHandler} />);
+	const { container } = render(<AmendActionHistoryPage 
+									backButtonHandler={mockBackHandler}
+									newRecordedAction={dummyNewRecordedAction} />);
 	
 	const backButton = container.querySelector(".actionHistoryBackButton");
 	fireEvent.click(backButton);
@@ -69,7 +95,8 @@ test("AmendActionHistoryPage will list the given items as ActionHistoryItem comp
 	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
-									items={dummyItems} />);
+									items={dummyItems}
+									newRecordedAction={dummyNewRecordedAction} />);
 	
 	const historyItems = container.querySelectorAll(".ActionHistoryItem");
 	
@@ -90,7 +117,8 @@ test.each([
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
 									items={dummyItems}
-									scaleUsesTimespans={isUsed} />);
+									scaleUsesTimespans={isUsed}
+									newRecordedAction={dummyNewRecordedAction} />);
 	
 	const historyItems = container.querySelectorAll(".ActionHistoryItem");
 	
@@ -111,7 +139,8 @@ test("AmendActionHistoryPage will display a message if items is empty", () => {
 	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
-									items={[]} />);
+									items={[]}
+									newRecordedAction={dummyNewRecordedAction} />);
 	
 	const messageDisplay = container.querySelector(".noHistoryItemsMessage");
 	
