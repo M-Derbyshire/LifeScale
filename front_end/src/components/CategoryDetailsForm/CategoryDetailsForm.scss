@@ -1,0 +1,25 @@
+@import '../../stdStyles/stdForms.scss';
+@import '../../stdStyles/stdButtons.scss';
+
+.CategoryDetailsForm {
+	
+	@include stdForm;
+	
+	margin: 1em;
+	
+	min-height: 50vh;
+	
+	input[type=submit], button {
+		@include stdPrimaryButton;
+		margin-top: 0.25em;
+	}
+	
+	form {
+		margin: 2em 0;
+	}
+	
+	input {
+		margin: 1em 0;
+	}
+	
+}
