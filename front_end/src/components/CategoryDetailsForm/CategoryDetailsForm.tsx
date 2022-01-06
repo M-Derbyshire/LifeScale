@@ -18,6 +18,9 @@ interface ICategoryDetailsFormProps {
 	disableSubmit?:boolean;
 }
 
+/*
+	This is used to create and edit categoires in the system. The container component should handle the logic
+*/
 const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 	
 	return (
