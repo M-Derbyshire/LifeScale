@@ -1,6 +1,10 @@
 @import '../../stdStyles/stdCard.scss';
 
 .AddItemCard {
+	cursor: pointer;
+}
+
+.addItemCardContent {
 	@include stdCard;
 	
 	span {
