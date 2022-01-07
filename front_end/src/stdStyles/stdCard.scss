@@ -11,8 +11,8 @@ $cardBackgroundColor: #97daeb;
 	color: $cardTextColor;
 	background-color: $cardBackgroundColor;
 	
-	width: 17vw;
-	height: 17vh;
+	min-width: 10em;
+	height: 7em;
 	
 	padding: 1em;
 }
