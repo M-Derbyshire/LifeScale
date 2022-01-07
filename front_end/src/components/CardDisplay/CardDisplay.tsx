@@ -11,7 +11,7 @@ const CardDisplay:FC<ICardDisplayProps> = (props) => {
 	return (
 		<div className="CardDisplay">
 			
-			{!props.children && <span>
+			{!props.children && <span className="emptyDisplayMessage">
 				{props.emptyDisplayMessage}
 			</span>}
 			
