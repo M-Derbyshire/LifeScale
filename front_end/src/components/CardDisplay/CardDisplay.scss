@@ -7,7 +7,12 @@
 	background-color: $stdSecondaryBackColor;
 	@include stdSecondaryBorder;
 	
-	// display: flex;
+	display: flex;
+	flex-wrap: wrap;
+	
+	& > * {
+		margin: 0.25em;
+	}
 	
 	.emptyDisplayMessage {
 		font-weight: 600;
