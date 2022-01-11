@@ -7,6 +7,7 @@ import ScalesNavList from '../ScalesNavList/ScalesNavList';
 interface IUserNavBarProps {
 	scaleLinks:IScaleLink[];
 	editUserURL:string;
+	logoutCallback:()=>void;
 	createScaleURL:string;
 }
 
@@ -24,6 +25,8 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 		<div className="UserNavBar">
 			
 			<Link className="editUserLink stdLink" to={props.editUserURL}>Edit My Details</Link>
+			
+			<span className="userLogoutSpan stdLink" onClick={props.logoutCallback}>Logout</span>
 			
 			<hr/>
 			

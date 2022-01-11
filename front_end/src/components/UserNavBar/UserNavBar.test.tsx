@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import UserNavBar from './UserNavBar';
 
+const dummyLogoutCallback = ()=>{};
 
 test("UserNavBar will render the given scale links", () => {
 	
@@ -11,7 +12,9 @@ test("UserNavBar will render the given scale links", () => {
 		{ label: "test3", url: "/test3" },
 	];
 	
-	render(<Router><UserNavBar createScaleURL="" editUserURL="" scaleLinks={scaleLinks} /></Router>);
+	render(<Router>
+		<UserNavBar createScaleURL="" editUserURL="" scaleLinks={scaleLinks} logoutCallback={dummyLogoutCallback} />
+	</Router>);
 	
 	scaleLinks.forEach((sl) => {
 		const link = screen.getByText(sl.label);
@@ -26,7 +29,9 @@ test.each([
 	["/testCreate2"]
 ])("UserNavBar will render a link to the create scale route", (route) => {
 	
-	render(<Router><UserNavBar createScaleURL={route} editUserURL="" scaleLinks={[]} /></Router>);
+	render(<Router>
+		<UserNavBar createScaleURL={route} editUserURL="" scaleLinks={[]} logoutCallback={dummyLogoutCallback} />
+	</Router>);
 	
 	const createLink = screen.getByText(/create/i);
 	
@@ -39,10 +44,26 @@ test.each([
 	["/testEdit2"]
 ])("UserNavBar will render a link to the edit user route", (route) => {
 	
-	render(<Router><UserNavBar createScaleURL="" editUserURL={route} scaleLinks={[]} /></Router>);
+	render(<Router>
+		<UserNavBar createScaleURL="" editUserURL={route} scaleLinks={[]} logoutCallback={dummyLogoutCallback} />
+	</Router>);
 	
 	const editLink = screen.getByText(/edit/i);
 	
 	expect(editLink).toHaveAttribute("href", route);
 	
+});
+
+test("UserNavBar will call the logoutCallback prop when the logout is clicked", () => {
+	
+	const mockLogoutCallback = jest.fn();
+	
+	render(<Router>
+		<UserNavBar createScaleURL="" editUserURL="" scaleLinks={[]} logoutCallback={mockLogoutCallback} />
+	</Router>);
+	
+	const logout = screen.getByText(/logout/i);
+	fireEvent.click(logout);
+	
+	expect(mockLogoutCallback).toHaveBeenCalled();
 });

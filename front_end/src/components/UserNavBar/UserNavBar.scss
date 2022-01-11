@@ -15,6 +15,7 @@
 	.stdLink {
 		@include stdSecondaryBorder;
 		color: $stdSecondaryTxtColor;
+		text-decoration: underline; //Logout is not an anchor/link, so setting this explicitly
 		background-color: darken($stdSecondaryBackColor, 5);
 		padding: 0.5em;
 		margin: 0.5em 0;
