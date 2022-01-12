@@ -271,3 +271,57 @@ test("ScaleDetailsForm will call the onSubmit callback, if the submit button is 
 	expect(mockSubmit).toHaveBeenCalled();
 	
 });
+
+
+
+test("ScaleDetailsForm will not render a delete button if no onDelete prop given", () => {
+	
+	render(<ScaleDetailsForm 
+				scaleItem={{
+					...dummyScaleItem, 
+					onDelete: undefined
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	
+	expect(deleteButton).toBeNull();
+	
+});
+
+test("ScaleDetailsForm will render a delete button if onDelete prop given", () => {
+	
+	render(<ScaleDetailsForm 
+				scaleItem={{
+					...dummyScaleItem, 
+					onDelete: ()=>{}
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	
+	expect(deleteButton).not.toBeNull();
+	
+});
+
+test("ScaleDetailsForm delete button will call onDelete prop", () => {
+	
+	const mockDelete = jest.fn();
+	
+	render(<ScaleDetailsForm 
+				scaleItem={{
+					...dummyScaleItem, 
+					onDelete: mockDelete
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	expect(mockDelete).toHaveBeenCalled();
+	
+});

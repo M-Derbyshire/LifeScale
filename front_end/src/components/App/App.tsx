@@ -42,7 +42,7 @@ function App() {
 				}}
 	
 				headingText="test1"
-				badLoadErrorMessage="test bad load"
+				// badLoadErrorMessage="test bad load"
 				
 				backButtonHandler={dummySubmit}
 				disableSubmit={false} />

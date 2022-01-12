@@ -49,6 +49,8 @@ const ScaleDetailsForm:FC<IScaleDetailsFormProps> = (props) => {
 					
 					{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
 					<input type="submit" value="Save" disabled={props.disableSubmit} />
+					{props.scaleItem.onDelete && 
+						<button type="button" onClick={props.scaleItem.onDelete}>Delete</button>}
 					
 				</form>
 				
