@@ -22,6 +22,7 @@ const ScaleDetailsForm:FC<IScaleDetailsFormProps> = (props) => {
 			
 			<header>
 				<h1>{props.headingText}</h1>
+				<button className="scaleBackButton" onClick={props.backButtonHandler}>Back</button>
 			</header>
 			
 		</div>
