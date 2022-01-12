@@ -7,6 +7,8 @@
 	
 	margin: 1em;
 	
+	min-height: 50vh;
+	
 	input[type=submit], button {
 		@include stdPrimaryButton;
 		margin-top: 0.5em;
