@@ -1,0 +1,27 @@
+@import '../../stdStyles/stdForms.scss';
+@import '../../stdStyles/stdButtons.scss';
+
+.ScaleDetailsForm {
+	
+	@include stdForm;
+	
+	margin: 1em;
+	
+	input[type=submit], button {
+		@include stdPrimaryButton;
+		margin-top: 0.5em;
+	}
+	
+	.ScaleDetailsFormPartial {
+		margin: 2em 0;
+		
+		input {
+			margin: 1em 0;
+		}
+	}
+	
+	form {
+		margin-bottom: 2em;
+	}
+	
+}
