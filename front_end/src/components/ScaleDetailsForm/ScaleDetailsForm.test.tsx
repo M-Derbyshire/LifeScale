@@ -213,3 +213,61 @@ test.each([
 	expect(saveMessage.textContent).toEqual(expect.stringContaining(message));
 	
 });
+
+
+
+test("ScaleDetailsForm will enable the submit button if no disableSubmit prop is passed in", () => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={dummyScaleItem}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
+	
+});
+
+test("ScaleDetailsForm will enable the submit button if the disableSubmit prop is passed false", () => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={dummyScaleItem}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler}
+				disableSubmit={false} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
+	
+});
+
+test("ScaleDetailsForm will disable the submit button if the disableSubmit prop is passed true", () => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={dummyScaleItem}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler}
+				disableSubmit={true} />);
+	
+	const submitButton = container.querySelector("input[type=submit]");
+	expect(submitButton).toBeDisabled();
+	
+});
+
+test("ScaleDetailsForm will call the onSubmit callback, if the submit button is clicked", () => {
+	
+	const mockSubmit = jest.fn();
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={{
+					...dummyScaleItem, 
+					onSubmit: mockSubmit
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	expect(mockSubmit).toHaveBeenCalled();
+	
+});

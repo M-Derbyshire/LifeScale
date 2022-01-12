@@ -31,7 +31,7 @@ const ScaleDetailsForm:FC<IScaleDetailsFormProps> = (props) => {
 			
 			<LoadedContentWrapper errorMessage={props.badLoadErrorMessage} render={props.scaleItem && 
 				
-				<form>
+				<form onSubmit={props.scaleItem.onSubmit}>
 					
 					<ScaleDetailsFormPartial
 						name={props.scaleItem.name}
@@ -46,6 +46,9 @@ const ScaleDetailsForm:FC<IScaleDetailsFormProps> = (props) => {
 							<BadSaveMessage message={props.scaleItem.badSaveErrorMessage} />}
 					{props.scaleItem.goodSaveMessage && 
 							<GoodSaveMessage message={props.scaleItem.goodSaveMessage} />}
+					
+					{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
+					<input type="submit" value="Save" disabled={props.disableSubmit} />
 					
 				</form>
 				

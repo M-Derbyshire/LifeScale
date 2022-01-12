@@ -45,7 +45,7 @@ function App() {
 				badLoadErrorMessage="test bad load"
 				
 				backButtonHandler={dummySubmit}
-				disableSubmit={true} />
+				disableSubmit={false} />
 		</div>
 	);
 }
