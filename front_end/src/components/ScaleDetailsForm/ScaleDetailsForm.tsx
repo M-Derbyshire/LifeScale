@@ -20,6 +20,10 @@ const ScaleDetailsForm:FC<IScaleDetailsFormProps> = (props) => {
 	return (
 		<div className="ScaleDetailsForm">
 			
+			<header>
+				<h1>{props.headingText}</h1>
+			</header>
+			
 		</div>
 	);
 	
