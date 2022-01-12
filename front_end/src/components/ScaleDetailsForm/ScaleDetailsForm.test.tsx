@@ -54,7 +54,7 @@ test.each([
 });
 
 
-test("CategoryDetailsForm will call the backButtonHandler prop if the back button is clicked", () => {
+test("ScaleDetailsForm will call the backButtonHandler prop if the back button is clicked", () => {
 	
 	const mockBackHandler = jest.fn();
 	
@@ -67,4 +67,107 @@ test("CategoryDetailsForm will call the backButtonHandler prop if the back butto
 	fireEvent.click(backButton);
 	
 	expect(mockBackHandler).toHaveBeenCalled();
+});
+
+
+
+
+test("ScaleDetailsForm will render content in a LoadedContentWrapper", () => {
+	
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={dummyScaleItem} 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
+	const nameInput = screen.getByDisplayValue(dummyScaleItem.name);
+	
+	expect(contentWrapper).not.toBeNull();
+	expect(nameInput).not.toBeNull();
+	
+});
+
+test.each([
+	["message 1"],
+	["message 2"]
+])("ScaleDetailsForm will render passed badLoadErrorMessage prop in a LoadedContentWrapper", (messageText) => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={dummyScaleItem} 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler}
+				badLoadErrorMessage={messageText} />);
+	
+	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
+	const messageElem = screen.getByText(messageText);
+	
+	expect(contentWrapper).not.toBeNull();
+	expect(messageElem).not.toBeNull();
+	
+});
+
+test("ScaleDetailsForm will not render anything in LoadedContentWrapper, when not passed a scaleItem or badLoadErrorMessage", () => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const loadingDisplay = container.querySelector(`.currentlyLoadingDisplay`);
+	
+	expect(loadingDisplay).not.toBeNull();
+});
+
+
+
+
+test("ScaleDetailsForm will render a ScaleDetailsFormPartial", () => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={dummyScaleItem} 
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const formPartial = container.querySelector(".ScaleDetailsFormPartial");
+	
+	expect(formPartial).not.toBeNull();
+	
+});
+
+test("ScaleDetailsForm will pass the scale details to ScaleDetailsFormPartial", () => {
+	
+	const name = "testname";
+	const mockSetName = jest.fn();
+	const dayCount = 1000000;
+	const mockSetDayCount = jest.fn();
+	const usesTimespans = true;
+	const mockSetUsesTimespans = jest.fn();
+	
+	const newName = "testnewname";
+	const newDayCount = 5000000;
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={{
+					name,
+					setName: mockSetName,
+					usesTimespans,
+					setUsesTimespans: mockSetUsesTimespans,
+					dayCount,
+					setDayCount: mockSetDayCount,
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const nameInput = screen.getByDisplayValue(name);
+	fireEvent.change(nameInput, { target: { value: newName } });
+	expect(mockSetName).toHaveBeenCalledWith(newName);
+	
+	const dayInput = screen.getByDisplayValue(dayCount);
+	fireEvent.change(dayInput, { target: { value: newDayCount } });
+	expect(mockSetDayCount).toHaveBeenCalledWith(newDayCount);
+	
+	const usesTimespansInput = container.querySelector("input[type=checkBox]");
+	fireEvent.click(usesTimespansInput);
+	expect(mockSetUsesTimespans).toHaveBeenCalledWith(!usesTimespans);
+	
 });
