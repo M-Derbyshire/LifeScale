@@ -3,6 +3,8 @@ import './ScaleDetailsForm.scss';
 import IScaleFormItem from '../../interfaces/UI/IScaleFormItem';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import ScaleDetailsFormPartial from '../ScaleDetailsFormPartial/ScaleDetailsFormPartial';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 
 interface IScaleDetailsFormProps {
 	scaleItem?:IScaleFormItem;
@@ -38,6 +40,12 @@ const ScaleDetailsForm:FC<IScaleDetailsFormProps> = (props) => {
 						setUsesTimespans={props.scaleItem.setUsesTimespans}
 						dayCount={props.scaleItem.dayCount}
 						setDayCount={props.scaleItem.setDayCount} />
+					
+					
+					{props.scaleItem.badSaveErrorMessage && 
+							<BadSaveMessage message={props.scaleItem.badSaveErrorMessage} />}
+					{props.scaleItem.goodSaveMessage && 
+							<GoodSaveMessage message={props.scaleItem.goodSaveMessage} />}
 					
 				</form>
 				

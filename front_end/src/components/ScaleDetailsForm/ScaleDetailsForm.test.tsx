@@ -171,3 +171,45 @@ test("ScaleDetailsForm will pass the scale details to ScaleDetailsFormPartial", 
 	expect(mockSetUsesTimespans).toHaveBeenCalledWith(!usesTimespans);
 	
 });
+
+
+
+test.each([
+	["test message 1"],
+	["test message 2"]
+])("ScaleDetailsForm will display the given badSaveErrorMessage prop in a BadSaveMessage", (message) => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={{
+					...dummyScaleItem, 
+					badSaveErrorMessage: message
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const errorMessage = container.querySelector(".BadSaveMessage");
+	
+	expect(errorMessage).not.toBeNull();
+	expect(errorMessage.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+test.each([
+	["test message 1"],
+	["test message 2"]
+])("ScaleDetailsForm will display the given goodSaveMessage prop in a GoodSaveMessage", (message) => {
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={{
+					...dummyScaleItem, 
+					goodSaveMessage: message
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	const saveMessage = container.querySelector(".GoodSaveMessage");
+	
+	expect(saveMessage).not.toBeNull();
+	expect(saveMessage.textContent).toEqual(expect.stringContaining(message));
+	
+});
