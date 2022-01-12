@@ -15,6 +15,9 @@ interface IScaleFormItem {
 	onDelete?:()=>void;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
+	
+	addCategoryCallback:()=>void; //Should take user to the add category screen
+	editCategoryCallback:(categoryID:string)=>void; //Should take user to the edit category screen
 }
 
 export default IScaleFormItem;
