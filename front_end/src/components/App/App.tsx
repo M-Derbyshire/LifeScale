@@ -38,7 +38,10 @@ function App() {
 					onSubmit: dummySubmit,
 					onDelete: dummySubmit,
 					badSaveErrorMessage: "test bad save",
-					goodSaveMessage: "test good save"
+					goodSaveMessage: "test good save",
+					
+					addCategoryCallback: dummySubmit,
+					editCategoryCallback: dummyEmpty
 				}}
 	
 				headingText="test1"

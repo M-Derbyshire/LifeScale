@@ -33,7 +33,10 @@ const dummyScaleItem = {
 	onSubmit: dummySubmit,
 	onDelete: dummySubmit,
 	badSaveErrorMessage: "test bad save",
-	goodSaveMessage: "test good save"
+	goodSaveMessage: "test good save",
+	
+	addCategoryCallback: dummySubmit,
+	editCategoryCallback: dummySetState
 };
 
 
@@ -323,5 +326,49 @@ test("ScaleDetailsForm delete button will call onDelete prop", () => {
 	fireEvent.click(deleteButton);
 	
 	expect(mockDelete).toHaveBeenCalled();
+	
+});
+
+
+
+test("ScaleDetailsForm will now render a CardDisplay (with the given categories and an AddItemCard) as children", () => {
+	
+	const mockEditCallback = jest.fn();
+	const mockAddCallback = jest.fn();
+	
+	const { container } = render(<ScaleDetailsForm 
+				scaleItem={{
+					...dummyScaleItem, 
+					editCategoryCallback: mockEditCallback,
+					addCategoryCallback: mockAddCallback
+				}}
+				headingText={"test"}
+				backButtonHandler={dummyBackHandler} />);
+	
+	
+	const cardDisplay = container.querySelector(".CardDisplay");
+	expect(cardDisplay).not.toBeNull();
+	
+	
+	
+	const addItemCard = container.querySelector(".CardDisplay .AddItemCard");
+	expect(addItemCard).not.toBeNull();
+	
+	fireEvent.click(addItemCard);
+	expect(mockAddCallback).toHaveBeenCalled();
+	
+	
+	const categoryCards = container.querySelectorAll(".CardDisplay .EditableItemCard");
+	const categoryCardButtons = container.querySelectorAll(".CardDisplay .EditableItemCard button");
+	expect(categoryCards.length).toBe(dummyScaleItem.categories.length);
+	
+	categoryCards.forEach((card, i) => {
+		
+		expect(card.textContent).toEqual(expect.stringContaining(dummyScaleItem.categories[i].name));
+		
+		fireEvent.click(categoryCardButtons[i]);
+		expect(mockEditCallback).toHaveBeenCalledWith(dummyScaleItem.categories[i].id);
+	});
+	
 	
 });
