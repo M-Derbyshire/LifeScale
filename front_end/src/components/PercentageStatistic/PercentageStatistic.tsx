@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import './ActionStatistic.scss';
+import './PercentageStatistic.scss';
 import IPercentageStatistic from '../../interfaces/UI/IPercentageStatistic';
 
-interface IActionStatisticProps {
+interface IPercentageStatisticProps {
 	statistic: IPercentageStatistic;
 }
 
@@ -10,10 +10,10 @@ interface IActionStatisticProps {
 	Used to display percentage information for actions that the user has recorded (say, what 
 	percentage of events on a scale are of the action type in question)
 */
-const ActionStatistic:FC<IActionStatisticProps> = (props) => {
+const PercentageStatistic:FC<IPercentageStatisticProps> = (props) => {
 	
 	return (
-		<div className="ActionStatistic">
+		<div className="PercentageStatistic">
 			<span className="statisticLabel">{props.statistic.label}: </span>
 			<span className="statisticPercentage">{props.statistic.percentage}%</span>
 		</div>
@@ -21,4 +21,4 @@ const ActionStatistic:FC<IActionStatisticProps> = (props) => {
 	
 };
 
-export default ActionStatistic;
+export default PercentageStatistic;
