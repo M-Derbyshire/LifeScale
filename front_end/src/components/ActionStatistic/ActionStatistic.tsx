@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import './ActionStatistic.scss';
+import IPercentageStatistic from '../../interfaces/UI/IPercentageStatistic';
 
 interface IActionStatisticProps {
-	label:string;
-	percentage:number;
+	statistic: IPercentageStatistic;
 }
 
 /*
@@ -14,8 +14,8 @@ const ActionStatistic:FC<IActionStatisticProps> = (props) => {
 	
 	return (
 		<div className="ActionStatistic">
-			<span className="statisticLabel">{props.label}: </span>
-			<span className="statisticPercentage">{props.percentage}%</span>
+			<span className="statisticLabel">{props.statistic.label}: </span>
+			<span className="statisticPercentage">{props.statistic.percentage}%</span>
 		</div>
 	);
 	

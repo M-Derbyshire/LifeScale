@@ -6,7 +6,7 @@ test.each([
 	["test2"]
 ])("ActionStatistic will display the given label text prop", (labelText) => {
 	
-	render(<ActionStatistic label={labelText} percentage={1} />)
+	render(<ActionStatistic statistic={{ label: labelText, percentage: 1 }} />)
 	
 	const labelElem = screen.getByText(labelText + ":");
 	
@@ -19,7 +19,7 @@ test.each([
 	[20]
 ])("ActionStatistic will display the given percentage prop", (percentage) => {
 	
-	render(<ActionStatistic label="test" percentage={percentage} />)
+	render(<ActionStatistic statistic={{ label: "test", percentage }} />)
 	
 	const percentElem = screen.getByText(percentage.toString() + "%");
 	
