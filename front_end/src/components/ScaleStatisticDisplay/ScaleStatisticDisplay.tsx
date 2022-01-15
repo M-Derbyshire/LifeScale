@@ -19,6 +19,13 @@ const ScaleStatisticDisplay:FC<IScaleStatisticDisplayProps> = (props) => {
 	return (
 		<div className="ScaleStatisticDisplay">
 			
+			<header>
+				<h2>Action Statistics</h2>
+			</header>
+			
+			
+			
+			
 		</div>
 	);
 	
