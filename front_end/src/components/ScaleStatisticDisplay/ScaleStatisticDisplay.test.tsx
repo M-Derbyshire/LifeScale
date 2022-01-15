@@ -58,3 +58,20 @@ test("ScaleStatisticDisplay will display the given statistics, in the correct or
 	);
 	
 });
+
+
+test("ScaleStatistic Amend action history button will call the amend callback", () => {
+	
+	const mockCallback = jest.fn();
+	
+	const { container } = render(<ScaleStatisticDisplay 
+									statistics={[]} 
+									amendHistoryCallback={mockCallback} />);
+	
+	const button = container.querySelector("button");
+	
+	fireEvent.click(button);
+	
+	expect(mockCallback).toHaveBeenCalled();
+	
+});
