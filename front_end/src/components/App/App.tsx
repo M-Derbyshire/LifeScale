@@ -1,54 +1,27 @@
 import React from 'react';
 import './App.scss';
-import ScaleDetailsForm from '../ScaleDetailsForm/ScaleDetailsForm';
+import ScaleStatisticDisplay from '../ScaleStatisticDisplay/ScaleStatisticDisplay';
 
 function App() {
 	
 	const dummyEmpty = (x:any)=>console.log(x);
 	const dummySubmit = ()=>console.log("submitted");
 	
+	
+	const statistics= [
+		{ id:"test1", label: "test", percentage: 10, children: [
+			{ label: "testChild1", percentage: 11, id: "testChild1" },
+			{ label: "testChild2", percentage: 12, id: "testChild2" }
+		]},
+		{ id:"test2", label: "test", percentage: 10, children: [
+			{ label: "testChild3", percentage: 11, id: "testChild3" },
+			{ label: "testChild4", percentage: 12, id: "testChild4" }
+		]}
+	];
+	
 	return (
 		<div className="App">
-			<ScaleDetailsForm 
-				scaleItem={{
-					name: "testScale",
-					setName: dummyEmpty,
-					usesTimespans: true,
-					setUsesTimespans: dummyEmpty,
-					dayCount: 7,
-					setDayCount: dummyEmpty,
-					
-					categories: [
-						{
-							id: "testcat1",
-							name: "test cat 1",
-							color: "red",
-							desiredWeight: 1,
-							actions: []
-						},
-						{
-							id: "testcat2",
-							name: "test cat 2",
-							color: "red",
-							desiredWeight: 1,
-							actions: []
-						}
-					],
-					
-					onSubmit: dummySubmit,
-					onDelete: dummySubmit,
-					badSaveErrorMessage: "test bad save",
-					goodSaveMessage: "test good save",
-					
-					addCategoryCallback: dummySubmit,
-					editCategoryCallback: dummyEmpty
-				}}
-	
-				headingText="test1"
-				// badLoadErrorMessage="test bad load"
-				
-				backButtonHandler={dummySubmit}
-				disableSubmit={false} />
+			<ScaleStatisticDisplay statistics={statistics} amendHistoryCallback={dummySubmit} />
 		</div>
 	);
 }
