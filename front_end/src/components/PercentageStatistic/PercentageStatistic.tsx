@@ -7,7 +7,7 @@ interface IPercentageStatisticProps {
 }
 
 
-const mapChildToLi = (child:IPercentageStatistic):ReactElement => (<li key={child.id}>
+const mapPercentageStatisticToLi = (child:IPercentageStatistic):ReactElement => (<li key={child.id}>
 	<PercentageStatistic statistic={child} />
 </li>);
 
@@ -25,7 +25,7 @@ const PercentageStatistic:FC<IPercentageStatisticProps> = (props) => {
 			<span className="statisticPercentage">{props.statistic.percentage}%</span>
 			
 			<ul className="statisticChildren">
-				{props.statistic.children && props.statistic.children.map(mapChildToLi)}
+				{props.statistic.children && props.statistic.children.map(mapPercentageStatisticToLi)}
 			</ul>
 		</div>
 	);
@@ -33,3 +33,4 @@ const PercentageStatistic:FC<IPercentageStatisticProps> = (props) => {
 };
 
 export default PercentageStatistic;
+export { mapPercentageStatisticToLi };
