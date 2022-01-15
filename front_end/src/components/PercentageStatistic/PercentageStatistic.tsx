@@ -14,7 +14,7 @@ const mapChildToLi = (child:IPercentageStatistic):ReactElement => (<li key={chil
 
 
 /*
-	Used to display percentage information for actions that the user has recorded (say, what 
+	Used to display percentage information for actions/categories/etc that the user has recorded (say, what 
 	percentage of events on a scale are of the action type in question)
 */
 const PercentageStatistic:FC<IPercentageStatisticProps> = (props) => {
