@@ -24,7 +24,7 @@ const ScalePrimaryDisplay:FC<IScalePrimaryDisplayProps> = (props) => {
 				
 				<div className="currentBalanceContainer">
 					<h2>Current Balance</h2>
-					{/* <ScaleBalanceDisplay scaleItems={props.currentBalanceItems} /> */}
+					<ScaleBalanceDisplay scaleItems={props.currentBalanceItems} />
 				</div>
 			</div>
 			
