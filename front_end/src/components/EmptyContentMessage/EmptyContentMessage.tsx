@@ -11,7 +11,7 @@ const EmptyContentMessage:FC<IEmptyContentMessageProps> = (props) => {
 	
 	return (
 		<div className="EmptyContentMessage">
-			
+			<span>{props.message}</span>
 		</div>
 	);
 	
