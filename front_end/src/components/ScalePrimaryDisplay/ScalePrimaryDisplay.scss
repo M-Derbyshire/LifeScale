@@ -8,6 +8,9 @@
 	
 	background-color: $stdPrimaryBackColor;
 	color: $stdPrimaryTxtColor;
+	& > * {
+		color: initial; //Set the color back, as the above is affecting children
+	}
 	
 	padding: 1em;
 	
