@@ -1,0 +1,23 @@
+@import '../../stdStyles/stdBorders.scss';
+@import '../../stdStyles/stdColors.scss';
+@import '../../stdStyles/stdButtons.scss';
+
+.ScalePrimaryDisplay {
+	
+	@include stdPrimaryBorder;
+	
+	background-color: $stdPrimaryBackColor;
+	color: $stdPrimaryTxtColor;
+	
+	padding: 1em;
+	
+	h2 {
+		margin-bottom: 0.25em;
+	}
+	
+	button {
+		@include stdPrimaryButton;
+		margin: 2em 0;
+	}
+	
+}
