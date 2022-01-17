@@ -1,17 +1,10 @@
 import React, { Component, ReactElement } from 'react';
 import './ScaleBalanceDisplay.scss';
+import IScaleBalanceItem from '../../interfaces/UI/IScaleBalanceItem';
 
-//ScaleItems represent an item (say, a category) to be placed on the scale
-interface IScaleItem {
-	label:string; //The name or title of the scale
-	weight:number; //A number to represent the weight. 
-					//This could be a percentage, a fraction, an int (as long as the type of number used is 
-					//consistent for every item)
-	color:string; //CSS color to be used for the item
-}
 
 interface IScaleBalanceDisplayProps {
-	scaleItems:IScaleItem[];
+	scaleItems:IScaleBalanceItem[];
 }
 
 /*
@@ -21,7 +14,7 @@ interface IScaleBalanceDisplayProps {
 class ScaleBalanceDisplay extends Component<IScaleBalanceDisplayProps> {
 	
 	
-	mapScaleItemToElement(scaleItem:IScaleItem):ReactElement
+	mapScaleItemToElement(scaleItem:IScaleBalanceItem):ReactElement
 	{
 		return (
 			<div className="scaleBalanceItem" key={scaleItem.label} style={{
@@ -48,4 +41,3 @@ class ScaleBalanceDisplay extends Component<IScaleBalanceDisplayProps> {
 
 
 export default ScaleBalanceDisplay;
-export type { IScaleItem };
