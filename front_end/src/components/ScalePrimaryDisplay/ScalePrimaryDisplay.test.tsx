@@ -44,3 +44,20 @@ test.each(balanceTestsEachArray)("ScalePrimaryDisplay will pass the given scale 
 	items.forEach(item => expect(balanceScale.textContent).toEqual(expect.stringContaining(item.label)));
 	
 });
+
+
+test("ScalePrimaryDisplay will call the given editScaleCallback when the edit scale button is clicked", () => {
+	
+	const mockCallback = jest.fn();
+	
+	const { container } = render(<ScalePrimaryDisplay 
+									desiredBalanceItems={[]} 
+									currentBalanceItems={[]}
+									editScaleCallback={mockCallback} />);
+	
+	const button = container.querySelector(".editScaleButton");
+	fireEvent.click(button);
+	
+	expect(mockCallback).toHaveBeenCalled();
+	
+});
