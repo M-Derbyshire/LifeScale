@@ -1,27 +1,24 @@
 import React from 'react';
 import './App.scss';
-import ScaleStatisticDisplay from '../ScaleStatisticDisplay/ScaleStatisticDisplay';
+import ScalePrimaryDisplay from '../ScalePrimaryDisplay/ScalePrimaryDisplay';
 
 function App() {
 	
 	const dummyEmpty = (x:any)=>console.log(x);
 	const dummySubmit = ()=>console.log("submitted");
 	
-	
-	const statistics= [
-		{ id:"test1", label: "test", percentage: 10, children: [
-			{ label: "testChild1", percentage: 11, id: "testChild1" },
-			{ label: "testChild2", percentage: 12, id: "testChild2" }
-		]},
-		{ id:"test2", label: "test", percentage: 10, children: [
-			{ label: "testChild3", percentage: 11, id: "testChild3" },
-			{ label: "testChild4", percentage: 12, id: "testChild4" }
-		]}
+	const balanceItems = [
+		{ label: "test1", color: "red", weight: 1 },
+		{ label: "test2", color: "blue", weight: 2 },
+		{ label: "test3", color: "yellow", weight: 3 }
 	];
 	
 	return (
 		<div className="App">
-			<ScaleStatisticDisplay statistics={statistics} amendHistoryCallback={dummySubmit} />
+			<ScalePrimaryDisplay 
+				editScaleCallback={dummySubmit} 
+				desiredBalanceItems={balanceItems} 
+				currentBalanceItems={balanceItems} />
 		</div>
 	);
 }
