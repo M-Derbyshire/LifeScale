@@ -15,7 +15,9 @@ const DropdownContentBar:FC<IDropdownContentBarProps> = (props) => {
 	
 	return (
 		<div className="DropdownContentBar">
-			
+			<div className="dropdownBarHead">
+				<ListIcon/>
+			</div>
 		</div>
 	);
 	
