@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
 import DropdownContentBar from '../DropdownContentBar/DropdownContentBar';
+import UserNavBar from '../UserNavBar/UserNavBar';
 
 function App() {
 	
@@ -10,9 +11,7 @@ function App() {
 	return (
 		<div className="App">
 			<DropdownContentBar>
-				<div>test1</div>
-				<div>test2</div>
-				<div>test3</div>
+				<UserNavBar scaleLinks={[]} editUserURL="/edit" logoutCallback={dummySubmit} createScaleURL="/create" />
 			</DropdownContentBar>
 		</div>
 	);

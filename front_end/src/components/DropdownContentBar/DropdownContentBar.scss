@@ -2,7 +2,7 @@
 
 .DropdownContentBar {
 	
-	width: 100%;
+	width: fit-content;
 	
 	.dropdownBarHead {
 		
@@ -21,7 +21,8 @@
 	}
 	
 	.contentHidden {
-		display: none;
+		height: 0;
+		overflow: hidden;
 	}
 	
 }
