@@ -21,6 +21,8 @@
 		display:block;
 		text-align: center;
 		
+		cursor: pointer;
+		
 		&:hover {
 			background-color: darken($stdSecondaryBackColor, 10);
 		}
