@@ -14,3 +14,27 @@ test("DropdownContentBar will render the given children", () => {
 	expect(screen.getByText("test3")).not.toBeNull();
 	
 });
+
+test("DropdownContentBar will toggle the class of the content container, when the svg is clicked", () => {
+	
+	const hiddenClass = "contentHidden";
+	const containerClass = "dropdownContent";
+	
+	const { container } = render(<DropdownContentBar>
+		<div>test1</div>
+	</DropdownContentBar>);
+	
+	const content = container.querySelector(`.${containerClass}`);
+	
+	expect(content.classList.contains(hiddenClass)).toBeTruthy();
+	
+	const icon = container.querySelector("svg");
+	fireEvent.click(icon);
+	
+	expect(content.classList.contains(hiddenClass)).toBeFalsy();
+	
+	fireEvent.click(icon);
+	
+	expect(content.classList.contains(hiddenClass)).toBeTruthy();
+	
+});

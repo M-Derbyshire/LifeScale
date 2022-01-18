@@ -11,16 +11,18 @@ interface IDropdownContentBarProps {
 */
 const DropdownContentBar:FC<IDropdownContentBarProps> = (props) => {
 	
-	const barExpanded = useState(false);
+	const [barExpanded, setBarExpanded] = useState(false);
+	const hiddenContentClass = "contentHidden";
+	const expandedContentClass = "contentExpanded";
 	
 	return (
 		<div className="DropdownContentBar">
 			
 			<div className="dropdownBarHead">
-				<ListIcon/>
+				<ListIcon onClick={() => setBarExpanded(!barExpanded)} />
 			</div>
 			
-			<div className="dropdownContent">
+			<div className={`dropdownContent ${ (!barExpanded) ? hiddenContentClass : "" }`}>
 				{props.children}
 			</div>
 			
