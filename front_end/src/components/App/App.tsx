@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.scss';
-import DropdownContentBar from '../DropdownContentBar/DropdownContentBar';
+import NavigatableContentWrapper from '../NavigatableContentWrapper/NavigatableContentWrapper';
 import UserNavBar from '../UserNavBar/UserNavBar';
+import ScaleStatisticDisplay from '../ScaleStatisticDisplay/ScaleStatisticDisplay';
 
 function App() {
 	
@@ -10,9 +11,11 @@ function App() {
 	
 	return (
 		<div className="App">
-			<DropdownContentBar>
+			<NavigatableContentWrapper smallSreenWidthPixels={500} navigationBar={
 				<UserNavBar scaleLinks={[]} editUserURL="/edit" logoutCallback={dummySubmit} createScaleURL="/create" />
-			</DropdownContentBar>
+			}>
+				<ScaleStatisticDisplay amendHistoryCallback={dummySubmit} statistics={[]} />
+			</NavigatableContentWrapper>
 		</div>
 	);
 }
