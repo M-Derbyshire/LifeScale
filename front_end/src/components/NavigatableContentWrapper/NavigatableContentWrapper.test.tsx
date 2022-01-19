@@ -3,6 +3,8 @@ import { render } from '@testing-library/react';
 
 const dummyNavBar = (<div className="dummyNavBar">dummy nav bar</div>);
 
+const smallScreenClass = "smallScreenWidth";
+
 test.each([
 	["testChild1", "testChild2"],
 	["testChild3", "testChild4"]
@@ -29,5 +31,51 @@ test.each([
 	</NavigatableContentWrapper>);
 	
 	expect(container.querySelector(`.${navClass}`)).not.toBeNull();
+	
+});
+
+
+
+
+
+test("NavigatableContentWrapper will add small screen class to wrapperContentContainer, when screen is smaller than the given width in px", () => {
+	
+	//IMPORTANT - This tests is based on the fact that JSDOM renders the screen width as 1024
+	
+	const { container } = render(<NavigatableContentWrapper navigationBar={dummyNavBar} smallScreenWidthPixels={2048} >
+	</NavigatableContentWrapper>);
+	
+	const containingElem = container.querySelector(".wrapperContentContainer");
+	
+	expect(containingElem.classList.contains(smallScreenClass)).toBeTruthy();
+	
+	
+});
+
+test("NavigatableContentWrapper will add small screen class to wrapperContentContainer, when screen is equal to the given width in px", () => {
+	
+	//IMPORTANT - This tests is based on the fact that JSDOM renders the screen width as 1024
+	
+	const { container } = render(<NavigatableContentWrapper navigationBar={dummyNavBar} smallScreenWidthPixels={1024} >
+	</NavigatableContentWrapper>);
+	
+	const containingElem = container.querySelector(".wrapperContentContainer");
+	
+	expect(containingElem.classList.contains(smallScreenClass)).toBeTruthy();
+	
+	
+});
+
+test("NavigatableContentWrapper will not add small screen class to wrapperContentContainer, when screen is larger than the given width in px", () => {
+	
+	//IMPORTANT - This tests is based on the fact that JSDOM renders the screen width as 1024
+	
+	const { container } = render(<NavigatableContentWrapper navigationBar={dummyNavBar} smallScreenWidthPixels={1000} >
+	</NavigatableContentWrapper>);
+	
+	const containingElem = container.querySelector(".wrapperContentContainer");
+	
+	expect(containingElem.classList.contains(smallScreenClass)).toBeFalsy();
+	
 	
 });

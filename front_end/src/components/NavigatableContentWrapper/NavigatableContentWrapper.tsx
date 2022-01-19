@@ -1,4 +1,4 @@
-import React, { FC, ReactChild } from 'react';
+import React, { FC, ReactChild, useState, useEffect } from 'react';
 import './NavigatableContentWrapper.scss';
 
 
@@ -11,16 +11,33 @@ interface INavigatableContentWrapperProps {
 
 const NavigatableContentWrapper:FC<INavigatableContentWrapperProps> = (props) => {
 	
+	const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+	const handleScreenResize = (e:any) => setScreenWidth(window.innerWidth);
+	
+	useEffect(() => {
+		
+		window.addEventListener("resize", handleScreenResize);
+		return () => window.removeEventListener("resize", handleScreenResize);
+		
+	}, []);
+	
+	const isSmallScreen = props.smallScreenWidthPixels >= screenWidth;
+	
+	
 	
 	return (
 		<div className="NavigatableContentWrapper">
 			
-			<div className="navigationBarContainer">
-				{props.navigationBar}
-			</div>
+			<div className={`wrapperContentContainer ${(isSmallScreen) ? "smallScreenWidth" : ""}`}>
 			
-			<div className="mainContentContainer">
-				{props.children}
+				<div className="navigationBarContainer">
+					{props.navigationBar}
+				</div>
+				
+				<div className="mainContentContainer">
+					{props.children}
+				</div>
+				
 			</div>
 			
 		</div>
