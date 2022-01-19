@@ -1,5 +1,6 @@
 import React, { FC, ReactChild, useState, useEffect } from 'react';
 import './NavigatableContentWrapper.scss';
+import DropdownContentBar from '../DropdownContentBar/DropdownContentBar';
 
 
 interface INavigatableContentWrapperProps {
@@ -31,7 +32,9 @@ const NavigatableContentWrapper:FC<INavigatableContentWrapperProps> = (props) =>
 			<div className={`wrapperContentContainer ${(isSmallScreen) ? "smallScreenWidth" : ""}`}>
 			
 				<div className="navigationBarContainer">
-					{props.navigationBar}
+					{(isSmallScreen) ? 
+						(<DropdownContentBar>{props.navigationBar}</DropdownContentBar>) : 
+						props.navigationBar}
 				</div>
 				
 				<div className="mainContentContainer">

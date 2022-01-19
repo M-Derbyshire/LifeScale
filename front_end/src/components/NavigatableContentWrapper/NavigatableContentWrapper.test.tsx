@@ -79,3 +79,32 @@ test("NavigatableContentWrapper will not add small screen class to wrapperConten
 	
 	
 });
+
+
+
+test("NavigatableContentWrapper will not render the navigation in a DropdownContentBar, if the screen is wider than the given small screen value", () => {
+	
+	//IMPORTANT - This tests is based on the fact that JSDOM renders the screen width as 1024
+	
+	const mockNavBar = (<div className={"navigationTest"}>Test</div>);
+	
+	const { container } = render(<NavigatableContentWrapper navigationBar={mockNavBar} smallScreenWidthPixels={1000} >
+	</NavigatableContentWrapper>);
+	
+	expect(container.querySelector(".DropdownContentBar")).toBeNull();
+	expect(container.querySelector(".navigationTest")).not.toBeNull();
+	
+});
+
+test("NavigatableContentWrapper will render the navigation in a DropdownContentBar, if the screen is not wider than the given small screen value", () => {
+	
+	//IMPORTANT - This tests is based on the fact that JSDOM renders the screen width as 1024
+	
+	const mockNavBar = (<div className={"navigationTest"}>Test</div>);
+	
+	const { container } = render(<NavigatableContentWrapper navigationBar={mockNavBar} smallScreenWidthPixels={2048} >
+	</NavigatableContentWrapper>);
+	
+	expect(container.querySelector(".DropdownContentBar .navigationTest")).not.toBeNull();
+	
+});
