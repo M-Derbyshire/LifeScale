@@ -20,7 +20,7 @@ const NavigatableContentWrapper:FC<INavigatableContentWrapperProps> = (props) =>
 			</div>
 			
 			<div className="mainContentContainer">
-				
+				{props.children}
 			</div>
 			
 		</div>
