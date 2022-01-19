@@ -5,7 +5,7 @@ import './NavigatableContentWrapper.scss';
 interface INavigatableContentWrapperProps {
 	children?:ReactChild|ReactChild[];
 	navigationBar:ReactChild;
-	smallSreenWidthPixels:number;
+	smallScreenWidthPixels:number;
 }
 
 
@@ -14,6 +14,14 @@ const NavigatableContentWrapper:FC<INavigatableContentWrapperProps> = (props) =>
 	
 	return (
 		<div className="NavigatableContentWrapper">
+			
+			<div className="navigationBarContainer">
+				
+			</div>
+			
+			<div className="mainContentContainer">
+				
+			</div>
 			
 		</div>
 	);

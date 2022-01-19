@@ -11,7 +11,7 @@ function App() {
 	
 	return (
 		<div className="App">
-			<NavigatableContentWrapper smallSreenWidthPixels={500} navigationBar={
+			<NavigatableContentWrapper smallScreenWidthPixels={500} navigationBar={
 				<UserNavBar scaleLinks={[]} editUserURL="/edit" logoutCallback={dummySubmit} createScaleURL="/create" />
 			}>
 				<ScaleStatisticDisplay amendHistoryCallback={dummySubmit} statistics={[]} />
