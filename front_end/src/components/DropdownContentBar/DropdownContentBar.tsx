@@ -13,7 +13,6 @@ const DropdownContentBar:FC<IDropdownContentBarProps> = (props) => {
 	
 	const [barExpanded, setBarExpanded] = useState(false);
 	const hiddenContentClass = "contentHidden";
-	const expandedContentClass = "contentExpanded";
 	
 	return (
 		<div className="DropdownContentBar">
