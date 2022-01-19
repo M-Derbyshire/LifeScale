@@ -16,7 +16,7 @@ const NavigatableContentWrapper:FC<INavigatableContentWrapperProps> = (props) =>
 		<div className="NavigatableContentWrapper">
 			
 			<div className="navigationBarContainer">
-				
+				{props.navigationBar}
 			</div>
 			
 			<div className="mainContentContainer">

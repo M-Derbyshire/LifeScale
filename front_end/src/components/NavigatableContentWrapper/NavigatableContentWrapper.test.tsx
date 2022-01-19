@@ -17,3 +17,17 @@ test.each([
 	expect(container.querySelector(`.${childrenClasses[1]}`)).not.toBeNull();
 	
 });
+
+test.each([
+	["testNav1"],
+	["testVav2"]
+])("NavigatableContentWrapper will render the given children", (navClass) => {
+	
+	const mockNavBar = (<div className={navClass}>Test</div>);
+	
+	const { container } = render(<NavigatableContentWrapper navigationBar={mockNavBar} smallScreenWidthPixels={50} >
+	</NavigatableContentWrapper>);
+	
+	expect(container.querySelector(`.${navClass}`)).not.toBeNull();
+	
+});
