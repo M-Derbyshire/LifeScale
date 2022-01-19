@@ -1,0 +1,36 @@
+
+
+.NavigatableContentWrapper {
+	
+	
+	.wrapperContentContainer {
+		display: flex;
+	}
+	
+	.wrapperContentContainer:not(.smallScreenWidth) {
+		
+		& > * {
+			margin: 0.25em;
+		}
+		
+		.navigationBarContainer {
+			width: 25vw;
+			flex-shrink: 0;
+		}
+		
+		.mainContentContainer {
+			flex-grow: 1;
+		}
+		
+	}
+	
+	
+	.wrapperContentContainer.smallScreenWidth {
+		flex-direction: column;
+		
+		.navigationBarContainer {
+			margin-bottom: 0.25em;
+		}
+	}
+	
+}
