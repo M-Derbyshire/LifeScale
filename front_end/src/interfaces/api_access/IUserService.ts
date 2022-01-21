@@ -25,29 +25,29 @@ interface IUserService {
 	//When rejecting promise, this will return an object (to seperate http 
 	//errors from bad login). See below: 
 	//	{ isBadLogin: boolean, message: string }
-	loginUser:(email:string, password:string)=>Promise;
+	loginUser:(email:string, password:string)=>Promise<void>;
 	isLoggedIn:()=>boolean;
 	
 	getLoadedUser:()=>IUser; //Will throw if no user loaded (logging in loads the user)
-	createUser:(newUser: IUser & { password:string })=>Promise;
-	updateLoadedUser:(newUserData:IUser)=>Promise;
-	updateLoadedUserPassword(currentPassword:string, newPassword:string)=>Promise;
+	createUser:(newUser: IUser & { password:string })=>Promise<void>;
+	updateLoadedUser:(newUserData:IUser)=>Promise<void>;
+	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<void>;
 	
-	createScale(newScale:ISCale)=>Promise;
-	updateScale(currentScale:IScale, newScaleData:IScale)=>Promise;
-	deleteScale(scale:IScale)=>Promise;
+	createScale:(newScale:IScale)=>Promise<void>;
+	updateScale:(currentScale:IScale, newScaleData:IScale)=>Promise<void>;
+	deleteScale:(scale:IScale)=>Promise<void>;
 	
-	createCategory(newCategory:ICategory)=>Promise;
-	updateCategory(currentCategory:ICategory, newCategoryData:ICategory)=>Promise;
-	deleteCategory(category:ICategory)=>Promise;
+	createCategory:(newCategory:ICategory)=>Promise<void>;
+	updateCategory:(currentCategory:ICategory, newCategoryData:ICategory)=>Promise<void>;
+	deleteCategory:(category:ICategory)=>Promise<void>;
 	
-	createAction(newAction:IAction)=>Promise;
-	updateAction(currentAction:IAction, newActionData:IAction)=>Promise;
-	deleteAction(action:IAction)=>Promise;
+	createAction:(newAction:IAction)=>Promise<void>;
+	updateAction:(currentAction:IAction, newActionData:IAction)=>Promise<void>;
+	deleteAction:(action:IAction)=>Promise<void>;
 	
 	//At this time, you can replace timespans by deleting/creating, but not update
-	createTimespan(newTimespan:ITimespan)=>Promise;
-	deleteTimespan(timespan:ITimespan)=>Promise;
+	createTimespan:(newTimespan:ITimespan)=>Promise<void>;
+	deleteTimespan:(timespan:ITimespan)=>Promise<void>;
 	
 }
 
