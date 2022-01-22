@@ -1,3 +1,112 @@
 {
-	"users": []
+	"users": [
+		{
+			"id": "test427347329847892374",
+			"email": "test@test.com",
+			"password": "password123",
+			"forename": "test",
+			"surname": "tester",
+			"scales": [
+				{
+					"id": "scaleTest3920912931-293",
+					"name": "Work/Life",
+					"usesTimespans": true,
+					"displayDayCount" : 7,
+					"categories": [
+						{
+							"id": "testCat23132948284",
+							"name": "work",
+							"color": "red",
+							"desiredWeight": 1,
+							"actions": [
+								{
+									"id": "testAct94092384092348",
+									"name": "employment",
+									"weight": 3,
+									"timespans": [
+										{
+											"id": "testTime329874920384",
+											"date": "2021-01-22",
+											"minuteCount": 450
+										}
+									]
+								},
+								{
+									"id": "testAct389345809348",
+									"name": "personal work",
+									"weight": 1,
+									"timespans": [
+										{
+											"id": "testTime34059309855880",
+											"date": "2021-01-21",
+											"minuteCount": 120
+										}
+									]
+								}
+							]
+						},
+						{
+							"id": "testCat28329723479274",
+							"name": "life",
+							"color": "blue",
+							"desiredWeight": 1.5,
+							"actions": [
+								{
+									"id": "testAct5839485385",
+									"name": "tv",
+									"weight": 1,
+									"timespans": [
+										{
+											"id": "testTime23842984098",
+											"date": "2021-01-22",
+											"minuteCount": 90
+										},
+										{
+											"id": "testTime43489238482384",
+											"date": "2021-01-21",
+											"minuteCount": 95
+										}
+									]
+								},
+								{
+									"id": "testAct3213233",
+									"name": "gaming",
+									"weight": 1,
+									"timespans": [
+										{
+											"id": "testTime23842984098",
+											"date": "2021-01-22",
+											"minuteCount": 90
+										},
+										{
+											"id": "testTime43489238482384",
+											"date": "2021-01-21",
+											"minuteCount": 95
+										}
+									]
+								},
+								{
+									"id": "testAct5839485385",
+									"name": "sleep",
+									"weight": 3,
+									"timespans": [
+										{
+											"id": "testTime9284093840",
+											"date": "2021-01-22",
+											"minuteCount": 450
+										},
+										{
+											"id": "testTime28409238480",
+											"date": "2021-01-21",
+											"minuteCount": 450
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
 }
