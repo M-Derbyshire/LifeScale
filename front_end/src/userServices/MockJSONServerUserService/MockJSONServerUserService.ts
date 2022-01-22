@@ -5,6 +5,19 @@ import ICategory from '../../interfaces/ICategory';
 import IAction from '../../interfaces/IAction';
 import ITimespan from '../../interfaces/ITimespan';
 
+
+
+/*
+	This is a UserService implementation designed to interact with a JSON-Server mock 
+	back end API.
+	
+	Note: As this is interacting with a mock API, certain functionality that would be in 
+	a real API (such as validating logins, etc) will be handled by this instead (this is 
+	purely designed for mocking a real back-end)
+	
+	For more information on why this is designed this way, see the IUserService 
+	interface (/interfaces/api_access/IUserService).
+*/
 export default class MockJSONServerUserService implements IUserService {
 	
 	//Private properties not available for the JS version we're transpiling to
