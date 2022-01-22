@@ -51,7 +51,7 @@ export default class MockJSONServerUserService implements IUserService {
 			.then(users => {
 				if(users.length === 0 || users[0].password !== password)
 					//See ILoginFailureInformation in IUserService module
-					throw { isBadLogin: true, message: "The entered email or password is incorrect." };
+					throw { isBadLogin: true, error: new Error("The entered email or password is incorrect.") };
 				
 				this._currentUser = users[0];
 				return users[0];
