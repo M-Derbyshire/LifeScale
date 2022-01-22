@@ -1,0 +1,15 @@
+{
+  "name": "json_server_mock",
+  "version": "1.0.0",
+  "description": "mock backend with JSON Server, for LifeScale application",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"serve": "json-server --watch db.json --port 8080"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "json-server": "^0.17.0"
+  }
+}
