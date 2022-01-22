@@ -23,10 +23,9 @@ import ITimespan from '../ITimespan';
 */
 interface IUserService {
 	
-	//Will load the user, and all it's related entities, if logged in succesfully
-	//When rejecting promise, this will return an object (to seperate http 
-	//errors from bad login). See below: 
-	//	{ isBadLogin: boolean, message: string }
+	//Will load the user, and all its related entities, if logged in succesfully.
+	//When rejecting promise, this will return an ILoginFailureInformation object 
+	//(to seperate http errors from bad login).
 	loginUser:(email:string, password:string)=>Promise<any>;
 	isLoggedIn:()=>boolean;
 	
@@ -53,4 +52,13 @@ interface IUserService {
 	
 }
 
+
+
+interface ILoginFailureInformation { 
+	isBadLogin:boolean;
+	message: string;
+}
+
+
 export default IUserService;
+export type { ILoginFailureInformation };
