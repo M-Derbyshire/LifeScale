@@ -1,4 +1,4 @@
-import IUserService from '../../interfaces/api_access/IUserService';
+import IUserService, { ILoginFailureInformation } from '../../interfaces/api_access/IUserService';
 import IUser from '../../interfaces/IUser';
 import IScale from '../../interfaces/IScale';
 import ICategory from '../../interfaces/ICategory';
@@ -23,9 +23,18 @@ export default class MockJSONServerUserService implements IUserService {
 	//Private properties not available for the JS version we're transpiling to
 	_apiURLBase:string;
 	
-	constructor(apiProtocol:string, apiDomain:string, apiPort:string)
+	constructor(apiProtocol:string, apiDomain:string, apiPort:string, apiPath?:string)
 	{
-		this._apiURLBase="";
+		this._apiURLBase=`${apiProtocol}://${apiDomain}:${apiPort}`;
+		
+		if(apiPath) 
+			this._apiURLBase += `/${apiPath}`;
+		
+		if(this._apiURLBase.slice(-1) === "/")
+			this._apiURLBase = this._apiURLBase.slice(0, -1);
+		
+		
+		console.log(this._apiURLBase);
 	}
 	
 	loginUser(email:string, password:string)
