@@ -1,4 +1,4 @@
-import IUserService, { ILoginFailureInformation } from '../../interfaces/api_access/IUserService';
+import IUserService from '../../interfaces/api_access/IUserService';
 import IUser from '../../interfaces/IUser';
 import IScale from '../../interfaces/IScale';
 import ICategory from '../../interfaces/ICategory';
@@ -21,7 +21,8 @@ import ITimespan from '../../interfaces/ITimespan';
 export default class MockJSONServerUserService implements IUserService {
 	
 	//Private properties not available for the JS version we're transpiling to
-	_apiURLBase:string;
+	_apiURLBase:string; //The entry point of the URL (e.g. http://myapi.com:8080/v1)
+	_currentUser?:IUser;
 	
 	constructor(apiProtocol:string, apiDomain:string, apiPort:string, apiPath?:string)
 	{
@@ -37,17 +38,32 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	
+	
 	loginUser(email:string, password:string)
 	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+		// ----------------------------------------------------------------------------------
+		// As this is a mock API, for demonstration purposes this handles password validation
+		// ----------------------------------------------------------------------------------
+		
+		return fetch(`${this._apiURLBase}/users?email=${email}`)
+			.then(response => response.json())
+			.then(users => {
+				if(users.length === 0 || users[0].password !== password)
+					//See ILoginFailureInformation in IUserService module
+					throw { isBadLogin: true, message: "The entered email or password is incorrect." };
+				
+				this._currentUser = users[0];
+				return users[0];
+			}).catch(err => { throw err; });
 	}
 	
 	isLoggedIn()
 	{
-		throw new Error("Method not implemented");
-		return false;
+		return !!this._currentUser;
 	}
+	
+	
 	
 	
 	
