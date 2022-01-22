@@ -27,6 +27,9 @@ interface IUserService {
 	//When rejecting promise, this will return an ILoginFailureInformation object 
 	//(to seperate http errors from bad login).
 	loginUser:(email:string, password:string)=>Promise<any>;
+	
+	logoutUser:()=>Promise<any>; //If the promise resolves, null is returned
+	
 	isLoggedIn:()=>boolean;
 	
 	getLoadedUser:()=>IUser; //Will throw if no user loaded (logging in loads the user)

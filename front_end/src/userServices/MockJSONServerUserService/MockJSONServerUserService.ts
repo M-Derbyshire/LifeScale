@@ -58,6 +58,14 @@ export default class MockJSONServerUserService implements IUserService {
 			}).catch(err => { throw err; });
 	}
 	
+	logoutUser()
+	{
+		return new Promise((resolve, reject) => {
+			this._currentUser = undefined;
+			resolve(null); //We would reject if an API call was actually being made
+		});
+	}
+	
 	isLoggedIn()
 	{
 		return !!this._currentUser;
