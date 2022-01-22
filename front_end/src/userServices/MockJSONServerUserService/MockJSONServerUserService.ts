@@ -32,10 +32,10 @@ export default class MockJSONServerUserService implements IUserService {
 		
 		if(this._apiURLBase.slice(-1) === "/")
 			this._apiURLBase = this._apiURLBase.slice(0, -1);
-		
-		
-		console.log(this._apiURLBase);
 	}
+	
+	
+	
 	
 	loginUser(email:string, password:string)
 	{
