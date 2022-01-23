@@ -143,8 +143,24 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	updateLoadedUserPassword(currentPassword:string, newPassword:string)
 	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+		return new Promise((resolve, reject) => {
+			
+			// ----------------------------------------------------------------------------------
+			// As this is a mock API, for demonstration purposes this handles password validation
+			// ----------------------------------------------------------------------------------
+			if(currentPassword !== this._currentUserPassword)
+				//See IPasswordFailureInformation in IUserService module
+				reject({ isBadPassword: true, error: new Error("The current password provided is incorrect.") });
+			
+			
+			
+			let userToSave:any = { ...this._currentUser!, password: newPassword };
+			delete userToSave.id;
+			
+			this._saveUser(userToSave, this._currentUser!.id)
+				.then(user => resolve(user))
+				.catch(err => reject(err));
+		});
 	}
 	
 	
