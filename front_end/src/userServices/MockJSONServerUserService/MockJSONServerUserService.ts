@@ -99,7 +99,12 @@ export default class MockJSONServerUserService implements IUserService {
 				'Content-Type': 'application/json'
 			}
 		}).then(res => res.json())
-			.then(data => { return data; })
+			.then(data => { 
+				if(data.password)
+					delete data.password;
+				
+				return data; 
+			})
 			.catch(err => { throw err; });
 	}
 	
