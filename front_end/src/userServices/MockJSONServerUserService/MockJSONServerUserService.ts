@@ -85,12 +85,16 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	//If isNewUser is true, this will POST rather than PUT
-	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, isNewUser:boolean):Promise<any>
+	//If id is undefined, this will be treated as a new user
+	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, id:string|undefined):Promise<any>
 	{
-		const method = (isNewUser) ? "POST" : "PUT";
+		const method = (!id) ? "POST" : "PUT";
+		let url = `${this._apiURLBase}/users`;
+		if(id)
+			url += `/${id}`;
 		
-		return fetch(`${this._apiURLBase}/users`, {
+		
+		return fetch(url, {
 			method,
 			body: JSON.stringify(newUserData),
 			headers: {
@@ -115,15 +119,26 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	createUser(newUser: Omit<IUser, "id"> & { password:string })
 	{
-		return this._saveUser(newUser, true)
+		return this._saveUser(newUser, undefined)
 			.then(user => { return user })
 			.catch(err => { throw err; });
 	}
 	
 	updateLoadedUser(newUserData:IUser)
 	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+		let userDataForUpdate:any = { ...newUserData };
+		delete userDataForUpdate.id;
+		
+		return this._saveUser({ ...userDataForUpdate, password: this._currentUserPassword }, newUserData.id)
+			.then(data => {
+				this._currentUser = {
+					...this._currentUser,
+					...newUserData
+				};
+				
+				return this._currentUser;
+			})
+			.catch(err => { throw err; });
 	}
 	
 	updateLoadedUserPassword(currentPassword:string, newPassword:string)
