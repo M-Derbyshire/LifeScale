@@ -24,9 +24,12 @@ export default class MockJSONServerUserService implements IUserService {
 	_apiURLBase:string; //The entry point of the URL (e.g. http://myapi.com:8080/v1)
 	_currentUser?:IUser;
 	
-	constructor(apiProtocol:string, apiDomain:string, apiPort:string, apiPath?:string)
+	constructor(apiProtocol:string, apiDomain:string, apiPort?:string, apiPath?:string)
 	{
-		this._apiURLBase=`${apiProtocol}://${apiDomain}:${apiPort}`;
+		this._apiURLBase=`${apiProtocol}://${apiDomain}`;
+		
+		if(apiPort)
+			this._apiURLBase += `:${apiPort}`;
 		
 		if(apiPath) 
 			this._apiURLBase += `/${apiPath}`;
