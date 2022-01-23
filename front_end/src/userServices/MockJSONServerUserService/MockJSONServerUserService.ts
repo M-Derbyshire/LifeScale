@@ -58,9 +58,7 @@ export default class MockJSONServerUserService implements IUserService {
 					throw { isBadLogin: true, error: new Error("The entered email or password is incorrect.") };
 				
 				this._currentUserPassword = users[0].password;
-				
-				if(users[0].password)
-					delete users[0].password;
+				delete users[0].password;
 				
 				this._currentUser = users[0];
 				
