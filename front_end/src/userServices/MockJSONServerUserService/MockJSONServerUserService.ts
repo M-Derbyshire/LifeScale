@@ -82,14 +82,10 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	getLoadedUser()
 	{
-		throw new Error("Method not implemented");
-		return {
-			id:"test", 
-			email:"test@test.com",
-			forename:"test", 
-			surname: "test",
-			scales: []
-		}
+		if(!this._currentUser)
+			throw new Error("No logged in user has been found.");
+		
+		return this._currentUser;
 	}
 	
 	createUser(newUser: IUser & { password:string })
