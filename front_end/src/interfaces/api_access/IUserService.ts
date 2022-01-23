@@ -35,7 +35,8 @@ interface IUserService {
 	getLoadedUser:()=>IUser; //Will throw if no user loaded (logging in loads the user)
 	createUser:(newUser: Omit<IUser, "id"> & { password:string })=>Promise<any>;
 	updateLoadedUser:(newUserData:IUser)=>Promise<any>;
-	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<any>;
+	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<any>; //Reject
+													//returns IPasswordFailureInformation object
 	
 	createScale:(newScale:IScale)=>Promise<any>;
 	updateScale:(currentScale:IScale, newScaleData:IScale)=>Promise<any>;
@@ -62,6 +63,11 @@ interface ILoginFailureInformation {
 	error: Error;
 }
 
+interface IPasswordFailureInformation { 
+	isBadPassword:boolean;
+	error: Error;
+}
+
 
 export default IUserService;
-export type { ILoginFailureInformation };
+export type { ILoginFailureInformation, IPasswordFailureInformation };
