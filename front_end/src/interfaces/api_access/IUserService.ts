@@ -33,7 +33,7 @@ interface IUserService {
 	isLoggedIn:()=>boolean;
 	
 	getLoadedUser:()=>IUser; //Will throw if no user loaded (logging in loads the user)
-	createUser:(newUser: IUser & { password:string })=>Promise<any>;
+	createUser:(newUser: Omit<IUser, "id"> & { password:string })=>Promise<any>;
 	updateLoadedUser:(newUserData:IUser)=>Promise<any>;
 	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<any>;
 	

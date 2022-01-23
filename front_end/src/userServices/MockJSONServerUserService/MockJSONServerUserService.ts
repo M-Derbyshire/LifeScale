@@ -23,6 +23,7 @@ export default class MockJSONServerUserService implements IUserService {
 	//Private properties not available for the JS version we're transpiling to
 	_apiURLBase:string; //The entry point of the URL (e.g. http://myapi.com:8080/v1)
 	_currentUser?:IUser;
+	_currentUserPassword:string = ""; //Aids with mocking password changes
 	
 	constructor(apiProtocol:string, apiDomain:string, apiPort?:string, apiPath?:string)
 	{
@@ -56,8 +57,15 @@ export default class MockJSONServerUserService implements IUserService {
 					//See ILoginFailureInformation in IUserService module
 					throw { isBadLogin: true, error: new Error("The entered email or password is incorrect.") };
 				
+				this._currentUserPassword = users[0].password;
+				
+				if(users[0].password)
+					delete users[0].password;
+				
 				this._currentUser = users[0];
+				
 				return users[0];
+				
 			}).catch(err => { throw err; });
 	}
 	
@@ -77,6 +85,23 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	//If isNewUser is true, this will POST rather than PUT
+	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, isNewUser:boolean):Promise<any>
+	{
+		const method = (isNewUser) ? "POST" : "PUT";
+		
+		return fetch(`${this._apiURLBase}/users`, {
+			method,
+			body: JSON.stringify(newUserData),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(res => res.json())
+			.then(data => { return data; })
+			.catch(err => { throw err; });
+	}
+	
+	
 	
 	
 	
@@ -88,10 +113,11 @@ export default class MockJSONServerUserService implements IUserService {
 		return this._currentUser;
 	}
 	
-	createUser(newUser: IUser & { password:string })
+	createUser(newUser: Omit<IUser, "id"> & { password:string })
 	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+		return this._saveUser(newUser, true)
+			.then(user => { return user })
+			.catch(err => { throw err; });
 	}
 	
 	updateLoadedUser(newUserData:IUser)
