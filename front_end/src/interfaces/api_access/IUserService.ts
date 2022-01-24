@@ -32,7 +32,7 @@ interface IUserService {
 	
 	isLoggedIn:()=>boolean;
 	
-	requestNewPassword:()=>Promise<any>; //If the promise resolves, null is returned
+	requestNewPassword:(email:string)=>Promise<any>; //If the promise resolves, null is returned
 	
 	getLoadedUser:()=>IUser; //Will throw if no user loaded (logging in loads the user)
 	createUser:(newUser: Omit<IUser, "id"> & { password:string })=>Promise<any>;
