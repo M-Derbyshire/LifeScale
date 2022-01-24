@@ -32,11 +32,14 @@ interface IUserService {
 	
 	isLoggedIn:()=>boolean;
 	
+	requestNewPassword:()=>Promise<any>; //If the promise resolves, null is returned
+	
 	getLoadedUser:()=>IUser; //Will throw if no user loaded (logging in loads the user)
 	createUser:(newUser: Omit<IUser, "id"> & { password:string })=>Promise<any>;
 	updateLoadedUser:(newUserData:IUser)=>Promise<any>;
 	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<any>; //Reject
 													//returns IPasswordFailureInformation object
+	
 	
 	createScale:(newScale:IScale)=>Promise<any>;
 	updateScale:(currentScale:IScale, newScaleData:IScale)=>Promise<any>;

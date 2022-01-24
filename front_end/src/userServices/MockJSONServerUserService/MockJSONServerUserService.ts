@@ -80,6 +80,12 @@ export default class MockJSONServerUserService implements IUserService {
 		return !!this._currentUser;
 	}
 	
+	requestNewPassword()
+	{
+		throw new Error("Method not implemented");
+		return new Promise(()=>{});
+	}
+	
 	
 	
 	
