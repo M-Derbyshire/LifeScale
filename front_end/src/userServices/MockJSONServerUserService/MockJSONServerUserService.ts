@@ -82,8 +82,9 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	requestNewPassword(email:string)
 	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+		return new Promise((resolve, reject) => {
+			reject(new Error("As this is an example system, with a mocked API, this feature cannot be implemented."));
+		});
 	}
 	
 	
