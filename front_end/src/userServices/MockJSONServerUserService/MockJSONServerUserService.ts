@@ -176,10 +176,14 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	
-	
-	//newItem should be an object, that requires an ID but doesn't currently have one
-	//entityTypeName could be "scale", "category", "action", etc (all lower case)
+	/*
+		Save an item to an array (such as a category to the user's scales, 
+		for example) while maintaining consistency between this._currentUser 
+		and the API's data.
+		
+		newItem should be an object, that requires an ID but doesn't currently have one
+		entityTypeName could be "scale", "category", "action", etc (all lower case)
+	*/
 	_saveToArrayInCurrentUser(currentArray:any[], newItem:any, entityTypeName:string):Promise<any>
 	{
 		const originalArray = [...currentArray];
@@ -198,9 +202,14 @@ export default class MockJSONServerUserService implements IUserService {
 			});
 	}
 	
-	//currentItem and newItemData should both be objects.
-	//newItemData should match the full interface of currentItem's type
-	//entityTypeName could be "scale", "category", "action", etc (all lower case)
+	/*
+		Update an item in an array (such as a scale, category, action, timespan) 
+		while maintaining consistency between this._currentUser and the API's data.
+		
+		currentItem and newItemData should both be objects.
+		newItemData should match the interface of currentItem's type
+		entityTypeName could be "scale", "category", "action", etc (all lower case)
+	*/
 	_updateArrayItemInCurrentUser(currentItem:any, newItemData:any, entityTypeName:string):Promise<any>
 	{
 		const originalItemData = { ...currentItem };
