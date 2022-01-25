@@ -330,16 +330,12 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
-	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">) {
+		return this._saveToArrayInCurrentUser(parentAction.timespans, newTimespan, "timespan");
 	}
 	
-	deleteTimespan(parentAction:IAction, timespan:ITimespan)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	deleteTimespan(parentAction:IAction, timespan:ITimespan) {
+		return this._deleteArrayItemInCurrentUser(parentAction.timespans, timespan, "timespan");
 	}
 	
 }
