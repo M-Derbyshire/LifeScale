@@ -207,7 +207,8 @@ export default class MockJSONServerUserService implements IUserService {
 		
 		//We can't just assign the new obj to the current (and spreading new obj won't work either)
 		//as that will change the reference of currentItem to the reference of the new data obj, rather 
-		//than changing the value of the current object to the new data values.
+		//than changing the value of the current object to the new data values. (so the array item is 
+		//still the same object).
 		//Therefore, we need to explicitly set the values.
 		for(let prop in newItemData)
 		{
