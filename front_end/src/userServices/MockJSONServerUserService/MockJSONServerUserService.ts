@@ -305,22 +305,17 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">) {
+		return this._saveToArrayInCurrentUser(parentScale.categories, newCategory, "category");
 	}
 	
-	updateCategory(currentCategory:ICategory, newCategoryData:ICategory)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	updateCategory(currentCategory:ICategory, newCategoryData:ICategory) {
+		return this._updateArrayItemInCurrentUser(currentCategory, newCategoryData, "category");
 	}
 	
 	deleteCategory(parentScale:IScale, category:ICategory)
 	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+		return this._deleteArrayItemInCurrentUser(parentScale.categories, category, "category");
 	}
 	
 	
