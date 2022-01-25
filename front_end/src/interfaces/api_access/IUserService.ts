@@ -16,7 +16,8 @@ import ITimespan from '../ITimespan';
 	
 	See further rules below (unfortunately, there is no way in Typescript to define what a promise's 
 	resolve/reject parameters should be):
-	- If a Promise resolves, it will return the related entity (e.g. An IScale when creating a scale)
+	- If a Promise resolves, it will return the related entity (e.g. An IScale when creating a scale).
+		However, if the method was deleting from an array, the array will be returned.
 	- If a Promise rejects, it will return an Error object (unless stated otherwise below)
 	- When making a change to an entity, the change should only be persisted to the current user object 
 		if the API call was successful. Otherwise, the change should be reverted (or never made at all)
