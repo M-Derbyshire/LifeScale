@@ -4,6 +4,7 @@ import IScale from '../../interfaces/IScale';
 import ICategory from '../../interfaces/ICategory';
 import IAction from '../../interfaces/IAction';
 import ITimespan from '../../interfaces/ITimespan';
+import { v4 as uuid } from 'uuid';
 
 
 
@@ -176,10 +177,30 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createScale(newScale:IScale)
+	
+	//newItem should be an object, that requires an ID but doesn't currently have one
+	//entityTypeName could be "scale", "category", "action", etc (all lower case)
+	_saveToArrayInCurrentUser(currentArray:any[], newItem:any, entityTypeName:string):Promise<any>
 	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+		const originalArray = [...currentArray];
+		
+		//We need to generate IDs ourselves when it comes to internal arrays
+		currentArray.push({...newItem, id: uuid() });
+		
+		let userToSave:any = { ...this._currentUser!, password: this._currentUserPassword };
+		delete userToSave.id;
+		
+		return this._saveUser(userToSave, this._currentUser!.id)
+			.then(user => currentArray)
+			.catch(err => {
+				currentArray = originalArray;
+				throw new Error(`Error saving new ${entityTypeName}: ${err.message}`);
+			});
+	}
+	
+	
+	createScale(newScale:Omit<IScale, "id">) { 
+		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale");
 	}
 	
 	updateScale(currentScale:IScale, newScaleData:IScale)
@@ -197,7 +218,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createCategory(newCategory:ICategory)
+	createCategory(newCategory:Omit<ICategory, "id">)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
@@ -218,7 +239,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createAction(newAction:IAction)
+	createAction(newAction:Omit<IAction, "id">)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
@@ -239,7 +260,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createTimespan(newTimespan:ITimespan)
+	createTimespan(newTimespan:Omit<ITimespan, "id">)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
