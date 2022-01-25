@@ -25,8 +25,6 @@ import ITimespan from '../ITimespan';
 interface IUserService {
 	
 	//Will load the user, and all its related entities, if logged in succesfully.
-	//When rejecting promise, this will return an ILoginFailureInformation object 
-	//(to seperate http errors from bad login).
 	loginUser:(email:string, password:string)=>Promise<any>;
 	
 	logoutUser:()=>Promise<any>; //If the promise resolves, null is returned
@@ -38,8 +36,7 @@ interface IUserService {
 	getLoadedUser:()=>IUser; //Will throw if no user loaded (logging in loads the user)
 	createUser:(newUser: Omit<IUser, "id"> & { password:string })=>Promise<any>;
 	updateLoadedUser:(newUserData:IUser)=>Promise<any>;
-	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<any>; //Reject
-													//returns IPasswordFailureInformation object
+	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<any>;
 	
 	
 	createScale:(newScale:Omit<IScale, "id">)=>Promise<any>;
@@ -61,17 +58,4 @@ interface IUserService {
 }
 
 
-
-interface ILoginFailureInformation { 
-	isBadLogin:boolean;
-	error: Error;
-}
-
-interface IPasswordFailureInformation { 
-	isBadPassword:boolean;
-	error: Error;
-}
-
-
 export default IUserService;
-export type { ILoginFailureInformation, IPasswordFailureInformation };

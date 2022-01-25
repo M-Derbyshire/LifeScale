@@ -55,8 +55,7 @@ export default class MockJSONServerUserService implements IUserService {
 			.then(response => response.json())
 			.then(users => {
 				if(users.length === 0 || users[0].password !== password)
-					//See ILoginFailureInformation in IUserService module
-					throw { isBadLogin: true, error: new Error("The entered email or password is incorrect.") };
+					throw new Error("The entered email or password is incorrect.");
 				
 				this._currentUserPassword = users[0].password;
 				delete users[0].password;
@@ -160,8 +159,7 @@ export default class MockJSONServerUserService implements IUserService {
 			// As this is a mock API, for demonstration purposes this handles password validation
 			// ----------------------------------------------------------------------------------
 			if(currentPassword !== this._currentUserPassword)
-				//See IPasswordFailureInformation in IUserService module
-				reject({ isBadPassword: true, error: new Error("The current password provided is incorrect.") });
+				reject(new Error("The current password provided is incorrect."));
 			
 			
 			
