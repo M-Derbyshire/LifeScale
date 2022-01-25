@@ -303,8 +303,6 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
-	
-	
 	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">) {
 		return this._saveToArrayInCurrentUser(parentScale.categories, newCategory, "category");
 	}
@@ -319,27 +317,17 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
-	
-	
-	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">) {
+		return this._saveToArrayInCurrentUser(parentCategory.actions, newAction, "action");
 	}
 	
-	updateAction(currentAction:IAction, newActionData:IAction)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	updateAction(currentAction:IAction, newActionData:IAction) {
+		return this._updateArrayItemInCurrentUser(currentAction, newActionData, "action");
 	}
 	
-	deleteAction(parentCategory:ICategory, action:IAction)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	deleteAction(parentCategory:ICategory, action:IAction) {
+		return this._deleteArrayItemInCurrentUser(parentCategory.actions, action, "action");
 	}
-	
-	
 	
 	
 	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">)
