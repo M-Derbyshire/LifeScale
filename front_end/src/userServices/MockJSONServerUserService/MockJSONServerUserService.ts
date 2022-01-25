@@ -176,6 +176,8 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	
+	
 	/*
 		Save an item to an array (such as a category to the user's scales, 
 		for example) while maintaining consistency between this._currentUser 
@@ -230,12 +232,59 @@ export default class MockJSONServerUserService implements IUserService {
 		return this._saveUser(userToSave, this._currentUser!.id)
 			.then(user => currentItem)
 			.catch(err => {
-				currentItem = originalItemData;
+				for(let prop in originalItemData)
+				{
+					currentItem[prop] = originalItemData[prop];
+				}
 				throw new Error(`Error saving new ${entityTypeName}: ${err.message}`);
 			});
 	}
 	
-	
+	/*
+		Delete an item in an array (such as a scale, category, action, timespan) 
+		while maintaining consistency between this._currentUser and the API's data.
+		
+		entityTypeName could be "scale", "category", "action", etc (all lower case)
+	*/
+	_deleteArrayItemInCurrentUser(containingArray:any[], itemToDelete:any, entityTypeName:string):Promise<any>
+	{
+		
+		const originalArray = [...containingArray];
+		
+		
+		//Need to filter the array to not include this item.
+		//However, we need to not change the reference of containingArray
+		//to a new array. Therefore, we need to clear then re-add the values 
+		//into the array explicitly
+		
+		const clearCurrentArray = () => {
+			while(containingArray.length) //Clear the array without referencing a new array
+				containingArray.pop();
+		};
+		
+		clearCurrentArray();
+		
+		//Refill array -- without this item -- while mainitaing correct reference
+		originalArray.forEach((item) => {
+			if(item !== itemToDelete) 
+				containingArray.push(item)
+		});
+		
+		
+		
+		let userToSave:any = { ...this._currentUser!, password: this._currentUserPassword };
+		delete userToSave.id;
+		
+		return this._saveUser(userToSave, this._currentUser!.id)
+			.then(user => containingArray)
+			.catch(err => {
+				clearCurrentArray();
+				originalArray.forEach((item) => containingArray.push(item));
+				console.log(containingArray);
+				throw new Error(`Error saving new ${entityTypeName}: ${err.message}`);
+			});
+		
+	}
 	
 	
 	
@@ -250,10 +299,8 @@ export default class MockJSONServerUserService implements IUserService {
 		return this._updateArrayItemInCurrentUser(currentScale, newScaleData, "scale");
 	}
 	
-	deleteScale(scale:IScale)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	deleteScale(scale:IScale) {
+		return this._deleteArrayItemInCurrentUser(this._currentUser!.scales, scale, "scale");
 	}
 	
 	
