@@ -198,15 +198,46 @@ export default class MockJSONServerUserService implements IUserService {
 			});
 	}
 	
+	//currentItem and newItemData should both be objects.
+	//newItemData should match the full interface of currentItem's type
+	//entityTypeName could be "scale", "category", "action", etc (all lower case)
+	_updateArrayItemInCurrentUser(currentItem:any, newItemData:any, entityTypeName:string):Promise<any>
+	{
+		const originalItemData = { ...currentItem };
+		
+		//We can't just assign the new obj to the current (and spreading new obj won't work either)
+		//as that will change the reference of currentItem to the reference of the new data obj, rather 
+		//than changing the value of the current object to the new data values.
+		//Therefore, we need to explicitly set the values.
+		for(let prop in newItemData)
+		{
+			currentItem[prop] = newItemData[prop];
+		}
+		
+		let userToSave:any = { ...this._currentUser!, password: this._currentUserPassword };
+		delete userToSave.id;
+		
+		return this._saveUser(userToSave, this._currentUser!.id)
+			.then(user => currentItem)
+			.catch(err => {
+				currentItem = originalItemData;
+				throw new Error(`Error saving new ${entityTypeName}: ${err.message}`);
+			});
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	createScale(newScale:Omit<IScale, "id">) { 
 		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale");
 	}
 	
-	updateScale(currentScale:IScale, newScaleData:IScale)
-	{
-		throw new Error("Method not implemented");
-		return new Promise(()=>{});
+	updateScale(currentScale:IScale, newScaleData:IScale) {
+		return this._updateArrayItemInCurrentUser(currentScale, newScaleData, "scale");
 	}
 	
 	deleteScale(scale:IScale)
