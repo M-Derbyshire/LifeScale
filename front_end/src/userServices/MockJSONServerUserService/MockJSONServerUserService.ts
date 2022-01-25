@@ -280,7 +280,6 @@ export default class MockJSONServerUserService implements IUserService {
 			.catch(err => {
 				clearCurrentArray();
 				originalArray.forEach((item) => containingArray.push(item));
-				console.log(containingArray);
 				throw new Error(`Error saving new ${entityTypeName}: ${err.message}`);
 			});
 		
