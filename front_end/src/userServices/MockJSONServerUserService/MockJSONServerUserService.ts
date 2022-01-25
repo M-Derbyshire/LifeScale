@@ -306,7 +306,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createCategory(newCategory:Omit<ICategory, "id">)
+	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
@@ -318,7 +318,7 @@ export default class MockJSONServerUserService implements IUserService {
 		return new Promise(()=>{});
 	}
 	
-	deleteCategory(category:ICategory)
+	deleteCategory(parentScale:IScale, category:ICategory)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
@@ -327,7 +327,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createAction(newAction:Omit<IAction, "id">)
+	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
@@ -339,7 +339,7 @@ export default class MockJSONServerUserService implements IUserService {
 		return new Promise(()=>{});
 	}
 	
-	deleteAction(action:IAction)
+	deleteAction(parentCategory:ICategory, action:IAction)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
@@ -348,13 +348,13 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createTimespan(newTimespan:Omit<ITimespan, "id">)
+	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});
 	}
 	
-	deleteTimespan(timespan:ITimespan)
+	deleteTimespan(parentAction:IAction, timespan:ITimespan)
 	{
 		throw new Error("Method not implemented");
 		return new Promise(()=>{});

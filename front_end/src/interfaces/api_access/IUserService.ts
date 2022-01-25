@@ -46,17 +46,17 @@ interface IUserService {
 	updateScale:(currentScale:IScale, newScaleData:IScale)=>Promise<any>;
 	deleteScale:(scale:IScale)=>Promise<any>;
 	
-	createCategory:(newCategory:Omit<ICategory, "id">)=>Promise<any>;
+	createCategory:(parentScale:IScale, newCategory:Omit<ICategory, "id">)=>Promise<any>;
 	updateCategory:(currentCategory:ICategory, newCategoryData:ICategory)=>Promise<any>;
-	deleteCategory:(category:ICategory)=>Promise<any>;
+	deleteCategory:(parentScale:IScale, category:ICategory)=>Promise<any>;
 	
-	createAction:(newAction:Omit<IAction, "id">)=>Promise<any>;
+	createAction:(parentCategory:ICategory, newAction:Omit<IAction, "id">)=>Promise<any>;
 	updateAction:(currentAction:IAction, newActionData:IAction)=>Promise<any>;
-	deleteAction:(action:IAction)=>Promise<any>;
+	deleteAction:(parentCategory:ICategory, action:IAction)=>Promise<any>;
 	
 	//At this time, you can replace timespans by deleting/creating, but not update
-	createTimespan:(newTimespan:Omit<ITimespan, "id">)=>Promise<any>;
-	deleteTimespan:(timespan:ITimespan)=>Promise<any>;
+	createTimespan:(parentAction:IAction, newTimespan:Omit<ITimespan, "id">)=>Promise<any>;
+	deleteTimespan:(parentAction:IAction, timespan:ITimespan)=>Promise<any>;
 	
 }
 
