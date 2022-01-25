@@ -41,20 +41,20 @@ interface IUserService {
 													//returns IPasswordFailureInformation object
 	
 	
-	createScale:(newScale:IScale)=>Promise<any>;
+	createScale:(newScale:Omit<IScale, "id">)=>Promise<any>;
 	updateScale:(currentScale:IScale, newScaleData:IScale)=>Promise<any>;
 	deleteScale:(scale:IScale)=>Promise<any>;
 	
-	createCategory:(newCategory:ICategory)=>Promise<any>;
+	createCategory:(newCategory:Omit<ICategory, "id">)=>Promise<any>;
 	updateCategory:(currentCategory:ICategory, newCategoryData:ICategory)=>Promise<any>;
 	deleteCategory:(category:ICategory)=>Promise<any>;
 	
-	createAction:(newAction:IAction)=>Promise<any>;
+	createAction:(newAction:Omit<IAction, "id">)=>Promise<any>;
 	updateAction:(currentAction:IAction, newActionData:IAction)=>Promise<any>;
 	deleteAction:(action:IAction)=>Promise<any>;
 	
 	//At this time, you can replace timespans by deleting/creating, but not update
-	createTimespan:(newTimespan:ITimespan)=>Promise<any>;
+	createTimespan:(newTimespan:Omit<ITimespan, "id">)=>Promise<any>;
 	deleteTimespan:(timespan:ITimespan)=>Promise<any>;
 	
 }
