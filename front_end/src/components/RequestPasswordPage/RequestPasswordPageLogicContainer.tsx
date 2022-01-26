@@ -31,7 +31,14 @@ export default class RequestPasswordPageLogicContainer
 	
 	handleSubmit()
 	{
-		this.props.userService.requestNewPassword(this.state.email);
+		const standardGoodSaveMessage = "A new password has now been sent via email.";
+		
+		this.props.userService.requestNewPassword(this.state.email)
+			.then((x) => this.setState({ 
+				badSaveErrorMessage: undefined, 
+				goodSaveMessage: standardGoodSaveMessage 
+			}))
+			.catch(err => err);
 	}
 	
 	render()
