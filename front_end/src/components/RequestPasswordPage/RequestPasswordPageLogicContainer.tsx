@@ -7,9 +7,26 @@ interface IRequestPasswordPageLogicContainerProps {
 	userService:IUserService;
 }
 
+interface IRequestPasswordPageLogicContainerState {
+	email:string;
+	badSaveErrorMessage?:string;
+	goodSaveMessage?:string;
+}
+
 export default class RequestPasswordPageLogicContainer 
-	extends Component<IRequestPasswordPageLogicContainerProps> 
+	extends Component<IRequestPasswordPageLogicContainerProps, IRequestPasswordPageLogicContainerState> 
 {
+	
+	constructor(props:IRequestPasswordPageLogicContainerProps)
+	{
+		super(props);
+		
+		this.state = {
+			email: "",
+			badSaveErrorMessage: undefined,
+			goodSaveMessage: undefined
+		};
+	}
 	
 	
 	render()
