@@ -2,10 +2,13 @@ import RequestPasswordPageLogicContainer from './RequestPasswordPageLogicContain
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService'
 
+const dummyBackHandler = ()=>{};
+
 test("Logic container for RequestPasswordPage will render a RequestPasswordPage component", () => {
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={new TestingDummyUserService()} /> );
+									userService={new TestingDummyUserService()}
+									backButtonHandler={dummyBackHandler} /> );
 	
 	expect(container.querySelector(".RequestPasswordPage")).not.toBeNull();
 	
@@ -20,7 +23,8 @@ test("Logic container for RequestPasswordPage will handle the state and submissi
 	const expectedEmailValue = "test1@test1.com";
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={mockUserService} /> );
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler} /> );
 	
 	const emailInput = container.querySelector("input[type=email]");
 	fireEvent.change(emailInput, { target: { value: expectedEmailValue } });
@@ -40,7 +44,8 @@ test("Logic container for RequestPasswordPage will pass on good save messages", 
 	mockUserService.requestNewPassword = (email:string) => new Promise((resolve, reject) => resolve(null));
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={mockUserService} /> );
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler} /> );
 	
 	const emailInput = container.querySelector("input[type=email]");
 	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
@@ -64,7 +69,8 @@ test("Logic container for RequestPasswordPage will pass down bad save messages",
 		(email:string) => new Promise((resolve, reject) => reject(new Error(saveMessage)));
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={mockUserService} /> );
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler} /> );
 	
 	const emailInput = container.querySelector("input[type=email]");
 	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
@@ -89,7 +95,8 @@ test("In logic container for RequestPasswordPage, a good request will clear the 
 		(email:string) => new Promise((resolve, reject) => reject(new Error(saveMessage)));
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={mockUserService} /> );
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler} /> );
 	
 	const emailInput = container.querySelector("input[type=email]");
 	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
@@ -126,7 +133,8 @@ test("In logic container for RequestPasswordPage, a bad request will clear the g
 	mockUserService.requestNewPassword = (email:string) => new Promise((resolve, reject) => resolve(null));
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={mockUserService} /> );
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler} /> );
 	
 	const emailInput = container.querySelector("input[type=email]");
 	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
@@ -151,5 +159,22 @@ test("In logic container for RequestPasswordPage, a bad request will clear the g
 	await waitFor(
 		() => expect(screen.queryByText(saveMessage)).toBeNull()
 	);
+	
+});
+
+
+test("Logic container for RequestPasswordPage will pass the given backButtonHandler prop into the RequestPasswordPage", () => {
+	
+	const mockBackCallback = jest.fn();
+	
+	const { container } = render(<RequestPasswordPageLogicContainer 
+									userService={new TestingDummyUserService()}
+									backButtonHandler={mockBackCallback} /> );
+	
+	const backButton = container.querySelector(".RequestPasswordForm .backButton");
+	
+	fireEvent.click(backButton);
+	
+	expect(mockBackCallback).toHaveBeenCalled();
 	
 });

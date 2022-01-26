@@ -1,6 +1,10 @@
 import RequestPasswordPage from './RequestPasswordPage';
 import { render, fireEvent, screen } from '@testing-library/react';
 
+const dummyBackButtonHandler = () => {};
+const dummySetEmail = (e) => {};
+const dummySubmit = ()=>{};
+
 test("RequestPasswordPage will render a RequestPasswordForm, with the given props", () => {
 	
 	const initialEmailValue = "test@test.com";
@@ -15,7 +19,8 @@ test("RequestPasswordPage will render a RequestPasswordForm, with the given prop
 				setEmail={mockSetEmail}
 				onSubmit={mockSubmit}
 				badSaveErrorMessage={badSaveErrorMessage}
-				goodSaveMessage={goodSaveMessage} />);
+				goodSaveMessage={goodSaveMessage}
+				backButtonHandler={dummyBackButtonHandler} />);
 	
 	expect(container.querySelector(".RequestPasswordForm")).not.toBeNull();
 	
@@ -31,5 +36,24 @@ test("RequestPasswordPage will render a RequestPasswordForm, with the given prop
 	
 	expect(screen.getByText(badSaveErrorMessage)).not.toBeNull();
 	expect(screen.getByText(goodSaveMessage)).not.toBeNull();
+	
+});
+
+
+test("RequestPasswordPage will pass the given backButtonHandler prop into the RequestPasswordForm", () => {
+	
+	const mockBackCallback = jest.fn();
+	
+	const { container } = render(<RequestPasswordPage
+				email="test@test.com"
+				setEmail={dummySetEmail}
+				onSubmit={dummySubmit}
+				backButtonHandler={mockBackCallback} />);
+	
+	const backButton = container.querySelector(".RequestPasswordForm .backButton");
+	
+	fireEvent.click(backButton);
+	
+	expect(mockBackCallback).toHaveBeenCalled();
 	
 });

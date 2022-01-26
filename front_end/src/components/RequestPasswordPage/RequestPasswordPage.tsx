@@ -8,6 +8,7 @@ interface IRequestPasswordPageProps {
 	onSubmit:()=>void;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
+	backButtonHandler:()=>void;
 }
 
 
@@ -21,7 +22,8 @@ const RequestPasswordPage:FC<IRequestPasswordPageProps> = (props) => {
 					setEmail={props.setEmail}
 					onSubmit={props.onSubmit}
 					badSaveErrorMessage={props.badSaveErrorMessage}
-					goodSaveMessage={props.goodSaveMessage} />
+					goodSaveMessage={props.goodSaveMessage}
+					backButtonHandler={props.backButtonHandler} />
 			</div>
 		</div>
 	);

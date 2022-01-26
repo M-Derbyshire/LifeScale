@@ -9,6 +9,7 @@ interface IRequestPasswordFormProps {
 	onSubmit:()=>void;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
+	backButtonHandler:()=>void;
 }
 
 /*
@@ -32,7 +33,11 @@ const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 				{props.goodSaveMessage && 
 							<GoodSaveMessage message={props.goodSaveMessage} />}
 				
+				{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
 				<input type="submit" value="Request New Password" />
+				<button className="backButton" type="button" onClick={props.backButtonHandler}>
+					Back to Login
+				</button>
 			</form>
 		</div>
 	);

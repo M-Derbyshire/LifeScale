@@ -5,6 +5,7 @@ import IUserService from '../../interfaces/api_access/IUserService';
 
 interface IRequestPasswordPageLogicContainerProps {
 	userService:IUserService;
+	backButtonHandler:()=>void;
 }
 
 interface IRequestPasswordPageLogicContainerState {
@@ -54,7 +55,8 @@ export default class RequestPasswordPageLogicContainer
 					setEmail={(email:string)=>this.setState({ email })}
 					onSubmit={this.handleSubmit.bind(this)}
 					badSaveErrorMessage={this.state.badSaveErrorMessage}
-					goodSaveMessage={this.state.goodSaveMessage} />
+					goodSaveMessage={this.state.goodSaveMessage}
+					backButtonHandler={this.props.backButtonHandler} />
 			</div>
 		);
 	}

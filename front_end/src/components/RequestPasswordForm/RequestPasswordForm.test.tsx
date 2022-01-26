@@ -3,10 +3,15 @@ import { render, fireEvent } from '@testing-library/react';
 
 const dummySetEmail = (email)=>{};
 const dummySubmitCB = ()=>{};
+const dummyBackCB = ()=>{};
 
 test("RequestPasswordForm renders an email input", () => {
 	
-	const { container } = render(<RequestPasswordForm email="email@email.com" setEmail={dummySetEmail} onSubmit={dummySubmitCB} />);
+	const { container } = render(<RequestPasswordForm 
+									email="email@email.com" 
+									setEmail={dummySetEmail} 
+									onSubmit={dummySubmitCB}
+									backButtonHandler={dummyBackCB} />);
 	
 	const email = container.querySelector("form input[type=email]");
 	
@@ -18,7 +23,11 @@ test("RequestPasswordForm will call the onSubmit handler prop when submitted", (
 	
 	const mockCB = jest.fn();
 	
-	const { container } = render(<RequestPasswordForm email="email@email.com" setEmail={dummySetEmail} onSubmit={mockCB} />);
+	const { container } = render(<RequestPasswordForm 
+									email="email@email.com" 
+									setEmail={dummySetEmail} 
+									onSubmit={mockCB}
+									backButtonHandler={dummyBackCB} />);
 	
 	//Checking this to make sure it's there, as fireEvent.submit() should actually be used (virtual dom doesn't implement submit)
 	const submit = container.querySelector("form input[type=submit]");
@@ -36,7 +45,11 @@ test.each([
 	["email2@email.com"]
 ])("RequestPasswordForm renders the email prop as the email", (email) => {
 	
-	const { container } = render(<RequestPasswordForm email={email} setEmail={dummySetEmail} onSubmit={dummySubmitCB} />);
+	const { container } = render(<RequestPasswordForm 
+									email={email} 
+									setEmail={dummySetEmail} 
+									onSubmit={dummySubmitCB}
+									backButtonHandler={dummyBackCB} />);
 	
 	const emailInput = container.querySelector("form input[type=email]");
 	
@@ -50,7 +63,11 @@ test("RequestPasswordForm will use the setEmail prop as the email onChange event
 	const mockCB = jest.fn();
 	const newVal = "test1@test.com";
 	
-	const { container } = render(<RequestPasswordForm email="test@test.com" setEmail={mockCB} onSubmit={dummySubmitCB} />);
+	const { container } = render(<RequestPasswordForm 
+									email="test@test.com" 
+									setEmail={mockCB} 
+									onSubmit={dummySubmitCB}
+									backButtonHandler={dummyBackCB} />);
 	
 	const emailInput = container.querySelector("form input[type=email]");
 	
@@ -69,7 +86,8 @@ test.each([
 									email="test@test.com" 
 									setEmail={dummySetEmail} 
 									onSubmit={dummySubmitCB}
-									badSaveErrorMessage={message} />);
+									badSaveErrorMessage={message}
+									backButtonHandler={dummyBackCB} />);
 	
 	const messageDisplay = container.querySelector(".BadSaveMessage");
 	
@@ -87,11 +105,30 @@ test.each([
 									email="test@test.com" 
 									setEmail={dummySetEmail} 
 									onSubmit={dummySubmitCB}
-									goodSaveMessage={message} />);
+									goodSaveMessage={message}
+									backButtonHandler={dummyBackCB} />);
 	
 	const messageDisplay = container.querySelector(".GoodSaveMessage");
 	
 	expect(messageDisplay).not.toBeNull();
 	expect(messageDisplay.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+test("RequestPasswordForm will call the given backButtonHandler prop when back button clicked", () => {
+	
+	const mockBackCallback = jest.fn();
+	
+	const { container } = render(<RequestPasswordForm 
+									email="test@test.com" 
+									setEmail={dummySetEmail} 
+									onSubmit={dummySubmitCB}
+									backButtonHandler={mockBackCallback} />);
+	
+	const backButton = container.querySelector(".RequestPasswordForm .backButton");
+	
+	fireEvent.click(backButton);
+	
+	expect(mockBackCallback).toHaveBeenCalled();
 	
 });
