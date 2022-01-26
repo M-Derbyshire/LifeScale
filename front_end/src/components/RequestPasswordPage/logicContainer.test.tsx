@@ -54,3 +54,102 @@ test("Logic container for RequestPasswordPage will pass on good save messages", 
 	);
 	
 });
+
+test("Logic container for RequestPasswordPage will pass down bad save messages", async () => {
+	
+	const saveMessage = "There was a problem with this request";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.requestNewPassword = 
+		(email:string) => new Promise((resolve, reject) => reject(new Error(saveMessage)));
+	
+	const { container } = render(<RequestPasswordPageLogicContainer 
+									userService={mockUserService} /> );
+	
+	const emailInput = container.querySelector("input[type=email]");
+	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	
+	await waitFor(
+		() => expect(screen.getByText(saveMessage)).not.toBeNull()
+	);
+	
+});
+
+
+test("In logic container for RequestPasswordPage, a good request will clear the bad request message", async () => {
+	
+	const saveMessage = "There was a problem with this request";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.requestNewPassword = 
+		(email:string) => new Promise((resolve, reject) => reject(new Error(saveMessage)));
+	
+	const { container } = render(<RequestPasswordPageLogicContainer 
+									userService={mockUserService} /> );
+	
+	const emailInput = container.querySelector("input[type=email]");
+	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+	
+	
+	//Rejecting promise to get error
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(
+		() => expect(screen.queryByText(saveMessage)).not.toBeNull()
+	);
+	
+	//Now get good save message
+	
+	mockUserService.requestNewPassword = (email:string) => new Promise((resolve, reject) => resolve(null));
+	
+	fireEvent.submit(form);
+	
+	await waitFor(
+		() => expect(screen.queryByText(saveMessage)).toBeNull()
+	);
+	
+});
+
+
+
+test("In logic container for RequestPasswordPage, a bad request will clear the good request message", async () => {
+	
+	const saveMessage = "A new password has now been sent via email.";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.requestNewPassword = (email:string) => new Promise((resolve, reject) => resolve(null));
+	
+	const { container } = render(<RequestPasswordPageLogicContainer 
+									userService={mockUserService} /> );
+	
+	const emailInput = container.querySelector("input[type=email]");
+	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+	
+	
+	//Resolve promise to get good save message
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(
+		() => expect(screen.queryByText(saveMessage)).not.toBeNull()
+	);
+	
+	//Now get error save message
+	
+	mockUserService.requestNewPassword = 
+		(email:string) => new Promise((resolve, reject) => reject(new Error("error")));
+	
+	fireEvent.submit(form);
+	
+	await waitFor(
+		() => expect(screen.queryByText(saveMessage)).toBeNull()
+	);
+	
+});

@@ -38,7 +38,10 @@ export default class RequestPasswordPageLogicContainer
 				badSaveErrorMessage: undefined, 
 				goodSaveMessage: standardGoodSaveMessage 
 			}))
-			.catch(err => err);
+			.catch(err => this.setState({
+				badSaveErrorMessage: err.message,
+				goodSaveMessage: undefined
+			}));
 	}
 	
 	render()
