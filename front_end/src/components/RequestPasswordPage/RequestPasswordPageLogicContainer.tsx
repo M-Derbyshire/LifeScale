@@ -29,6 +29,11 @@ export default class RequestPasswordPageLogicContainer
 	}
 	
 	
+	handleSubmit()
+	{
+		this.props.userService.requestNewPassword(this.state.email);
+	}
+	
 	render()
 	{
 		
@@ -36,8 +41,8 @@ export default class RequestPasswordPageLogicContainer
 			<div className="RequestPasswordPageLogicContainer">
 				<RequestPasswordPage 
 					email={this.state.email}
-					setEmail={(email:string)=>{console.log(email)}}
-					onSubmit={()=>console.log("submitted")}
+					setEmail={(email:string)=>this.setState({ email })}
+					onSubmit={this.handleSubmit.bind(this)}
 					badSaveErrorMessage={this.state.badSaveErrorMessage}
 					goodSaveMessage={this.state.goodSaveMessage} />
 			</div>
