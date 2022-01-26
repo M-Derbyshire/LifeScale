@@ -34,7 +34,12 @@ export default class RequestPasswordPageLogicContainer
 		
 		return (
 			<div className="RequestPasswordPageLogicContainer">
-				
+				<RequestPasswordPage 
+					email={this.state.email}
+					setEmail={(email:string)=>{console.log(email)}}
+					onSubmit={()=>console.log("submitted")}
+					badSaveErrorMessage={this.state.badSaveErrorMessage}
+					goodSaveMessage={this.state.goodSaveMessage} />
 			</div>
 		);
 	}
