@@ -5,6 +5,7 @@ import IUser from '../../interfaces/IUser';
 
 interface ILoginPageLogicContainerProps {
 	userService:IUserService;
+	onSuccessfulLogin:()=>void;
 	registerPath:string; //The URL path to the register user page
 	forgotPasswordPath:string; //The URL path to the request new password page
 }
@@ -36,7 +37,7 @@ export default class LoginPageLogicContainer
 	handleLogin()
 	{
 		this.props.userService.loginUser(this.state.email, this.state.password)
-			.then((user:IUser) => {})
+			.then((user:IUser) => this.props.onSuccessfulLogin())
 			.catch(err => this.setState({ badLoginErrorMessage: err.message }));
 	}
 	

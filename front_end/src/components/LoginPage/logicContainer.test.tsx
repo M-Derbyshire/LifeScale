@@ -3,11 +3,14 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
+const dummyOnLogin = () => {};
+
 test("Logic container for LoginPage will render a LoginPage component", () => {
 	
 	const { container } = render(<Router>
 									<LoginPageLogicContainer 
 										userService={new TestingDummyUserService()}
+										onSuccessfulLogin={dummyOnLogin}
 										registerPath="/"
 										forgotPasswordPath="/" />
 								</Router> );
@@ -34,6 +37,7 @@ test("Logic container for LoginPage will handle the state and submission of form
 	const { container } = render(<Router>
 									<LoginPageLogicContainer 
 										userService={mockUserService}
+										onSuccessfulLogin={dummyOnLogin}
 										registerPath="/"
 										forgotPasswordPath="/" />
 								</Router>);
@@ -62,6 +66,7 @@ test("Logic container for LoginPage will pass the bad login error message to the
 	const { container } = render(<Router>
 									<LoginPageLogicContainer 
 										userService={mockUserService}
+										onSuccessfulLogin={dummyOnLogin}
 										registerPath="/"
 										forgotPasswordPath="/" />
 								</Router>);
@@ -91,6 +96,7 @@ test("Logic container for LoginPage will pass the link paths to the LoginPage", 
 	const { container } = render(<Router>
 									<LoginPageLogicContainer 
 										userService={new TestingDummyUserService()}
+										onSuccessfulLogin={dummyOnLogin}
 										registerPath={registerPath}
 										forgotPasswordPath={forgotPath} />
 								</Router>);
@@ -100,5 +106,40 @@ test("Logic container for LoginPage will pass the link paths to the LoginPage", 
 	
 	const forgotLink = screen.getByText("forgot", {exact: false});
 	expect(forgotLink).toHaveAttribute("href", forgotPath);
+	
+});
+
+
+test("Logic container for LoginPage will call the onSuccesfulLogin prop on good login", async () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.loginUser = jest.fn().mockResolvedValue({
+		id: "test",
+		email: "test@test.com",
+		forename: "test",
+		surname: "tester",
+		scales: []
+	});
+	
+	const mockOnLogin = jest.fn();
+	
+	const { container } = render(<Router>
+									<LoginPageLogicContainer 
+										userService={mockUserService}
+										onSuccessfulLogin={mockOnLogin}
+										registerPath="/"
+										forgotPasswordPath="/" />
+								</Router>);
+	
+	const emailInput = container.querySelector("input[type=email]");
+	fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+	
+	const passwordInput = container.querySelector("input[type=password]");
+	fireEvent.change(passwordInput, { target: { value: "password" } });
+	
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => expect(mockOnLogin).toHaveBeenCalled());
 	
 });
