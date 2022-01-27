@@ -69,7 +69,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	logoutUser()
 	{
-		return new Promise((resolve, reject) => {
+		return new Promise<null>((resolve, reject) => {
 			this._currentUser = undefined;
 			resolve(null);
 		});
@@ -82,7 +82,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	requestNewPassword(email:string)
 	{
-		return new Promise((resolve, reject) => {
+		return new Promise<null>((resolve, reject) => {
 			reject(new Error("As this is an example system, with a mocked API, this feature cannot be implemented."));
 		});
 	}
@@ -91,7 +91,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	//If id is undefined, this will be treated as a new user
-	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, id:string|undefined):Promise<any>
+	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, id:string|undefined):Promise<IUser>
 	{
 		const method = (!id) ? "POST" : "PUT";
 		let url = `${this._apiURLBase}/users`;
@@ -153,7 +153,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	updateLoadedUserPassword(currentPassword:string, newPassword:string)
 	{
-		return new Promise((resolve, reject) => {
+		return new Promise<IUser>((resolve, reject) => {
 			
 			// ----------------------------------------------------------------------------------
 			// As this is a mock API, for demonstration purposes this handles password validation
@@ -195,7 +195,7 @@ export default class MockJSONServerUserService implements IUserService {
 		delete userToSave.id;
 		
 		return this._saveUser(userToSave, this._currentUser!.id)
-			.then(user => currentArray)
+			.then(user => currentArray[currentArray.length - 1])
 			.catch(err => {
 				currentArray = originalArray;
 				throw new Error(`Error saving new ${entityTypeName}: ${err.message}`);
@@ -288,51 +288,50 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	createScale(newScale:Omit<IScale, "id">) { 
+	createScale(newScale:Omit<IScale, "id">):Promise<IScale> { 
 		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale");
 	}
 	
-	updateScale(currentScale:IScale, newScaleData:IScale) {
+	updateScale(currentScale:IScale, newScaleData:IScale):Promise<IScale> {
 		return this._updateArrayItemInCurrentUser(currentScale, newScaleData, "scale");
 	}
 	
-	deleteScale(scale:IScale) {
+	deleteScale(scale:IScale):Promise<IScale[]> {
 		return this._deleteArrayItemInCurrentUser(this._currentUser!.scales, scale, "scale");
 	}
 	
 	
-	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">) {
+	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">):Promise<ICategory> {
 		return this._saveToArrayInCurrentUser(parentScale.categories, newCategory, "category");
 	}
 	
-	updateCategory(currentCategory:ICategory, newCategoryData:ICategory) {
+	updateCategory(currentCategory:ICategory, newCategoryData:ICategory):Promise<ICategory> {
 		return this._updateArrayItemInCurrentUser(currentCategory, newCategoryData, "category");
 	}
 	
-	deleteCategory(parentScale:IScale, category:ICategory)
-	{
+	deleteCategory(parentScale:IScale, category:ICategory):Promise<ICategory[]> {
 		return this._deleteArrayItemInCurrentUser(parentScale.categories, category, "category");
 	}
 	
 	
-	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">) {
+	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">):Promise<IAction> {
 		return this._saveToArrayInCurrentUser(parentCategory.actions, newAction, "action");
 	}
 	
-	updateAction(currentAction:IAction, newActionData:IAction) {
+	updateAction(currentAction:IAction, newActionData:IAction):Promise<IAction> {
 		return this._updateArrayItemInCurrentUser(currentAction, newActionData, "action");
 	}
 	
-	deleteAction(parentCategory:ICategory, action:IAction) {
+	deleteAction(parentCategory:ICategory, action:IAction):Promise<IAction[]> {
 		return this._deleteArrayItemInCurrentUser(parentCategory.actions, action, "action");
 	}
 	
 	
-	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">) {
+	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">):Promise<ITimespan> {
 		return this._saveToArrayInCurrentUser(parentAction.timespans, newTimespan, "timespan");
 	}
 	
-	deleteTimespan(parentAction:IAction, timespan:ITimespan) {
+	deleteTimespan(parentAction:IAction, timespan:ITimespan):Promise<ITimespan[]> {
 		return this._deleteArrayItemInCurrentUser(parentAction.timespans, timespan, "timespan");
 	}
 	
