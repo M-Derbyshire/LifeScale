@@ -167,7 +167,10 @@ export default class MockJSONServerUserService implements IUserService {
 			delete userToSave.id;
 			
 			this._saveUser(userToSave, this._currentUser!.id)
-				.then(user => resolve(user))
+				.then(user => {
+					this._currentUserPassword = newPassword;
+					resolve(user);
+				})
 				.catch(err => reject(err));
 		});
 	}
