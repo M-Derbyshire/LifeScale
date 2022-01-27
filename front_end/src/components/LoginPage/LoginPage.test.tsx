@@ -31,7 +31,6 @@ test("LoginPage will render a LoginForm with the given props", () => {
 	expect(loginForm).not.toBeNull();
 	
 	const emailInput = screen.getByDisplayValue(initialEmailValue);
-	console.log(emailInput.value);
 	fireEvent.change(emailInput, { target: { value: newEmailValue } });
 	expect(mockSetEmail).toHaveBeenCalledWith(newEmailValue);
 	
