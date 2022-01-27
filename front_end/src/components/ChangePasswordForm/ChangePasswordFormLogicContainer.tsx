@@ -34,10 +34,14 @@ export default class ChangePasswordFormLogicContainer
 	
 	handleSubmit()
 	{
-		this.props.userService.updateLoadedUserPassword(
-			this.state.currentPassword, 
-			this.state.newPassword
-		);
+		//If not, ChangePasswordForm currently displays a message to say it's incorrect
+		if(this.state.newPasswordIsConfirmed)
+		{
+			this.props.userService.updateLoadedUserPassword(
+				this.state.currentPassword, 
+				this.state.newPassword
+			);
+		}
 	}
 	
 	render()
