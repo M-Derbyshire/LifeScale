@@ -160,18 +160,18 @@ export default class MockJSONServerUserService implements IUserService {
 			// ----------------------------------------------------------------------------------
 			if(currentPassword !== this._currentUserPassword)
 				reject(new Error("The current password provided is incorrect."));
-			
-			
-			
-			let userToSave:any = { ...this._currentUser!, password: newPassword };
-			delete userToSave.id;
-			
-			this._saveUser(userToSave, this._currentUser!.id)
-				.then(user => {
-					this._currentUserPassword = newPassword;
-					resolve(user);
-				})
-				.catch(err => reject(err));
+			else
+			{
+				let userToSave:any = { ...this._currentUser!, password: newPassword };
+				delete userToSave.id;
+				
+				this._saveUser(userToSave, this._currentUser!.id)
+					.then(user => {
+						this._currentUserPassword = newPassword;
+						resolve(user);
+					})
+					.catch(err => reject(err));
+			}
 		});
 	}
 	
