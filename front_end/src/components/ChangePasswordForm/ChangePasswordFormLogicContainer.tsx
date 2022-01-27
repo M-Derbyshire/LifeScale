@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import IUserService from '../../interfaces/api_access/IUserService';
+import IUser from '../../interfaces/IUser';
 import ChangePasswordForm from './ChangePasswordForm';
 
 interface IChangePasswordFormLogicContainerProps {
@@ -37,10 +38,12 @@ export default class ChangePasswordFormLogicContainer
 		//If not, ChangePasswordForm currently displays a message to say it's incorrect
 		if(this.state.newPasswordIsConfirmed)
 		{
-			this.props.userService.updateLoadedUserPassword(
-				this.state.currentPassword, 
-				this.state.newPassword
-			);
+			const goodSaveMessage = "Your password has now been changed.";
+			
+			this.props.userService
+				.updateLoadedUserPassword(this.state.currentPassword, this.state.newPassword)
+				.then((user:IUser) => this.setState({ goodSaveMessage, badSaveErrorMessage: undefined }))
+				.catch(err => this.setState({ badSaveErrorMessage: err.message, goodSaveMessage: undefined }));
 		}
 	}
 	
