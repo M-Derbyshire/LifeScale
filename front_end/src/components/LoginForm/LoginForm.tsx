@@ -18,7 +18,7 @@ const LoginForm:FC<ILoginFormProps> = (props) => {
 	
 	return (
 		<div className="LoginForm">
-			<form onSubmit={props.onSubmit}>
+			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); }}>
 				
 				<label>
 					Email: <input type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
