@@ -90,6 +90,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	
 	//If id is undefined, this will be treated as a new user
 	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, id:string|undefined):Promise<IUser>
 	{
@@ -97,6 +98,21 @@ export default class MockJSONServerUserService implements IUserService {
 		let url = `${this._apiURLBase}/users`;
 		if(id)
 			url += `/${id}`;
+		
+		//Find any missing properties on user data
+		let missingProperties:string[] = [];
+		if(!newUserData.email) missingProperties.push("email address");
+		if(!newUserData.password) missingProperties.push("password");
+		if(!newUserData.forename) missingProperties.push("forename");
+		if(!newUserData.surname) missingProperties.push("surname");
+		if(!newUserData.scales) missingProperties.push("scales");
+		
+		if(missingProperties.length > 0)
+		{
+			return new Promise((resolve, reject) => {
+				reject(new Error(`The following required properties have not been provided: ${missingProperties.join(", ")}`));
+			});
+		}
 		
 		
 		return fetch(url, {
