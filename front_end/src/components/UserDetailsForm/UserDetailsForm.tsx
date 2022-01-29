@@ -50,7 +50,7 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 				</header>
 				
 				<LoadedContentWrapper errorMessage={this.props.badLoadErrorMessage} render={this.props.user && 
-					<form onSubmit={this.props.onSubmit}>
+					<form onSubmit={(e) => { e.preventDefault(); this.props.onSubmit() } }>
 						
 						<UserDetailsFormPartial 
 							email={this.props.user.email}
