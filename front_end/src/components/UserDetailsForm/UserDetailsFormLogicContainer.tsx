@@ -47,8 +47,7 @@ export default class UserDetailsFormLogicContainer
 		try 
 		{
 			if(!this.props.isNewUser)
-				//Spread, so we don't change the userService user
-				user = { ...this.props.userService.getLoadedUser() };
+				user = this.props.userService.getLoadedUser();
 		} 
 		catch (err:any) 
 		{
