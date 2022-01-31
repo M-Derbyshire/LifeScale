@@ -139,10 +139,6 @@ export default class UserDetailsFormLogicContainer
 	render()
 	{
 		const isCreatingUser = (this.props.isNewUser && !this.state.userSavedPreviously);
-		const rejectAccess = (
-			!isCreatingUser && !this.state.userSavedPreviously && !this.props.userService.isLoggedIn());
-		
-		
 		
 		
 		
