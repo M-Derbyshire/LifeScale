@@ -364,17 +364,17 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	getScaleTimespans(scale:IScale, reverseOrder:boolean = false) {
-		let allTimespans:ITimespan[] = [];
+		let allTimespansInfo = new Array<(ITimespan & { category:ICategory, action:IAction })>();
 		
 		scale.categories.forEach(
 			cat => cat.actions.forEach(
 				act => act.timespans.forEach(
-					timespan => allTimespans.push(timespan)
+					(timespan:ITimespan) => allTimespansInfo.push({ ...timespan, action: act, category: cat })
 				)
 			)
-		);
+		); 
 		
-		return allTimespans.sort((a, b) => {
+		return allTimespansInfo.sort((a, b) => {
 			//Get the milliseconds since 01/01/1970, and compare
 			const aTimeMS = new Date(a.date).getTime();
 			const bTimeMS = new Date(b.date).getTime();
