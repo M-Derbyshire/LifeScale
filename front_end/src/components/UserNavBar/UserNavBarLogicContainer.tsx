@@ -51,6 +51,17 @@ export default class UserNavBarLogicContainer
 	}
 	
 	
+	logoutCallback()
+	{
+		this.props.userService.logoutUser()
+			.then(n => this.props.onSuccessfulLogout())
+			.catch(err => this.setState({ 
+				failedLogoutErrorMessage: "Error while logging out: " + err.message 
+			}));
+	}
+	
+	
+	
 	render()
 	{
 		
@@ -63,7 +74,8 @@ export default class UserNavBarLogicContainer
 					scaleLinks={scaleLinks}
 					editUserURL={this.props.editUserURL}
 					createScaleURL={this.props.createScaleURL}
-					logoutCallback={()=>{}} />
+					logoutCallback={this.logoutCallback.bind(this)}
+					failedLogoutErrorMessage={this.state.failedLogoutErrorMessage} />
 			</div>
 		);
 	}

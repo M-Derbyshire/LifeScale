@@ -1,5 +1,5 @@
 import UserNavBarLogicContainer from './UserNavBarLogicContainer';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
@@ -108,32 +108,75 @@ test("UserNavBarLogicContainer will not pass scaleLinks to the nav bar, if loadi
 });
 
 
-// test("UserNavBarLogicContainer will call onSuccessfulLogout callback prop, after successful logout", () => {
-	
-// 	const mockUserService = new TestingDummyUserService();
-// 	mockUserService.getLoadedUser = () => {
-// 		return {
-// 			scales: [],
-// 			id: "test",
-// 			email: "test@test.com",
-// 			forename: "test",
-// 			surname: "testing"
-// 		};
-// 	};
-	
-// 	const scaleURLBase = "scale123";
-	
-// 	render(<Router><UserNavBarLogicContainer
-// 				userService={mockUserService}
-// 				onSuccessfulLogout={()=>{}}
-// 				scaleURLBase={scaleURLBase}
-// 				editUserURL={"/test"}
-// 				createScaleURL={"/test"} /></Router>);
-	
-// });
 
-// test("UserNavBarLogicContainer will pass a failedLogoutErrorMessage if logout fails", () => {
+
+test("UserNavBarLogicContainer will call onSuccessfulLogout callback prop, after successful logout", async () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	
+	mockUserService.getLoadedUser = () => {
+		return {
+			scales: [],
+			id: "test",
+			email: "test@test.com",
+			forename: "test",
+			surname: "testing"
+		};
+	};
+	
+	mockUserService.logoutUser = jest.fn().mockResolvedValue(null);
+	
+	const mockLogoutCallback = jest.fn();
+	
+	render(<Router><UserNavBarLogicContainer
+				userService={mockUserService}
+				onSuccessfulLogout={mockLogoutCallback}
+				scaleURLBase={"/scale"}
+				editUserURL={"/test"}
+				createScaleURL={"/test"} /></Router>);
 	
 	
+	const logoutLink = screen.getByText("logout", {exact: false});
+	fireEvent.click(logoutLink);
 	
-// });
+	await waitFor(() => expect(mockLogoutCallback).toHaveBeenCalled());
+});
+
+
+test("UserNavBarLogicContainer will pass a failedLogoutErrorMessage if logout fails", async () => {
+	
+	const errorMessage = "test error, failed to logout test test";
+	
+	const mockUserService = new TestingDummyUserService();
+	
+	mockUserService.getLoadedUser = () => {
+		return {
+			scales: [],
+			id: "test",
+			email: "test@test.com",
+			forename: "test",
+			surname: "testing"
+		};
+	};
+	
+	mockUserService.logoutUser = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const mockLogoutCallback = jest.fn();
+	
+	render(<Router><UserNavBarLogicContainer
+				userService={mockUserService}
+				onSuccessfulLogout={mockLogoutCallback}
+				scaleURLBase={"/scale"}
+				editUserURL={"/test"}
+				createScaleURL={"/test"} /></Router>);
+	
+	
+	const logoutLink = screen.getByText("logout", {exact: false});
+	fireEvent.click(logoutLink);
+	
+	await waitFor(() => {
+		expect(mockLogoutCallback).not.toHaveBeenCalled();
+		expect(screen.queryByText(errorMessage, { exact: false })).not.toBeNull();
+	});
+	
+});
