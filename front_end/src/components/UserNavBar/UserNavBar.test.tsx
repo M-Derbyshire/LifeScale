@@ -67,3 +67,22 @@ test("UserNavBar will call the logoutCallback prop when the logout is clicked", 
 	
 	expect(mockLogoutCallback).toHaveBeenCalled();
 });
+
+
+test.each([
+	["test1"],
+	["test2"]
+])("UserNavBar will render the a failedLogoutErrorMessage prop if one's passed in", (message) => {
+	
+	render(<Router>
+		<UserNavBar 
+			createScaleURL="" 
+			editUserURL="" 
+			scaleLinks={[]} 
+			logoutCallback={dummyLogoutCallback} 
+			failedLogoutErrorMessage={message} />
+	</Router>);
+	
+	expect(screen.queryByText(message)).not.toBeNull();
+	
+});

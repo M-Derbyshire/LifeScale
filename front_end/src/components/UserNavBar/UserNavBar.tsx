@@ -3,12 +3,14 @@ import { NavLink } from 'react-router-dom';
 import './UserNavBar.scss';
 import IScaleLink from '../../interfaces/UI/IScaleLink';
 import ScalesNavList from '../ScalesNavList/ScalesNavList';
+import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 interface IUserNavBarProps {
 	scaleLinks:IScaleLink[];
 	editUserURL:string;
-	logoutCallback:()=>void;
 	createScaleURL:string;
+	logoutCallback:()=>void;
+	failedLogoutErrorMessage?:string;
 }
 
 
@@ -27,6 +29,8 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 			<NavLink className="editUserLink stdLink" to={props.editUserURL}>Edit My Details</NavLink>
 			
 			<span className="userLogoutSpan stdLink" onClick={props.logoutCallback}>Logout</span>
+			
+			{props.failedLogoutErrorMessage && <BadSaveMessage message={props.failedLogoutErrorMessage} />}
 			
 			<hr/>
 			
