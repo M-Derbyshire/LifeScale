@@ -87,3 +87,53 @@ test("UserNavBarLogicContainer will map scales to scaleLinks (using the given sc
 	);
 	
 });
+
+
+test("UserNavBarLogicContainer will not pass scaleLinks to the nav bar, if loading user failed", () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.getLoadedUser = () => {
+		throw new Error("bad load");
+	};
+	
+	const { container } = render(<Router><UserNavBarLogicContainer
+				userService={mockUserService}
+				onSuccessfulLogout={()=>{}}
+				scaleURLBase={"/scale"}
+				editUserURL={"/test"}
+				createScaleURL={"/test"} /></Router>);
+	
+	
+	expect(container.querySelectorAll(".ScalesNavList a").length).toBe(0);
+});
+
+
+// test("UserNavBarLogicContainer will call onSuccessfulLogout callback prop, after successful logout", () => {
+	
+// 	const mockUserService = new TestingDummyUserService();
+// 	mockUserService.getLoadedUser = () => {
+// 		return {
+// 			scales: [],
+// 			id: "test",
+// 			email: "test@test.com",
+// 			forename: "test",
+// 			surname: "testing"
+// 		};
+// 	};
+	
+// 	const scaleURLBase = "scale123";
+	
+// 	render(<Router><UserNavBarLogicContainer
+// 				userService={mockUserService}
+// 				onSuccessfulLogout={()=>{}}
+// 				scaleURLBase={scaleURLBase}
+// 				editUserURL={"/test"}
+// 				createScaleURL={"/test"} /></Router>);
+	
+// });
+
+// test("UserNavBarLogicContainer will pass a failedLogoutErrorMessage if logout fails", () => {
+	
+	
+	
+// });
