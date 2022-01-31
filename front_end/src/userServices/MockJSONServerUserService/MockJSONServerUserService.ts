@@ -307,7 +307,8 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	getScale(scaleID:string) {
-		return this._currentUser!.scales.find(scale => scale.id === scaleID);
+		try { return this._currentUser!.scales.find(scale => scale.id === scaleID); }
+		catch (err) { return undefined; }
 	}
 	
 	createScale(newScale:Omit<IScale, "id">):Promise<IScale> { 
