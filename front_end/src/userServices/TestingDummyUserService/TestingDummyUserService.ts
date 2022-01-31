@@ -76,6 +76,9 @@ export default class TestingDummyUserService implements IUserService {
 	}
 	
 	
+	getScale(scaleID:string) {
+		return undefined;
+	}
 	
 	createScale(newScale:Omit<IScale, "id">) { 
 		return new Promise<IScale>((resolve, reject) => {
@@ -96,6 +99,10 @@ export default class TestingDummyUserService implements IUserService {
 	}
 	
 	
+	getCategory(categoryID:string, scaleID:string) {
+		return undefined;
+	}
+	
 	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">) {
 		return new Promise<ICategory>((resolve, reject) => {
 			resolve({ ...newCategory, id: "test" });
@@ -115,6 +122,10 @@ export default class TestingDummyUserService implements IUserService {
 	}
 	
 	
+	getAction(actionID:string, categoryID:string, scaleID:string) {
+		return undefined;
+	}
+	
 	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">) {
 		return new Promise<IAction>((resolve, reject) => {
 			resolve({ ...newAction, id: "test" });
@@ -133,6 +144,10 @@ export default class TestingDummyUserService implements IUserService {
 		});
 	}
 	
+	
+	getScaleTimespans(scale:IScale, reverseOrder:boolean = false) {
+		return [];
+	}
 	
 	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">) {
 		return new Promise<ITimespan>((resolve, reject) => {

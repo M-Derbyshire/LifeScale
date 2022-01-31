@@ -37,18 +37,31 @@ interface IUserService {
 	updateLoadedUserPassword:(currentPassword:string, newPassword:string)=>Promise<IUser>;
 	
 	
+	
+	
+	// When retrieving these relations, the full data will already have been loaded (as 
+	// per the rules state for this interface). That being said, retrieval methods do 
+	// not return promises.
+	// -- Also, the retrieval methods will return undefined if not found
+	
+	
+	getScale:(scaleID:string)=>IScale|undefined; //Will return undefined if not found
 	createScale:(newScale:Omit<IScale, "id">)=>Promise<IScale>;
 	updateScale:(currentScale:IScale, newScaleData:IScale)=>Promise<IScale>;
 	deleteScale:(scale:IScale)=>Promise<IScale[]>;
 	
+	getCategory:(categoryID:string, scaleID:string)=>ICategory|undefined; //Will return undefined if not found
 	createCategory:(parentScale:IScale, newCategory:Omit<ICategory, "id">)=>Promise<ICategory>;
 	updateCategory:(currentCategory:ICategory, newCategoryData:ICategory)=>Promise<ICategory>;
 	deleteCategory:(parentScale:IScale, category:ICategory)=>Promise<ICategory[]>;
 	
+	getAction:(actionID:string, categoryID:string, scaleID:string)=>IAction|undefined; //Will return undefined if not found
 	createAction:(parentCategory:ICategory, newAction:Omit<IAction, "id">)=>Promise<IAction>;
 	updateAction:(currentAction:IAction, newActionData:IAction)=>Promise<IAction>;
 	deleteAction:(parentCategory:ICategory, action:IAction)=>Promise<IAction[]>;
 	
+	//Get all timespans for a scale, in date order.
+	getScaleTimespans:(scale:IScale, reverseOrder:boolean)=>ITimespan[];
 	//At this time, you can replace timespans by deleting/creating, but not update
 	createTimespan:(parentAction:IAction, newTimespan:Omit<ITimespan, "id">)=>Promise<ITimespan>;
 	deleteTimespan:(parentAction:IAction, timespan:ITimespan)=>Promise<ITimespan[]>;

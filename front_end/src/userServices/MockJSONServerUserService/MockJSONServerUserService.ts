@@ -306,6 +306,9 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	getScale(scaleID:string) {
+		return this._currentUser!.scales.find(scale => scale.id === scaleID);
+	}
 	
 	createScale(newScale:Omit<IScale, "id">):Promise<IScale> { 
 		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale");
@@ -320,6 +323,11 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
+	getCategory(categoryID:string, scaleID:string) {
+		try { return this.getScale(scaleID)!.categories.find(cat => cat.id === categoryID); }
+		catch (err) { return undefined; }
+	}
+	
 	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">):Promise<ICategory> {
 		return this._saveToArrayInCurrentUser(parentScale.categories, newCategory, "category");
 	}
@@ -333,6 +341,11 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
+	getAction(actionID:string, categoryID:string, scaleID:string) {
+		try { return this.getCategory(categoryID, scaleID)!.actions.find(act => act.id === actionID); }
+		catch (err) { return undefined; }
+	}
+	
 	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">):Promise<IAction> {
 		return this._saveToArrayInCurrentUser(parentCategory.actions, newAction, "action");
 	}
@@ -345,6 +358,28 @@ export default class MockJSONServerUserService implements IUserService {
 		return this._deleteArrayItemInCurrentUser(parentCategory.actions, action, "action");
 	}
 	
+	
+	
+	
+	
+	getScaleTimespans(scale:IScale, reverseOrder:boolean = false) {
+		let allTimespans:ITimespan[] = [];
+		
+		scale.categories.forEach(
+			cat => cat.actions.forEach(
+				act => act.timespans.forEach(
+					timespan => allTimespans.push(timespan)
+				)
+			)
+		);
+		
+		return allTimespans.sort((a, b) => {
+			//Get the milliseconds since 01/01/1970, and compare
+			const aTimeMS = new Date(a.date).getTime();
+			const bTimeMS = new Date(b.date).getTime();
+			return (reverseOrder) ? (bTimeMS - aTimeMS) : (aTimeMS - bTimeMS);
+		});
+	}
 	
 	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">):Promise<ITimespan> {
 		return this._saveToArrayInCurrentUser(parentAction.timespans, newTimespan, "timespan");
