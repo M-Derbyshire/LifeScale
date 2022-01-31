@@ -34,7 +34,11 @@ export default class UserNavBarLogicContainer
 		
 		return (
 			<div className="UserNavBarLogicContainer">
-				
+				<UserNavBar 
+					scaleLinks={[]}
+					editUserURL={this.props.editUserURL}
+					createScaleURL={this.props.createScaleURL}
+					logoutCallback={()=>{}} />
 			</div>
 		);
 	}
