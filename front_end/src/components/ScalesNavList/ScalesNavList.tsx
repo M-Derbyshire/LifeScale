@@ -1,5 +1,5 @@
 import React, { Component, ReactElement } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './ScalesNavList.scss';
 import IScaleLink from '../../interfaces/UI/IScaleLink';
 
@@ -17,7 +17,7 @@ class ScalesNavList extends Component<IScalesNavListProps> {
 	{
 		return (
 			<li key={`${scaleLink.label}-${scaleLink.url}`}>
-				<Link to={scaleLink.url}>{scaleLink.label}</Link>
+				<NavLink to={scaleLink.url}>{scaleLink.label}</NavLink>
 			</li>
 		);
 	}

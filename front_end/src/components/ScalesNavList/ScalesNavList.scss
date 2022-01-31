@@ -11,6 +11,8 @@
 		
 		li a {
 			
+			color: $stdSecondaryTxtColor;
+			
 			&:hover {
 				background-color: darken($stdSecondaryBackColor, 5);
 			}

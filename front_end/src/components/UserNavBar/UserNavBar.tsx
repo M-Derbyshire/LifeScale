@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './UserNavBar.scss';
 import IScaleLink from '../../interfaces/UI/IScaleLink';
 import ScalesNavList from '../ScalesNavList/ScalesNavList';
@@ -24,13 +24,13 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	return (
 		<div className="UserNavBar">
 			
-			<Link className="editUserLink stdLink" to={props.editUserURL}>Edit My Details</Link>
+			<NavLink className="editUserLink stdLink" to={props.editUserURL}>Edit My Details</NavLink>
 			
 			<span className="userLogoutSpan stdLink" onClick={props.logoutCallback}>Logout</span>
 			
 			<hr/>
 			
-			<Link className="createScaleLink stdLink" to={props.createScaleURL}>Create New Scale</Link>
+			<NavLink className="createScaleLink stdLink" to={props.createScaleURL}>Create New Scale</NavLink>
 			
 			<ScalesNavList scaleLinks={props.scaleLinks} />
 			
