@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import './RecordActionForm.scss';
 import IRecordedActionFormItem from '../../interfaces/UI/IRecordedActionFormItem';
 import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
@@ -72,14 +74,13 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						
 						
 						<label>
-							Date: <input 
-									type="date" 
+							Date: <DatePicker 
 									className="actionDate" 
 									value={convertDateToInputString(this.props.recordedAction.timespan.date)}
 									
-									onChange={(e) => this.props.recordedAction.setTimespan({
+									onChange={(date) => this.props.recordedAction.setTimespan({
 										 ...this.props.recordedAction.timespan, 
-										 date: new Date(e.target.value) 
+										 date: date! 
 									})} />
 						</label>
 						

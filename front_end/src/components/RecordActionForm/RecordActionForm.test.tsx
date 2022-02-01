@@ -178,7 +178,7 @@ test.each([
 	const { container } = render(<RecordActionForm 
 									recordedAction={{...dummyRecordedAction, timespan}} />);
 	
-	const dateInput = container.querySelector("input[type=date]");
+	const dateInput = container.querySelector(".actionDate");
 	
 	expect(dateInput.value).toBe(givenDate);
 	
@@ -197,7 +197,7 @@ test("RecordActionForm will call the setTimespan prop, when changing the date, b
 										setTimespan: mockSetTimespan
 									}} />);
 	
-	const dateInput = container.querySelector("input[type=date]");
+	const dateInput = container.querySelector(".actionDate");
 	fireEvent.change(dateInput, { target: { value: newDate } });
 	
 	expect(mockSetTimespan).toHaveBeenCalledWith({ ...timespan, date: new Date(newDate) });
