@@ -91,12 +91,14 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 								minuteCount: mins
 							})} />}
 						
+						
+						<input type="submit" value="Record Action" />
+						
+						
 						{this.props.recordedAction.badSaveErrorMessage && 
 							<BadSaveMessage message={this.props.recordedAction.badSaveErrorMessage} />}
 						{this.props.recordedAction.goodSaveMessage && 
 							<GoodSaveMessage message={this.props.recordedAction.goodSaveMessage} />}
-						
-						<input type="submit" value="Record Action" />
 						
 					</form>
 				</div>
