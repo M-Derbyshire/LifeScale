@@ -453,4 +453,51 @@ test("RecordActionFormLogicContainer will not blank the form after a failed save
 	
 });
 
-// optional succesfull save callback
+
+test("RecordActionFormLogicContainer will call the onSuccessfulSave prop on successful save", async () => {
+	
+	const mockSaveCallback = jest.fn();
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn().mockResolvedValue({
+		id: "testTimespan",
+		date: new Date().toString(),
+		minuteCount: 0
+	});
+	
+	const scale = dummyScaleUsesTimespans;
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale}
+									onSuccessfulSave={mockSaveCallback} />);
+	
+	const recordActionForm = container.querySelector(".RecordActionForm");
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => expect(mockSaveCallback).toHaveBeenCalled());
+	
+});
+
+test("RecordActionFormLogicContainer will not call the onSuccessfulSave prop on failed save", async () => {
+	
+	const mockSaveCallback = jest.fn();
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn().mockRejectedValue(new Error("Test"));
+	
+	const scale = dummyScaleUsesTimespans;
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale}
+									onSuccessfulSave={mockSaveCallback} />);
+	
+	const recordActionForm = container.querySelector(".RecordActionForm");
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => expect(mockSaveCallback).not.toHaveBeenCalled());
+	
+});

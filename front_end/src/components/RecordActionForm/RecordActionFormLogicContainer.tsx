@@ -9,6 +9,7 @@ import convertDateToInputString from '../../utility_functions/convertDateToInput
 interface IRecordActionFormLogicContainerProps {
 	userService:IUserService;
 	scale:IScale;
+	onSuccessfulSave?:()=>void;
 }
 
 interface IRecordActionFormLogicContainerState {
@@ -72,10 +73,15 @@ export default class RecordActionFormLogicContainer
 			date: new Date(this.state.timespan.date),
 			minuteCount: this.state.timespan.minuteCount
 		})
-			.then(timespan => this.setState({ 
-				...this.getBlankFormData(),
-				goodSaveMessage 
-			}))
+			.then(timespan => {
+				this.setState({ 
+					...this.getBlankFormData(),
+					goodSaveMessage 
+				});
+				
+				if(this.props.onSuccessfulSave)
+					this.props.onSuccessfulSave();
+			})
 			.catch(err => this.setState({ badSaveErrorMessage: err.message }));
 	}
 	
