@@ -54,6 +54,8 @@ export default class RecordActionFormLogicContainer
 	
 	handleSubmit()
 	{
+		const goodSaveMessage = "Action saved successfully.";
+		
 		const selectedAction = this.props.userService.getAction(
 			this.state.selectedActionID, 
 			this.state.selectedCategoryID, 
@@ -65,8 +67,8 @@ export default class RecordActionFormLogicContainer
 			date: new Date(this.state.timespan.date),
 			minuteCount: this.state.timespan.minuteCount
 		})
-			.then(timespan => {})
-			.catch(err => {});
+			.then(timespan => this.setState({ goodSaveMessage }))
+			.catch(err => this.setState({ badSaveErrorMessage: err.message }));
 	}
 	
 	

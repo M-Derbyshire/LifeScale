@@ -1,5 +1,5 @@
 import RecordActionFormLogicContainer from './RecordActionFormLogicContainer';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
@@ -282,7 +282,7 @@ test("In RecordActionFormLogicContainer, if the user has no categories, the sele
 	
 });
 
-test ("In RecordActionFormLogicContainer, if the category has no actions, the selected action will be an empty string", () => {
+test("In RecordActionFormLogicContainer, if the category has no actions, the selected action will be an empty string", () => {
 	
 	const scale = { ...dummyScaleUsesTimespans, categories: [{
 		id: "testCat23132948284",
@@ -303,9 +303,51 @@ test ("In RecordActionFormLogicContainer, if the category has no actions, the se
 });
 
 
-// good save message
+test("RecordActionFormLogicContainer will pass the successful save message to RecordActionForm to be rendered", async () => {
+	
+	const message = "Action saved successfully.";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn().mockResolvedValue({
+		id: "testTimespan",
+		date: new Date().toString(),
+		minuteCount: 0
+	});
+	
+	const scale = dummyScaleUsesTimespans;
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale} />);
+	
+	const recordActionForm = container.querySelector(".RecordActionForm");
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => expect(recordActionForm.textContent).toEqual(expect.stringContaining(message)));
+	
+});
 
-// bad save message
+test("RecordActionFormLogicContainer will pass the failed save message to RecordActionForm to be rendered", async () => {
+	
+	const message = "Error while saving.";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn().mockRejectedValue(new Error(message));
+	
+	const scale = dummyScaleUsesTimespans;
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale} />);
+	
+	const recordActionForm = container.querySelector(".RecordActionForm");
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => expect(recordActionForm.textContent).toEqual(expect.stringContaining(message)));
+	
+});
 
 // blank form after good save
 
