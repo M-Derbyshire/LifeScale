@@ -349,8 +349,108 @@ test("RecordActionFormLogicContainer will pass the failed save message to Record
 	
 });
 
-// blank form after good save
+test("RecordActionFormLogicContainer will blank the form after a successful save", async () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn().mockResolvedValue({
+		id: "testTimespan",
+		date: new Date().toString(),
+		minuteCount: 0
+	});
+	
+	const scale = dummyScaleUsesTimespans;
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale} />);
+	
+	//Get the inputs, and store their values
+	const categorySelect = container.querySelector(".categorySelect");
+	const categoryOriginalValue = categorySelect.value;
+	const actionSelect = container.querySelector(".actionSelect");
+	const actionOriginalValue = actionSelect.value;
+	const dateInput = container.querySelector(".actionDate");
+	const dateOriginalValue = dateInput.value;
+	const timepsanMinutesInput = container.querySelector(".timespanMinuteInput");
+	const minutesOriginalValue = timepsanMinutesInput.value;
+	const form = container.querySelector(".RecordActionForm form");
+	
+	
+	//Set the values, then submit the form
+	expect(categorySelect.value).toBe(scale.categories[0].id);
+	userEvent.selectOptions(categorySelect, scale.categories[1].id);
+	expect(actionSelect.value).toBe(scale.categories[1].actions[0].id);
+	userEvent.selectOptions(actionSelect, scale.categories[1].actions[1].id);
+	
+	const newDateValue = "2010-12-01";
+	const newMinuteValue = 150;
+	fireEvent.change(dateInput, { target: { value: newDateValue } });
+	fireEvent.change(timepsanMinutesInput, { target: { value: newMinuteValue } });
+	
+	
+	fireEvent.submit(form);
+	
+	
+	//These should revert back to their original values
+	await waitFor(() => {
+		expect(categorySelect.value).toBe(categoryOriginalValue);
+		expect(actionSelect.value).toBe(actionOriginalValue);
+		expect(dateInput.value).toBe(dateOriginalValue);
+		expect(timepsanMinutesInput.value).toBe(minutesOriginalValue);
+	});
+	
+});
 
-// dont blank form after bad save
+test("RecordActionFormLogicContainer will not blank the form after a failed save", async () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn().mockResolvedValue({
+		id: "testTimespan",
+		date: new Date().toString(),
+		minuteCount: 0
+	});
+	
+	const scale = dummyScaleUsesTimespans;
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale} />);
+	
+	//Get the inputs, and store their values
+	const categorySelect = container.querySelector(".categorySelect");
+	const categoryOriginalValue = categorySelect.value;
+	const actionSelect = container.querySelector(".actionSelect");
+	const actionOriginalValue = actionSelect.value;
+	const dateInput = container.querySelector(".actionDate");
+	const dateOriginalValue = dateInput.value;
+	const timepsanMinutesInput = container.querySelector(".timespanMinuteInput");
+	const minutesOriginalValue = timepsanMinutesInput.value;
+	const form = container.querySelector(".RecordActionForm form");
+	
+	
+	//Set the values, then submit the form
+	expect(categorySelect.value).toBe(scale.categories[0].id);
+	userEvent.selectOptions(categorySelect, scale.categories[1].id);
+	expect(actionSelect.value).toBe(scale.categories[1].actions[0].id);
+	userEvent.selectOptions(actionSelect, scale.categories[1].actions[1].id);
+	
+	const newDateValue = "2010-12-01";
+	const newMinuteValue = 150;
+	fireEvent.change(dateInput, { target: { value: newDateValue } });
+	fireEvent.change(timepsanMinutesInput, { target: { value: newMinuteValue } });
+	
+	
+	fireEvent.submit(form);
+	
+	
+	//These should not revert back to their original values
+	await waitFor(() => {
+		expect(categorySelect.value).not.toBe(categoryOriginalValue);
+		expect(actionSelect.value).not.toBe(actionOriginalValue);
+		expect(dateInput.value).not.toBe(dateOriginalValue);
+		expect(timepsanMinutesInput.value).not.toBe(minutesOriginalValue);
+	});
+	
+});
 
 // optional succesfull save callback

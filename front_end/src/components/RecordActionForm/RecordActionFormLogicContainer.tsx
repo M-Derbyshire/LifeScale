@@ -15,7 +15,6 @@ interface IRecordActionFormLogicContainerState {
 	selectedCategoryID:string;
 	selectedActionID:string;
 	
-	usesTimespans?:boolean;
 	timespan:ITimespan;
 	
 	badSaveErrorMessage?:string;
@@ -31,16 +30,22 @@ export default class RecordActionFormLogicContainer
 	{
 		super(props);
 		
+		this.state = { ...this.getBlankFormData() };
+	}
+	
+	
+	
+	getBlankFormData()
+	{
 		const selectedCategory = 
 			(this.props.scale.categories.length > 0) ? this.props.scale.categories[0] : undefined;
 		const selectedAction = 
 			(selectedCategory && selectedCategory.actions.length > 0) ? selectedCategory.actions[0] : undefined;
 		
 		
-		this.state = {
+		return {
 			selectedCategoryID: (selectedCategory) ? selectedCategory.id : "",
 			selectedActionID: (selectedAction) ? selectedAction.id : "",
-			usesTimespans: this.props.scale.usesTimespans,
 			timespan: {
 				id: "",
 				minuteCount: 0,
@@ -67,7 +72,10 @@ export default class RecordActionFormLogicContainer
 			date: new Date(this.state.timespan.date),
 			minuteCount: this.state.timespan.minuteCount
 		})
-			.then(timespan => this.setState({ goodSaveMessage }))
+			.then(timespan => this.setState({ 
+				...this.getBlankFormData(),
+				goodSaveMessage 
+			}))
 			.catch(err => this.setState({ badSaveErrorMessage: err.message }));
 	}
 	
@@ -82,6 +90,7 @@ export default class RecordActionFormLogicContainer
 			setSelectedCategoryID: (selectedCategoryID:string) => this.setState({ selectedCategoryID }),
 			setSelectedActionID: (selectedActionID:string) => this.setState({ selectedActionID }),
 			setTimespan: (timespan:ITimespan) => this.setState({ timespan }),
+			usesTimespans: this.props.scale.usesTimespans,
 			onSubmit: this.handleSubmit.bind(this)
 		};
 		
