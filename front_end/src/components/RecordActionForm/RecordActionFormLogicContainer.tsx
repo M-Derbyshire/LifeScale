@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import RecordActionForm from './RecordActionForm';
 import IUserService from '../../interfaces/api_access/IUserService';
 import IScale from '../../interfaces/IScale';
+import ITimespan from '../../interfaces/ITimespan';
 
 
 interface IRecordActionFormLogicContainerProps {
