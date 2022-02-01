@@ -36,7 +36,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 				</header>
 				
 				<div className="formContainer">
-					<form onSubmit={this.props.recordedAction.onSubmit}>
+					<form onSubmit={(e) => { e.preventDefault(); this.props.recordedAction.onSubmit() }}>
 						
 						<label>
 							Category: <select className="categorySelect" 
