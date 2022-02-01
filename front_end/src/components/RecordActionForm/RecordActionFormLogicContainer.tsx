@@ -61,6 +61,7 @@ export default class RecordActionFormLogicContainer
 	handleSubmit()
 	{
 		const goodSaveMessage = "Action saved successfully.";
+		const noActionMessage = "No action has been selected.";
 		
 		const selectedAction = this.props.userService.getAction(
 			this.state.selectedActionID, 
@@ -68,21 +69,28 @@ export default class RecordActionFormLogicContainer
 			this.props.scale.id
 		);
 		
-		
-		this.props.userService.createTimespan(selectedAction!, {
-			date: new Date(this.state.timespan.date),
-			minuteCount: this.state.timespan.minuteCount
-		})
-			.then(timespan => {
-				this.setState({ 
-					...this.getBlankFormData(),
-					goodSaveMessage 
-				});
-				
-				if(this.props.onSuccessfulSave)
-					this.props.onSuccessfulSave();
+		if(!selectedAction)
+		{
+			this.setState({ badSaveErrorMessage: noActionMessage , goodSaveMessage: undefined })
+		}
+		else
+		{
+			this.props.userService.createTimespan(selectedAction, {
+				date: new Date(this.state.timespan.date),
+				minuteCount: this.state.timespan.minuteCount
 			})
-			.catch(err => this.setState({ badSaveErrorMessage: err.message }));
+				.then(timespan => {
+					this.setState({ 
+						...this.getBlankFormData(),
+						goodSaveMessage 
+					});
+					
+					if(this.props.onSuccessfulSave)
+						this.props.onSuccessfulSave();
+				})
+				.catch(err => this.setState({ badSaveErrorMessage: err.message, goodSaveMessage: undefined }));
+		}
+		
 	}
 	
 	

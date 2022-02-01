@@ -305,16 +305,20 @@ test("In RecordActionFormLogicContainer, if the category has no actions, the sel
 
 test("RecordActionFormLogicContainer will pass the successful save message to RecordActionForm to be rendered", async () => {
 	
+	const scale = dummyScaleUsesTimespans;
 	const message = "Action saved successfully.";
 	
 	const mockUserService = new TestingDummyUserService();
+	
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
 		date: new Date().toString(),
 		minuteCount: 0
 	});
 	
-	const scale = dummyScaleUsesTimespans;
+	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
+	
+	
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}
@@ -330,12 +334,14 @@ test("RecordActionFormLogicContainer will pass the successful save message to Re
 
 test("RecordActionFormLogicContainer will pass the failed save message to RecordActionForm to be rendered", async () => {
 	
+	const scale = dummyScaleUsesTimespans;
 	const message = "Error while saving.";
 	
 	const mockUserService = new TestingDummyUserService();
 	mockUserService.createTimespan = jest.fn().mockRejectedValue(new Error(message));
+	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
 	
-	const scale = dummyScaleUsesTimespans;
+	
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}
@@ -351,14 +357,18 @@ test("RecordActionFormLogicContainer will pass the failed save message to Record
 
 test("RecordActionFormLogicContainer will blank the form after a successful save", async () => {
 	
+	const scale = dummyScaleUsesTimespans;
+	
 	const mockUserService = new TestingDummyUserService();
+	
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
 		date: new Date().toString(),
 		minuteCount: 0
 	});
 	
-	const scale = dummyScaleUsesTimespans;
+	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
+	
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}
@@ -456,16 +466,20 @@ test("RecordActionFormLogicContainer will not blank the form after a failed save
 
 test("RecordActionFormLogicContainer will call the onSuccessfulSave prop on successful save", async () => {
 	
+	const scale = dummyScaleUsesTimespans;
+	
 	const mockSaveCallback = jest.fn();
 	
 	const mockUserService = new TestingDummyUserService();
+	
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
 		date: new Date().toString(),
 		minuteCount: 0
 	});
 	
-	const scale = dummyScaleUsesTimespans;
+	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
+	
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}
@@ -499,5 +513,63 @@ test("RecordActionFormLogicContainer will not call the onSuccessfulSave prop on 
 	fireEvent.submit(form);
 	
 	await waitFor(() => expect(mockSaveCallback).not.toHaveBeenCalled());
+	
+});
+
+
+
+test("RecordActionFormLogicContainer will not call createTimespan if no category available, and will display an error", async () => {
+	
+	const message = "No action has been selected.";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn();
+	mockUserService.getAction = (actID, catID, scaleID) => undefined;
+	
+	const scale = { ...dummyScaleUsesTimespans, categories: [] };
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale} />);
+	
+	const recordActionForm = container.querySelector(".RecordActionForm");
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(mockUserService.createTimespan).not.toHaveBeenCalled();
+		expect(recordActionForm.textContent).toEqual(expect.stringContaining(message));
+	});
+	
+});
+
+test("RecordActionFormLogicContainer will not call createTimespan if no action available, and will display an error", async () => {
+	
+	const message = "No action has been selected.";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn();
+	mockUserService.getAction = (actID, catID, scaleID) => undefined;
+	
+	const scale = { ...dummyScaleUsesTimespans, categories: [{
+		id: "testCat23132948284",
+		name: "work",
+		color: "red",
+		desiredWeight: 1,
+		actions:[]
+	}] };
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={mockUserService}
+									scale={scale} />);
+	
+	const recordActionForm = container.querySelector(".RecordActionForm");
+	const form = container.querySelector("form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(mockUserService.createTimespan).not.toHaveBeenCalled();
+		expect(recordActionForm.textContent).toEqual(expect.stringContaining(message));
+	});
 	
 });
