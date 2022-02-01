@@ -69,7 +69,8 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 											(e) => this.props.recordedAction.setSelectedActionID(e.target.value)
 										}>
 								
-								{this.props.recordedAction.categories.find(
+								{this.props.recordedAction.categories.length > 0 && 
+								this.props.recordedAction.categories.find(
 									cat => cat.id === this.props.recordedAction.selectedCategoryID
 								)!.actions.map(
 									(act) => this.mapItemToOptionElem(act.name, act.id)
