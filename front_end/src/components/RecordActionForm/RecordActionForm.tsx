@@ -4,6 +4,7 @@ import IRecordedActionFormItem from '../../interfaces/UI/IRecordedActionFormItem
 import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
+import convertDateToInputString from '../../utility_functions/convertDateToInputString';
 
 interface IRecordActionFormProps {
 	recordedAction: IRecordedActionFormItem;
@@ -24,16 +25,6 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 		);
 	}
 	
-	convertDateToString(date:Date)
-	{
-		const day = date.getDate();
-		const month = date.getMonth() + 1;
-		
-		const paddedDay = (day < 10) ? `0${day}` : day;
-		const paddedMonth = (month < 10) ? `0${month}` : month;
-		
-		return `${date.getFullYear()}-${paddedMonth}-${paddedDay}`;
-	}
 	
 	render()
 	{
@@ -84,7 +75,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 							Date: <input 
 									type="date" 
 									className="actionDate" 
-									value={this.convertDateToString(this.props.recordedAction.timespan.date)}
+									value={convertDateToInputString(this.props.recordedAction.timespan.date)}
 									
 									onChange={(e) => this.props.recordedAction.setTimespan({
 										 ...this.props.recordedAction.timespan, 
