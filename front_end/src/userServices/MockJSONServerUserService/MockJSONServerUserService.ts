@@ -88,8 +88,28 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
+	//Returns empty string if given object has all the given required properties (and they are truthy),
+	// and otherwise and error message
+	_validateObjectHasAllProperties(objToTest:any, requiredProperties:string[]):string
+	{
+		for(let i = 0; i < requiredProperties.length; i++)
+		{
+			if(!objToTest[requiredProperties[i]] && typeof(objToTest[requiredProperties[i]]) !== "number")
+				return `Some of the following required properties are missing: ${requiredProperties.join(", ")}.`;
+		}
+		
+		return "";
+	}
 	
 	
+	
+	_userRequiredProperties = [
+		"email",
+		"password",
+		"forename",
+		"surname",
+		"scales"
+	];
 	
 	//If id is undefined, this will be treated as a new user
 	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, id:string|undefined):Promise<IUser>
@@ -99,18 +119,14 @@ export default class MockJSONServerUserService implements IUserService {
 		if(id)
 			url += `/${id}`;
 		
-		//Find any missing properties on user data
-		let missingProperties:string[] = [];
-		if(!newUserData.email) missingProperties.push("email address");
-		if(!newUserData.password) missingProperties.push("password");
-		if(!newUserData.forename) missingProperties.push("forename");
-		if(!newUserData.surname) missingProperties.push("surname");
-		if(!newUserData.scales) missingProperties.push("scales");
 		
-		if(missingProperties.length > 0)
+		
+		const requiredPropertiesError = 
+			this._validateObjectHasAllProperties(newUserData, this._userRequiredProperties);
+		if(requiredPropertiesError !== "")
 		{
 			return new Promise((resolve, reject) => {
-				reject(new Error(`The following required properties have not been provided: ${missingProperties.join(", ")}`));
+				reject(new Error(requiredPropertiesError));
 			});
 		}
 		
@@ -154,6 +170,19 @@ export default class MockJSONServerUserService implements IUserService {
 	{
 		let userDataForUpdate:any = { ...newUserData };
 		delete userDataForUpdate.id;
+		
+		
+		
+		const requiredPropertiesError = 
+			this._validateObjectHasAllProperties(newUserData, [...this._userRequiredProperties, "id"]);
+		if(requiredPropertiesError !== "")
+		{
+			return new Promise<IUser>((resolve, reject) => {
+				reject(new Error(requiredPropertiesError));
+			});
+		}
+		
+		
 		
 		return this._saveUser({ ...userDataForUpdate, password: this._currentUserPassword }, newUserData.id)
 			.then(data => {
@@ -202,9 +231,19 @@ export default class MockJSONServerUserService implements IUserService {
 		
 		newItem should be an object, that requires an ID but doesn't currently have one
 		entityTypeName could be "scale", "category", "action", etc (all lower case)
+		requiredProperties are the properties required on the object
 	*/
-	_saveToArrayInCurrentUser(currentArray:any[], newItem:any, entityTypeName:string):Promise<any>
+	_saveToArrayInCurrentUser(currentArray:any[], newItem:any, entityTypeName:string, requiredProperties:string[]):Promise<any>
 	{
+		
+		const requiredPropertiesError = this._validateObjectHasAllProperties(newItem, requiredProperties);
+		if(requiredPropertiesError !== "")
+		{
+			return new Promise((resolve, reject) => {
+				reject(new Error(requiredPropertiesError));
+			});
+		}
+		
 		const originalArray = [...currentArray];
 		
 		//We need to generate IDs ourselves when it comes to internal arrays
@@ -228,9 +267,19 @@ export default class MockJSONServerUserService implements IUserService {
 		currentItem and newItemData should both be objects.
 		newItemData should match the interface of currentItem's type
 		entityTypeName could be "scale", "category", "action", etc (all lower case)
+		requiredProperties are the properties required on the object
 	*/
-	_updateArrayItemInCurrentUser(currentItem:any, newItemData:any, entityTypeName:string):Promise<any>
+	_updateArrayItemInCurrentUser(currentItem:any, newItemData:any, entityTypeName:string, requiredProperties:string[]):Promise<any>
 	{
+		const requiredPropertiesError = this._validateObjectHasAllProperties(newItemData, requiredProperties);
+		if(requiredPropertiesError !== "")
+		{
+			return new Promise((resolve, reject) => {
+				reject(new Error(requiredPropertiesError));
+			});
+		}
+		
+		
 		const originalItemData = { ...currentItem };
 		
 		//We can't just assign the new obj to the current (and spreading new obj won't work either)
@@ -305,6 +354,12 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	_scaleRequiredProperties = [
+		"name",
+		"usesTimespans",
+		"displayDayCount",
+		"categories"
+	];
 	
 	getScale(scaleID:string) {
 		try { return this._currentUser!.scales.find(scale => scale.id === scaleID); }
@@ -312,11 +367,16 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	createScale(newScale:Omit<IScale, "id">):Promise<IScale> { 
-		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale");
+		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale", this._scaleRequiredProperties);
 	}
 	
 	updateScale(currentScale:IScale, newScaleData:IScale):Promise<IScale> {
-		return this._updateArrayItemInCurrentUser(currentScale, newScaleData, "scale");
+		return this._updateArrayItemInCurrentUser(
+			currentScale, 
+			newScaleData, 
+			"scale", 
+			[...this._scaleRequiredProperties, "id"]
+		);
 	}
 	
 	deleteScale(scale:IScale):Promise<IScale[]> {
@@ -324,17 +384,29 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
+	_categoryRequiredProperties = [
+		"name",
+		"color",
+		"desiredWeight",
+		"actions"
+	];
+	
 	getCategory(categoryID:string, scaleID:string) {
 		try { return this.getScale(scaleID)!.categories.find(cat => cat.id === categoryID); }
 		catch (err) { return undefined; }
 	}
 	
 	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">):Promise<ICategory> {
-		return this._saveToArrayInCurrentUser(parentScale.categories, newCategory, "category");
+		return this._saveToArrayInCurrentUser(parentScale.categories, newCategory, "category", this._categoryRequiredProperties);
 	}
 	
 	updateCategory(currentCategory:ICategory, newCategoryData:ICategory):Promise<ICategory> {
-		return this._updateArrayItemInCurrentUser(currentCategory, newCategoryData, "category");
+		return this._updateArrayItemInCurrentUser(
+			currentCategory, 
+			newCategoryData, 
+			"category", 
+			[...this._categoryRequiredProperties, "id"]
+		);
 	}
 	
 	deleteCategory(parentScale:IScale, category:ICategory):Promise<ICategory[]> {
@@ -342,17 +414,28 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
+	_actionRequiredProperties = [
+		"name",
+		"weight",
+		"timespans"
+	];
+	
 	getAction(actionID:string, categoryID:string, scaleID:string) {
 		try { return this.getCategory(categoryID, scaleID)!.actions.find(act => act.id === actionID); }
 		catch (err) { return undefined; }
 	}
 	
 	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">):Promise<IAction> {
-		return this._saveToArrayInCurrentUser(parentCategory.actions, newAction, "action");
+		return this._saveToArrayInCurrentUser(parentCategory.actions, newAction, "action", this._actionRequiredProperties);
 	}
 	
 	updateAction(currentAction:IAction, newActionData:IAction):Promise<IAction> {
-		return this._updateArrayItemInCurrentUser(currentAction, newActionData, "action");
+		return this._updateArrayItemInCurrentUser(
+			currentAction, 
+			newActionData, 
+			"action", 
+			[...this._actionRequiredProperties, "id"]
+		);
 	}
 	
 	deleteAction(parentCategory:ICategory, action:IAction):Promise<IAction[]> {
@@ -362,6 +445,10 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	_timespanRequiredProperties = [
+		"date",
+		"minuteCount"
+	];
 	
 	getScaleTimespans(scale:IScale, reverseOrder:boolean = false) {
 		let allTimespansInfo = new Array<(ITimespan & { category:ICategory, action:IAction })>();
@@ -383,7 +470,7 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">):Promise<ITimespan> {
-		return this._saveToArrayInCurrentUser(parentAction.timespans, newTimespan, "timespan");
+		return this._saveToArrayInCurrentUser(parentAction.timespans, newTimespan, "timespan", this._timespanRequiredProperties);
 	}
 	
 	deleteTimespan(parentAction:IAction, timespan:ITimespan):Promise<ITimespan[]> {
