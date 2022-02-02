@@ -1,5 +1,5 @@
 import AmendActionHistoryPageLogicContainer from './AmendActionHistoryPageLogicContainer';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 
@@ -76,5 +76,22 @@ test("AmendActionHistoryPageLogicContainer will pass in a loading error, if issu
 	
 	const historyPage = container.querySelector(".AmendActionHistoryPage");
 	expect(historyPage.textContent).toEqual(expect.stringContaining(message));
+	
+});
+
+
+test("AmendActionHistoryPageLogicContainer will pass through the back button handler", () => {
+	
+	const mockBackHandler = jest.fn();
+	
+	const { container } = render(<AmendActionHistoryPageLogicContainer
+									scaleID={dummyScale.id}
+									userService={dummyUserService}
+									backButtonHandler={mockBackHandler} />);
+	
+	const backButton = screen.getByRole("button", { name: /back/i });
+	fireEvent.click(backButton);
+	
+	expect(mockBackHandler).toHaveBeenCalled();
 	
 });

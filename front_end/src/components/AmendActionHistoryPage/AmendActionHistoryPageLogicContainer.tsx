@@ -48,7 +48,7 @@ export default class AmendActionHistoryPageLogicContainer
 					userService={this.props.userService}
 					items={this.state.historyItems}
 					loadingError={this.state.loadingError}
-					backButtonHandler={()=>{}}
+					backButtonHandler={this.props.backButtonHandler}
 					onNewRecordSuccessfulSave={()=>{}} />
 			</div>
 		);
