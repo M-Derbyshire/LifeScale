@@ -61,3 +61,20 @@ test("AmendActionHistoryPageLogicContainer will render an AmendActionHistoryPage
 	expect(mockUserService.createTimespan).toHaveBeenCalled();
 	
 });
+
+test("AmendActionHistoryPageLogicContainer will pass in a loading error, if issues finding the scale", () => {
+	
+	const message = "Unable to find the selected scale.";
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.getScale = () => undefined;
+	
+	const { container } = render(<AmendActionHistoryPageLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={()=>{}} />);
+	
+	const historyPage = container.querySelector(".AmendActionHistoryPage");
+	expect(historyPage.textContent).toEqual(expect.stringContaining(message));
+	
+});
