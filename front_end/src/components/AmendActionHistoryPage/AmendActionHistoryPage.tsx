@@ -14,6 +14,7 @@ interface IAmendActionHistoryPageProps {
 	items?:IActionHistoryItem[];
 	loadingError?:string;
 	backButtonHandler:()=>void;
+	onNewRecordSuccessfulSave?:()=>void;
 }
 
 
@@ -50,7 +51,8 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 					
 					<RecordActionFormLogicContainer 
 						scale={this.props.scale}
-						userService={this.props.userService} />
+						userService={this.props.userService}
+						onSuccessfulSave={this.props.onNewRecordSuccessfulSave} />
 					
 					<div className="historyItemsArea">
 						{this.props.items.map(this.mapHistoryItemToComponent.bind(this))}

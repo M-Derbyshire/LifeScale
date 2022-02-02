@@ -1,5 +1,5 @@
 import AmendActionHistoryPage from './AmendActionHistoryPage';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 const dummyBackButtonHandler = ()=>{};
@@ -27,7 +27,13 @@ const dummyScale = {
 	name: "testScale",
 	usesTimespans: true,
 	displayDayCount: 7,
-	categories: []
+	categories: [{
+		id: "testCat23132948284",
+		name: "testcat",
+		color: "red",
+		desiredWeight: 1,
+		actions: [dummyAction]
+	}]
 }
 
 
@@ -137,4 +143,35 @@ test("AmendActionHistoryPage will display a message if items is empty", () => {
 	const messageDisplay = container.querySelector(".noHistoryItemsMessage");
 	
 	expect(messageDisplay).not.toBeNull();
+});
+
+test("AmendActionHistoryPage will pass onNewRecordSuccessfulSave prop to the RecordActionForm container", async () => {
+	
+	const mockSaveCallback = jest.fn();
+	
+	const mockUserService = new TestingDummyUserService();
+	
+	mockUserService.createTimespan = jest.fn().mockResolvedValue({
+		id: "testTimespan",
+		date: new Date().toString(),
+		minuteCount: 0
+	});
+	
+	//Fake action to return
+	mockUserService.getAction = (actID, catID, scaleID) => dummyScale.categories[0].actions[0];
+	
+	
+	const { container } = render(<AmendActionHistoryPage 
+									backButtonHandler={dummyBackButtonHandler}
+									items={[]}
+									scale={dummyScale}
+									userService={mockUserService}
+									onNewRecordSuccessfulSave={mockSaveCallback} />);
+	
+	
+	const form = container.querySelector(".RecordActionForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => expect(mockSaveCallback).toHaveBeenCalled());
+	
 });
