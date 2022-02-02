@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import AmendActionHistoryPage from './AmendActionHistoryPage';
-import IScale from '../../interfaces/IScale';
 import IUserService from '../../interfaces/api_access/IUserService';
+import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 
 
 interface IAmendActionHistoryPageLogicContainerProps {
-	scale:IScale;
+	scaleID:string;
 	userService:IUserService;
 	backButtonHandler:()=>void;
 }
