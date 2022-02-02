@@ -9,7 +9,7 @@ import RecordActionFormLogicContainer from '../RecordActionForm/RecordActionForm
 
 
 interface IAmendActionHistoryPageProps {
-	scale:IScale;
+	scale?:IScale;
 	userService:IUserService;
 	items?:IActionHistoryItem[];
 	loadingError?:string;
@@ -31,7 +31,7 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 			<ActionHistoryItem
 				key={item.timespan.id}
 				actionHistoryItem={item}
-				usesTimespan={this.props.scale.usesTimespans} />
+				usesTimespan={this.props!.scale.usesTimespans} />
 		);
 	}
 	
@@ -47,20 +47,22 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 					<button className="actionHistoryBackButton" onClick={this.props.backButtonHandler}>Back</button>
 				</header>
 				
-				<LoadedContentWrapper errorMessage={this.props.loadingError} render={this.props.items && (<div className="loadedContent">
+				<LoadedContentWrapper 
+					errorMessage={this.props.loadingError} 
+					render={this.props.items && this.props.scale && (<div className="loadedContent">
 					
-					<RecordActionFormLogicContainer 
-						scale={this.props.scale}
-						userService={this.props.userService}
-						onSuccessfulSave={this.props.onNewRecordSuccessfulSave} />
-					
-					<div className="historyItemsArea">
-						{this.props.items.map(this.mapHistoryItemToComponent.bind(this))}
+						<RecordActionFormLogicContainer 
+							scale={this.props.scale}
+							userService={this.props.userService}
+							onSuccessfulSave={this.props.onNewRecordSuccessfulSave} />
 						
-						{this.props.items.length === 0 && <span className="noHistoryItemsMessage">
-							There are no historical actions recorded for this scale.
-						</span>}
-					</div>
+						<div className="historyItemsArea">
+							{this.props.items.map(this.mapHistoryItemToComponent.bind(this))}
+							
+							{this.props.items.length === 0 && <span className="noHistoryItemsMessage">
+								There are no historical actions recorded for this scale.
+							</span>}
+						</div>
 					
 				</div>)} />
 				
