@@ -1,5 +1,6 @@
 import AmendActionHistoryPage from './AmendActionHistoryPage';
 import { render, fireEvent } from '@testing-library/react';
+import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 const dummyBackButtonHandler = ()=>{};
 
@@ -18,26 +19,16 @@ const dummyItems = [
 	{ ...dummyAction, categoryName: "test-item2", timespan: { ...dummyTimespan, id: "test2" }  }
 ];
 
-const dummyNewRecordedAction = {
-	categories: [{
-		id: "test-cat1",
-		name:"test cat",
-		color:"red",
-		desiredWeight:1,
-		actions:[dummyAction]
-	}],
-	selectedCategoryID:"test-cat1",
-	setSelectedCategoryID:(category:string)=>{},
-	
-	selectedActionID: dummyAction.id,
-	setSelectedActionID:(action:string)=>{},
-	
-	timespan: dummyTimespan,
-	setTimespan:(timespan:ITimespan)=>{},
-	
-	onSubmit:()=>{}
-};
 
+const dummyUserService = new TestingDummyUserService();
+
+const dummyScale = {
+	id: "testScale1",
+	name: "testScale",
+	usesTimespans: true,
+	displayDayCount: 7,
+	categories: []
+}
 
 
 
@@ -49,7 +40,8 @@ test.each([
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler} 
 									loadingError={message}
-									newRecordedAction={dummyNewRecordedAction} />);
+									userService={dummyUserService}
+									scale={dummyScale} />);
 	
 	const contentWrapper = container.querySelector(".LoadedContentWrapper");
 	
@@ -58,20 +50,17 @@ test.each([
 	
 });
 
-test.each([
-	["test1"],
-	["test2"]
-])("AmendActionHistoryPage will display the scaleName prop in a header", (name) => {
+test("AmendActionHistoryPage will display the scale name prop in a header", () => {
 	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler} 
-									scaleName={name}
-									newRecordedAction={dummyNewRecordedAction} />);
+									scale={dummyScale}
+									userService={dummyUserService} />);
 	
 	const heading = container.querySelector("h1");
 	
 	expect(heading).not.toBeNull();
-	expect(heading.textContent).toEqual(expect.stringContaining(name));
+	expect(heading.textContent).toEqual(expect.stringContaining(dummyScale.name));
 	
 });
 
@@ -82,7 +71,8 @@ test("AmendActionHistoryPage will call the backButtonHandler prop when back butt
 	const mockBackHandler = jest.fn();
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={mockBackHandler}
-									newRecordedAction={dummyNewRecordedAction} />);
+									scale={dummyScale}
+									userService={dummyUserService} />);
 	
 	const backButton = container.querySelector(".actionHistoryBackButton");
 	fireEvent.click(backButton);
@@ -96,7 +86,8 @@ test("AmendActionHistoryPage will list the given items as ActionHistoryItem comp
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
 									items={dummyItems}
-									newRecordedAction={dummyNewRecordedAction} />);
+									scale={dummyScale}
+									userService={dummyUserService} />);
 	
 	const historyItems = container.querySelectorAll(".ActionHistoryItem");
 	
@@ -112,13 +103,13 @@ test.each([
 	[undefined],
 	[false],
 	[true]
-])("AmendActionHistoryPage will pass on the scaleUsesTimespans prop to ActionHistoryItem components", (isUsed) => {
+])("AmendActionHistoryPage will pass on the scale.usesTimespans to ActionHistoryItem components", (isUsed) => {
 	
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
 									items={dummyItems}
-									scaleUsesTimespans={isUsed}
-									newRecordedAction={dummyNewRecordedAction} />);
+									scale={{...dummyScale, usesTimespans: isUsed } }
+									userService={dummyUserService} />);
 	
 	const historyItems = container.querySelectorAll(".ActionHistoryItem");
 	
@@ -140,7 +131,8 @@ test("AmendActionHistoryPage will display a message if items is empty", () => {
 	const { container } = render(<AmendActionHistoryPage 
 									backButtonHandler={dummyBackButtonHandler}
 									items={[]}
-									newRecordedAction={dummyNewRecordedAction} />);
+									scale={dummyScale}
+									userService={dummyUserService} />);
 	
 	const messageDisplay = container.querySelector(".noHistoryItemsMessage");
 	

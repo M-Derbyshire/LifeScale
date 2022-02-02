@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import './AmendActionHistoryPage.scss';
 import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 import IRecordedActionFormItem from '../../interfaces/UI/IRecordedActionFormItem';
+import IScale from '../../interfaces/IScale';
+import IUserService from '../../interfaces/api_access/IUserService';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import ActionHistoryItem from '../ActionHistoryItem/ActionHistoryItem';
-import RecordActionForm from '../RecordActionForm/RecordActionForm';
+import RecordActionFormLogicContainer from '../RecordActionForm/RecordActionFormLogicContainer';
 
 
 interface IAmendActionHistoryPageProps {
-	scaleName?:string;
-	scaleUsesTimespans?:boolean,
+	scale:IScale;
+	userService:IUserService;
 	items?:IActionHistoryItem[];
 	loadingError?:string;
-	newRecordedAction:IRecordedActionFormItem;
 	backButtonHandler:()=>void;
 }
 
@@ -30,7 +31,7 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 			<ActionHistoryItem
 				key={item.timespan.id}
 				actionHistoryItem={item}
-				usesTimespan={this.props.scaleUsesTimespans} />
+				usesTimespan={this.props.scale.usesTimespans} />
 		);
 	}
 	
@@ -42,13 +43,15 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 			<div className="AmendActionHistoryPage">
 				
 				<header>
-					<h1>Amend Action History{this.props.scaleName && ` - ${this.props.scaleName}`}:</h1>
+					<h1>Amend Action History - {this.props.scale.name}:</h1>
 					<button className="actionHistoryBackButton" onClick={this.props.backButtonHandler}>Back</button>
 				</header>
 				
 				<LoadedContentWrapper errorMessage={this.props.loadingError} render={this.props.items && (<div className="loadedContent">
 					
-					<RecordActionForm recordedAction={this.props.newRecordedAction} />
+					<RecordActionFormLogicContainer 
+						scale={this.props.scale}
+						userService={this.props.userService} />
 					
 					<div className="historyItemsArea">
 						{this.props.items.map(this.mapHistoryItemToComponent.bind(this))}
