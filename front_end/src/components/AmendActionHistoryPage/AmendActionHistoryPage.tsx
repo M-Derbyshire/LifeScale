@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './AmendActionHistoryPage.scss';
 import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
-import IRecordedActionFormItem from '../../interfaces/UI/IRecordedActionFormItem';
 import IScale from '../../interfaces/IScale';
 import IUserService from '../../interfaces/api_access/IUserService';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
