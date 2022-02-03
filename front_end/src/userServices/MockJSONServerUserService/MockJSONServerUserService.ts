@@ -60,6 +60,17 @@ export default class MockJSONServerUserService implements IUserService {
 				this._currentUserPassword = users[0].password;
 				delete users[0].password;
 				
+				//The timespans will have strings as dates, rather than Date
+				users[0].scales.forEach((scale:IScale) => {
+					scale.categories.forEach((cat:ICategory) => {
+						cat.actions.forEach((act:IAction) => {
+							act.timespans.forEach(ts => {
+								ts.date = new Date(ts.date);
+							});
+						});
+					});
+				});
+				
 				this._currentUser = users[0];
 				
 				return users[0];
@@ -457,7 +468,7 @@ export default class MockJSONServerUserService implements IUserService {
 			cat => cat.actions.forEach(
 				act => act.timespans.forEach(
 					(timespan:ITimespan) => allTimespansInfo.push({
-						 timespan: { ...timespan, date: new Date(timespan.date) }, 
+						 timespan, 
 						 action: act, 
 						 category: cat 
 					})
