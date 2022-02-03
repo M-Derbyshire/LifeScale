@@ -9,6 +9,12 @@ import IAction from '../../interfaces/IAction';
 import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 
 
+// Used to record errors during the deletion of action history
+interface IHistoryItemDeleteError {
+	itemID:string;
+	errorMessage:string;
+}
+
 interface IAmendActionHistoryPageLogicContainerProps {
 	scaleID:string;
 	userService:IUserService;
@@ -19,6 +25,7 @@ interface IAmendActionHistoryPageLogicContainerState {
 	historyItems?:IActionHistoryItem[];
 	scale?:IScale;
 	loadingError?:string;
+	lastHistoryDeleteError:IHistoryItemDeleteError; //We only need to display the last one
 }
 
 
@@ -27,9 +34,15 @@ export default class AmendActionHistoryPageLogicContainer
 {
 	
 	
+	stdScaleLoadError = "Unable to find the selected scale.";
+	stdTimespanLoadError = "Unable to load the timescales for the selected scale.";
+	
+	
+	
 	constructor(props:IAmendActionHistoryPageLogicContainerProps)
 	{
 		super(props);
+		
 		
 		const scale = this.props.userService.getScale(this.props.scaleID);
 		let historyItems:IActionHistoryItem[]|undefined = undefined;
@@ -37,41 +50,97 @@ export default class AmendActionHistoryPageLogicContainer
 		let loadingError:string|undefined = undefined;
 		if (!scale) 
 		{
-			loadingError = "Unable to find the selected scale.";
+			loadingError = this.stdScaleLoadError;
 		}
 		else
 		{
 			try 
 			{
-				historyItems = this.props.userService.getScaleTimespans(scale, true).map(
-					this.mapTimespanToHistoryItem.bind(this)
-				);
+				historyItems = this.getRefreshedHistoryItemList(scale);
 			} 
 			catch {}
 		}
 		
-		if (scale && !historyItems)
-			loadingError = "Unable to load the timescales for the selected scale.";
 		
-		this.state = { scale, loadingError, historyItems };
+		if (scale && !historyItems)
+			loadingError = this.stdTimespanLoadError;
+		
+		const lastHistoryDeleteError = {
+			itemID: "",
+			errorMessage: ""
+		};
+		
+		this.state = { scale, loadingError, historyItems, lastHistoryDeleteError };
 		
 	}
 	
 	
-	mapTimespanToHistoryItem(timespanDetails:(ITimespan & { category:ICategory, action:IAction })):IActionHistoryItem
+	
+	getRefreshedHistoryItemList(scale = this.state.scale)
 	{
+		try 
+		{
+			if(scale)
+			{
+				return this.props.userService.getScaleTimespans(scale, true).map(
+					this.mapTimespanToHistoryItem.bind(this)
+				);
+			}
+		} 
+		catch {}
+		
+		return undefined;
+	}
+	
+	reloadHistoryItemList(scale = this.state.scale)
+	{
+		const historyItems = this.getRefreshedHistoryItemList(scale);
+		let loadingError:string|undefined = undefined;
+		
+		if(!historyItems)
+			loadingError = this.stdTimespanLoadError;
+		
+		this.setState({
+			historyItems,
+			loadingError
+		});
+	}
+	
+	
+	
+	timespanDeleteHandler(timespan:ITimespan, parentAction:IAction)
+	{
+		this.props.userService.deleteTimespan(parentAction, timespan)
+			.then(timespans => this.reloadHistoryItemList())
+			.catch(err => {
+				this.setState({ 
+					lastHistoryDeleteError: { itemID: timespan.id, errorMessage: err.message } 
+				});
+				this.reloadHistoryItemList();
+			});
+	}
+	
+	
+	mapTimespanToHistoryItem(timespanDetails:({ timespan:ITimespan, category:ICategory, action:IAction })):IActionHistoryItem
+	{
+		const hasDeleteError = (this.state && this.state.lastHistoryDeleteError &&
+								timespanDetails.timespan.id === this.state.lastHistoryDeleteError.itemID);
+		
 		return {
 			categoryName: timespanDetails.category.name,
 			actionName: timespanDetails.action.name,
-			timespan: {
-				id: timespanDetails.id,
-				date: new Date(timespanDetails.date),
-				minuteCount: timespanDetails.minuteCount
-			},
-			deleteHandler: ()=>{},
-			deleteErrorMessage: undefined
+			timespan: timespanDetails.timespan,
+			deleteHandler: () => this.timespanDeleteHandler(timespanDetails.timespan, timespanDetails.action),
+			deleteErrorMessage: (!hasDeleteError) ?  undefined : this.state.lastHistoryDeleteError!.errorMessage
 		};
 	}
+	
+	
+	onSuccessfulItemCreate()
+	{
+		this.reloadHistoryItemList();
+	}
+	
 	
 	
 	render()
@@ -85,7 +154,7 @@ export default class AmendActionHistoryPageLogicContainer
 					items={this.state.historyItems}
 					loadingError={this.state.loadingError}
 					backButtonHandler={this.props.backButtonHandler}
-					onNewRecordSuccessfulSave={()=>{}} />
+					onNewRecordSuccessfulSave={this.onSuccessfulItemCreate.bind(this)} />
 			</div>
 		);
 	}

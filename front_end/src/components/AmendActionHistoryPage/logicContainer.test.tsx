@@ -1,5 +1,5 @@
 import AmendActionHistoryPageLogicContainer from './AmendActionHistoryPageLogicContainer';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 
@@ -44,11 +44,11 @@ const dummyUserService = new TestingDummyUserService();
 dummyUserService.getScale = scaleID => dummyScale;
 dummyUserService.getScaleTimespans = 
 	(scale, reverseOrder) => dummyScale.categories[0].actions[0].timespans.map((timespan) => {
-		return { ...timespan, category: dummyScale.categories[0], action: dummyScale.categories[0].actions[0] };
+		return { timespan, category: dummyScale.categories[0], action: dummyScale.categories[0].actions[0] };
 	}).sort((a, b) => {
 		
-		const aDate = new Date(a.date).getTime();
-		const bDate = new Date(b.date).getTime();
+		const aDate = a.timespan.date.getTime();
+		const bDate = b.timespan.date.getTime();
 		
 		if(reverseOrder) 
 			return bDate - aDate;
@@ -160,7 +160,163 @@ test("AmendActionHistoryPageLogicContainer will pass in an error if issue loadin
 
 
 //will update item list on create
+test("AmendActionHistoryPageLogicContainer will update the list of history items, after creating one", async () => {
+	
+	const mockUserService = { ...dummyUserService };
+	
+	//Old date, so comes first in refreshed list (our mock will only return in ascending order)
+	const timespanToCreate = {
+		id: "testidnew",
+		date: new Date("1971-01-02"), 
+		minuteCount: 1
+	};
+	
+	mockUserService.createTimespan = jest.fn().mockResolvedValue(timespanToCreate);
+	mockUserService.getAction = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0]);
+	
+	const { container } = render(<AmendActionHistoryPageLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={()=>{}} />);
+	
+	const originalHistoryItems = container.querySelectorAll(".AmendActionHistoryPage .ActionHistoryItem");
+	expect(originalHistoryItems[0].textContent)
+		.not.toEqual(expect.stringContaining(timespanToCreate.date.getFullYear().toString()));
+	
+	
+	//Just changing the return value of getScaleTimespans, to include the new one
+	//We'll change this to only sort in ascending order as well, so we know our new one is first
+	const currentScaleTSResult = mockUserService.getScaleTimespans(dummyScale, false);
+	mockUserService.getScaleTimespans = 
+		(scale, reverseOrder) => [
+				...currentScaleTSResult.map(tsDetails => tsDetails.timespan), //Whatever we're already returning
+				timespanToCreate
+			].map((timespan) => {
+			return { timespan, category: dummyScale.categories[0], action: dummyScale.categories[0].actions[0] };
+		}).sort((a, b) => {
+			const aDate = a.timespan.date.getTime();
+			const bDate = b.timespan.date.getTime();
+			return aDate - bDate;
+		});
+	
+	
+	//Trigger a save (doesn't matter about the actual data, as we're mocking it in the return)
+	const recordForm = container.querySelector(".RecordActionForm form");
+	fireEvent.submit(recordForm);
+	
+	await waitFor(() => {
+		const newHistoryItems = container.querySelectorAll(".AmendActionHistoryPage .ActionHistoryItem");
+		
+		expect(newHistoryItems[0].textContent)
+			.toEqual(expect.stringContaining(timespanToCreate.date.getFullYear().toString()));
+	});
+	
+	
+});
 
-//will pass onDelete to history items, and update item list on delete
 
-//Will display delete error message if unable to delete
+
+test("AmendActionHistoryPageLogicContainer will pass through delete handlers for history items, and update the list on delete", async () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getAction = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0]);
+	
+	
+	const currentTSList = dummyScale.categories[0].actions[0].timespans.sort((a, b) => {
+		const aDate = new Date(a.date).getTime();
+		const bDate = new Date(b.date).getTime();
+		return bDate - aDate; //reverse order
+	}); 
+	
+	//We're testing the second in the list
+	mockUserService.deleteTimespan = jest.fn().mockResolvedValue(currentTSList);
+	
+	
+	
+	const { container } = render(<AmendActionHistoryPageLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={()=>{}} />);
+	
+	const originalItems = container.querySelectorAll(".AmendActionHistoryPage .ActionHistoryItem");
+	expect(originalItems.length).toBe(currentTSList.length)
+	currentTSList.forEach((ts, i) => {
+		expect(originalItems[i].textContent)
+			.toEqual(expect.stringContaining(ts.date.getFullYear().toString()))
+	});
+	
+	
+	const deleteButtons = screen.getAllByRole("button", { name: /delete/i })
+	expect(deleteButtons.length).toBe(currentTSList.length);
+	
+	
+	
+	//before delete, mock a removal of the middle one
+	mockUserService.getScaleTimespans = 
+		(scale, reverseOrder) => scale.categories[0].actions[0].timespans
+			.filter(
+				ts => ts !== scale.categories[0].actions[0].timespans[1]
+			).map((timespan) => {
+				return { timespan, category: scale.categories[0], action: scale.categories[0].actions[0] };
+			}).sort((a, b) => {
+			
+				const aDate = new Date(a.date).getTime();
+				const bDate = new Date(b.date).getTime();
+				
+				if(reverseOrder) 
+					return bDate - aDate;
+				else
+					return aDate - bDate;
+			});
+	
+	
+	fireEvent.click(deleteButtons[1]);
+	
+	
+	await waitFor(() => {
+		
+		expect(mockUserService.deleteTimespan).toHaveBeenCalled();
+		
+		const currentItemList = container.querySelectorAll(".AmendActionHistoryPage .ActionHistoryItem");
+		
+		expect(currentItemList.length).toBe(currentTSList.length - 1);
+		
+		//Second item here should now be the third item from the orignal list
+		expect(currentItemList[1].textContent)
+			.toEqual(expect.stringContaining(currentTSList[2].date.getFullYear().toString()));
+	});
+	
+});
+
+
+test("AmendActionHistoryPageLogicContainer will pass through error message if error on delete for history items", async () => {
+	
+	const message = "Error while deleting... testtestetst";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getAction = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0]);
+	
+	
+	//We're testing the second in the list
+	mockUserService.deleteTimespan = jest.fn().mockRejectedValue(new Error(message));
+	
+	
+	
+	const { container } = render(<AmendActionHistoryPageLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={()=>{}} />);
+	
+	const deleteButtons = screen.getAllByRole("button", { name: /delete/i })
+	
+	
+	fireEvent.click(deleteButtons[0]);
+	
+	
+	await waitFor(() => {
+		const currentItemList = container.querySelectorAll(".AmendActionHistoryPage .ActionHistoryItem");
+		
+		expect(currentItemList[0].textContent).toEqual(expect.stringContaining(message));
+	});
+	
+});
