@@ -456,7 +456,11 @@ export default class MockJSONServerUserService implements IUserService {
 		scale.categories.forEach(
 			cat => cat.actions.forEach(
 				act => act.timespans.forEach(
-					(timespan:ITimespan) => allTimespansInfo.push({ timespan, action: act, category: cat })
+					(timespan:ITimespan) => allTimespansInfo.push({
+						 timespan: { ...timespan, date: new Date(timespan.date) }, 
+						 action: act, 
+						 category: cat 
+					})
 				)
 			)
 		); 
