@@ -61,7 +61,7 @@ interface IUserService {
 	deleteAction:(parentCategory:ICategory, action:IAction)=>Promise<IAction[]>;
 	
 	//Get all timespans for a scale, in date order.
-	getScaleTimespans:(scale:IScale, reverseOrder:boolean)=>(ITimespan & { category:ICategory, action:IAction })[];
+	getScaleTimespans:(scale:IScale, reverseOrder:boolean)=>({ timespan:ITimespan, category:ICategory, action:IAction })[];
 	//At this time, you can replace timespans by deleting/creating, but not update
 	createTimespan:(parentAction:IAction, newTimespan:Omit<ITimespan, "id">)=>Promise<ITimespan>;
 	deleteTimespan:(parentAction:IAction, timespan:ITimespan)=>Promise<ITimespan[]>;
