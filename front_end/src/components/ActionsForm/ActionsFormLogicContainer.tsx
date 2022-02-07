@@ -44,7 +44,18 @@ export default class ActionsFormLogicContainer
 		
 		return (
 			<div className="ActionsFormLogicContainer">
-				
+				<ActionsForm 
+					actions={[]}
+					newAction={{
+						name: "test",
+						setName:(name:string)=>{},
+						weight: 1,
+						setWeight: (weight:number)=>{},
+						onSubmit: ()=>{},
+						onDelete: undefined,
+						badSaveErrorMessage: undefined,
+						goodSaveMessage: undefined
+					}} />
 			</div>
 		);
 	}
