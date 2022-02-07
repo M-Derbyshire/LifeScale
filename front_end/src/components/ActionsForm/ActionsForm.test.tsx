@@ -1,5 +1,5 @@
 import ActionsForm from './ActionsForm';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, within } from '@testing-library/react';
 
 
 const dummySetState = (x)=>{};
@@ -91,5 +91,51 @@ test("ActionsForm will render SingleActionForm components for each passed in act
 		expect(screen.getByText(action.badSaveErrorMessage)).not.toBeNull();
 		expect(screen.getByText(action.goodSaveMessage)).not.toBeNull();
 	});
+	
+});
+
+
+test("ActionsForm will pass the SingleActionForm an onDelete prop, if the action has one", () => {
+	
+	const action = { ...dummyActions[0], onDelete: jest.fn() };
+	
+	const { container } = render(<ActionsForm actions={[action]} newAction={dummyActions[0]} />);
+	
+	const actionForm = container.querySelector(".SingleActionForm");
+	const deleteButton = within(actionForm).queryByRole("button", { name: /delete/i });
+	
+	expect(deleteButton).not.toBeNull();
+	
+	fireEvent.click(deleteButton);
+	
+	expect(action.onDelete).toHaveBeenCalled();
+	
+});
+
+test("ActionsForm will not pass the SingleActionForm an onDelete prop, if the action doesn't have one", () => {
+	
+	const action = [{ ...dummyActions[0], onDelete: undefined }];
+	
+	const { container } = render(<ActionsForm actions={[action]} newAction={dummyActions[0]} />);
+	
+	const actionForm = container.querySelector(".SingleActionForm");
+	const deleteButton = within(actionForm).queryAllByRole("button", { name: /delete/i });
+	
+	expect(deleteButton.length).toBe(0);
+	
+});
+
+
+test("ActionsForm will pass the SingleActionForm an onSubmit prop", () => {
+	
+	const action = { ...dummyActions[0], onSubmit: jest.fn() };
+	
+	const { container } = render(<ActionsForm actions={[action]} newAction={dummyActions[0]} />);
+	
+	const form = container.querySelector(".SingleActionForm form");
+	
+	fireEvent.submit(form);
+	
+	expect(action.onSubmit).toHaveBeenCalled();
 	
 });
