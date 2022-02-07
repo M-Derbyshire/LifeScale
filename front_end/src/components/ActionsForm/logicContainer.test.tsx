@@ -165,7 +165,38 @@ test("ActionsFormLogicContainer will give the current actions submit handlers", 
 });
 
 
-// refreshes list on delete
+
+test("ActionsFormLogicContainer will refresh the actions list after a delete", async () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.deleteAction = jest.fn().mockResolvedValue([]);
+	mockUserService.getCategory = jest.fn().mockReturnValue(dummyCategory);
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	
+	const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+	const actionForms = container.querySelectorAll(".SingleActionForm");
+	expect(actionForms.length).toBe(dummyCategory.actions.length);
+	
+	//Change the getCategory to not include the first action
+	mockUserService.getCategory = jest.fn().mockReturnValue({ 
+		...dummyCategory, 
+		actions: dummyCategory.actions.slice(1)
+	});
+	
+	
+	fireEvent.click(deleteButtons[0]);
+	
+	await waitFor(() => {
+		const actionForms2 = container.querySelectorAll(".SingleActionForm");
+		expect(actionForms2.length).toBe(dummyCategory.actions.length - 1);
+	});
+	
+});
 
 // delete error message
 

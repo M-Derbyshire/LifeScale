@@ -41,46 +41,59 @@ export default class ActionsFormLogicContainer
 	{
 		super(props)
 		
-		const category = this.props.userService.getCategory(this.props.categoryID, this.props.scaleID);
-		let actions:IAction[]|undefined = undefined;
-		let originalActions:IAction[]|undefined = undefined;
-		
-		if (!category) 
-		{
-			actions = [];
-			if(this.props.onCategoryLoadError)
-				this.props.onCategoryLoadError(this.stdCategoryLoadError);
-		}
-		else
-		{
-			try 
-			{
-				originalActions = category.actions;
-				actions = this.getRefreshedActionList(category);
-			} 
-			catch {}
-		}
-		
-		if (category && (!actions || !originalActions) && this.props.onCategoryLoadError)
-			this.props.onCategoryLoadError(this.stdActionsLoadError);
-		
-		
 		const lastActionSaveMessage = {
 			actionID: "",
 			isError: false,
 			saveMessage: ""
 		};
 		
+		const category = this.loadCategory();
+		const actionLists = this.loadActionLists(category);
 		
 		this.state = {
 			category,
-			actions,
-			originalActions,
+			actions: actionLists.actions,
+			originalActions: actionLists.originalActions,
 			lastActionSaveMessage
 		};
 	}
 	
 	
+	
+	loadCategory():ICategory|undefined
+	{
+		const category = this.props.userService.getCategory(this.props.categoryID, this.props.scaleID);
+		
+		if (!category && this.props.onCategoryLoadError) 
+			this.props.onCategoryLoadError(this.stdCategoryLoadError);
+		
+		return category; //If an issue on load, this will be undefined
+	}
+	
+	//actions are the actions that can be changed here (as state)
+	//originalActions are references to the action from the userService (used in updating/deleting)
+	loadActionLists(category:ICategory|undefined):{ actions:IAction[]|undefined, originalActions:IAction[]|undefined }
+	{
+		let actions:IAction[]|undefined = undefined;
+		let originalActions:IAction[]|undefined = undefined;
+		
+		if (!category) 
+			actions = [];
+		else
+		{
+			originalActions = category.actions;
+			actions = this.getRefreshedActionList(category);
+		}
+		
+		if (category && (!actions || !originalActions) && this.props.onCategoryLoadError)
+			this.props.onCategoryLoadError(this.stdActionsLoadError);
+		
+		
+		return {
+			actions,
+			originalActions
+		};
+	}
 	
 	getRefreshedActionList(category:ICategory)
 	{
@@ -125,7 +138,15 @@ export default class ActionsFormLogicContainer
 	{
 		if(this.state.category && this.state.originalActions)
 			this.props.userService.deleteAction(this.state.category, this.state.originalActions[actionIndex])
-				.then(actions => {})
+				.then(actions => {
+					const category = this.loadCategory();
+					const actionLists = this.loadActionLists(category);
+					this.setState({
+						category,
+						actions: actionLists.actions,
+						originalActions: actionLists.originalActions,
+					});
+				})
 				.catch(err => {})
 	}
 	
