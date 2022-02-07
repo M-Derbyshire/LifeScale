@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ActionsForm from './ActionsForm';
 import IUserService from '../../interfaces/api_access/IUserService';
-import ICategory from '../../interfaces/ICategory';
+import IAction from '../../interfaces/IAction';
 
 
 
@@ -19,7 +19,7 @@ interface IActionsFormLogicContainerProps {
 }
 
 interface IActionsFormLogicContainerState {
-	category?:ICategory;
+	actions?:IAction[];
 	loadingError?:string;
 	lastActionSaveMessage:IActionSaveMessage; //We only need to display the last save message (good or bad)
 }
