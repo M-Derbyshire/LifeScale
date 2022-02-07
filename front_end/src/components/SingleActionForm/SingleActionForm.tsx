@@ -22,7 +22,7 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 	
 	return (
 		<div className="SingleActionForm">
-			<form onSubmit={props.onSubmit}>
+			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit() }}>
 				
 				<label>
 					Name: <input type="text" className="singleActionNameInput" value={props.name} onChange={(e)=>props.setName(e.target.value)} />
