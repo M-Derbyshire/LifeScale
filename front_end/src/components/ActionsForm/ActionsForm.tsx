@@ -27,7 +27,7 @@ export default class ActionsForm extends Component<IActionsFormProps, IActionsFo
 	mapActionToComponent(action:IActionFormItem)
 	{
 		return (<SingleActionForm 
-					key={`${action.name}-actionItem`}
+					key={`${action.id}-actionItem`}
 					name={action.name}
 					setName={action.setName}
 					weight={action.weight}
