@@ -14,6 +14,7 @@ const dummyCategoryFormItem = {
 	setDesiredWeight: dummySetState,
 	
 	newAction: {
+		id: "test",
 		name: "test new act",
 		setName: dummySetState,
 		weight: 1,
@@ -24,6 +25,7 @@ const dummyCategoryFormItem = {
 		goodSaveMessage: "test good save"
 	},
 	actions: [{
+		id: "test1",
 		name: "test act 1",
 		setName: dummySetState,
 		weight: 1,
@@ -33,6 +35,7 @@ const dummyCategoryFormItem = {
 		badSaveErrorMessage: "test bad save",
 		goodSaveMessage: "test good save"
 	}, {
+		id: "test2",
 		name: "test act 2",
 		setName: dummySetState,
 		weight: 1,
