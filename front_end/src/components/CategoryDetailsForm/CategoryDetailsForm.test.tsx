@@ -297,7 +297,7 @@ test("CategoryDetailsForm will call the onSubmit callback, if the submit button 
 
 test("CategoryDetailsForm will not render a delete button if no onDelete prop given", () => {
 	
-	render(<CategoryDetailsForm 
+	const { container } = render(<CategoryDetailsForm 
 				categoryItem={{
 					...dummyCategoryFormItem, 
 					onDelete: undefined
@@ -305,7 +305,7 @@ test("CategoryDetailsForm will not render a delete button if no onDelete prop gi
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler} />);
 	
-	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	const deleteButton = container.querySelector(".categoryDeleteButton");
 	
 	expect(deleteButton).toBeNull();
 	
@@ -313,7 +313,7 @@ test("CategoryDetailsForm will not render a delete button if no onDelete prop gi
 
 test("CategoryDetailsForm will render a delete button if onDelete prop given", () => {
 	
-	render(<CategoryDetailsForm 
+	const { container } = render(<CategoryDetailsForm 
 				categoryItem={{
 					...dummyCategoryFormItem, 
 					onDelete: ()=>{}
@@ -321,7 +321,7 @@ test("CategoryDetailsForm will render a delete button if onDelete prop given", (
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler} />);
 	
-	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	const deleteButton = container.querySelector(".categoryDeleteButton");
 	
 	expect(deleteButton).not.toBeNull();
 	
@@ -331,7 +331,7 @@ test("CategoryDetailsForm delete button will call onDelete prop", () => {
 	
 	const mockDelete = jest.fn();
 	
-	render(<CategoryDetailsForm 
+	const { container } = render(<CategoryDetailsForm 
 				categoryItem={{
 					...dummyCategoryFormItem, 
 					onDelete: mockDelete
@@ -339,7 +339,7 @@ test("CategoryDetailsForm delete button will call onDelete prop", () => {
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler} />);
 	
-	const deleteButton = screen.queryByRole("button", { name: /delete/i });
+	const deleteButton = container.querySelector(".categoryDeleteButton");
 	
 	fireEvent.click(deleteButton);
 	
