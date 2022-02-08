@@ -262,7 +262,39 @@ test("ActionsFormLogicContainer will pass in a badSaveErrorMessage if an error d
 });
 
 
-// save message on save
+test("ActionsFormLogicContainer will pass in a goodSaveMessage after successful update", async () => {
+	
+	const message = "Action Saved";
+	const action = { ...dummyCategory.actions[0] };
+	const newName = "testChange";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateAction = jest.fn().mockResolvedValue({ ...action, name: newName });
+	mockUserService.getCategory = jest.fn().mockReturnValue({ 
+		...dummyCategory, 
+		actions: [action] // just get one
+	});
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	
+	const nameInput = screen.getByDisplayValue(action.name);
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	const forms = container.querySelectorAll(".SingleActionForm form");
+	fireEvent.submit(forms[0]);
+	
+	
+	await waitFor(() => {
+		const actionForms = container.querySelectorAll(".SingleActionForm");
+		expect(actionForms[0].textContent).toEqual(expect.stringContaining(message));
+	});
+	
+});
 
 // onCategoryLoadError prop
 // - for category load

@@ -130,7 +130,13 @@ export default class ActionsFormLogicContainer
 	{
 		if(this.state.originalActions)
 			this.props.userService.updateAction(this.state.originalActions[index], action)
-				.then(action => {})
+				.then(action => this.setState({ 
+					lastActionSaveMessage: {
+						actionID: action.id,
+						isError: false,
+						saveMessage: "Action Saved Successfully."
+					}
+				 }))
 				.catch(err => this.setState({ 
 					lastActionSaveMessage: {
 						actionID: action.id,
@@ -182,7 +188,7 @@ export default class ActionsFormLogicContainer
 			onSubmit: () => this.updateHandler(action, index),
 			onDelete: (!isNewAction) ? () => this.deleteHandler(action, index) : undefined,
 			badSaveErrorMessage: badSaveMessage,
-			goodSaveMessage: undefined
+			goodSaveMessage
 		};
 	}
 	
