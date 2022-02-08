@@ -101,6 +101,7 @@ export default class ActionsFormLogicContainer
 		{
 			if(category)
 			{
+				//We don't want references to the originals (timespans being references is not an issue)
 				return category.actions.map(action => ({ ...action }));
 			}
 		} 
