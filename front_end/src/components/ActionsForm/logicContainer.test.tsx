@@ -296,8 +296,36 @@ test("ActionsFormLogicContainer will pass in a goodSaveMessage after successful 
 	
 });
 
-// onCategoryLoadError prop
-// - for category load
-// - for accessing actions
+
+test("ActionsFormLogicContainer will not call onCategoryLoadError prop if no error", () => {
+	
+	const mockCallback = jest.fn();
+	
+	render(<ActionsFormLogicContainer
+				userService={dummyUserService}
+				scaleID={dummyScale.id}
+				categoryID={dummyCategory.id}
+				onCategoryLoadError={mockCallback} />);
+	
+	expect(mockCallback).not.toHaveBeenCalled();
+	
+});
+
+test("ActionsFormLogicContainer will call onCategoryLoadError prop if issue getting categories", () => {
+	
+	const mockCallback = jest.fn();
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = jest.fn().mockReturnValue(undefined);
+	
+	render(<ActionsFormLogicContainer
+		userService={mockUserService}
+		scaleID={dummyScale.id}
+		categoryID={dummyCategory.id}
+		onCategoryLoadError={mockCallback} />);
+	
+	expect(mockCallback).toHaveBeenCalled();
+	
+});
 
 // new action stuff
