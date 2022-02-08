@@ -14,6 +14,12 @@ interface IActionSaveMessage {
 	saveMessage:string;
 }
 
+interface INewActionData {
+	name:string;
+	weight:number;
+	badSaveErrorMessage?:string;
+}
+
 interface IActionsFormLogicContainerProps {
 	userService:IUserService;
 	scaleID:string;
@@ -23,6 +29,7 @@ interface IActionsFormLogicContainerProps {
 
 interface IActionsFormLogicContainerState {
 	category?:ICategory;
+	newAction:INewActionData;
 	actions?:IAction[]; //Actions that we can edit as state
 	originalActions?:IAction[]; //References to actions in userService (used when updating/deleting)
 	lastActionSaveMessage:IActionSaveMessage; //We only need to display the last save message (good or bad)
@@ -47,11 +54,18 @@ export default class ActionsFormLogicContainer
 			saveMessage: ""
 		};
 		
+		const newAction:INewActionData = {
+			name: "",
+			weight: 0,
+			badSaveErrorMessage: undefined,
+		};
+		
 		const category = this.loadCategory();
 		const actionLists = this.loadActionLists(category);
 		
 		this.state = {
 			category,
+			newAction,
 			actions: actionLists.actions,
 			originalActions: actionLists.originalActions,
 			lastActionSaveMessage
@@ -198,6 +212,7 @@ export default class ActionsFormLogicContainer
 	render()
 	{
 		const actions = this.state.actions!.map((act, i) => this.mapActionToFormItem(act, i, false));
+		const newAction = this.state.newAction;
 		
 		return (
 			<div className="ActionsFormLogicContainer">
@@ -205,13 +220,13 @@ export default class ActionsFormLogicContainer
 					actions={actions}
 					newAction={{
 						id: "",
-						name: "test",
-						setName:(name:string)=>{},
-						weight: 1,
-						setWeight: (weight:number)=>{},
+						name: newAction.name,
+						setName: (name:string) => this.setState({ newAction: { ...newAction, name } }),
+						weight: newAction.weight,
+						setWeight: (weight:number) => this.setState({ newAction: { ...newAction, weight } }),
 						onSubmit: ()=>{},
 						onDelete: undefined,
-						badSaveErrorMessage: undefined,
+						badSaveErrorMessage: newAction.badSaveErrorMessage,
 						goodSaveMessage: undefined
 					}} />
 			</div>

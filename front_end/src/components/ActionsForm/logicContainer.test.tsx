@@ -29,6 +29,11 @@ const dummyCategory = {
 	]
 };
 
+const dummyCategoryNoActions = {
+	...dummyCategory,
+	actions: []
+};
+
 const dummyScale = {
 	id: "testscale",
 	name: "test-scale",
@@ -328,4 +333,52 @@ test("ActionsFormLogicContainer will call onCategoryLoadError prop if issue gett
 	
 });
 
-// new action stuff
+
+
+
+// ----- New action form -------------------------------------------------
+
+
+test("ActionsFormLogicContainer will handle the state of the new action form", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	
+	const newName = "testNameChange";
+	const newWeight = 150;
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />);
+	
+	const addButton = screen.getByRole("button", { name: /new/i });
+	fireEvent.click(addButton)
+	
+	const actionForms = container.querySelectorAll(".SingleActionForm form");
+	expect(actionForms.length).toBe(1);
+	
+	const nameInput = container.querySelector("input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	const weightInput = container.querySelector("input[type=number]");
+	expect(weightInput.value).not.toBe(newWeight);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	fireEvent.change(weightInput, { target: { value: newWeight } });
+	
+	expect(nameInput.value).toBe(newName);
+	expect(Number(weightInput.value)).toBe(newWeight);
+	
+});
+
+//no delete handler
+
+// save
+
+//refreshes list on save
+
+// hides actions form after save
+
+// good save message on new action
+
+// badSaveMessage
