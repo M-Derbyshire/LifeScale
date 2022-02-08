@@ -392,14 +392,93 @@ test("ActionsFormLogicContainer will not pass a delete handler to the new action
 	
 });
 
-//no delete handler
 
-// save
+test("ActionsFormLogicContainer will give the new action a submit handler that creates", () => {
+	
+	const newAction = {
+		name: "testNameChange",
+		weight: 150,
+		timespans: []
+	};
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	mockUserService.createAction = jest.fn().mockResolvedValue({ ...newAction, id: "testID" });
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	const addButton = screen.getByRole("button", { name: /new/i });
+	fireEvent.click(addButton)
+	
+	const actionForms = container.querySelectorAll(".SingleActionForm form");
+	expect(actionForms.length).toBe(1);
+	
+	const nameInput = container.querySelector("input[type=text]");
+	expect(nameInput.value).not.toBe(newAction.name);
+	const weightInput = container.querySelector("input[type=number]");
+	expect(weightInput.value).not.toBe(newAction.weight);
+	
+	fireEvent.change(nameInput, { target: { value: newAction.name } });
+	fireEvent.change(weightInput, { target: { value: newAction.weight } });
+	
+	fireEvent.submit(actionForms[0]);
+	
+	expect(mockUserService.createAction).toHaveBeenCalledWith(dummyCategoryNoActions, newAction);
+	
+});
 
-//refreshes list on save
+test("ActionsFormLogicContainer will refresh the actions list after a create", async () => {
+	
+	const newAction = {
+		name: "testNameChange",
+		weight: 150,
+		timespans: []
+	};
+	const newActionID = "testID";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	mockUserService.createAction = jest.fn().mockResolvedValue({ ...newAction, id: newActionID });
+	
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	const addButton = screen.getByRole("button", { name: /new/i });
+	fireEvent.click(addButton)
+	
+	
+	const actionForms = container.querySelectorAll(".SingleActionForm form");
+	expect(actionForms.length).toBe(1); //extra is the create form
+	
+	
+	const nameInput = container.querySelector("input[type=text]");
+	expect(nameInput.value).not.toBe(newAction.name);
+	const weightInput = container.querySelector("input[type=number]");
+	expect(weightInput.value).not.toBe(newAction.weight);
+	
+	fireEvent.change(nameInput, { target: { value: newAction.name } });
+	fireEvent.change(weightInput, { target: { value: newAction.weight } });
+	
+	//We should be displaying the 
+	mockUserService.getCategory = (catID, scaleID) => { 
+		return { dummyCategoryNoActions, actions: [{ ...newAction, id: newActionID }] } 
+	};
+	
+	fireEvent.submit(actionForms[0]);
+	
+	await waitFor(() => expect(container.querySelectorAll(".SingleActionForm").length).toBe(2));
+	
+});
 
-// hides actions form after save
 
 // good save message on new action
 
 // badSaveMessage
+
+// hides actions form after save

@@ -84,8 +84,9 @@ export default class ActionsFormLogicContainer
 		return category; //If an issue on load, this will be undefined
 	}
 	
-	//actions are the actions that can be changed here (as state)
-	//originalActions are references to the action from the userService (used in updating/deleting)
+	//Return values:
+	//actions - are the actions that can be changed (as state)
+	//originalActions - are references to the action's references from the userService (used in updating/deleting)
 	loadActionLists(category:ICategory|undefined):{ actions:IAction[]|undefined, originalActions:IAction[]|undefined }
 	{
 		let actions:IAction[]|undefined = undefined;
@@ -125,6 +126,7 @@ export default class ActionsFormLogicContainer
 	}
 	
 	
+	//Update single action in the actions state array
 	updateSingleActionState(newActionData:IAction, newActionIndex:number)
 	{
 		this.setState(state => {
@@ -139,10 +141,39 @@ export default class ActionsFormLogicContainer
 		});
 	}
 	
+	refreshCategoryActionListStates()
+	{
+		const category = this.loadCategory();
+		const actionLists = this.loadActionLists(category);
+		this.setState({
+			category,
+			actions: actionLists.actions,
+			originalActions: actionLists.originalActions,
+		});
+	}
 	
 	
+	
+	//onSubmit for new actions
+	createHandler()
+	{
+		const newAction = {
+			name: this.state.newAction.name,
+			weight: this.state.newAction.weight,
+			timespans: []
+		};
+		
+		//If no category, the onCategoryLoadError is called
+		if(this.state.category)
+			this.props.userService.createAction(this.state.category, newAction)
+				.then(savedAction => this.refreshCategoryActionListStates())
+				.catch(err => {});
+	}
+	
+	//onSubmit for existing actions
 	updateHandler(action:IAction, index:number)
 	{
+		//If no actions, the onCategoryLoadError is called
 		if(this.state.originalActions)
 			this.props.userService.updateAction(this.state.originalActions[index], action)
 				.then(action => this.setState({ 
@@ -161,19 +192,13 @@ export default class ActionsFormLogicContainer
 				 }));
 	}
 	
+	//onDelete for actions
 	deleteHandler(action:IAction, actionIndex:number)
 	{
+		//If no category or actions, the onCategoryLoadError is called
 		if(this.state.category && this.state.originalActions)
 			this.props.userService.deleteAction(this.state.category, this.state.originalActions[actionIndex])
-				.then(actions => {
-					const category = this.loadCategory();
-					const actionLists = this.loadActionLists(category);
-					this.setState({
-						category,
-						actions: actionLists.actions,
-						originalActions: actionLists.originalActions,
-					});
-				})
+				.then(actions => this.refreshCategoryActionListStates())
 				.catch(err => this.setState({ 
 					lastActionSaveMessage: {
 						actionID: action.id,
@@ -182,6 +207,8 @@ export default class ActionsFormLogicContainer
 					}
 				 }))
 	}
+	
+	
 	
 	
 	mapActionToFormItem(action:IAction, index:number, isNewAction = false):IActionFormItem
@@ -224,7 +251,7 @@ export default class ActionsFormLogicContainer
 						setName: (name:string) => this.setState({ newAction: { ...newAction, name } }),
 						weight: newAction.weight,
 						setWeight: (weight:number) => this.setState({ newAction: { ...newAction, weight } }),
-						onSubmit: ()=>{},
+						onSubmit: this.createHandler.bind(this),
 						onDelete: undefined,
 						badSaveErrorMessage: newAction.badSaveErrorMessage,
 						goodSaveMessage: undefined
