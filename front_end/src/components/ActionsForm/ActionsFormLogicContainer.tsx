@@ -167,7 +167,12 @@ export default class ActionsFormLogicContainer
 		if(this.state.category)
 			this.props.userService.createAction(this.state.category, newAction)
 				.then(savedAction => this.refreshCategoryActionListStates())
-				.catch(err => {});
+				.catch(err => this.setState({ 
+					newAction: {
+						...newAction, 
+						badSaveErrorMessage: `Unable to create new action: ${err.message}` 
+					}
+				}));
 	}
 	
 	//onSubmit for existing actions

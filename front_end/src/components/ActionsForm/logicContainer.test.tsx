@@ -454,7 +454,7 @@ test("ActionsFormLogicContainer will refresh the actions list after a create", a
 	
 	
 	const actionForms = container.querySelectorAll(".SingleActionForm form");
-	expect(actionForms.length).toBe(1); //extra is the create form
+	expect(actionForms.length).toBe(1);
 	
 	
 	const nameInput = container.querySelector("input[type=text]");
@@ -465,7 +465,7 @@ test("ActionsFormLogicContainer will refresh the actions list after a create", a
 	fireEvent.change(nameInput, { target: { value: newAction.name } });
 	fireEvent.change(weightInput, { target: { value: newAction.weight } });
 	
-	//We should be displaying the 
+	
 	mockUserService.getCategory = (catID, scaleID) => { 
 		return { dummyCategoryNoActions, actions: [{ ...newAction, id: newActionID }] } 
 	};
@@ -476,9 +476,50 @@ test("ActionsFormLogicContainer will refresh the actions list after a create", a
 	
 });
 
+test("ActionsFormLogicContainer will pass a badSaveErrorMessage to new action if problem saving", async () => {
+	
+	const errorMessage = "test error message";
+	
+	const newAction = {
+		name: "testNameChange",
+		weight: 150
+	};
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	mockUserService.createAction = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	const addButton = screen.getByRole("button", { name: /new/i });
+	fireEvent.click(addButton)
+	
+	
+	const actionForms = container.querySelectorAll(".SingleActionForm form");
+	expect(actionForms.length).toBe(1);
+	
+	
+	const nameInput = container.querySelector("input[type=text]");
+	expect(nameInput.value).not.toBe(newAction.name);
+	const weightInput = container.querySelector("input[type=number]");
+	expect(weightInput.value).not.toBe(newAction.weight);
+	
+	fireEvent.change(nameInput, { target: { value: newAction.name } });
+	fireEvent.change(weightInput, { target: { value: newAction.weight } });
+	
+	fireEvent.submit(actionForms[0]);
+	
+	await waitFor(
+		() => expect(container.querySelectorAll(".SingleActionForm")[0].textContent)
+				.toEqual(expect.stringContaining(errorMessage))
+	);
+	
+});
 
 // good save message on new action
-
-// badSaveMessage
 
 // hides actions form after save
