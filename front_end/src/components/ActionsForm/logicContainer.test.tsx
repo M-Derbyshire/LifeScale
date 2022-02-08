@@ -371,6 +371,27 @@ test("ActionsFormLogicContainer will handle the state of the new action form", (
 	
 });
 
+
+test("ActionsFormLogicContainer will not pass a delete handler to the new action form", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />);
+	
+	const addButton = screen.getByRole("button", { name: /new/i });
+	fireEvent.click(addButton)
+	
+	const actionForms = container.querySelectorAll(".SingleActionForm form");
+	expect(actionForms.length).toBe(1);
+	
+	expect(within(actionForms[0]).queryByRole("button", { name: /delete/i })).toBeNull();
+	
+});
+
 //no delete handler
 
 // save
