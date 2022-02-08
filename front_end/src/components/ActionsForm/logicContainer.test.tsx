@@ -198,7 +198,69 @@ test("ActionsFormLogicContainer will refresh the actions list after a delete", a
 	
 });
 
-// delete error message
+
+
+test("ActionsFormLogicContainer will pass in a badSaveErrorMessage if an error during delete", async () => {
+	
+	const errorMessage = "Unable to delete action";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.deleteAction = jest.fn().mockRejectedValue(new Error(errorMessage));
+	mockUserService.getCategory = jest.fn().mockReturnValue({ 
+		...dummyCategory, 
+		actions: [dummyCategory.actions[0]] // just get one
+	});
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	
+	const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButtons[0]);
+	
+	await waitFor(() => {
+		const actionForms = container.querySelectorAll(".SingleActionForm");
+		expect(actionForms[0].textContent).toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
+
+test("ActionsFormLogicContainer will pass in a badSaveErrorMessage if an error during update", async () => {
+	
+	const errorMessage = "Unable to update action";
+	const action = dummyCategory.actions[0];
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateAction = jest.fn().mockRejectedValue(new Error(errorMessage));
+	mockUserService.getCategory = jest.fn().mockReturnValue({ 
+		...dummyCategory, 
+		actions: [action] // just get one
+	});
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	
+	const nameInput = screen.getByDisplayValue(action.name);
+	fireEvent.change(nameInput, { target: { value: action.name + "testchange" } });
+	
+	
+	const forms = container.querySelectorAll(".SingleActionForm form");
+	fireEvent.submit(forms[0]);
+	
+	
+	await waitFor(() => {
+		const actionForms = container.querySelectorAll(".SingleActionForm");
+		expect(actionForms[0].textContent).toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
+
 
 // save message on save
 

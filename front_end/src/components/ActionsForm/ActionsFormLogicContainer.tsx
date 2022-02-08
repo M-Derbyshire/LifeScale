@@ -131,10 +131,16 @@ export default class ActionsFormLogicContainer
 		if(this.state.originalActions)
 			this.props.userService.updateAction(this.state.originalActions[index], action)
 				.then(action => {})
-				.catch(err => {});
+				.catch(err => this.setState({ 
+					lastActionSaveMessage: {
+						actionID: action.id,
+						isError: true,
+						saveMessage: `Unable to save action: ${err.message}`
+					}
+				 }));
 	}
 	
-	deleteHandler(actionIndex:number)
+	deleteHandler(action:IAction, actionIndex:number)
 	{
 		if(this.state.category && this.state.originalActions)
 			this.props.userService.deleteAction(this.state.category, this.state.originalActions[actionIndex])
@@ -147,7 +153,13 @@ export default class ActionsFormLogicContainer
 						originalActions: actionLists.originalActions,
 					});
 				})
-				.catch(err => {})
+				.catch(err => this.setState({ 
+					lastActionSaveMessage: {
+						actionID: action.id,
+						isError: true,
+						saveMessage: `Unable to delete action: ${err.message}`
+					}
+				 }))
 	}
 	
 	
@@ -168,8 +180,8 @@ export default class ActionsFormLogicContainer
 			weight: action.weight,
 			setWeight: (weight:number) => this.updateSingleActionState({ ...action, weight }, index),
 			onSubmit: () => this.updateHandler(action, index),
-			onDelete: (!isNewAction) ? () => this.deleteHandler(index) : undefined,
-			badSaveErrorMessage: undefined,
+			onDelete: (!isNewAction) ? () => this.deleteHandler(action, index) : undefined,
+			badSaveErrorMessage: badSaveMessage,
 			goodSaveMessage: undefined
 		};
 	}
