@@ -59,6 +59,27 @@ test("ActionsFormLogicContainer will render a ActionsForm", () => {
 	
 });
 
+test("ActionsFormLogicContainer will set the ActionsForm to display the new action form, after clicking the add new button", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = () => dummyCategoryNoActions; //So only one form would be displayed
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	
+	expect(container.querySelector(".SingleActionForm")).toBeNull();
+	
+	const addButton = screen.getByRole("button", { name: /new/i });
+	fireEvent.click(addButton);
+	
+	expect(screen.queryByRole("button", { name: /new/i })).toBeNull();
+	expect(container.querySelectorAll(".SingleActionForm").length).toBe(1);
+	
+});
+
 
 test("ActionsFormLogicContainer will load the categories with the correct scale/category ids", () => {
 	
@@ -472,7 +493,8 @@ test("ActionsFormLogicContainer will refresh the actions list after a create", a
 	
 	fireEvent.submit(actionForms[0]);
 	
-	await waitFor(() => expect(container.querySelectorAll(".SingleActionForm").length).toBe(2));
+	//If this fails, make sure the functionality that hides the new action form on save is working
+	await waitFor(() => expect(container.querySelectorAll(".SingleActionForm").length).toBe(1));
 	
 });
 
@@ -482,7 +504,8 @@ test("ActionsFormLogicContainer will pass a badSaveErrorMessage to new action if
 	
 	const newAction = {
 		name: "testNameChange",
-		weight: 150
+		weight: 150,
+		timespans: []
 	};
 	
 	const mockUserService = { ...dummyUserService };
@@ -520,6 +543,46 @@ test("ActionsFormLogicContainer will pass a badSaveErrorMessage to new action if
 	
 });
 
-// good save message on new action
 
-// hides actions form after save
+test("ActionsFormLogicContainer will not display the new actions form after a create", async () => {
+	
+	const newAction = {
+		name: "testNameChange",
+		weight: 150,
+		timespans: []
+	};
+	const newActionID = "testID";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	mockUserService.createAction = jest.fn().mockResolvedValue({ ...newAction, id: newActionID });
+	
+	
+	const { container } = render(<ActionsFormLogicContainer
+									userService={mockUserService}
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id} />)
+	
+	const addButton = screen.getByRole("button", { name: /new/i });
+	fireEvent.click(addButton)
+	
+	
+	const actionForms = container.querySelectorAll(".SingleActionForm form");
+	expect(actionForms.length).toBe(1); // new action form
+	
+	
+	const nameInput = container.querySelector("input[type=text]");
+	expect(nameInput.value).not.toBe(newAction.name);
+	const weightInput = container.querySelector("input[type=number]");
+	expect(weightInput.value).not.toBe(newAction.weight);
+	
+	fireEvent.change(nameInput, { target: { value: newAction.name } });
+	fireEvent.change(weightInput, { target: { value: newAction.weight } });
+	
+	
+	fireEvent.submit(actionForms[0]);
+	
+	// getCategory is still returning no actions, so no existing action forms to display either
+	await waitFor(() => expect(container.querySelectorAll(".SingleActionForm").length).toBe(0));
+	
+});

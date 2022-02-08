@@ -33,6 +33,7 @@ interface IActionsFormLogicContainerState {
 	actions?:IAction[]; //Actions that we can edit as state
 	originalActions?:IAction[]; //References to actions in userService (used when updating/deleting)
 	lastActionSaveMessage:IActionSaveMessage; //We only need to display the last save message (good or bad)
+	displayNewActionForm:boolean;
 }
 
 
@@ -68,7 +69,8 @@ export default class ActionsFormLogicContainer
 			newAction,
 			actions: actionLists.actions,
 			originalActions: actionLists.originalActions,
-			lastActionSaveMessage
+			lastActionSaveMessage,
+			displayNewActionForm: false
 		};
 	}
 	
@@ -166,7 +168,10 @@ export default class ActionsFormLogicContainer
 		//If no category, the onCategoryLoadError is called
 		if(this.state.category)
 			this.props.userService.createAction(this.state.category, newAction)
-				.then(savedAction => this.refreshCategoryActionListStates())
+				.then(savedAction => {
+					this.setState({ displayNewActionForm: false });
+					this.refreshCategoryActionListStates();
+				})
 				.catch(err => this.setState({ 
 					newAction: {
 						...newAction, 
@@ -249,6 +254,10 @@ export default class ActionsFormLogicContainer
 		return (
 			<div className="ActionsFormLogicContainer">
 				<ActionsForm 
+					displayNewActionForm={this.state.displayNewActionForm}
+					setDisplayNewActionForm={(newVal:boolean) => this.setState({
+						displayNewActionForm: newVal
+					})}
 					actions={actions}
 					newAction={{
 						id: "",

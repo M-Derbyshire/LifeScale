@@ -7,21 +7,14 @@ import SingleActionForm from '../SingleActionForm/SingleActionForm';
 interface IActionsFormProps {
 	actions:IActionFormItem[];
 	newAction:IActionFormItem;
-}
-
-interface IActionsFormState {
 	displayNewActionForm:boolean;
+	setDisplayNewActionForm:(newVal:boolean)=>void;
 }
 
 /*
 	Used to Create/Update/Delete actions
 */
-export default class ActionsForm extends Component<IActionsFormProps, IActionsFormState> {
-	
-	
-	state:IActionsFormState = {
-		displayNewActionForm: false
-	}
+export default class ActionsForm extends Component<IActionsFormProps> {
 	
 	
 	mapActionToComponent(action:IActionFormItem)
@@ -48,15 +41,15 @@ export default class ActionsForm extends Component<IActionsFormProps, IActionsFo
 					<h2>Actions</h2>
 				</header>
 				
-				{!this.state.displayNewActionForm && <button 
+				{!this.props.displayNewActionForm && <button 
 					className="newActionButton" 
-					onClick={()=>this.setState({ displayNewActionForm: true })} >
+					onClick={() => this.props.setDisplayNewActionForm(true)} >
 						Add New Action
 				</button>}
 				
 				<div className="actionsArea">
 					
-					{this.state.displayNewActionForm && this.mapActionToComponent(this.props.newAction)}
+					{this.props.displayNewActionForm && this.mapActionToComponent(this.props.newAction)}
 					
 					{this.props.actions.map(this.mapActionToComponent.bind(this))}
 					
