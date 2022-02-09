@@ -1,10 +1,9 @@
-import React, { FC } from 'react';
+import React, { FC, ReactElement } from 'react';
 import './CategoryDetailsForm.scss';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import CategoryDetailsFormPartial from '../CategoryDetailsFormPartial/CategoryDetailsFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
-import ActionsForm from '../ActionsForm/ActionsForm';
 import ICategoryFormItem from '../../interfaces/UI/ICategoryFormItem';
 
 
@@ -16,6 +15,8 @@ interface ICategoryDetailsFormProps {
 	
 	backButtonHandler:()=>void;
 	disableSubmit?:boolean;
+	
+	actionsForm?:ReactElement;
 }
 
 /*
@@ -60,9 +61,8 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 						
 					</form>
 					
-					<ActionsForm
-							actions={props.categoryItem.actions}
-							newAction={props.categoryItem.newAction} />
+					{props.actionsForm}
+					
 				</div>
 			} />
 			

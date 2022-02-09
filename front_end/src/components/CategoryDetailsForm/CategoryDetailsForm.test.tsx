@@ -352,42 +352,18 @@ test("CategoryDetailsForm delete button will call onDelete prop", () => {
 
 
 
-test("CategoryDetailsForm will render an ActionsForm", () => {
+test("CategoryDetailsForm will render the given actionsForm prop", () => {
+	
+	const testText = "testing text in place of action form";
 	
 	const { container } = render(<CategoryDetailsForm 
 				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				actionsForm={(<div>{testText}</div>)} />);
 	
-	const actionsForm = container.querySelector(".ActionsForm");
+	const textElement = screen.getByText(testText);
 	
-	expect(actionsForm).not.toBeNull();
-	
-});
-
-test("CategoryDetailsForm will pass the actions to ActionsForm", () => {
-	
-	render(<CategoryDetailsForm 
-				categoryItem={dummyCategoryFormItem}
-				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
-	
-	dummyCategoryFormItem.actions.forEach(
-		(act) => expect(screen.getByDisplayValue(act.name)).not.toBeNull()
-	);
-	
-});
-
-test("CategoryDetailsForm will pass the newAction to ActionsForm", () => {
-	
-	const { container } = render(<CategoryDetailsForm 
-				categoryItem={dummyCategoryFormItem}
-				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
-	
-	const newActionButton = container.querySelector(".newActionButton");
-	fireEvent.click(newActionButton);
-	
-	expect(screen.getByDisplayValue(dummyCategoryFormItem.newAction.name)).not.toBeNull()
+	expect(textElement).not.toBeNull();
 	
 });

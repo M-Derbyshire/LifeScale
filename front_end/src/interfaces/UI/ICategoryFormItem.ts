@@ -10,9 +10,6 @@ interface ICategoryFormItem {
 	desiredWeight:number;
 	setDesiredWeight:(weight:number)=>void;
 	
-	newAction:IActionFormItem;
-	actions:IActionFormItem[];
-	
 	onSubmit:()=>void;
 	onDelete?:()=>void;
 	badSaveErrorMessage?:string;
