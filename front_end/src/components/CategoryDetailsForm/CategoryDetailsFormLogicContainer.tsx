@@ -8,6 +8,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 	categoryID?:string; //If undefined, this form will be used to create. Otherwise, form will update
 	userService:IUserService;
 	backButtonHandler:()=>void;
+	onSuccessfulDeleteHandler?:()=>void;
 };
 
 interface ICategoryDetailsFormLogicContainerState {
