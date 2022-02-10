@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import CategoryDetailsForm from './CategoryDetailsForm';
 import ActionsFormLogicContainer from '../ActionsForm/ActionsFormLogicContainer';
 import IUserService from '../../interfaces/api_access/IUserService';
+import ICategory from '../../interfaces/ICategory';
 
 
 interface ICategoryDetailsFormLogicContainerProps {
@@ -13,9 +14,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 };
 
 interface ICategoryDetailsFormLogicContainerState {
-	name:string;
-	color:string;
-	desiredWeight:number;
+	category:ICategory|Omit<ICategory, "id">;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
 };
@@ -29,10 +28,18 @@ export default class CategoryDetailsFormLogicContainer
 	{
 		super(props)
 		
+		
+		//getCategory may return undefined
+		let category:ICategory|Omit<ICategory, "id">|undefined = (this.props.categoryID) 
+							? this.props.userService.getCategory(this.props.categoryID!, this.props.scaleID) 
+							: undefined;
+		
+		if(!category)
+			category = { name: "", color: "red", desiredWeight: 1, actions: [] };
+		
+		
 		this.state = {
-			name: "",
-			color: "",
-			desiredWeight: 0
+			category: category!
 		};
 	}
 	
@@ -45,9 +52,20 @@ export default class CategoryDetailsFormLogicContainer
 		const actionsForm = (!isCreating) ? (<ActionsFormLogicContainer 
 															userService={this.props.userService}
 															scaleID={this.props.scaleID}
-															categoryID={this.props.categoryID}
+															categoryID={this.props.categoryID!}
 															onCategoryLoadError={()=>{}}
 														/>) : undefined;
+		
+		
+		let headingText = "";
+		if(!this.state.category) 
+			headingText = "Error";
+		else if (!isCreating)
+			headingText = `Edit Category - ${this.state.category!.name}`;
+		else
+			headingText = "Create Category";
+		
+		
 		
 		return (
 			<div className="CategoryDetailsFormLogicContainer">
@@ -64,7 +82,7 @@ export default class CategoryDetailsFormLogicContainer
 						badSaveErrorMessage: undefined,
 						goodSaveMessage: undefined
 					}}
-					headingText=""
+					headingText={headingText}
 					badLoadErrorMessage={undefined}
 					backButtonHandler={()=>{}}
 					disableSubmit={undefined}

@@ -92,7 +92,36 @@ test("CategoryDetailsFormLogicContainer will not pass in the delete handler, if 
 	
 });
 
-// if category id, category name in heading text
+
+test("CategoryDetailsFormLogicContainer will load the category with the given scale and category IDs", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = jest.fn().mockReturnValue(dummyCategory);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScaleID}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	expect(mockUserService.getCategory).toHaveBeenCalledWith(dummyCategory.id, dummyScaleID);
+	
+});
+
+test("CategoryDetailsFormLogicContainer will pass the category name within the headingText, if categoryID is provided", () => {
+	
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScaleID}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={dummyUserService} />);
+	
+	const heading = container.querySelector(".CategoryDetailsForm header");
+	
+	expect(heading.textContent).toEqual(expect.stringContaining(dummyCategory.name));
+	
+});
 
 // loads scale on create
 
