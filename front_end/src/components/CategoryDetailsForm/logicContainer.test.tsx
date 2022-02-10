@@ -5,8 +5,6 @@ import TestingDummyUserService from '../../userServices/TestingDummyUserService/
 
 const dummyBackHandler = ()=>{};
 
-const dummyScaleID = "testScaleID";
-
 const dummyCategory = {
 	id: "testCat23132948284",
 	name: "testcat",
@@ -20,16 +18,25 @@ const dummyCategory = {
 	}]
 }
 
+const dummyScale = {
+	id: "testScale38312772389",
+	name: "testscale",
+	usesTimespans: true,
+	displayDayCount: 7,
+	categories: [dummyCategory]
+}
+
 const dummyCategoryNoActions = { ...dummyCategory, actions: [] };
 
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getCategory = (catID, scaleID) => dummyCategory;
+dummyUserService.getScale = (scaleID) => dummyScale;
 
 
 test("CategoryDetailsFormLogicContainer will display a CategoryDetailsForm", () => {
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScaleID}
+									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
 									userService={dummyUserService} />);
@@ -41,7 +48,7 @@ test("CategoryDetailsFormLogicContainer will display a CategoryDetailsForm", () 
 test("CategoryDetailsFormLogicContainer will pass in the actionsForm prop, if categoryID is provided", () => {
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScaleID}
+									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
 									userService={dummyUserService} />);
@@ -53,7 +60,7 @@ test("CategoryDetailsFormLogicContainer will pass in the actionsForm prop, if ca
 test("CategoryDetailsFormLogicContainer will not pass in the actionsForm prop, if no categoryID is provided", () => {
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScaleID}
+									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
 									userService={dummyUserService} />);
 	
@@ -68,7 +75,7 @@ test("CategoryDetailsFormLogicContainer will pass in the delete handler, if cate
 	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScaleID}
+									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
 									userService={mockUserService} />);
@@ -84,7 +91,7 @@ test("CategoryDetailsFormLogicContainer will not pass in the delete handler, if 
 	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScaleID}
+									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
 									userService={mockUserService} />);
 	
@@ -92,27 +99,11 @@ test("CategoryDetailsFormLogicContainer will not pass in the delete handler, if 
 	
 });
 
-
-test("CategoryDetailsFormLogicContainer will load the category with the given scale and category IDs", () => {
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = jest.fn().mockReturnValue(dummyCategory);
-	
-	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScaleID}
-									categoryID={dummyCategory.id}
-									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
-	
-	expect(mockUserService.getCategory).toHaveBeenCalledWith(dummyCategory.id, dummyScaleID);
-	
-});
-
 test("CategoryDetailsFormLogicContainer will pass the category name within the headingText, if categoryID is provided", () => {
 	
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScaleID}
+									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
 									userService={dummyUserService} />);
@@ -123,9 +114,39 @@ test("CategoryDetailsFormLogicContainer will pass the category name within the h
 	
 });
 
-// loads scale on create
 
-// loads scale and category on edit
+test("CategoryDetailsFormLogicContainer will load the category and scale with the given scale and category IDs, if a category id is provided", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = jest.fn().mockReturnValue(dummyCategory);
+	mockUserService.getScale = jest.fn().mockReturnValue(dummyScale);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	expect(mockUserService.getCategory).toHaveBeenCalledWith(dummyCategory.id, dummyScale.id);
+	expect(mockUserService.getScale).toHaveBeenCalledWith(dummyScale.id);
+	
+});
+
+test("CategoryDetailsFormLogicContainer will load just the scale with the given scale ID, if no category id is provided", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = jest.fn().mockReturnValue(dummyCategory);
+	mockUserService.getScale = jest.fn().mockReturnValue(dummyScale);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	expect(mockUserService.getCategory).not.toHaveBeenCalled();
+	expect(mockUserService.getScale).toHaveBeenCalledWith(dummyScale.id);
+	
+});
 
 // badLoadErrorMessage on bad scale load
 

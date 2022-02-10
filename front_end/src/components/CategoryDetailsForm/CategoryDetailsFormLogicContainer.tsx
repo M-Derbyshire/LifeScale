@@ -3,6 +3,7 @@ import CategoryDetailsForm from './CategoryDetailsForm';
 import ActionsFormLogicContainer from '../ActionsForm/ActionsFormLogicContainer';
 import IUserService from '../../interfaces/api_access/IUserService';
 import ICategory from '../../interfaces/ICategory';
+import IScale from '../../interfaces/IScale';
 
 
 interface ICategoryDetailsFormLogicContainerProps {
@@ -15,6 +16,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 
 interface ICategoryDetailsFormLogicContainerState {
 	category:ICategory|Omit<ICategory, "id">;
+	scale?:IScale;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
 };
@@ -38,8 +40,13 @@ export default class CategoryDetailsFormLogicContainer
 			category = { name: "", color: "red", desiredWeight: 1, actions: [] };
 		
 		
+		
+		const scale = this.props.userService.getScale(this.props.scaleID); // may also be undefined
+		
+		
 		this.state = {
-			category: category!
+			category: category!,
+			scale
 		};
 	}
 	
