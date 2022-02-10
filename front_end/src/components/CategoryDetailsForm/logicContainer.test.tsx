@@ -23,7 +23,7 @@ const dummyCategory = {
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getCategory = (catID, scaleID) => dummyCategory;
 
-// displays form
+
 test("CategoryDetailsFormLogicContainer will display a CategoryDetailsForm", () => {
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
@@ -36,9 +36,28 @@ test("CategoryDetailsFormLogicContainer will display a CategoryDetailsForm", () 
 	
 });
 
-//displays action form if category id (think about header text as well)
+test("CategoryDetailsFormLogicContainer will pass in the actionsForm prop, if categoryID is provided", () => {
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScaleID}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={dummyUserService} />);
+	
+	expect(container.querySelector(".ActionsFormLogicContainer")).not.toBeNull();
+	
+});
 
-// doesn't display action form if no category id
+test("CategoryDetailsFormLogicContainer will not pass in the actionsForm prop, if no categoryID is provided", () => {
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScaleID}
+									backButtonHandler={dummyBackHandler}
+									userService={dummyUserService} />);
+	
+	expect(container.querySelector(".ActionsFormLogicContainer")).toBeNull();
+	
+});
 
 // displays delete button if category id
 

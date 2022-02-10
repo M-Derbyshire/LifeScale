@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CategoryDetailsForm from './CategoryDetailsForm';
+import ActionsFormLogicContainer from '../ActionsForm/ActionsFormLogicContainer';
 import IUserService from '../../interfaces/api_access/IUserService';
 
 
@@ -39,7 +40,12 @@ export default class CategoryDetailsFormLogicContainer
 	
 	render()
 	{
-		
+		const actionsForm = (this.props.categoryID) ? (<ActionsFormLogicContainer 
+															userService={this.props.userService}
+															scaleID={this.props.scaleID}
+															categoryID={this.props.categoryID}
+															onCategoryLoadError={()=>{}}
+														/>) : undefined;
 		
 		return (
 			<div className="CategoryDetailsFormLogicContainer">
@@ -60,7 +66,7 @@ export default class CategoryDetailsFormLogicContainer
 					badLoadErrorMessage={undefined}
 					backButtonHandler={()=>{}}
 					disableSubmit={undefined}
-					actionsForm={undefined} />
+					actionsForm={actionsForm} />
 			</div>
 		);
 	}
