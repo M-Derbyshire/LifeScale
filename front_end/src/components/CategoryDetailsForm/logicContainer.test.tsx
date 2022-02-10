@@ -20,6 +20,8 @@ const dummyCategory = {
 	}]
 }
 
+const dummyCategoryNoActions = { ...dummyCategory, actions: [] };
+
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getCategory = (catID, scaleID) => dummyCategory;
 
@@ -59,9 +61,38 @@ test("CategoryDetailsFormLogicContainer will not pass in the actionsForm prop, i
 	
 });
 
-// displays delete button if category id
+test("CategoryDetailsFormLogicContainer will pass in the delete handler, if categoryID is provided", () => {
+	
+	//No actions, so no delete buttons for those
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScaleID}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	expect(screen.queryByRole("button", { name: /delete/i })).not.toBeNull();
+	
+});
 
-// doesn't display delete if no cat id
+test("CategoryDetailsFormLogicContainer will not pass in the delete handler, if no categoryID is provided", () => {
+	
+	//No actions, so no delete buttons for those
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScaleID}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	expect(screen.queryByRole("button", { name: /delete/i })).toBeNull();
+	
+});
+
+// if category id, category name in heading text
 
 // loads scale on create
 

@@ -40,7 +40,9 @@ export default class CategoryDetailsFormLogicContainer
 	
 	render()
 	{
-		const actionsForm = (this.props.categoryID) ? (<ActionsFormLogicContainer 
+		const isCreating = (!this.props.categoryID);
+		
+		const actionsForm = (!isCreating) ? (<ActionsFormLogicContainer 
 															userService={this.props.userService}
 															scaleID={this.props.scaleID}
 															categoryID={this.props.categoryID}
@@ -58,7 +60,7 @@ export default class CategoryDetailsFormLogicContainer
 						desiredWeight: 1,
 						setDesiredWeight:(weight:number)=>{},
 						onSubmit:()=>{},
-						onDelete:()=>{},
+						onDelete:(isCreating) ? undefined : ()=>{},
 						badSaveErrorMessage: undefined,
 						goodSaveMessage: undefined
 					}}
