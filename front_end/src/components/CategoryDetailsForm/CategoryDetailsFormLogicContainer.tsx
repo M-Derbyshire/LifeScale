@@ -19,6 +19,7 @@ interface ICategoryDetailsFormLogicContainerState {
 	scale?:IScale;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
+	badLoadErrorMessage?:string;
 };
 
 
@@ -26,27 +27,38 @@ export default class CategoryDetailsFormLogicContainer
 	extends Component<ICategoryDetailsFormLogicContainerProps, ICategoryDetailsFormLogicContainerState>
 {
 	
+	stdScaleLoadErrorMessage = "Unable to load the requested scale.";
+	stdCategoryLoadErrorMessage = "Unable to load the requested category.";
+	
+	
 	constructor(props:ICategoryDetailsFormLogicContainerProps)
 	{
 		super(props)
 		
+		let badLoadErrorMessage;
 		
 		//getCategory may return undefined
 		let category:ICategory|Omit<ICategory, "id">|undefined = (this.props.categoryID) 
 							? this.props.userService.getCategory(this.props.categoryID!, this.props.scaleID) 
 							: undefined;
 		
-		if(!category)
+		if(this.props.categoryID && !category)
+		{
+			badLoadErrorMessage = this.stdCategoryLoadErrorMessage;
 			category = { name: "", color: "red", desiredWeight: 1, actions: [] };
+		}
 		
 		
 		
-		const scale = this.props.userService.getScale(this.props.scaleID); // may also be undefined
+		const scale = this.props.userService.getScale(this.props.scaleID);
+		if(!scale)
+			badLoadErrorMessage = this.stdScaleLoadErrorMessage;
 		
 		
 		this.state = {
 			category: category!,
-			scale
+			scale, //may be undefined
+			badLoadErrorMessage //may be undefined
 		};
 	}
 	
@@ -56,16 +68,20 @@ export default class CategoryDetailsFormLogicContainer
 	{
 		const isCreating = (!this.props.categoryID);
 		
-		const actionsForm = (!isCreating) ? (<ActionsFormLogicContainer 
-															userService={this.props.userService}
-															scaleID={this.props.scaleID}
-															categoryID={this.props.categoryID!}
-															onCategoryLoadError={()=>{}}
-														/>) : undefined;
+		let actionsForm;
+		if (!isCreating) 
+			actionsForm = (<ActionsFormLogicContainer 
+								userService={this.props.userService}
+								scaleID={this.props.scaleID}
+								categoryID={this.props.categoryID!}
+								onCategoryLoadError={()=>this.setState({ 
+									badLoadErrorMessage: this.stdCategoryLoadErrorMessage 
+								})}
+							/>);
 		
 		
 		let headingText = "";
-		if(!this.state.category) 
+		if(this.state.badLoadErrorMessage) 
 			headingText = "Error";
 		else if (!isCreating)
 			headingText = `Edit Category - ${this.state.category!.name}`;
@@ -90,7 +106,7 @@ export default class CategoryDetailsFormLogicContainer
 						goodSaveMessage: undefined
 					}}
 					headingText={headingText}
-					badLoadErrorMessage={undefined}
+					badLoadErrorMessage={this.state.badLoadErrorMessage}
 					backButtonHandler={()=>{}}
 					disableSubmit={undefined}
 					actionsForm={actionsForm} />

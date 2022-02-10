@@ -1,5 +1,5 @@
 import CategoryDetailsFormLogicContainer from './CategoryDetailsFormLogicContainer';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 
@@ -31,6 +31,12 @@ const dummyCategoryNoActions = { ...dummyCategory, actions: [] };
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getCategory = (catID, scaleID) => dummyCategory;
 dummyUserService.getScale = (scaleID) => dummyScale;
+
+
+
+const scaleLoadErrorMessage = "Unable to load the requested scale.";
+const categoryLoadErrorMessage = "Unable to load the requested category.";
+
 
 
 test("CategoryDetailsFormLogicContainer will display a CategoryDetailsForm", () => {
@@ -148,11 +154,65 @@ test("CategoryDetailsFormLogicContainer will load just the scale with the given 
 	
 });
 
-// badLoadErrorMessage on bad scale load
+test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage on bad scale load", () => {
+	
+	const errorMessage = scaleLoadErrorMessage;
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = jest.fn().mockReturnValue(dummyCategory);
+	mockUserService.getScale = jest.fn().mockReturnValue(undefined);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	const categoryForm = container.querySelector(".CategoryDetailsForm");
+	expect(within(categoryForm).queryByText(errorMessage)).not.toBeNull();
+	
+});
 
-//badLoadErrorMessage on bad category load
+test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage on bad category load", () => {
+	
+	const errorMessage = categoryLoadErrorMessage;
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getCategory = jest.fn().mockReturnValue(undefined);
+	mockUserService.getScale = jest.fn().mockReturnValue(dummyScale);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	const categoryForm = container.querySelector(".CategoryDetailsForm");
+	expect(within(categoryForm).queryByText(errorMessage)).not.toBeNull();
+	
+});
 
 // badLoadErrorMessage to category form on bad load callback from actionform
+test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage to CategoryDetailsForm on bad load callback from ActionsForm", () => {
+	
+	const errorMessage = categoryLoadErrorMessage;
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getScale = jest.fn().mockReturnValue(dummyScale);
+	
+	//Only the once, so ActionsForm fails
+	mockUserService.getCategory = jest.fn().mockReturnValueOnce(dummyCategory).mockReturnValue(undefined);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	const categoryForm = container.querySelector(".CategoryDetailsForm");
+	expect(within(categoryForm).queryByText(errorMessage)).not.toBeNull();
+	
+});
 
 // handles form state
 
