@@ -43,7 +43,24 @@ export default class CategoryDetailsFormLogicContainer
 		
 		return (
 			<div className="CategoryDetailsFormLogicContainer">
-				
+				<CategoryDetailsForm
+					categoryItem={{
+						name: "test",
+						setName:(name:string)=>{},
+						color: "red",
+						setColor:(color:string)=>{},
+						desiredWeight: 1,
+						setDesiredWeight:(weight:number)=>{},
+						onSubmit:()=>{},
+						onDelete:()=>{},
+						badSaveErrorMessage: undefined,
+						goodSaveMessage: undefined
+					}}
+					headingText=""
+					badLoadErrorMessage={undefined}
+					backButtonHandler={()=>{}}
+					disableSubmit={undefined}
+					actionsForm={undefined} />
 			</div>
 		);
 	}
