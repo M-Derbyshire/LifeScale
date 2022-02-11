@@ -42,9 +42,11 @@ export default class CategoryDetailsFormLogicContainer
 							? this.props.userService.getCategory(this.props.categoryID!, this.props.scaleID) 
 							: undefined;
 		
-		if(this.props.categoryID && !category)
+		if(!category)
 		{
-			badLoadErrorMessage = this.stdCategoryLoadErrorMessage;
+			if(this.props.categoryID)
+				badLoadErrorMessage = this.stdCategoryLoadErrorMessage;
+			
 			category = { name: "", color: "red", desiredWeight: 1, actions: [] };
 		}
 		
@@ -94,16 +96,27 @@ export default class CategoryDetailsFormLogicContainer
 			<div className="CategoryDetailsFormLogicContainer">
 				<CategoryDetailsForm
 					categoryItem={{
-						name: "test",
-						setName:(name:string)=>{},
-						color: "red",
-						setColor:(color:string)=>{},
-						desiredWeight: 1,
-						setDesiredWeight:(weight:number)=>{},
+						
+						name: this.state.category.name,
+						setName:(name:string) => this.setState({ 
+							category: { ...this.state.category, name } 
+						}),
+						
+						color: this.state.category.color,
+						setColor:(color:string) => this.setState({ 
+							category: { ...this.state.category, color } 
+						}),
+						
+						desiredWeight: this.state.category.desiredWeight,
+						setDesiredWeight:(desiredWeight:number) => this.setState({ 
+							category: { ...this.state.category, desiredWeight } 
+						}),
+						
 						onSubmit:()=>{},
 						onDelete:(isCreating) ? undefined : ()=>{},
 						badSaveErrorMessage: undefined,
 						goodSaveMessage: undefined
+						
 					}}
 					headingText={headingText}
 					badLoadErrorMessage={this.state.badLoadErrorMessage}

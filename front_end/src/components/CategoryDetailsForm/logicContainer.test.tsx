@@ -1,5 +1,6 @@
 import CategoryDetailsFormLogicContainer from './CategoryDetailsFormLogicContainer';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 
@@ -214,7 +215,43 @@ test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage to Categ
 	
 });
 
-// handles form state
+test("CategoryDetailsFormLogicContainer will handle the form state", () => {
+	
+	const newName = "testNewTest";
+	const newColor = "yellow";
+	const newWeight = 13467;
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={dummyUserService} />);
+	
+	const nameInput = screen.getByDisplayValue(dummyCategory.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	//We can't use getByDisplayValue for selects
+	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
+	expect(colorInput.value).not.toBe(newColor);
+	
+	// value shows up too often to use getByDisplayValue
+	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
+	expect(Number(weightInput.value)).not.toBe(newWeight);
+	
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	userEvent.selectOptions(colorInput, newColor);
+	fireEvent.change(weightInput, { target: { value: newWeight } });
+	
+	expect(nameInput.value).toBe(newName);
+	expect(colorInput.value).toBe(newColor);
+	expect(Number(weightInput.value)).toBe(newWeight);
+	
+});
+
+// will not change the header when changing the name state
+
+// will change the header after saving a name change
 
 // back button handler
 
