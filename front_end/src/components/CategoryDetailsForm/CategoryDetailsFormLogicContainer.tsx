@@ -123,7 +123,7 @@ export default class CategoryDetailsFormLogicContainer
 					}}
 					headingText={headingText}
 					badLoadErrorMessage={this.state.badLoadErrorMessage}
-					backButtonHandler={()=>{}}
+					backButtonHandler={this.props.backButtonHandler}
 					disableSubmit={undefined}
 					actionsForm={actionsForm} />
 			</div>

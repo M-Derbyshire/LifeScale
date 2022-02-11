@@ -269,7 +269,24 @@ test("CategoryDetailsFormLogicContainer will not change the header when changing
 	
 });
 
-// back button handler
+test("CategoryDetailsFormLogicContainer will pass down the backButtonHandler prop", () => {
+	
+	const mockBackButtonHandler = jest.fn();
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={mockBackButtonHandler}
+									userService={dummyUserService} />);
+	
+	const categoryDetailsForm = container.querySelector(".CategoryDetailsForm");
+	const backButton = within(categoryDetailsForm).getByRole("button", { name: /back/i })
+	
+	fireEvent.click(backButton);
+	
+	expect(mockBackButtonHandler).toHaveBeenCalled();
+	
+});
 
 // save creating
 
