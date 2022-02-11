@@ -107,16 +107,14 @@ export default class CategoryDetailsFormLogicContainer
 	
 	render()
 	{
-		const isCreating = (!this.props.categoryID && !this.state.category.id);
+		const isCreating = (!this.state.category.id);
 		
 		let actionsForm;
 		if (!isCreating) 
 			actionsForm = (<ActionsFormLogicContainer 
 								userService={this.props.userService}
 								scaleID={this.props.scaleID}
-								categoryID={
-									(this.props.categoryID) ? this.props.categoryID : this.state.category!.id
-								}
+								categoryID={this.state.category!.id}
 								onCategoryLoadError={()=>this.setState({ 
 									badLoadErrorMessage: this.stdCategoryLoadErrorMessage 
 								})}
