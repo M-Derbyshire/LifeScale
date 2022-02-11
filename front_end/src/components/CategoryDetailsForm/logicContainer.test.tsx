@@ -249,15 +249,33 @@ test("CategoryDetailsFormLogicContainer will handle the form state", () => {
 	
 });
 
-// will not change the header when changing the name state
-
-// will change the header after saving a name change
+test("CategoryDetailsFormLogicContainer will not change the header when changing the name state", () => {
+	
+	const newName = "aaaaaaabbbbbbbbbbccccccccc";
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={dummyUserService} />);
+	
+	const nameInput = screen.getByDisplayValue(dummyCategory.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	const header = container.querySelector(".CategoryDetailsForm header");
+	expect(header.textContent).toEqual(expect.stringContaining(dummyCategory.name));
+	
+});
 
 // back button handler
 
 // save creating
 
 // save updating
+
+// CategoryDetailsFormLogicContainer will change the header after saving an update with name change
 
 // error message on bad create
 

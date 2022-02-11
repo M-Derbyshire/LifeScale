@@ -16,6 +16,8 @@ interface ICategoryDetailsFormLogicContainerProps {
 
 interface ICategoryDetailsFormLogicContainerState {
 	category:ICategory|Omit<ICategory, "id">;
+	categoryNameForHeading:string; // This is stored seperately, as changing the state.category.name 
+									//would also change the heading otherwise
 	scale?:IScale;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
@@ -59,6 +61,7 @@ export default class CategoryDetailsFormLogicContainer
 		
 		this.state = {
 			category: category!,
+			categoryNameForHeading: category!.name,
 			scale, //may be undefined
 			badLoadErrorMessage //may be undefined
 		};
@@ -86,7 +89,7 @@ export default class CategoryDetailsFormLogicContainer
 		if(this.state.badLoadErrorMessage) 
 			headingText = "Error";
 		else if (!isCreating)
-			headingText = `Edit Category - ${this.state.category!.name}`;
+			headingText = `Edit Category - ${this.state.categoryNameForHeading}`;
 		else
 			headingText = "Create Category";
 		
