@@ -34,7 +34,7 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 			
 			<LoadedContentWrapper errorMessage={props.badLoadErrorMessage} render={props.categoryItem && 
 				<div>
-					<form onSubmit={props.categoryItem.onSubmit}>
+					<form onSubmit={(e) => { e.preventDefault(); props.categoryItem!.onSubmit(); } }>
 						
 						<CategoryDetailsFormPartial 
 							name={props.categoryItem.name}

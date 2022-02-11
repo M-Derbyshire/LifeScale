@@ -15,7 +15,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 };
 
 interface ICategoryDetailsFormLogicContainerState {
-	category:ICategory|Omit<ICategory, "id">;
+	category:ICategory;
 	categoryNameForHeading:string; // This is stored seperately, as changing the state.category.name 
 									//would also change the heading otherwise
 	scale?:IScale;
@@ -39,19 +39,11 @@ export default class CategoryDetailsFormLogicContainer
 		
 		let badLoadErrorMessage;
 		
-		//getCategory may return undefined
-		let category:ICategory|Omit<ICategory, "id">|undefined = (this.props.categoryID) 
-							? this.props.userService.getCategory(this.props.categoryID!, this.props.scaleID) 
-							: undefined;
+		const category = this.loadOrCreateCategory(this.props.categoryID);
 		
-		if(!category)
-		{
-			if(this.props.categoryID)
+		//empty string is falsy
+		if(!category.id && this.props.categoryID)
 				badLoadErrorMessage = this.stdCategoryLoadErrorMessage;
-			
-			category = { name: "", color: "red", desiredWeight: 1, actions: [] };
-		}
-		
 		
 		
 		const scale = this.props.userService.getScale(this.props.scaleID);
@@ -60,7 +52,7 @@ export default class CategoryDetailsFormLogicContainer
 		
 		
 		this.state = {
-			category: category!,
+			category: category,
 			categoryNameForHeading: category!.name,
 			scale, //may be undefined
 			badLoadErrorMessage //may be undefined
@@ -69,16 +61,62 @@ export default class CategoryDetailsFormLogicContainer
 	
 	
 	
+	//If can't load a category, creates an empty one (no ID, for creating)
+	loadOrCreateCategory(categoryID?:string):ICategory
+	{
+		//getCategory may return undefined
+		let category:ICategory|undefined = (categoryID) 
+							? this.props.userService.getCategory(categoryID!, this.props.scaleID) 
+							: undefined;
+		
+		if(!category)
+			category = { id:"", name: "", color: "red", desiredWeight: 1, actions: [] };
+		
+		return category;
+	}
+	
+	
+	
+	
+	createCategoryHandler()
+	{
+		//Bad load message prop to be passed to form, if scale isn't there (category gets set to blank if none)
+		if(this.state.scale && this.state.category)
+		{
+			//The state category can have an ID, so for future safety's sake, we're 
+			//creating the new obect with the values
+			const category = this.state.category;
+			
+			this.props.userService.createCategory(this.state.scale, {
+				name: category.name,
+				color: category.color,
+				desiredWeight: category.desiredWeight,
+				actions: category.actions
+			})
+				.then(newCategory => this.setState({ 
+					category: newCategory, 
+					categoryNameForHeading: newCategory.name 
+				}))
+				.catch(err => {});
+		}
+		
+	}
+	
+	
+	
+	
 	render()
 	{
-		const isCreating = (!this.props.categoryID);
+		const isCreating = (!this.props.categoryID && !this.state.category.id);
 		
 		let actionsForm;
 		if (!isCreating) 
 			actionsForm = (<ActionsFormLogicContainer 
 								userService={this.props.userService}
 								scaleID={this.props.scaleID}
-								categoryID={this.props.categoryID!}
+								categoryID={
+									(this.props.categoryID) ? this.props.categoryID : this.state.category!.id
+								}
 								onCategoryLoadError={()=>this.setState({ 
 									badLoadErrorMessage: this.stdCategoryLoadErrorMessage 
 								})}
@@ -115,7 +153,7 @@ export default class CategoryDetailsFormLogicContainer
 							category: { ...this.state.category, desiredWeight } 
 						}),
 						
-						onSubmit:()=>{},
+						onSubmit: (isCreating) ? this.createCategoryHandler.bind(this) : ()=>{},
 						onDelete:(isCreating) ? undefined : ()=>{},
 						badSaveErrorMessage: undefined,
 						goodSaveMessage: undefined

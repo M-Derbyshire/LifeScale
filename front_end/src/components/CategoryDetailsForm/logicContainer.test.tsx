@@ -288,7 +288,64 @@ test("CategoryDetailsFormLogicContainer will pass down the backButtonHandler pro
 	
 });
 
-// save creating
+test("CategoryDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode", async () => {
+	
+	const newName = "testNewTest";
+	const newColor = "yellow";
+	const newWeight = 13467;
+	
+	const catToCreate = { 
+		name: newName, 
+		color: newColor, 
+		desiredWeight: newWeight,
+		actions: []
+	};
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createCategory = jest.fn().mockResolvedValue({ ...catToCreate, id: "testID" });
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	//We can't use getByDisplayValue for selects
+	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
+	expect(colorInput.value).not.toBe(newColor);
+	
+	// value shows up too often to use getByDisplayValue
+	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
+	expect(Number(weightInput.value)).not.toBe(newWeight);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	userEvent.selectOptions(colorInput, newColor);
+	fireEvent.change(weightInput, { target: { value: newWeight } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(mockUserService.createCategory)
+			.toHaveBeenCalledWith(dummyScale, catToCreate);
+		
+		//Check we're now in editing mode
+		const categoryDetailsForm = container.querySelector(".CategoryDetailsForm form");
+		expect(within(categoryDetailsForm).queryByRole("button", { name: /delete/i })).not.toBeNull();
+		expect(container.querySelector(".CategoryDetailsForm header").textContent)
+			.toEqual(expect.stringContaining(newName));
+	});
+	
+});
 
 // save updating
 
