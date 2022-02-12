@@ -347,7 +347,60 @@ test("CategoryDetailsFormLogicContainer will save new records with the apiAccess
 	
 });
 
-// save updating
+test("CategoryDetailsFormLogicContainer will update existing records with the apiAccessor", async () => {
+	
+	const newName = "testNewTest";
+	const newColor = "yellow";
+	const newWeight = 13467;
+	
+	const catToReturn = { 
+		id: dummyCategory.id,
+		name: newName, 
+		color: newColor, 
+		desiredWeight: newWeight,
+		actions: dummyCategory.actions
+	};
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockResolvedValue(catToReturn);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	
+	const nameInput = screen.getByDisplayValue(dummyCategory.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	//We can't use getByDisplayValue for selects
+	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
+	expect(colorInput.value).not.toBe(newColor);
+	
+	// value shows up too often to use getByDisplayValue
+	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
+	expect(Number(weightInput.value)).not.toBe(newWeight);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	userEvent.selectOptions(colorInput, newColor);
+	fireEvent.change(weightInput, { target: { value: newWeight } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(mockUserService.updateCategory)
+			.toHaveBeenCalledWith(dummyCategory, catToReturn);
+	});
+	
+});
 
 // CategoryDetailsFormLogicContainer will change the header after saving an update with name change
 

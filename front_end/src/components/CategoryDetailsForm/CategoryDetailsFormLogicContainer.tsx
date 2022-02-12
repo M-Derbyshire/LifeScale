@@ -16,8 +16,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 
 interface ICategoryDetailsFormLogicContainerState {
 	category:ICategory;
-	categoryNameForHeading:string; // This is stored seperately, as changing the state.category.name 
-									//would also change the heading otherwise
+	originalCategoryRef:ICategory; // used when updating (and to keep the original header text during name change)
 	scale?:IScale;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
@@ -39,10 +38,10 @@ export default class CategoryDetailsFormLogicContainer
 		
 		let badLoadErrorMessage;
 		
-		const category = this.loadOrCreateCategory(this.props.categoryID);
+		const categoryObjects = this.loadOrCreateCategory(this.props.categoryID);
 		
 		//empty string is falsy
-		if(!category.id && this.props.categoryID)
+		if(!categoryObjects.category.id && this.props.categoryID)
 				badLoadErrorMessage = this.stdCategoryLoadErrorMessage;
 		
 		
@@ -52,8 +51,8 @@ export default class CategoryDetailsFormLogicContainer
 		
 		
 		this.state = {
-			category: category,
-			categoryNameForHeading: category!.name,
+			category: categoryObjects.category,
+			originalCategoryRef: categoryObjects.categoryRef,
 			scale, //may be undefined
 			badLoadErrorMessage //may be undefined
 		};
@@ -62,17 +61,21 @@ export default class CategoryDetailsFormLogicContainer
 	
 	
 	//If can't load a category, creates an empty one (no ID, for creating)
-	loadOrCreateCategory(categoryID?:string):ICategory
+	//categoryRef is a reference to the original category. category is a spread of the reference
+	loadOrCreateCategory(categoryID?:string):{ categoryRef:ICategory, category:ICategory }
 	{
 		//getCategory may return undefined
-		let category:ICategory|undefined = (categoryID) 
+		let categoryRef:ICategory|undefined = (categoryID) 
 							? this.props.userService.getCategory(categoryID!, this.props.scaleID) 
 							: undefined;
 		
-		if(!category)
-			category = { id:"", name: "", color: "red", desiredWeight: 1, actions: [] };
+		if(!categoryRef)
+			categoryRef = { id:"", name: "", color: "red", desiredWeight: 1, actions: [] };
 		
-		return category;
+		const category = { ...categoryRef };
+		
+		
+		return { category, categoryRef };
 	}
 	
 	
@@ -81,7 +84,7 @@ export default class CategoryDetailsFormLogicContainer
 	createCategoryHandler()
 	{
 		//Bad load message prop to be passed to form, if scale isn't there (category gets set to blank if none)
-		if(this.state.scale && this.state.category)
+		if(this.state.scale)
 		{
 			//The state category can have an ID, so for future safety's sake, we're 
 			//creating the new obect with the values
@@ -94,12 +97,19 @@ export default class CategoryDetailsFormLogicContainer
 				actions: category.actions
 			})
 				.then(newCategory => this.setState({ 
-					category: newCategory, 
-					categoryNameForHeading: newCategory.name 
+					category: { ...newCategory }, 
+					originalCategoryRef: category
 				}))
 				.catch(err => {});
 		}
 		
+	}
+	
+	updateCategoryHandler()
+	{
+		this.props.userService.updateCategory(this.state.originalCategoryRef, this.state.category)
+			.then(updatedCategory => {})
+			.catch(err => {});
 	}
 	
 	
@@ -125,10 +135,14 @@ export default class CategoryDetailsFormLogicContainer
 		if(this.state.badLoadErrorMessage) 
 			headingText = "Error";
 		else if (!isCreating)
-			headingText = `Edit Category - ${this.state.categoryNameForHeading}`;
+			headingText = `Edit Category - ${this.state.originalCategoryRef.name}`;
 		else
 			headingText = "Create Category";
 		
+		
+		
+		const onSubmit = 
+			(isCreating) ? this.createCategoryHandler.bind(this) : this.updateCategoryHandler.bind(this);
 		
 		
 		return (
@@ -151,7 +165,7 @@ export default class CategoryDetailsFormLogicContainer
 							category: { ...this.state.category, desiredWeight } 
 						}),
 						
-						onSubmit: (isCreating) ? this.createCategoryHandler.bind(this) : ()=>{},
+						onSubmit: onSubmit,
 						onDelete:(isCreating) ? undefined : ()=>{},
 						badSaveErrorMessage: undefined,
 						goodSaveMessage: undefined
