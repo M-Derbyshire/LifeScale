@@ -31,6 +31,7 @@ export default class CategoryDetailsFormLogicContainer
 	stdScaleLoadErrorMessage = "Unable to load the requested scale.";
 	stdCategoryLoadErrorMessage = "Unable to load the requested category.";
 	
+	stdGoodSaveMessage = "Category saved successfully.";
 	
 	constructor(props:ICategoryDetailsFormLogicContainerProps)
 	{
@@ -98,9 +99,14 @@ export default class CategoryDetailsFormLogicContainer
 			})
 				.then(newCategory => this.setState({ 
 					category: { ...newCategory }, 
-					originalCategoryRef: category
+					originalCategoryRef: category,
+					goodSaveMessage: this.stdGoodSaveMessage,
+					badSaveErrorMessage: undefined
 				}))
-				.catch(err => {});
+				.catch(err => this.setState({ 
+					badSaveErrorMessage: err.message,
+					goodSaveMessage: undefined
+				}));
 		}
 		
 	}
@@ -108,8 +114,15 @@ export default class CategoryDetailsFormLogicContainer
 	updateCategoryHandler()
 	{
 		this.props.userService.updateCategory(this.state.originalCategoryRef, this.state.category)
-			.then(updatedCategory => this.setState({ originalCategoryRef: updatedCategory }))
-			.catch(err => {});
+			.then(updatedCategory => this.setState({ 
+				originalCategoryRef: updatedCategory,
+				goodSaveMessage: this.stdGoodSaveMessage,
+				badSaveErrorMessage: undefined
+			}))
+			.catch(err => this.setState({ 
+				badSaveErrorMessage: err.message,
+				goodSaveMessage: undefined
+			}));
 	}
 	
 	
@@ -167,8 +180,8 @@ export default class CategoryDetailsFormLogicContainer
 						
 						onSubmit: onSubmit,
 						onDelete:(isCreating) ? undefined : ()=>{},
-						badSaveErrorMessage: undefined,
-						goodSaveMessage: undefined
+						badSaveErrorMessage: this.state.badSaveErrorMessage,
+						goodSaveMessage: this.state.goodSaveMessage
 						
 					}}
 					headingText={headingText}

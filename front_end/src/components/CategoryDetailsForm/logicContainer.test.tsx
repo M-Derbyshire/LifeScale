@@ -38,6 +38,7 @@ dummyUserService.getScale = (scaleID) => dummyScale;
 const scaleLoadErrorMessage = "Unable to load the requested scale.";
 const categoryLoadErrorMessage = "Unable to load the requested category.";
 
+const stdGoodSaveMessage = "Category saved successfully.";
 
 
 test("CategoryDetailsFormLogicContainer will display a CategoryDetailsForm", () => {
@@ -438,13 +439,324 @@ test("CategoryDetailsFormLogicContainer will change the header after saving an u
 	
 });
 
-// error message on bad create
 
-// error message on bad update
+test("CategoryDetailsFormLogicContainer will display an error message on bad create save", async () => {
+	
+	const errorMessage = "Unable to save during creating";
+	
+	const newName = "testNewTest";
+	const newColor = "yellow";
+	const newWeight = 13467;
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createCategory = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	//We can't use getByDisplayValue for selects
+	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
+	expect(colorInput.value).not.toBe(newColor);
+	
+	// value shows up too often to use getByDisplayValue
+	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
+	expect(Number(weightInput.value)).not.toBe(newWeight);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	userEvent.selectOptions(colorInput, newColor);
+	fireEvent.change(weightInput, { target: { value: newWeight } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
 
-// save message on good create
+test("CategoryDetailsFormLogicContainer will display an error message on bad update save", async () => {
+	
+	const errorMessage = "Unable to save during creating";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
 
-// save message on good update
+test("CategoryDetailsFormLogicContainer will display a good save message on good create save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	
+	const newName = "testNewTest";
+	const newColor = "yellow";
+	const newWeight = 13467;
+	
+	const catToReturn = { 
+		id: "testID",
+		name: newName, 
+		color: newColor, 
+		desiredWeight: newWeight,
+		actions: dummyCategory.actions
+	};
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createCategory = jest.fn().mockResolvedValue(catToReturn);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	//We can't use getByDisplayValue for selects
+	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
+	expect(colorInput.value).not.toBe(newColor);
+	
+	// value shows up too often to use getByDisplayValue
+	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
+	expect(Number(weightInput.value)).not.toBe(newWeight);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	userEvent.selectOptions(colorInput, newColor);
+	fireEvent.change(weightInput, { target: { value: newWeight } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(message));
+	});
+	
+});
+
+test("CategoryDetailsFormLogicContainer will display a good save message on good save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockResolvedValue({ ...dummyCategory, name: newName });
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(message));
+	});
+	
+});
+
+test("CategoryDetailsFormLogicContainer will clear good save message after a bad update save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	const errorMessage = "Test error";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockResolvedValue({ ...dummyCategory, name: newName });
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(message));
+	});
+	
+	//Now change to reject
+	mockUserService.updateCategory = jest.fn().mockRejectedValue(new Error(errorMessage));
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.not.toEqual(expect.stringContaining(message));
+	});
+	
+});
+
+
+test("CategoryDetailsFormLogicContainer will clear error save message after a good create save", async () => {
+	
+	const errorMessage = "Test error";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createCategory = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+	//Now change to reject (in editing mode)
+	mockUserService.createCategory = jest.fn().mockResolvedValue({ ...dummyCategory, name: newName });
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.not.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
+
+test("CategoryDetailsFormLogicContainer will clear error save message after a good update save", async () => {
+	
+	const errorMessage = "Test error";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+	//Now change to reject
+	mockUserService.updateCategory = jest.fn().mockResolvedValue({ ...dummyCategory, name: newName });
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.not.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
+
 
 // disable submit while creating, re-enable when done
 
