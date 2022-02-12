@@ -21,6 +21,7 @@ interface ICategoryDetailsFormLogicContainerState {
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
 	badLoadErrorMessage?:string;
+	disableSubmit:boolean;
 };
 
 
@@ -55,7 +56,8 @@ export default class CategoryDetailsFormLogicContainer
 			category: categoryObjects.category,
 			originalCategoryRef: categoryObjects.categoryRef,
 			scale, //may be undefined
-			badLoadErrorMessage //may be undefined
+			badLoadErrorMessage, //may be undefined
+			disableSubmit: false
 		};
 	}
 	
@@ -101,12 +103,19 @@ export default class CategoryDetailsFormLogicContainer
 					category: { ...newCategory }, 
 					originalCategoryRef: category,
 					goodSaveMessage: this.stdGoodSaveMessage,
-					badSaveErrorMessage: undefined
+					badSaveErrorMessage: undefined,
+					disableSubmit: false
 				}))
 				.catch(err => this.setState({ 
 					badSaveErrorMessage: err.message,
-					goodSaveMessage: undefined
+					goodSaveMessage: undefined,
+					disableSubmit: false
 				}));
+			
+			
+			this.setState({
+				disableSubmit: true
+			});
 		}
 		
 	}
@@ -117,12 +126,19 @@ export default class CategoryDetailsFormLogicContainer
 			.then(updatedCategory => this.setState({ 
 				originalCategoryRef: updatedCategory,
 				goodSaveMessage: this.stdGoodSaveMessage,
-				badSaveErrorMessage: undefined
+				badSaveErrorMessage: undefined,
+				disableSubmit: false
 			}))
 			.catch(err => this.setState({ 
 				badSaveErrorMessage: err.message,
-				goodSaveMessage: undefined
+				goodSaveMessage: undefined,
+				disableSubmit: false
 			}));
+		
+		
+		this.setState({
+			disableSubmit: true
+		});
 	}
 	
 	
@@ -187,7 +203,7 @@ export default class CategoryDetailsFormLogicContainer
 					headingText={headingText}
 					badLoadErrorMessage={this.state.badLoadErrorMessage}
 					backButtonHandler={this.props.backButtonHandler}
-					disableSubmit={undefined}
+					disableSubmit={this.state.disableSubmit}
 					actionsForm={actionsForm} />
 			</div>
 		);

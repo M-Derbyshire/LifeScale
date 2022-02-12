@@ -758,13 +758,169 @@ test("CategoryDetailsFormLogicContainer will clear error save message after a go
 });
 
 
-// disable submit while creating, re-enable when done
 
-// disable submit while updating, re-enable when done
+test("CategoryDetailsFormLogicContainer will disable submit button when creating, then re-enable when done", async () => {
+	
+	const newName = "testNewTest";
+	const newColor = "yellow";
+	const newWeight = 13467;
+	
+	const catToReturn = { 
+		id: "testID",
+		name: newName, 
+		color: newColor, 
+		desiredWeight: newWeight,
+		actions: dummyCategory.actions
+	};
+	
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createCategory = jest.fn().mockResolvedValue(catToReturn);
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	const submitButton = container.querySelector(".CategoryDetailsForm form input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
+	
+	fireEvent.submit(form);
+	
+	expect(submitButton).toBeDisabled();
+	
+	//Re-enable
+	await waitFor(() => {
+		expect(submitButton).not.toBeDisabled();
+	});
+	
+});
 
-// re-enable submit after bad create
+test("CategoryDetailsFormLogicContainer will disable submit button when updating, then re-enable when done", async () => {
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockResolvedValue({ ...dummyCategory, name: newName });
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	const submitButton = container.querySelector(".CategoryDetailsForm form input[type=submit]");
+	expect(submitButton).not.toBeDisabled();
+	
+	fireEvent.submit(form);
+	
+	expect(submitButton).toBeDisabled();
+	
+	//Re-enable
+	await waitFor(() => {
+		expect(submitButton).not.toBeDisabled();
+	});
+	
+});
 
-// re-enable submit after bad update
+test("CategoryDetailsFormLogicContainer will re-enable submit button after a error during create", async () => {
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createCategory = jest.fn().mockRejectedValue(new Error("error"));
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	const submitButton = container.querySelector(".CategoryDetailsForm form input[type=submit]");
+	
+	fireEvent.submit(form);
+	
+	//Re-enable
+	await waitFor(() => {
+		expect(submitButton).not.toBeDisabled();
+	});
+	
+});
+
+test("CategoryDetailsFormLogicContainer will re-enable submit button after a error during update", async () => {
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockRejectedValue(new Error("error"));
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//Can't use getByDisplayValue, as empty string
+	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	const submitButton = container.querySelector(".CategoryDetailsForm form input[type=submit]");
+	
+	fireEvent.submit(form);
+	
+	//Re-enable
+	await waitFor(() => {
+		expect(submitButton).not.toBeDisabled();
+	});
+	
+});
 
 // calls delete on user service, on delete button
 
