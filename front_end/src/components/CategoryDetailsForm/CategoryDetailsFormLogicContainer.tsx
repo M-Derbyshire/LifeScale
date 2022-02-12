@@ -108,7 +108,7 @@ export default class CategoryDetailsFormLogicContainer
 	updateCategoryHandler()
 	{
 		this.props.userService.updateCategory(this.state.originalCategoryRef, this.state.category)
-			.then(updatedCategory => {})
+			.then(updatedCategory => this.setState({ originalCategoryRef: updatedCategory }))
 			.catch(err => {});
 	}
 	

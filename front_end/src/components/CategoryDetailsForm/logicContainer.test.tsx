@@ -402,7 +402,41 @@ test("CategoryDetailsFormLogicContainer will update existing records with the ap
 	
 });
 
-// CategoryDetailsFormLogicContainer will change the header after saving an update with name change
+
+test("CategoryDetailsFormLogicContainer will change the header after saving an update with name change", async () => {
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateCategory = jest.fn().mockResolvedValue({ ...dummyCategory, name: newName });
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	
+	const nameInput = screen.getByDisplayValue(dummyCategory.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".CategoryDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm header").textContent)
+			.toEqual(expect.stringContaining(newName));
+	});
+	
+});
 
 // error message on bad create
 
