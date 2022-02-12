@@ -922,8 +922,99 @@ test("CategoryDetailsFormLogicContainer will re-enable submit button after a err
 	
 });
 
-// calls delete on user service, on delete button
 
-// displays bad save message on bad delete
 
-// call onSuccessfulDeleteHandler after good delete
+
+
+test("CategoryDetailsFormLogicContainer will use userService deleteCategory method to delete (passing original category)", async () => {
+	
+	const mockUserService = { ...dummyUserService };
+	
+	//so no delete buttons displayed for actions
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	mockUserService.deleteCategory = jest.fn().mockResolvedValue([]);
+	
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	//Just change the name, to make sure we're not passing changed category to delete handler
+	const newName = "testNewTest";
+	const nameInput = screen.getByDisplayValue(dummyCategoryNoActions.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	const deleteButton = screen.getByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	
+	await waitFor(() => {
+		expect(mockUserService.deleteCategory).toHaveBeenCalledWith(dummyScale, dummyCategoryNoActions);
+	});
+	
+});
+
+test("CategoryDetailsFormLogicContainer will use display error if bad save during delete", async () => {
+	
+	const errorMessage = "test error on delete";
+	
+	const mockUserService = { ...dummyUserService };
+	
+	//so no delete buttons displayed for actions
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	mockUserService.deleteCategory = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService} />);
+	
+	
+	const deleteButton = screen.getByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".CategoryDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
+
+test("CategoryDetailsFormLogicContainer will call onSuccessfulDeleteHandler after successful delete", async () => {
+	
+	const mockUserService = { ...dummyUserService };
+	
+	//so no delete buttons displayed for actions
+	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
+	mockUserService.deleteCategory = jest.fn().mockResolvedValue([]);
+	
+	
+	const mockDeleteCallback = jest.fn();
+	
+	const { container } = render(<CategoryDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									categoryID={dummyCategory.id}
+									backButtonHandler={dummyBackHandler}
+									userService={mockUserService}
+									onSuccessfulDeleteHandler={mockDeleteCallback} />);
+	
+	
+	const deleteButton = screen.getByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	await waitFor(() => {
+		expect(mockDeleteCallback).toHaveBeenCalled();
+	});
+	
+});

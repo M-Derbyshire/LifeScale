@@ -16,7 +16,8 @@ interface ICategoryDetailsFormLogicContainerProps {
 
 interface ICategoryDetailsFormLogicContainerState {
 	category:ICategory;
-	originalCategoryRef:ICategory; // used when updating (and to keep the original header text during name change)
+	originalCategoryRef:ICategory; // used when updating/deleting (and to keep the original
+									// header text during name change)
 	scale?:IScale;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
@@ -141,6 +142,17 @@ export default class CategoryDetailsFormLogicContainer
 		});
 	}
 	
+	deleteCategoryHandler()
+	{
+		if(this.state.scale)
+			this.props.userService.deleteCategory(this.state.scale, this.state.originalCategoryRef)
+				.then(categories => {
+					if(this.props.onSuccessfulDeleteHandler) 
+						this.props.onSuccessfulDeleteHandler()
+				})
+				.catch(err => this.setState({ badSaveErrorMessage: err.message }));
+	}
+	
 	
 	
 	
@@ -195,7 +207,7 @@ export default class CategoryDetailsFormLogicContainer
 						}),
 						
 						onSubmit: onSubmit,
-						onDelete:(isCreating) ? undefined : ()=>{},
+						onDelete:(isCreating) ? undefined : this.deleteCategoryHandler.bind(this),
 						badSaveErrorMessage: this.state.badSaveErrorMessage,
 						goodSaveMessage: this.state.goodSaveMessage
 						
