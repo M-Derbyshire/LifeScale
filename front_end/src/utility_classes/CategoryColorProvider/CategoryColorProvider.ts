@@ -1,4 +1,4 @@
-import ICategoryColorData from '../interfaces/UI/ICategoryColorData';
+import ICategoryColorData from '../../interfaces/UI/ICategoryColorData';
 
 /*
 	The values stored in the database for ICategory colors will need to be consistent (though more can be 
