@@ -60,3 +60,32 @@ test("CategoryColorProvider getRealColorFromName will return undefined if no mat
 	expect(realColor).toBeUndefined();
 	
 });
+
+
+
+test("CategoryColorProvider getNameFromRealColor will return the name that matches the color", () => {
+	
+	const provider = new CategoryColorProvider();
+	
+	const list = provider.getColorList();
+	
+	expect(list.length).toBeGreaterThan(0);
+	
+	list.forEach(col => {
+		const name = provider.getNameFromRealColor(col.colorRealValue);
+		expect(name).toEqual(col.colorName);
+	});
+	
+});
+
+test("CategoryColorProvider getNameFromRealColor will return undefined if no matching name found", () => {
+	
+	const color = "nonExsistentColor";
+	
+	const provider = new CategoryColorProvider();
+	
+	const name = provider.getRealColorFromName(color);
+	
+	expect(name).toBeUndefined();
+	
+});
