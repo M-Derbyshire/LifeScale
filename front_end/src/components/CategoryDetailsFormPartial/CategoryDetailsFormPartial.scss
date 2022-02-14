@@ -4,6 +4,7 @@
 	
 	.categoryColorInputLabel select {
 		@include stdBorder(#000000, 3px); //Color should get replaced by the state color
+		outline:none; //This removes black outline, which would be seen on focus
 		padding: 0.25em;
 	}
 	
