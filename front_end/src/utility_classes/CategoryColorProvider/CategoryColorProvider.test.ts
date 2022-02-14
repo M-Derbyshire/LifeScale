@@ -32,3 +32,31 @@ test("CategoryColorProvider getColorList will return valid CSS colors", () => {
 	});
 	
 });
+
+
+test("CategoryColorProvider getRealColorFromName will return the color that matches the name", () => {
+	
+	const provider = new CategoryColorProvider();
+	
+	const list = provider.getColorList();
+	
+	expect(list.length).toBeGreaterThan(0);
+	
+	list.forEach(col => {
+		const realColor = provider.getRealColorFromName(col.colorName);
+		expect(realColor).toEqual(col.colorRealValue);
+	});
+	
+});
+
+test("CategoryColorProvider getRealColorFromName will return undefined if no matching color found", () => {
+	
+	const name = "nonExsistentColor";
+	
+	const provider = new CategoryColorProvider();
+	
+	const realColor = provider.getRealColorFromName(name);
+	
+	expect(realColor).toBeUndefined();
+	
+});

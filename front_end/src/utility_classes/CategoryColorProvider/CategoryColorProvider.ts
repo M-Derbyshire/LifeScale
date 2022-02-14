@@ -51,8 +51,8 @@ export default class CategoryColorProvider
 	//Returns undefined if no result found
 	getRealColorFromName(colorName:string):string|undefined
 	{
-		throw new Error("Not implemented");
-		return undefined;
+		const color = this._colorList.find(col => col.colorName === colorName);
+		return (color) ? color.colorRealValue : undefined;
 	}
 	
 	//Returns undefined if no result found
