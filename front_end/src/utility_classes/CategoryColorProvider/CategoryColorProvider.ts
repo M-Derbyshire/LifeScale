@@ -39,7 +39,7 @@ export default class CategoryColorProvider
 	
 	_formatColorNameToLabel(name:string):string
 	{
-		return name;
+		return name.charAt(0).toUpperCase() + name.slice(1);
 	}
 	
 	
