@@ -24,9 +24,14 @@ export default class CategoryColorProvider
 	constructor()
 	{
 		this._colorList = [
-			{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "" },
-			{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "" },
-			{ colorName: "blue", colorRealValue: "#5555ff", colorLabel: "" }
+			{ colorName: "red", colorRealValue: "red", colorLabel: "" },
+			{ colorName: "green", colorRealValue: "green", colorLabel: "" },
+			{ colorName: "blue", colorRealValue: "blue", colorLabel: "" },
+			{ colorName: "cyan", colorRealValue: "cyan", colorLabel: "" },
+			{ colorName: "yellow", colorRealValue: "yellow", colorLabel: "" },
+			{ colorName: "pink", colorRealValue: "pink", colorLabel: "" },
+			{ colorName: "purple", colorRealValue: "purple", colorLabel: "" },
+			{ colorName: "orange", colorRealValue: "orange", colorLabel: "" }
 		];
 		
 		//Create the color labels
