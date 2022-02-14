@@ -3,6 +3,12 @@ import { render, fireEvent } from '@testing-library/react';
 
 const dummySetState = (x)=>{};
 
+const dummyColorList = [
+	{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "RedLabel" },
+	{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "GreenLabel" },
+	{ colorName: "blue", colorRealValue: "#5555ff", colorLabel: "BlueLabel" },
+];
+
 test.each([
 	["test1"],
 	["test2"]
@@ -11,10 +17,11 @@ test.each([
 	const { container } = render(<CategoryDetailsFormPartial 
 		name={nameText}
 		setName={dummySetState}
-		color="#000000"
+		color={dummyColorList[0].colorRealValue}
 		setColor={dummySetState}
 		desiredWeight={1}
-		setDesiredWeight={dummySetState} />);
+		setDesiredWeight={dummySetState}
+		colorList={dummyColorList} />);
 	
 	const nameInput = container.querySelector(".categoryNameInput");
 	
@@ -30,10 +37,11 @@ test("CategoryDetailsFormPartial will call the setName callback when changing th
 	const { container } = render(<CategoryDetailsFormPartial 
 		name="test"
 		setName={mockSetState}
-		color="#000000"
+		color={dummyColorList[0].colorRealValue}
 		setColor={dummySetState}
 		desiredWeight={1}
-		setDesiredWeight={dummySetState} />);
+		setDesiredWeight={dummySetState}
+		colorList={dummyColorList} />);
 	
 	const nameInput = container.querySelector(".categoryNameInput");
 	
@@ -44,11 +52,45 @@ test("CategoryDetailsFormPartial will call the setName callback when changing th
 });
 
 
+test.each([
+	[
+		[
+			{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "RedLabel" },
+			{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "GreenLabel" }
+		]
+	],
+	[
+		[
+			{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "GreenLabel" },
+			{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "RedLabel" }
+		]
+	]
+])("CategoryDetailsFormPartial will render the colors as options in the color select", (mockColorList) => {
+	
+	const { container } = render(<CategoryDetailsFormPartial 
+		name="test"
+		setName={dummySetState}
+		color={mockColorList[0].colorRealValue}
+		setColor={dummySetState}
+		desiredWeight={1}
+		setDesiredWeight={dummySetState}
+		colorList={mockColorList} />);
+	
+	const colorInputOptions = container.querySelectorAll(".categoryColorInput option");
+	
+	expect(colorInputOptions.length).toBe(mockColorList.length);
+	
+	mockColorList.forEach((mockColor, i) => {
+		expect(colorInputOptions[i].value).toBe(mockColor.colorRealValue);
+		expect(colorInputOptions[i].textContent).toEqual(expect.stringContaining(mockColor.colorLabel));
+	});
+	
+});
 
 
 test.each([
-	["green"],
-	["yellow"]
+	[dummyColorList[0].colorRealValue],
+	[dummyColorList[1].colorRealValue]
 ])("CategoryDetailsFormPartial will set the color input value to the given color prop", (optionVal) => {
 	
 	const { container } = render(<CategoryDetailsFormPartial 
@@ -57,7 +99,8 @@ test.each([
 		color={optionVal}
 		setColor={dummySetState}
 		desiredWeight={1}
-		setDesiredWeight={dummySetState} />);
+		setDesiredWeight={dummySetState}
+		colorList={dummyColorList} />);
 	
 	const colorInput = container.querySelector(".categoryColorInput");
 	
@@ -65,32 +108,49 @@ test.each([
 	expect(colorInput.value).toEqual(optionVal);
 });
 
+
+test("CategoryDetailsFormPartial will set the color input value to the first color in the given list, if the passed value is an empty string", () => {
+	
+	const { container } = render(<CategoryDetailsFormPartial 
+		name="test"
+		setName={dummySetState}
+		color=""
+		setColor={dummySetState}
+		desiredWeight={1}
+		setDesiredWeight={dummySetState}
+		colorList={dummyColorList} />);
+	
+	const colorInput = container.querySelector(".categoryColorInput");
+	
+	expect(colorInput).not.toBeNull();
+	expect(colorInput.value).toEqual(dummyColorList[0].colorRealValue);
+});
+
+
 test("CategoryDetailsFormPartial will call the setColor callback when changing the color field", () => {
 	
-	//If this test breaks after you've changed the default option, change this (we need to check the default isn't
-	//changed to the value we're trying to change the input to here)
-	const defaultValue = "red";
+	const startValue = dummyColorList[0].colorRealValue;
 	
-	const newVal = "yellow";
+	const newVal = dummyColorList[1].colorRealValue;
 	const mockSetState = jest.fn();
 	
 	const { container } = render(<CategoryDetailsFormPartial 
 		name="test"
 		setName={dummySetState}
-		color={defaultValue}
+		color={startValue}
 		setColor={mockSetState}
 		desiredWeight={1}
-		setDesiredWeight={dummySetState} />);
+		setDesiredWeight={dummySetState}
+		colorList={dummyColorList} />);
 	
 	const colorInput = container.querySelector(".categoryColorInput");
-	expect(colorInput.value).toEqual(defaultValue);
+	expect(colorInput.value).toEqual(startValue);
 	
 	fireEvent.change(colorInput, { target: { value: newVal } });
 	
 	expect(mockSetState).toHaveBeenCalledWith(newVal);
 	
 });
-
 
 
 test.each([
@@ -101,10 +161,11 @@ test.each([
 	const { container } = render(<CategoryDetailsFormPartial 
 		name="test"
 		setName={dummySetState}
-		color="red"
+		color={dummyColorList[0].colorRealValue}
 		setColor={dummySetState}
 		desiredWeight={weightText}
-		setDesiredWeight={dummySetState} />);
+		setDesiredWeight={dummySetState}
+		colorList={dummyColorList} />);
 	
 	const weightInput = container.querySelector(".categoryDesiredWeightInput");
 	
@@ -121,10 +182,11 @@ test("CategoryDetailsFormPartial will use the setDesiredWeight prop as the desir
 	const { container } = render(<CategoryDetailsFormPartial 
 		name="test"
 		setName={dummySetState}
-		color="red"
+		color={dummyColorList[0].colorRealValue}
 		setColor={dummySetState}
 		desiredWeight={1}
-		setDesiredWeight={mockCB} />);
+		setDesiredWeight={mockCB}
+		colorList={dummyColorList} />);
 	
 	const weightInput = container.querySelector(".categoryDesiredWeightInput");
 	
@@ -141,10 +203,11 @@ test("CategoryDetailsFormPartial will not allow weight to be a negative number (
 	const { container } = render(<CategoryDetailsFormPartial 
 		name="test"
 		setName={dummySetState}
-		color="red"
+		color={dummyColorList[0].colorRealValue}
 		setColor={dummySetState}
 		desiredWeight={1}
-		setDesiredWeight={mockCB} />);
+		setDesiredWeight={mockCB}
+		colorList={dummyColorList} />);
 	
 	const weightInput = container.querySelector(".categoryDesiredWeightInput");
 	
@@ -165,10 +228,11 @@ test.each([
 	const { container } = render(<CategoryDetailsFormPartial 
 		name="test"
 		setName={dummySetState}
-		color="red"
+		color={dummyColorList[0].colorRealValue}
 		setColor={dummySetState}
 		desiredWeight={1}
-		setDesiredWeight={mockCB} />);
+		setDesiredWeight={mockCB}
+		colorList={dummyColorList} />);
 	
 	const weightInput = container.querySelector(".categoryDesiredWeightInput");
 	

@@ -2,14 +2,25 @@ import CategoryDetailsFormLogicContainer from './CategoryDetailsFormLogicContain
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
+import TestCategoryColorProvider from '../../utility_classes/CategoryColorProvider/TestCategoryColorProvider';
 
 
 const dummyBackHandler = ()=>{};
 
+const dummyColorList = [
+	{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "RedLabel" },
+	{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "GreenLabel" },
+	{ colorName: "blue", colorRealValue: "#5555ff", colorLabel: "BlueLabel" }
+];
+
+const dummyColorProvider = new TestCategoryColorProvider(dummyColorList);
+
+
+
 const dummyCategory = {
 	id: "testCat23132948284",
 	name: "testcat",
-	color: "red",
+	color: dummyColorList[0].colorName,
 	desiredWeight: 1,
 	actions: [{
 		id: "testact3298294848",
@@ -47,7 +58,8 @@ test("CategoryDetailsFormLogicContainer will display a CategoryDetailsForm", () 
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={dummyUserService} />);
+									userService={dummyUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	expect(container.querySelector(".CategoryDetailsForm")).not.toBeNull();
 	
@@ -59,7 +71,8 @@ test("CategoryDetailsFormLogicContainer will pass in the actionsForm prop, if ca
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={dummyUserService} />);
+									userService={dummyUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	expect(container.querySelector(".ActionsFormLogicContainer")).not.toBeNull();
 	
@@ -70,7 +83,8 @@ test("CategoryDetailsFormLogicContainer will not pass in the actionsForm prop, i
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={dummyUserService} />);
+									userService={dummyUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	expect(container.querySelector(".ActionsFormLogicContainer")).toBeNull();
 	
@@ -86,7 +100,8 @@ test("CategoryDetailsFormLogicContainer will pass in the delete handler, if cate
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	expect(screen.queryByRole("button", { name: /delete/i })).not.toBeNull();
 	
@@ -101,7 +116,8 @@ test("CategoryDetailsFormLogicContainer will not pass in the delete handler, if 
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	expect(screen.queryByRole("button", { name: /delete/i })).toBeNull();
 	
@@ -114,7 +130,8 @@ test("CategoryDetailsFormLogicContainer will pass the category name within the h
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={dummyUserService} />);
+									userService={dummyUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	const heading = container.querySelector(".CategoryDetailsForm header");
 	
@@ -133,7 +150,8 @@ test("CategoryDetailsFormLogicContainer will load the category and scale with th
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	expect(mockUserService.getCategory).toHaveBeenCalledWith(dummyCategory.id, dummyScale.id);
 	expect(mockUserService.getScale).toHaveBeenCalledWith(dummyScale.id);
@@ -149,7 +167,8 @@ test("CategoryDetailsFormLogicContainer will load just the scale with the given 
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	expect(mockUserService.getCategory).not.toHaveBeenCalled();
 	expect(mockUserService.getScale).toHaveBeenCalledWith(dummyScale.id);
@@ -168,7 +187,8 @@ test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage on bad s
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	const categoryForm = container.querySelector(".CategoryDetailsForm");
 	expect(within(categoryForm).queryByText(errorMessage)).not.toBeNull();
@@ -187,7 +207,8 @@ test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage on bad c
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	const categoryForm = container.querySelector(".CategoryDetailsForm");
 	expect(within(categoryForm).queryByText(errorMessage)).not.toBeNull();
@@ -209,7 +230,8 @@ test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage to Categ
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	const categoryForm = container.querySelector(".CategoryDetailsForm");
 	expect(within(categoryForm).queryByText(errorMessage)).not.toBeNull();
@@ -219,21 +241,22 @@ test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage to Categ
 test("CategoryDetailsFormLogicContainer will handle the form state", () => {
 	
 	const newName = "testNewTest";
-	const newColor = "yellow";
+	const newColor = dummyColorList[1].colorName;
 	const newWeight = 13467;
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={dummyUserService} />);
+									userService={dummyUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	const nameInput = screen.getByDisplayValue(dummyCategory.name);
 	expect(nameInput.value).not.toBe(newName);
 	
 	//We can't use getByDisplayValue for selects
 	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
-	expect(colorInput.value).not.toBe(newColor);
+	expect(colorInput.value).not.toBe(dummyColorProvider.getRealColorFromName(newColor));
 	
 	// value shows up too often to use getByDisplayValue
 	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
@@ -241,11 +264,11 @@ test("CategoryDetailsFormLogicContainer will handle the form state", () => {
 	
 	
 	fireEvent.change(nameInput, { target: { value: newName } });
-	userEvent.selectOptions(colorInput, newColor);
+	userEvent.selectOptions(colorInput, dummyColorProvider.getRealColorFromName(newColor));
 	fireEvent.change(weightInput, { target: { value: newWeight } });
 	
 	expect(nameInput.value).toBe(newName);
-	expect(colorInput.value).toBe(newColor);
+	expect(colorInput.value).toBe(dummyColorProvider.getRealColorFromName(newColor));
 	expect(Number(weightInput.value)).toBe(newWeight);
 	
 });
@@ -258,7 +281,8 @@ test("CategoryDetailsFormLogicContainer will not change the header when changing
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={dummyUserService} />);
+									userService={dummyUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	const nameInput = screen.getByDisplayValue(dummyCategory.name);
 	expect(nameInput.value).not.toBe(newName);
@@ -278,7 +302,8 @@ test("CategoryDetailsFormLogicContainer will pass down the backButtonHandler pro
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={mockBackButtonHandler}
-									userService={dummyUserService} />);
+									userService={dummyUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	const categoryDetailsForm = container.querySelector(".CategoryDetailsForm");
 	const backButton = within(categoryDetailsForm).getByRole("button", { name: /back/i })
@@ -292,7 +317,7 @@ test("CategoryDetailsFormLogicContainer will pass down the backButtonHandler pro
 test("CategoryDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode", async () => {
 	
 	const newName = "testNewTest";
-	const newColor = "yellow";
+	const newColor = dummyColorList[1].colorName;
 	const newWeight = 13467;
 	
 	const catToCreate = { 
@@ -308,7 +333,8 @@ test("CategoryDetailsFormLogicContainer will save new records with the apiAccess
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -319,14 +345,14 @@ test("CategoryDetailsFormLogicContainer will save new records with the apiAccess
 	
 	//We can't use getByDisplayValue for selects
 	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
-	expect(colorInput.value).not.toBe(newColor);
+	expect(colorInput.value).not.toBe(dummyColorProvider.getRealColorFromName(newColor));
 	
 	// value shows up too often to use getByDisplayValue
 	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
 	expect(Number(weightInput.value)).not.toBe(newWeight);
 	
 	fireEvent.change(nameInput, { target: { value: newName } });
-	userEvent.selectOptions(colorInput, newColor);
+	userEvent.selectOptions(colorInput, dummyColorProvider.getRealColorFromName(newColor));
 	fireEvent.change(weightInput, { target: { value: newWeight } });
 	
 	
@@ -351,7 +377,7 @@ test("CategoryDetailsFormLogicContainer will save new records with the apiAccess
 test("CategoryDetailsFormLogicContainer will update existing records with the apiAccessor", async () => {
 	
 	const newName = "testNewTest";
-	const newColor = "yellow";
+	const newColor = dummyColorList[1].colorName;
 	const newWeight = 13467;
 	
 	const catToReturn = { 
@@ -369,7 +395,8 @@ test("CategoryDetailsFormLogicContainer will update existing records with the ap
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -380,14 +407,14 @@ test("CategoryDetailsFormLogicContainer will update existing records with the ap
 	
 	//We can't use getByDisplayValue for selects
 	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
-	expect(colorInput.value).not.toBe(newColor);
+	expect(colorInput.value).not.toBe(dummyColorProvider.getRealColorFromName(newColor));
 	
 	// value shows up too often to use getByDisplayValue
 	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
 	expect(Number(weightInput.value)).not.toBe(newWeight);
 	
 	fireEvent.change(nameInput, { target: { value: newName } });
-	userEvent.selectOptions(colorInput, newColor);
+	userEvent.selectOptions(colorInput, dummyColorProvider.getRealColorFromName(newColor));
 	fireEvent.change(weightInput, { target: { value: newWeight } });
 	
 	
@@ -415,7 +442,8 @@ test("CategoryDetailsFormLogicContainer will change the header after saving an u
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -445,7 +473,7 @@ test("CategoryDetailsFormLogicContainer will display an error message on bad cre
 	const errorMessage = "Unable to save during creating";
 	
 	const newName = "testNewTest";
-	const newColor = "yellow";
+	const newColor = dummyColorList[1].colorName;
 	const newWeight = 13467;
 	
 	const mockUserService = { ...dummyUserService };
@@ -454,7 +482,8 @@ test("CategoryDetailsFormLogicContainer will display an error message on bad cre
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -465,14 +494,14 @@ test("CategoryDetailsFormLogicContainer will display an error message on bad cre
 	
 	//We can't use getByDisplayValue for selects
 	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
-	expect(colorInput.value).not.toBe(newColor);
+	expect(colorInput.value).not.toBe(dummyColorProvider.getRealColorFromName(newColor));
 	
 	// value shows up too often to use getByDisplayValue
 	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
 	expect(Number(weightInput.value)).not.toBe(newWeight);
 	
 	fireEvent.change(nameInput, { target: { value: newName } });
-	userEvent.selectOptions(colorInput, newColor);
+	userEvent.selectOptions(colorInput, dummyColorProvider.getRealColorFromName(newColor));
 	fireEvent.change(weightInput, { target: { value: newWeight } });
 	
 	
@@ -501,7 +530,8 @@ test("CategoryDetailsFormLogicContainer will display an error message on bad upd
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -530,7 +560,7 @@ test("CategoryDetailsFormLogicContainer will display a good save message on good
 	const message = stdGoodSaveMessage;
 	
 	const newName = "testNewTest";
-	const newColor = "yellow";
+	const newColor = dummyColorList[1].colorName;
 	const newWeight = 13467;
 	
 	const catToReturn = { 
@@ -547,7 +577,8 @@ test("CategoryDetailsFormLogicContainer will display a good save message on good
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -558,14 +589,14 @@ test("CategoryDetailsFormLogicContainer will display a good save message on good
 	
 	//We can't use getByDisplayValue for selects
 	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
-	expect(colorInput.value).not.toBe(newColor);
+	expect(colorInput.value).not.toBe(dummyColorProvider.getRealColorFromName(newColor));
 	
 	// value shows up too often to use getByDisplayValue
 	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
 	expect(Number(weightInput.value)).not.toBe(newWeight);
 	
 	fireEvent.change(nameInput, { target: { value: newName } });
-	userEvent.selectOptions(colorInput, newColor);
+	userEvent.selectOptions(colorInput, dummyColorProvider.getRealColorFromName(newColor));
 	fireEvent.change(weightInput, { target: { value: newWeight } });
 	
 	
@@ -594,7 +625,8 @@ test("CategoryDetailsFormLogicContainer will display a good save message on good
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -632,7 +664,8 @@ test("CategoryDetailsFormLogicContainer will clear good save message after a bad
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -678,7 +711,8 @@ test("CategoryDetailsFormLogicContainer will clear error save message after a go
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -724,7 +758,8 @@ test("CategoryDetailsFormLogicContainer will clear error save message after a go
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -762,7 +797,7 @@ test("CategoryDetailsFormLogicContainer will clear error save message after a go
 test("CategoryDetailsFormLogicContainer will disable submit button when creating, then re-enable when done", async () => {
 	
 	const newName = "testNewTest";
-	const newColor = "yellow";
+	const newColor = dummyColorList[1].colorName;
 	const newWeight = 13467;
 	
 	const catToReturn = { 
@@ -780,7 +815,8 @@ test("CategoryDetailsFormLogicContainer will disable submit button when creating
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -820,7 +856,8 @@ test("CategoryDetailsFormLogicContainer will disable submit button when updating
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -859,7 +896,8 @@ test("CategoryDetailsFormLogicContainer will re-enable submit button after a err
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -896,7 +934,8 @@ test("CategoryDetailsFormLogicContainer will re-enable submit button after a err
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	// ----------- Set the values -----------------
@@ -939,7 +978,8 @@ test("CategoryDetailsFormLogicContainer will use userService deleteCategory meth
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	//Just change the name, to make sure we're not passing changed category to delete handler
@@ -976,7 +1016,8 @@ test("CategoryDetailsFormLogicContainer will use display error if bad save durin
 									scaleID={dummyScale.id}
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
-									userService={mockUserService} />);
+									userService={mockUserService}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	const deleteButton = screen.getByRole("button", { name: /delete/i });
@@ -1006,7 +1047,8 @@ test("CategoryDetailsFormLogicContainer will call onSuccessfulDeleteHandler afte
 									categoryID={dummyCategory.id}
 									backButtonHandler={dummyBackHandler}
 									userService={mockUserService}
-									onSuccessfulDeleteHandler={mockDeleteCallback} />);
+									onSuccessfulDeleteHandler={mockDeleteCallback}
+									categoryColorProvider={dummyColorProvider} />);
 	
 	
 	const deleteButton = screen.getByRole("button", { name: /delete/i });

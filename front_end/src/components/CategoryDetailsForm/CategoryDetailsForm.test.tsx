@@ -1,14 +1,20 @@
 import CategoryDetailsForm from './CategoryDetailsForm';
 import { render, fireEvent, screen } from '@testing-library/react';
+import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/CategoryColorProvider';
 
 const dummyBackHandler = () => {};
 const dummySubmit = () => {};
 const dummySetState = (x) => {};
 
+
+const dummyColorProvider = new CategoryColorProvider();
+const dummyColorList = dummyColorProvider.getColorList();
+
+
 const dummyCategoryFormItem = {
 	name: "Test category",
 	setName: dummySetState,
-	color: "red",
+	color: dummyColorList[0].colorRealValue,
 	setColor: dummySetState,
 	desiredWeight: 1,
 	setDesiredWeight: dummySetState,
@@ -32,7 +38,8 @@ test.each([
 	const { container } = render(<CategoryDetailsForm 
 				categoryItem={dummyCategoryFormItem} 
 				headingText={headText}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const heading = container.querySelector("h1");
 	
@@ -48,7 +55,8 @@ test("CategoryDetailsForm will call the backButtonHandler prop if the back butto
 	const { container } = render(<CategoryDetailsForm 
 				categoryItem={dummyCategoryFormItem} 
 				headingText={"test"}
-				backButtonHandler={mockBackHandler} />);
+				backButtonHandler={mockBackHandler}
+				colorList={dummyColorList} />);
 	
 	const backButton = container.querySelector(".categoryBackButton");
 	fireEvent.click(backButton);
@@ -64,7 +72,8 @@ test("CategoryDetailsForm will render content in a LoadedContentWrapper", () => 
 	const { container } = render(<CategoryDetailsForm 
 				categoryItem={dummyCategoryFormItem} 
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
 	const nameInput = screen.getByDisplayValue(dummyCategoryFormItem.name);
@@ -83,7 +92,8 @@ test.each([
 				categoryItem={dummyCategoryFormItem} 
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler}
-				badLoadErrorMessage={messageText} />);
+				badLoadErrorMessage={messageText}
+				colorList={dummyColorList} />);
 	
 	const contentWrapper = container.querySelector(`.LoadedContentWrapper`);
 	const messageElem = screen.getByText(messageText);
@@ -97,7 +107,8 @@ test("CategoryDetailsForm will not render anything in LoadedContentWrapper, when
 	
 	const { container } = render(<CategoryDetailsForm 
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const loadingDisplay = container.querySelector(`.currentlyLoadingDisplay`);
 	
@@ -112,7 +123,8 @@ test("CategoryDetailsForm will render a CategoryDetailsFormPartial", () => {
 	const { container } = render(<CategoryDetailsForm 
 				categoryItem={dummyCategoryFormItem} 
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const formPartial = container.querySelector(".CategoryDetailsFormPartial");
 	
@@ -126,12 +138,13 @@ test("CategoryDetailsForm will pass the category details to CategoryDetailsFormP
 	const mockSetName = jest.fn();
 	const weight = 1000000;
 	const mockSetWeight = jest.fn();
-	const color = "red";
+	const color = dummyColorList[0].colorRealValue;
 	const mockSetColor = jest.fn();
 	
 	const newName = "testnewname";
 	const newWeight = 5000000;
-	const newColor = "blue";
+	const newColor = dummyColorList[1].colorRealValue; //If there's less than 2 colors, something bigger has 
+														//gone wrong somewhere, so this should be a warning sign
 	
 	const { container } = render(<CategoryDetailsForm 
 				categoryItem={{
@@ -144,7 +157,8 @@ test("CategoryDetailsForm will pass the category details to CategoryDetailsFormP
 					setColor: mockSetColor
 				}}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const nameInput = screen.getByDisplayValue(name);
 	fireEvent.change(nameInput, { target: { value: newName } });
@@ -174,7 +188,8 @@ test.each([
 					badSaveErrorMessage: message
 				}}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler} 
+				colorList={dummyColorList} />);
 	
 	const errorMessage = container.querySelector(".BadSaveMessage");
 	
@@ -194,7 +209,8 @@ test.each([
 					goodSaveMessage: message
 				}}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const saveMessage = container.querySelector(".GoodSaveMessage");
 	
@@ -211,7 +227,8 @@ test("CategoryDetailsForm will enable the submit button if no disableSubmit prop
 	const { container } = render(<CategoryDetailsForm 
 				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).not.toBeDisabled();
@@ -224,7 +241,8 @@ test("CategoryDetailsForm will enable the submit button if the disableSubmit pro
 				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler}
-				disableSubmit={false} />);
+				disableSubmit={false}
+				colorList={dummyColorList} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).not.toBeDisabled();
@@ -237,7 +255,8 @@ test("CategoryDetailsForm will disable the submit button if the disableSubmit pr
 				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler}
-				disableSubmit={true} />);
+				disableSubmit={true}
+				colorList={dummyColorList} />);
 	
 	const submitButton = container.querySelector("input[type=submit]");
 	expect(submitButton).toBeDisabled();
@@ -254,7 +273,8 @@ test("CategoryDetailsForm will call the onSubmit callback, if the submit button 
 					onSubmit: mockSubmit
 				}}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const form = container.querySelector("form");
 	fireEvent.submit(form);
@@ -273,7 +293,8 @@ test("CategoryDetailsForm will not render a delete button if no onDelete prop gi
 					onDelete: undefined
 				}}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const deleteButton = container.querySelector(".categoryDeleteButton");
 	
@@ -289,7 +310,8 @@ test("CategoryDetailsForm will render a delete button if onDelete prop given", (
 					onDelete: ()=>{}
 				}}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const deleteButton = container.querySelector(".categoryDeleteButton");
 	
@@ -307,7 +329,8 @@ test("CategoryDetailsForm delete button will call onDelete prop", () => {
 					onDelete: mockDelete
 				}}
 				headingText={"test"}
-				backButtonHandler={dummyBackHandler} />);
+				backButtonHandler={dummyBackHandler}
+				colorList={dummyColorList} />);
 	
 	const deleteButton = container.querySelector(".categoryDeleteButton");
 	
@@ -327,10 +350,43 @@ test("CategoryDetailsForm will render the given actionsForm prop", () => {
 				categoryItem={dummyCategoryFormItem}
 				headingText={"test"}
 				backButtonHandler={dummyBackHandler}
-				actionsForm={(<div>{testText}</div>)} />);
+				actionsForm={(<div>{testText}</div>)}
+				colorList={dummyColorList} />);
 	
 	const textElement = screen.getByText(testText);
 	
 	expect(textElement).not.toBeNull();
+	
+});
+
+test.each([
+	[
+		[
+			{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "RedLabel" },
+			{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "GreenLabel" }
+		]
+	],
+	[
+		[
+			{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "GreenLabel" },
+			{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "RedLabel" }
+		]
+	]
+])("CategoryDetailsForm will pass in the colorList prop to CategoryDetailsForm", (mockColorList) => {
+		
+	const { container } = render(<CategoryDetailsForm 
+			categoryItem={{ ...dummyCategoryFormItem, color: mockColorList[0].colorRealValue }}
+			headingText={"test"}
+			backButtonHandler={dummyBackHandler}
+			colorList={mockColorList} />);
+	
+	const colorInputOptions = container.querySelectorAll(".categoryColorInput option");
+	
+	expect(colorInputOptions.length).toBe(mockColorList.length);
+	
+	mockColorList.forEach((mockColor, i) => {
+		expect(colorInputOptions[i].value).toBe(mockColor.colorRealValue);
+		expect(colorInputOptions[i].textContent).toEqual(expect.stringContaining(mockColor.colorLabel));
+	});
 	
 });

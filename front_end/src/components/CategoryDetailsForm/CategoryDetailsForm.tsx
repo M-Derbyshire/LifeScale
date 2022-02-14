@@ -5,10 +5,13 @@ import CategoryDetailsFormPartial from '../CategoryDetailsFormPartial/CategoryDe
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 import ICategoryFormItem from '../../interfaces/UI/ICategoryFormItem';
+import ICategoryColorData from '../../interfaces/UI/ICategoryColorData';
 
 
 interface ICategoryDetailsFormProps {
 	categoryItem?:ICategoryFormItem;
+	
+	colorList:ICategoryColorData[];
 	
 	headingText:string;
 	badLoadErrorMessage?:string;
@@ -42,7 +45,8 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 							color={props.categoryItem.color}
 							setColor={props.categoryItem.setColor}
 							desiredWeight={props.categoryItem.desiredWeight}
-							setDesiredWeight={props.categoryItem.setDesiredWeight} />
+							setDesiredWeight={props.categoryItem.setDesiredWeight}
+							colorList={props.colorList} />
 						
 						
 						{props.categoryItem.badSaveErrorMessage && 

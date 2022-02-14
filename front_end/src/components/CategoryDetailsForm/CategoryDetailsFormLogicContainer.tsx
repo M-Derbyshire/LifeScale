@@ -4,6 +4,8 @@ import ActionsFormLogicContainer from '../ActionsForm/ActionsFormLogicContainer'
 import IUserService from '../../interfaces/api_access/IUserService';
 import ICategory from '../../interfaces/ICategory';
 import IScale from '../../interfaces/IScale';
+import ICategoryColorData from '../../interfaces/UI/ICategoryColorData';
+import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/CategoryColorProvider';
 
 
 interface ICategoryDetailsFormLogicContainerProps {
@@ -12,6 +14,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 	userService:IUserService;
 	backButtonHandler:()=>void;
 	onSuccessfulDeleteHandler?:()=>void;
+	categoryColorProvider:CategoryColorProvider;
 };
 
 interface ICategoryDetailsFormLogicContainerState {
@@ -35,9 +38,14 @@ export default class CategoryDetailsFormLogicContainer
 	
 	stdGoodSaveMessage = "Category saved successfully.";
 	
+	colorList:ICategoryColorData[];
+	
 	constructor(props:ICategoryDetailsFormLogicContainerProps)
 	{
 		super(props)
+		
+		this.colorList = this.props.categoryColorProvider.getColorList();
+		
 		
 		let badLoadErrorMessage;
 		
@@ -74,7 +82,10 @@ export default class CategoryDetailsFormLogicContainer
 							: undefined;
 		
 		if(!categoryRef)
-			categoryRef = { id:"", name: "", color: "red", desiredWeight: 1, actions: [] };
+		{
+			const defaultColor = (this.colorList.length > 0) ? this.colorList[0].colorName : "";
+			categoryRef = { id:"", name: "", color: defaultColor, desiredWeight: 1, actions: [] };
+		}
 		
 		const category = { ...categoryRef };
 		
@@ -186,6 +197,12 @@ export default class CategoryDetailsFormLogicContainer
 			(isCreating) ? this.createCategoryHandler.bind(this) : this.updateCategoryHandler.bind(this);
 		
 		
+		//Used to keep the value in the database consistent, even if the actual color changes
+		let itemRealColor = this.props.categoryColorProvider.getRealColorFromName(this.state.category.color);
+		if(!itemRealColor)
+			itemRealColor = ""; //Empty value will be treated as not found by the form partial, and handled there
+		
+		
 		return (
 			<div className="CategoryDetailsFormLogicContainer">
 				<CategoryDetailsForm
@@ -196,10 +213,22 @@ export default class CategoryDetailsFormLogicContainer
 							category: { ...this.state.category, name } 
 						}),
 						
-						color: this.state.category.color,
-						setColor:(color:string) => this.setState({ 
-							category: { ...this.state.category, color } 
-						}),
+						color: itemRealColor,
+						setColor:(color:string) => 
+						{
+							//Used to keep the value in the database consistent, 
+							//even if the actual color changes
+							let colorName = this.props.categoryColorProvider.getNameFromRealColor(color);
+							if(!colorName)
+								colorName = "";
+							
+							this.setState({ 
+								category: { 
+									...this.state.category, 
+									color: colorName
+								} 
+							});
+						},
 						
 						desiredWeight: this.state.category.desiredWeight,
 						setDesiredWeight:(desiredWeight:number) => this.setState({ 
@@ -212,6 +241,7 @@ export default class CategoryDetailsFormLogicContainer
 						goodSaveMessage: this.state.goodSaveMessage
 						
 					}}
+					colorList={this.colorList}
 					headingText={headingText}
 					badLoadErrorMessage={this.state.badLoadErrorMessage}
 					backButtonHandler={this.props.backButtonHandler}

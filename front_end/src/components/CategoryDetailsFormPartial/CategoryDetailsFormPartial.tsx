@@ -1,5 +1,6 @@
-import React, { FC } from 'react';
+import React, { FC, ReactElement } from 'react';
 import './CategoryDetailsFormPartial.scss';
+import ICategoryColorData from '../../interfaces/UI/ICategoryColorData';
 
 interface ICategoryDetailsFormPartialProps {
 	name:string;
@@ -8,12 +9,33 @@ interface ICategoryDetailsFormPartialProps {
 	setColor:(color:string)=>void;
 	desiredWeight:number;
 	setDesiredWeight:(weight:number)=>void;
+	colorList:ICategoryColorData[];
 }
+
+
+const mapColorDataToOptionElement = (color:ICategoryColorData):ReactElement => {
+	
+	return (
+		<option value={color.colorRealValue} key={color.colorRealValue}>
+			{color.colorLabel}
+		</option>
+	);
+	
+}
+
+
 
 /*
 	Used to display and set basic category details (not including setting actions)
 */
 const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) => {
+	
+	//If the provided color is empty, this means it was invalid,
+	//and needs setting to the first as default (if no colors 
+	//are provided, there's a bigger problem somewhere, so we'll 
+	//just leave blank in that case).
+	const realCategoryColorValue = 
+		(props.color === "" && props.colorList.length > 0) ? props.colorList[0].colorRealValue : props.color;
 	
 	return (
 		<div className="CategoryDetailsFormPartial">
@@ -29,18 +51,11 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			
 			<label className="categoryColorInputLabel">
 				Color: <select 
-						style={{ borderColor: props.color }}
+						style={{ borderColor: realCategoryColorValue }}
 						className="categoryColorInput" 
-						value={props.color} 
+						value={realCategoryColorValue} 
 						onChange={(e)=>props.setColor(e.target.value)}>
-							<option value="red">Red</option>
-							<option value="green">Green</option>
-							<option value="blue">Blue</option>
-							<option value="cyan">Cyan</option>
-							<option value="yellow">Yellow</option>
-							<option value="pink">Pink</option>
-							<option value="purple">Purple</option>
-							<option value="orange">Orange</option>
+							{props.colorList.map(mapColorDataToOptionElement)}
 						</select>
 			</label>
 			<br/>

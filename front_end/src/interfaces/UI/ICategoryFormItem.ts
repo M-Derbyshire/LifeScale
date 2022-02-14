@@ -5,7 +5,7 @@ interface ICategoryFormItem {
 	
 	name:string;
 	setName:(name:string)=>void;
-	color:string;
+	color:string; //This can become an empty string, if the original color was invalid
 	setColor:(color:string)=>void;
 	desiredWeight:number;
 	setDesiredWeight:(weight:number)=>void;
