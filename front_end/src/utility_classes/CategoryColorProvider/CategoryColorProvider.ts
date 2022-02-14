@@ -3,7 +3,7 @@
 interface ICategoryColorData {
 	colorName:string; //The name of the color (to be stored in the database)
 	colorRealValue:string; // The real CSS color to display
-	getColorLabel:()=>string; // Get a formatted name of this color (for use in select drop-downs, etc)
+	colorLabel:string; // A formatted name of this color (for use in select drop-downs, etc)
 };
 
 /*
@@ -19,20 +19,33 @@ interface ICategoryColorData {
 export default class CategoryColorProvider
 {
 	
-	colorList:ICategoryColorData[];
+	_colorList:ICategoryColorData[];
 		
 	constructor()
 	{
-		this.colorList = [
-			
+		this._colorList = [
+			{ colorName: "red", colorRealValue: "#ff5555", colorLabel: "" },
+			{ colorName: "green", colorRealValue: "#55ff55", colorLabel: "" },
+			{ colorName: "blue", colorRealValue: "#5555ff", colorLabel: "" }
 		];
+		
+		//Create the color labels
+		this._colorList = this._colorList.map(
+			col => ({ ...col, colorLabel: this._formatColorNameToLabel(col.colorName) })
+		);
+	}
+	
+	
+	
+	_formatColorNameToLabel(name:string):string
+	{
+		return name;
 	}
 	
 	
 	getColorList():ICategoryColorData[]
 	{
-		throw new Error("Not implemented");
-		return [];
+		return this._colorList;
 	}
 	
 	//Returns undefined if no result found
