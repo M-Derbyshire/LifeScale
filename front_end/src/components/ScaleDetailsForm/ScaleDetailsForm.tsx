@@ -22,7 +22,11 @@ interface IScaleDetailsFormProps {
 type mapCategoryToCardType = ((id:string, name:string)=>ReactElement);
 
 
+/*
 
+	This is used to create and edit scales in the system (it also displays a CardDisplay, to provide 
+	links to create/edit categories). The container component should handle the logic
+*/
 class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 {
 	emptyCardDisplayMessage:string;
