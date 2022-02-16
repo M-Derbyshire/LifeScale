@@ -116,6 +116,7 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	
 	const newDateValue = "2010-12-01";
 	const newMinuteValue = 150;
+	const expectedCategory = scale.categories[1];
 	const expectedAction = scale.categories[1].actions[1];
 	
 	const mockUserService = new TestingDummyUserService();
@@ -127,6 +128,7 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	});
 	
 	mockUserService.getAction = (actID, catID, scaleID) => expectedAction;
+	mockUserService.getCategory = (catID, scaleID) => expectedCategory;
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}
@@ -166,7 +168,7 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	fireEvent.submit(form);
 	
 	//The first parameter will confirm that the correct categories/actions have been selected
-	expect(mockUserService.createTimespan).toHaveBeenCalledWith(expectedAction, {
+	expect(mockUserService.createTimespan).toHaveBeenCalledWith(scale, expectedCategory, expectedAction, {
 		date: new Date(newDateValue),
 		minuteCount: newMinuteValue
 	});
@@ -178,6 +180,7 @@ test("If not using timespans, RecordActionFormLogicContainer will set minute cou
 	
 	const newDateValue = "2010-12-01";
 	const expectedAction = scale.categories[1].actions[1];
+	const expectedCategory = scale.categories[1];
 	
 	const mockUserService = new TestingDummyUserService();
 	
@@ -188,6 +191,7 @@ test("If not using timespans, RecordActionFormLogicContainer will set minute cou
 	});
 	
 	mockUserService.getAction = (actID, catID, scaleID) => expectedAction;
+	mockUserService.getCategory = (catID, scaleID) => expectedCategory;
 	
 	
 	const { container } = render(<RecordActionFormLogicContainer
@@ -206,7 +210,7 @@ test("If not using timespans, RecordActionFormLogicContainer will set minute cou
 	
 	fireEvent.submit(form);
 	
-	expect(mockUserService.createTimespan).toHaveBeenCalledWith(expectedAction, {
+	expect(mockUserService.createTimespan).toHaveBeenCalledWith(scale, expectedCategory, expectedAction, {
 		date: new Date(newDateValue),
 		minuteCount: 0
 	});
@@ -317,6 +321,7 @@ test("RecordActionFormLogicContainer will pass the successful save message to Re
 	});
 	
 	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
+	mockUserService.getCategory = (catID, scaleID) => scale.categories[0];
 	
 	
 	
@@ -340,6 +345,7 @@ test("RecordActionFormLogicContainer will pass the failed save message to Record
 	const mockUserService = new TestingDummyUserService();
 	mockUserService.createTimespan = jest.fn().mockRejectedValue(new Error(message));
 	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
+	mockUserService.getCategory = (catID, scaleID) => scale.categories[0];
 	
 	
 	
@@ -368,7 +374,7 @@ test("RecordActionFormLogicContainer will blank the form after a successful save
 	});
 	
 	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
-	
+	mockUserService.getCategory = (catID, scaleID) => scale.categories[0];
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}
@@ -479,6 +485,7 @@ test("RecordActionFormLogicContainer will call the onSuccessfulSave prop on succ
 	});
 	
 	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
+	mockUserService.getCategory = (catID, scaleID) => scale.categories[0];
 	
 	
 	const { container } = render(<RecordActionFormLogicContainer
@@ -520,13 +527,14 @@ test("RecordActionFormLogicContainer will not call the onSuccessfulSave prop on 
 
 test("RecordActionFormLogicContainer will not call createTimespan if no category available, and will display an error", async () => {
 	
-	const message = "No action has been selected.";
+	const message = "No category has been selected.";
+	
+	const scale = { ...dummyScaleUsesTimespans, categories: [] };
 	
 	const mockUserService = new TestingDummyUserService();
 	mockUserService.createTimespan = jest.fn();
-	mockUserService.getAction = (actID, catID, scaleID) => undefined;
-	
-	const scale = { ...dummyScaleUsesTimespans, categories: [] };
+	mockUserService.getCategory = (catID, scaleID) => undefined;
+	mockUserService.getAction = (actID, catID, scaleID) => dummyScaleUsesTimespans.categories[0].actions[0];
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}
@@ -547,10 +555,6 @@ test("RecordActionFormLogicContainer will not call createTimespan if no action a
 	
 	const message = "No action has been selected.";
 	
-	const mockUserService = new TestingDummyUserService();
-	mockUserService.createTimespan = jest.fn();
-	mockUserService.getAction = (actID, catID, scaleID) => undefined;
-	
 	const scale = { ...dummyScaleUsesTimespans, categories: [{
 		id: "testCat23132948284",
 		name: "work",
@@ -558,6 +562,12 @@ test("RecordActionFormLogicContainer will not call createTimespan if no action a
 		desiredWeight: 1,
 		actions:[]
 	}] };
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.createTimespan = jest.fn();
+	mockUserService.getCategory = (catID, scaleID) => scale.categories[0];
+	mockUserService.getAction = (actID, catID, scaleID) => undefined;
+	
 	
 	const { container } = render(<RecordActionFormLogicContainer
 									userService={mockUserService}

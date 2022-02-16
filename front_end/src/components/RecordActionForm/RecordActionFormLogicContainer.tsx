@@ -77,11 +77,11 @@ export default class RecordActionFormLogicContainer
 		
 		if(!selectedCategory)
 		{
-			this.setState({ badSaveErrorMessage: noCategoryMessage , goodSaveMessage: undefined });
+			this.setState({ badSaveErrorMessage: noCategoryMessage, goodSaveMessage: undefined });
 		}
 		else if(!selectedAction)
 		{
-			this.setState({ badSaveErrorMessage: noActionMessage , goodSaveMessage: undefined });
+			this.setState({ badSaveErrorMessage: noActionMessage, goodSaveMessage: undefined });
 		}
 		else
 		{
