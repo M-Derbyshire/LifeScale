@@ -484,11 +484,11 @@ export default class MockJSONServerUserService implements IUserService {
 		});
 	}
 	
-	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">):Promise<ITimespan> {
+	createTimespan(parentScale:IScale, parentCategory:ICategory, parentAction:IAction, newTimespan:Omit<ITimespan, "id">):Promise<ITimespan> {
 		return this._saveToArrayInCurrentUser(parentAction.timespans, newTimespan, "timespan", this._timespanRequiredProperties);
 	}
 	
-	deleteTimespan(parentAction:IAction, timespan:ITimespan):Promise<ITimespan[]> {
+	deleteTimespan(parentScale:IScale, parentCategory:ICategory, parentAction:IAction, timespan:ITimespan):Promise<ITimespan[]> {
 		return this._deleteArrayItemInCurrentUser(parentAction.timespans, timespan, "timespan");
 	}
 	

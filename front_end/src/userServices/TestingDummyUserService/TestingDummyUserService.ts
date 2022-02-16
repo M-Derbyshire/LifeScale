@@ -149,13 +149,13 @@ export default class TestingDummyUserService implements IUserService {
 		return [];
 	}
 	
-	createTimespan(parentAction:IAction, newTimespan:Omit<ITimespan, "id">) {
+	createTimespan(parentScale:IScale, parentCategory:ICategory, parentAction:IAction, newTimespan:Omit<ITimespan, "id">) {
 		return new Promise<ITimespan>((resolve, reject) => {
 			resolve({ ...newTimespan, id: "test" });
 		});
 	}
 	
-	deleteTimespan(parentAction:IAction, timespan:ITimespan) {
+	deleteTimespan(parentScale:IScale, parentCategory:ICategory, parentAction:IAction, timespan:ITimespan) {
 		return new Promise<ITimespan[]>((resolve, reject) => {
 			resolve(parentAction.timespans);
 		});
