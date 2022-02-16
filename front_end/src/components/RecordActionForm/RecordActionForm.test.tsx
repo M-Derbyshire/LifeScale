@@ -65,6 +65,38 @@ test("RecordActionForm will call the onSubmit prop when submitted", () => {
 });
 
 
+test("RecordActionForm will call the disable submit button if actions are empty", () => {
+	
+	const mockSubmit = jest.fn();
+	
+	const { container } = render(<RecordActionForm 
+									recordedAction={{
+										...dummyRecordedAction, 
+										categories: [ { ...dummyCategories[0], actions: [] } ]
+									}} />);
+	
+	const submit = container.querySelector("input[type=submit]");
+	
+	expect(submit).toBeDisabled();
+	
+});
+
+test("RecordActionForm will call the disable submit button if categories are empty", () => {
+	
+	const mockSubmit = jest.fn();
+	
+	const { container } = render(<RecordActionForm 
+									recordedAction={{
+										...dummyRecordedAction, 
+										categories: []
+									}} />);
+	
+	const submit = container.querySelector("input[type=submit]");
+	
+	expect(submit).toBeDisabled();
+	
+});
+
 
 
 

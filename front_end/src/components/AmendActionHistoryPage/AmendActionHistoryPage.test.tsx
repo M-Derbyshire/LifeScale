@@ -158,6 +158,7 @@ test("AmendActionHistoryPage will pass onNewRecordSuccessfulSave prop to the Rec
 	});
 	
 	//Fake action to return
+	mockUserService.getCategory = (catID, scaleID) => dummyScale.categories[0];
 	mockUserService.getAction = (actID, catID, scaleID) => dummyScale.categories[0].actions[0];
 	
 	

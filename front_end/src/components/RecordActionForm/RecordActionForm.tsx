@@ -30,6 +30,21 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 	
 	render()
 	{
+		const selectedCategory = this.props.recordedAction.categories
+									.find(cat => cat.id === this.props.recordedAction.selectedCategoryID)
+		
+		const selectedAction = (!selectedCategory) ? undefined 
+			: selectedCategory.actions.find(act => act.id === this.props.recordedAction.selectedActionID);
+		
+		const disableSubmit = (
+			this.props.recordedAction.categories.length === 0 
+			|| !this.props.recordedAction.selectedCategoryID
+			|| !selectedCategory
+			|| selectedCategory.actions.length === 0
+			|| !this.props.recordedAction.selectedActionID
+			|| !selectedAction
+		);
+		
 		return (
 			<div className="RecordActionForm">
 				
@@ -62,10 +77,8 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 											(e) => this.props.recordedAction.setSelectedActionID(e.target.value)
 										}>
 								
-								{this.props.recordedAction.categories.length > 0 && 
-								this.props.recordedAction.categories.find(
-									cat => cat.id === this.props.recordedAction.selectedCategoryID
-								)!.actions.map(
+								{this.props.recordedAction.categories.length > 0 && selectedCategory &&
+								selectedCategory.actions.map(
 									(act) => this.mapItemToOptionElem(act.name, act.id)
 								)}
 								
@@ -92,7 +105,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 							})} />}
 						
 						
-						<input type="submit" value="Record Action" />
+						<input type="submit" disabled={disableSubmit} value="Record Action" />
 						
 						
 						{this.props.recordedAction.badSaveErrorMessage && 
