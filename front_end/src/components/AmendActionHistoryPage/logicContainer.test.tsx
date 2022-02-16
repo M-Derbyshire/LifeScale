@@ -62,6 +62,7 @@ test("AmendActionHistoryPageLogicContainer will render an AmendActionHistoryPage
 	const mockUserService = { ...dummyUserService };
 	mockUserService.createTimespan = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0].timespans[0]);
 	mockUserService.getAction = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0]);
+	mockUserService.getCategory = jest.fn().mockResolvedValue(dummyScale.categories[0]);
 	
 	const { container } = render(<AmendActionHistoryPageLogicContainer
 									scaleID={dummyScale.id}
@@ -173,6 +174,7 @@ test("AmendActionHistoryPageLogicContainer will update the list of history items
 	
 	mockUserService.createTimespan = jest.fn().mockResolvedValue(timespanToCreate);
 	mockUserService.getAction = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0]);
+	mockUserService.getCategory = jest.fn().mockResolvedValue(dummyScale.categories[0]);
 	
 	const { container } = render(<AmendActionHistoryPageLogicContainer
 									scaleID={dummyScale.id}
@@ -220,6 +222,7 @@ test("AmendActionHistoryPageLogicContainer will pass through delete handlers for
 	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.getAction = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0]);
+	mockUserService.getCategory = jest.fn().mockResolvedValue(dummyScale.categories[0]);
 	
 	
 	const currentTSList = dummyScale.categories[0].actions[0].timespans.sort((a, b) => {
@@ -275,7 +278,12 @@ test("AmendActionHistoryPageLogicContainer will pass through delete handlers for
 	
 	await waitFor(() => {
 		
-		expect(mockUserService.deleteTimespan).toHaveBeenCalled();
+		expect(mockUserService.deleteTimespan).toHaveBeenCalledWith(
+			dummyScale, 
+			dummyScale.categories[0], 
+			dummyScale.categories[0].actions[0], 
+			dummyScale.categories[0].actions[0].timespans[1]
+		);
 		
 		const currentItemList = container.querySelectorAll(".AmendActionHistoryPage .ActionHistoryItem");
 		
@@ -295,7 +303,7 @@ test("AmendActionHistoryPageLogicContainer will pass through error message if er
 	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.getAction = jest.fn().mockResolvedValue(dummyScale.categories[0].actions[0]);
-	
+	mockUserService.getCategory = jest.fn().mockResolvedValue(dummyScale.categories[0]);
 	
 	//We're testing the second in the list
 	mockUserService.deleteTimespan = jest.fn().mockRejectedValue(new Error(message));

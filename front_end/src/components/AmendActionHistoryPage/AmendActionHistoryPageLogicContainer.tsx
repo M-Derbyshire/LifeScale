@@ -108,9 +108,9 @@ export default class AmendActionHistoryPageLogicContainer
 	
 	
 	
-	timespanDeleteHandler(timespan:ITimespan, parentAction:IAction)
+	timespanDeleteHandler(timespan:ITimespan, parentAction:IAction, parentCategory:ICategory, parentScale:IScale)
 	{
-		this.props.userService.deleteTimespan(parentAction, timespan)
+		this.props.userService.deleteTimespan(parentScale, parentCategory, parentAction, timespan)
 			.then(timespans => this.reloadHistoryItemList())
 			.catch(err => {
 				this.setState({ 
@@ -130,7 +130,12 @@ export default class AmendActionHistoryPageLogicContainer
 			categoryName: timespanDetails.category.name,
 			actionName: timespanDetails.action.name,
 			timespan: timespanDetails.timespan,
-			deleteHandler: () => this.timespanDeleteHandler(timespanDetails.timespan, timespanDetails.action),
+			deleteHandler: () => this.timespanDeleteHandler(
+				timespanDetails.timespan, 
+				timespanDetails.action,
+				timespanDetails.category,
+				this.state.scale!, //If no scale, we'll display a loading error instead anyway
+			),
 			deleteErrorMessage: (!hasDeleteError) ?  undefined : this.state.lastHistoryDeleteError!.errorMessage
 		};
 	}
