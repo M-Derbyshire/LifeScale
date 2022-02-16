@@ -215,28 +215,6 @@ test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage on bad c
 	
 });
 
-// badLoadErrorMessage to category form on bad load callback from actionform
-test("CategoryDetailsFormLogicContainer will pass a badLoadErrorMessage to CategoryDetailsForm on bad load callback from ActionsForm", () => {
-	
-	const errorMessage = categoryLoadErrorMessage;
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getScale = jest.fn().mockReturnValue(dummyScale);
-	
-	//Only the once, so ActionsForm fails
-	mockUserService.getCategory = jest.fn().mockReturnValueOnce(dummyCategory).mockReturnValue(undefined);
-	
-	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id}
-									backButtonHandler={dummyBackHandler}
-									userService={mockUserService}
-									categoryColorProvider={dummyColorProvider} />);
-	
-	const categoryForm = container.querySelector(".CategoryDetailsForm");
-	expect(within(categoryForm).queryByText(errorMessage)).not.toBeNull();
-	
-});
 
 test("CategoryDetailsFormLogicContainer will handle the form state", () => {
 	

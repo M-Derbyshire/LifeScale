@@ -172,14 +172,11 @@ export default class CategoryDetailsFormLogicContainer
 		const isCreating = (!this.state.category.id);
 		
 		let actionsForm;
-		if (!isCreating) 
+		if (!isCreating && this.state.scale) //If no scale, bad load message should be displayed anyway 
 			actionsForm = (<ActionsFormLogicContainer 
 								userService={this.props.userService}
-								scaleID={this.props.scaleID}
-								categoryID={this.state.category!.id}
-								onCategoryLoadError={()=>this.setState({ 
-									badLoadErrorMessage: this.stdCategoryLoadErrorMessage 
-								})}
+								scale={this.state.scale!}
+								category={this.state.category!}
 							/>);
 		
 		
