@@ -3,6 +3,7 @@ import ActionsForm from './ActionsForm';
 import IUserService from '../../interfaces/api_access/IUserService';
 import IAction from '../../interfaces/IAction';
 import ICategory from '../../interfaces/ICategory';
+import IScale from '../../interfaces/IScale';
 import IActionFormItem from '../../interfaces/UI/IActionFormItem';
 
 
@@ -22,16 +23,15 @@ interface INewActionData {
 
 interface IActionsFormLogicContainerProps {
 	userService:IUserService;
-	scaleID:string;
-	categoryID:string;
+	scale:IScale;
+	category:ICategory;
 	onCategoryLoadError?:(errorMessage:string)=>void;
 }
 
 interface IActionsFormLogicContainerState {
-	category?:ICategory;
 	newAction:INewActionData;
-	actions?:IAction[]; //Actions that we can edit as state
-	originalActions?:IAction[]; //References to actions in userService (used when updating/deleting)
+	actions:IAction[]; //Actions that we can edit as state
+	originalActions:IAction[]; //References to actions in userService (used when updating/deleting)
 	lastActionSaveMessage:IActionSaveMessage; //We only need to display the last save message (good or bad)
 	displayNewActionForm:boolean;
 }
@@ -61,11 +61,9 @@ export default class ActionsFormLogicContainer
 			badSaveErrorMessage: undefined,
 		};
 		
-		const category = this.loadCategory();
-		const actionLists = this.loadActionLists(category);
+		const actionLists = this.loadActionLists(this.props.category);
 		
 		this.state = {
-			category,
 			newAction,
 			actions: actionLists.actions,
 			originalActions: actionLists.originalActions,
@@ -76,56 +74,26 @@ export default class ActionsFormLogicContainer
 	
 	
 	
-	loadCategory():ICategory|undefined
-	{
-		const category = this.props.userService.getCategory(this.props.categoryID, this.props.scaleID);
-		
-		if (!category && this.props.onCategoryLoadError) 
-			this.props.onCategoryLoadError(this.stdCategoryLoadError);
-		
-		return category; //If an issue on load, this will be undefined
-	}
 	
 	//Return values:
 	//actions - are the actions that can be changed (as state)
 	//originalActions - are references to the action's references from the userService (used in updating/deleting)
-	loadActionLists(category:ICategory|undefined):{ actions:IAction[]|undefined, originalActions:IAction[]|undefined }
+	loadActionLists(category:ICategory):{ actions:IAction[], originalActions:IAction[] }
 	{
-		let actions:IAction[]|undefined = undefined;
-		let originalActions:IAction[]|undefined = undefined;
-		
-		if (!category) 
-			actions = [];
-		else
-		{
-			originalActions = category.actions;
-			actions = this.getRefreshedActionList(category);
-		}
-		
-		if (category && (!actions || !originalActions) && this.props.onCategoryLoadError)
-			this.props.onCategoryLoadError(this.stdActionsLoadError);
-		
-		
 		return {
-			actions,
-			originalActions
+			actions: this.getRefreshedActionList(category),
+			originalActions: category.actions
 		};
 	}
 	
+	
+	
 	getRefreshedActionList(category:ICategory)
 	{
-		try 
-		{
-			if(category)
-			{
-				//We don't want references to the originals (timespans being references is not an issue)
-				return category.actions.map(action => ({ ...action }));
-			}
-		} 
-		catch {}
-		
-		return undefined;
+		return category.actions.map(action => ({ ...action }));
 	}
+	
+	
 	
 	
 	//Update single action in the actions state array
@@ -133,7 +101,7 @@ export default class ActionsFormLogicContainer
 	{
 		this.setState(state => {
 			return { 
-				actions: state.actions!.map((action, i) => {
+				actions: state.actions.map((action, i) => {
 					if(i === newActionIndex)
 						return newActionData;
 					else
@@ -143,12 +111,12 @@ export default class ActionsFormLogicContainer
 		});
 	}
 	
+	
+	
 	refreshCategoryActionListStates()
 	{
-		const category = this.loadCategory();
-		const actionLists = this.loadActionLists(category);
+		const actionLists = this.loadActionLists(this.props.category);
 		this.setState({
-			category,
 			actions: actionLists.actions,
 			originalActions: actionLists.originalActions,
 		});
@@ -165,57 +133,60 @@ export default class ActionsFormLogicContainer
 			timespans: []
 		};
 		
-		//If no category, the onCategoryLoadError is called
-		if(this.state.category)
-			this.props.userService.createAction(this.state.category, newAction)
-				.then(savedAction => {
-					this.setState({ displayNewActionForm: false });
-					this.refreshCategoryActionListStates();
-				})
-				.catch(err => this.setState({ 
-					newAction: {
-						...newAction, 
-						badSaveErrorMessage: `Unable to create new action: ${err.message}` 
-					}
-				}));
+		this.props.userService.createAction(this.props.scale, this.props.category, newAction)
+			.then(savedAction => {
+				this.setState({ displayNewActionForm: false });
+				this.refreshCategoryActionListStates();
+			})
+			.catch(err => this.setState({ 
+				newAction: {
+					...newAction, 
+					badSaveErrorMessage: `Unable to create new action: ${err.message}` 
+				}
+			}));
 	}
 	
 	//onSubmit for existing actions
 	updateHandler(action:IAction, index:number)
 	{
-		//If no actions, the onCategoryLoadError is called
-		if(this.state.originalActions)
-			this.props.userService.updateAction(this.state.originalActions[index], action)
-				.then(action => this.setState({ 
-					lastActionSaveMessage: {
-						actionID: action.id,
-						isError: false,
-						saveMessage: "Action Saved Successfully."
-					}
-				 }))
-				.catch(err => this.setState({ 
-					lastActionSaveMessage: {
-						actionID: action.id,
-						isError: true,
-						saveMessage: `Unable to save action: ${err.message}`
-					}
-				 }));
+		this.props.userService.updateAction(
+			this.props.scale,
+			this.props.category, 
+			this.state.originalActions[index],
+			action
+		)
+			.then(action => this.setState({ 
+				lastActionSaveMessage: {
+					actionID: action.id,
+					isError: false,
+					saveMessage: "Action Saved Successfully."
+				}
+				}))
+			.catch(err => this.setState({ 
+				lastActionSaveMessage: {
+					actionID: action.id,
+					isError: true,
+					saveMessage: `Unable to save action: ${err.message}`
+				}
+			}));
 	}
 	
 	//onDelete for actions
 	deleteHandler(action:IAction, actionIndex:number)
 	{
-		//If no category or actions, the onCategoryLoadError is called
-		if(this.state.category && this.state.originalActions)
-			this.props.userService.deleteAction(this.state.category, this.state.originalActions[actionIndex])
-				.then(actions => this.refreshCategoryActionListStates())
-				.catch(err => this.setState({ 
-					lastActionSaveMessage: {
-						actionID: action.id,
-						isError: true,
-						saveMessage: `Unable to delete action: ${err.message}`
-					}
-				 }))
+		this.props.userService.deleteAction(
+				this.props.scale, 
+				this.props.category, 
+				this.state.originalActions[actionIndex]
+			)
+			.then(actions => this.refreshCategoryActionListStates())
+			.catch(err => this.setState({ 
+				lastActionSaveMessage: {
+					actionID: action.id,
+					isError: true,
+					saveMessage: `Unable to delete action: ${err.message}`
+				}
+			}))
 	}
 	
 	
@@ -248,7 +219,7 @@ export default class ActionsFormLogicContainer
 	
 	render()
 	{
-		const actions = this.state.actions!.map((act, i) => this.mapActionToFormItem(act, i, false));
+		const actions = this.state.actions.map((act, i) => this.mapActionToFormItem(act, i, false));
 		const newAction = this.state.newAction;
 		
 		return (

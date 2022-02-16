@@ -44,7 +44,6 @@ const dummyScale = {
 
 
 const dummyUserService = new TestingDummyUserService();
-dummyUserService.getCategory = (catID, scaleID) => dummyCategory;
 
 
 
@@ -52,8 +51,8 @@ test("ActionsFormLogicContainer will render a ActionsForm", () => {
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={dummyUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategory} />)
 	
 	expect(container.querySelector(".ActionsForm")).not.toBeNull();
 	
@@ -61,13 +60,10 @@ test("ActionsFormLogicContainer will render a ActionsForm", () => {
 
 test("ActionsFormLogicContainer will set the ActionsForm to display the new action form, after clicking the add new button", () => {
 	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = () => dummyCategoryNoActions; //So only one form would be displayed
-	
 	const { container } = render(<ActionsFormLogicContainer
-									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									userService={dummyUserService}
+									scale={dummyScale}
+									category={dummyCategoryNoActions} />)
 	
 	
 	expect(container.querySelector(".SingleActionForm")).toBeNull();
@@ -81,26 +77,13 @@ test("ActionsFormLogicContainer will set the ActionsForm to display the new acti
 });
 
 
-test("ActionsFormLogicContainer will load the categories with the correct scale/category ids", () => {
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = jest.fn();
-	
-	const { container } = render(<ActionsFormLogicContainer
-									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
-	
-	expect(mockUserService.getCategory).toHaveBeenCalledWith(dummyCategory.id, dummyScale.id);
-	
-});
 
 test("ActionsFormLogicContainer will load the category and display the actions as SingleActionForm", () => {
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={dummyUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />);
+									scale={dummyScale}
+									category={dummyCategory} />);
 	
 	const singleActionForms = container.querySelectorAll(".SingleActionForm");
 	expect(singleActionForms.length).toBe(dummyCategory.actions.length);
@@ -119,8 +102,8 @@ test("ActionsFormLogicContainer will handle the state of the actions", () => {
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={dummyUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategory} />)
 	
 	
 	const singleActionForms = container.querySelectorAll(".SingleActionForm");
@@ -147,15 +130,15 @@ test("ActionsFormLogicContainer will give the current actions delete handlers", 
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategory} />)
 	
 	const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
 	expect(deleteButtons.length).toBe(dummyCategory.actions.length);
 	
 	dummyCategory.actions.forEach((act, i) => {
 		fireEvent.click(deleteButtons[i]);
-		expect(mockUserService.deleteAction).toHaveBeenCalledWith(dummyCategory, dummyCategory.actions[i]);
+		expect(mockUserService.deleteAction).toHaveBeenCalledWith(dummyScale, dummyCategory, dummyCategory.actions[i]);
 	});
 	
 });
@@ -169,8 +152,8 @@ test("ActionsFormLogicContainer will give the current actions submit handlers", 
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategory} />)
 	
 	const forms = container.querySelectorAll(".SingleActionForm form");
 	expect(forms.length).toBe(dummyCategory.actions.length);
@@ -182,7 +165,7 @@ test("ActionsFormLogicContainer will give the current actions submit handlers", 
 		fireEvent.change(nameInput, { target: { value: newName } });
 		
 		fireEvent.submit(form);
-		expect(mockUserService.updateAction).toHaveBeenCalledWith(action, {
+		expect(mockUserService.updateAction).toHaveBeenCalledWith(dummyScale, dummyCategory, action, {
 			...action,
 			name: newName
 		});
@@ -196,30 +179,28 @@ test("ActionsFormLogicContainer will refresh the actions list after a delete", a
 	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.deleteAction = jest.fn().mockResolvedValue([]);
-	mockUserService.getCategory = jest.fn().mockReturnValue(dummyCategory);
+	
+	let mockCategory = { ...dummyCategory };
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={mockCategory} />)
 	
 	
 	const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
 	const actionForms = container.querySelectorAll(".SingleActionForm");
 	expect(actionForms.length).toBe(dummyCategory.actions.length);
 	
-	//Change the getCategory to not include the first action
-	mockUserService.getCategory = jest.fn().mockReturnValue({ 
-		...dummyCategory, 
-		actions: dummyCategory.actions.slice(1)
-	});
+	//Change the category to not include any actions (so we know they're getting refreshed)
+	mockCategory.actions = [];
 	
 	
 	fireEvent.click(deleteButtons[0]);
 	
 	await waitFor(() => {
 		const actionForms2 = container.querySelectorAll(".SingleActionForm");
-		expect(actionForms2.length).toBe(dummyCategory.actions.length - 1);
+		expect(actionForms2.length).toBe(0);
 	});
 	
 });
@@ -232,15 +213,11 @@ test("ActionsFormLogicContainer will pass in a badSaveErrorMessage if an error d
 	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.deleteAction = jest.fn().mockRejectedValue(new Error(errorMessage));
-	mockUserService.getCategory = jest.fn().mockReturnValue({ 
-		...dummyCategory, 
-		actions: [dummyCategory.actions[0]] // just get one
-	});
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategory} />)
 	
 	
 	const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
@@ -261,15 +238,11 @@ test("ActionsFormLogicContainer will pass in a badSaveErrorMessage if an error d
 	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.updateAction = jest.fn().mockRejectedValue(new Error(errorMessage));
-	mockUserService.getCategory = jest.fn().mockReturnValue({ 
-		...dummyCategory, 
-		actions: [action] // just get one
-	});
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategory} />)
 	
 	
 	const nameInput = screen.getByDisplayValue(action.name);
@@ -296,15 +269,11 @@ test("ActionsFormLogicContainer will pass in a goodSaveMessage after successful 
 	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.updateAction = jest.fn().mockResolvedValue({ ...action, name: newName });
-	mockUserService.getCategory = jest.fn().mockReturnValue({ 
-		...dummyCategory, 
-		actions: [action] // just get one
-	});
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategory} />)
 	
 	
 	const nameInput = screen.getByDisplayValue(action.name);
@@ -323,38 +292,6 @@ test("ActionsFormLogicContainer will pass in a goodSaveMessage after successful 
 });
 
 
-test("ActionsFormLogicContainer will not call onCategoryLoadError prop if no error", () => {
-	
-	const mockCallback = jest.fn();
-	
-	render(<ActionsFormLogicContainer
-				userService={dummyUserService}
-				scaleID={dummyScale.id}
-				categoryID={dummyCategory.id}
-				onCategoryLoadError={mockCallback} />);
-	
-	expect(mockCallback).not.toHaveBeenCalled();
-	
-});
-
-test("ActionsFormLogicContainer will call onCategoryLoadError prop if issue getting categories", () => {
-	
-	const mockCallback = jest.fn();
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = jest.fn().mockReturnValue(undefined);
-	
-	render(<ActionsFormLogicContainer
-		userService={mockUserService}
-		scaleID={dummyScale.id}
-		categoryID={dummyCategory.id}
-		onCategoryLoadError={mockCallback} />);
-	
-	expect(mockCallback).toHaveBeenCalled();
-	
-});
-
-
 
 
 // ----- New action form -------------------------------------------------
@@ -362,16 +299,13 @@ test("ActionsFormLogicContainer will call onCategoryLoadError prop if issue gett
 
 test("ActionsFormLogicContainer will handle the state of the new action form", () => {
 	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
-	
 	const newName = "testNameChange";
 	const newWeight = 150;
 	
 	const { container } = render(<ActionsFormLogicContainer
-									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />);
+									userService={dummyUserService}
+									scale={dummyScale}
+									category={dummyCategoryNoActions} />);
 	
 	const addButton = screen.getByRole("button", { name: /new/i });
 	fireEvent.click(addButton)
@@ -395,13 +329,10 @@ test("ActionsFormLogicContainer will handle the state of the new action form", (
 
 test("ActionsFormLogicContainer will not pass a delete handler to the new action form", () => {
 	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
-	
 	const { container } = render(<ActionsFormLogicContainer
-									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />);
+									userService={dummyUserService}
+									scale={dummyScale}
+									category={dummyCategoryNoActions} />);
 	
 	const addButton = screen.getByRole("button", { name: /new/i });
 	fireEvent.click(addButton)
@@ -423,13 +354,12 @@ test("ActionsFormLogicContainer will give the new action a submit handler that c
 	};
 	
 	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
 	mockUserService.createAction = jest.fn().mockResolvedValue({ ...newAction, id: "testID" });
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategoryNoActions} />)
 	
 	const addButton = screen.getByRole("button", { name: /new/i });
 	fireEvent.click(addButton)
@@ -447,7 +377,7 @@ test("ActionsFormLogicContainer will give the new action a submit handler that c
 	
 	fireEvent.submit(actionForms[0]);
 	
-	expect(mockUserService.createAction).toHaveBeenCalledWith(dummyCategoryNoActions, newAction);
+	expect(mockUserService.createAction).toHaveBeenCalledWith(dummyScale, dummyCategoryNoActions, newAction);
 	
 });
 
@@ -461,14 +391,14 @@ test("ActionsFormLogicContainer will refresh the actions list after a create", a
 	const newActionID = "testID";
 	
 	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
 	mockUserService.createAction = jest.fn().mockResolvedValue({ ...newAction, id: newActionID });
 	
+	let mockCategory = { ...dummyCategory, actions: [] };
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={mockCategory} />)
 	
 	const addButton = screen.getByRole("button", { name: /new/i });
 	fireEvent.click(addButton)
@@ -487,9 +417,7 @@ test("ActionsFormLogicContainer will refresh the actions list after a create", a
 	fireEvent.change(weightInput, { target: { value: newAction.weight } });
 	
 	
-	mockUserService.getCategory = (catID, scaleID) => { 
-		return { dummyCategoryNoActions, actions: [{ ...newAction, id: newActionID }] } 
-	};
+	mockCategory = { ...dummyCategory, actions: [{ ...newAction, id: newActionID }] };
 	
 	fireEvent.submit(actionForms[0]);
 	
@@ -509,14 +437,13 @@ test("ActionsFormLogicContainer will pass a badSaveErrorMessage to new action if
 	};
 	
 	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
 	mockUserService.createAction = jest.fn().mockRejectedValue(new Error(errorMessage));
 	
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategoryNoActions} />)
 	
 	const addButton = screen.getByRole("button", { name: /new/i });
 	fireEvent.click(addButton)
@@ -554,14 +481,13 @@ test("ActionsFormLogicContainer will not display the new actions form after a cr
 	const newActionID = "testID";
 	
 	const mockUserService = { ...dummyUserService };
-	mockUserService.getCategory = (catID, scaleID) => dummyCategoryNoActions;
 	mockUserService.createAction = jest.fn().mockResolvedValue({ ...newAction, id: newActionID });
 	
 	
 	const { container } = render(<ActionsFormLogicContainer
 									userService={mockUserService}
-									scaleID={dummyScale.id}
-									categoryID={dummyCategory.id} />)
+									scale={dummyScale}
+									category={dummyCategoryNoActions} />)
 	
 	const addButton = screen.getByRole("button", { name: /new/i });
 	fireEvent.click(addButton)
@@ -582,7 +508,7 @@ test("ActionsFormLogicContainer will not display the new actions form after a cr
 	
 	fireEvent.submit(actionForms[0]);
 	
-	// getCategory is still returning no actions, so no existing action forms to display either
+	// still returning no actions, so no existing action forms to display either
 	await waitFor(() => expect(container.querySelectorAll(".SingleActionForm").length).toBe(0));
 	
 });
