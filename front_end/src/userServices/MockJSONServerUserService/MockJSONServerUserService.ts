@@ -436,11 +436,11 @@ export default class MockJSONServerUserService implements IUserService {
 		catch (err) { return undefined; }
 	}
 	
-	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">):Promise<IAction> {
+	createAction(parentScale:IScale, parentCategory:ICategory, newAction:Omit<IAction, "id">):Promise<IAction> {
 		return this._saveToArrayInCurrentUser(parentCategory.actions, newAction, "action", this._actionRequiredProperties);
 	}
 	
-	updateAction(currentAction:IAction, newActionData:IAction):Promise<IAction> {
+	updateAction(parentScale:IScale, parentCategory:ICategory, currentAction:IAction, newActionData:IAction):Promise<IAction> {
 		return this._updateArrayItemInCurrentUser(
 			currentAction, 
 			newActionData, 
@@ -449,7 +449,7 @@ export default class MockJSONServerUserService implements IUserService {
 		);
 	}
 	
-	deleteAction(parentCategory:ICategory, action:IAction):Promise<IAction[]> {
+	deleteAction(parentScale:IScale, parentCategory:ICategory, action:IAction):Promise<IAction[]> {
 		return this._deleteArrayItemInCurrentUser(parentCategory.actions, action, "action");
 	}
 	

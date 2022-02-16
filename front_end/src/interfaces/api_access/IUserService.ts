@@ -10,9 +10,11 @@ import ITimespan from '../ITimespan';
 	database model).
 	
 	This is mainly designed to work with APIs that are based on a document model database 
-	paradigm. However, this could be implemented to work with an API that has seperate endpoints 
-	for the different entities (however, when loading the user, it should also fetch all related 
-	entities, to build an IUser object with all the necessary data).
+	paradigm (which is partly why the categories/actions/timespans methods also get passed  
+	the entities -- e.g. scales for categories -- that contain those entities). However, this 
+	could be implemented to work with an API that has seperate endpoints for the different 
+	entities (however, when loading the user, it should also fetch all related entities, to 
+	build an IUser object with all the necessary data).
 	
 	See further rules below:
 	- If a Promise resolves, it will return the related entity (e.g. An IScale when creating a scale).
@@ -56,9 +58,9 @@ interface IUserService {
 	deleteCategory:(parentScale:IScale, category:ICategory)=>Promise<ICategory[]>;
 	
 	getAction:(actionID:string, categoryID:string, scaleID:string)=>IAction|undefined; //Will return undefined if not found
-	createAction:(parentCategory:ICategory, newAction:Omit<IAction, "id">)=>Promise<IAction>;
-	updateAction:(currentAction:IAction, newActionData:IAction)=>Promise<IAction>;
-	deleteAction:(parentCategory:ICategory, action:IAction)=>Promise<IAction[]>;
+	createAction:(parentScale:IScale, parentCategory:ICategory, newAction:Omit<IAction, "id">)=>Promise<IAction>;
+	updateAction:(parentScale:IScale, parentCategory:ICategory, currentAction:IAction, newActionData:IAction)=>Promise<IAction>;
+	deleteAction:(parentScale:IScale, parentCategory:ICategory, action:IAction)=>Promise<IAction[]>;
 	
 	//Get all timespans for a scale, in date order.
 	getScaleTimespans:(scale:IScale, reverseOrder:boolean)=>({ timespan:ITimespan, category:ICategory, action:IAction })[];

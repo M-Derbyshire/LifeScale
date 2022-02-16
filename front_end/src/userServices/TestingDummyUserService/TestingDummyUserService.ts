@@ -126,19 +126,19 @@ export default class TestingDummyUserService implements IUserService {
 		return undefined;
 	}
 	
-	createAction(parentCategory:ICategory, newAction:Omit<IAction, "id">) {
+	createAction(parentScale:IScale, parentCategory:ICategory, newAction:Omit<IAction, "id">) {
 		return new Promise<IAction>((resolve, reject) => {
 			resolve({ ...newAction, id: "test" });
 		});
 	}
 	
-	updateAction(currentAction:IAction, newActionData:IAction) {
+	updateAction(parentScale:IScale, parentCategory:ICategory, currentAction:IAction, newActionData:IAction) {
 		return new Promise<IAction>((resolve, reject) => {
 			resolve(newActionData);
 		});
 	}
 	
-	deleteAction(parentCategory:ICategory, action:IAction) {
+	deleteAction(parentScale:IScale, parentCategory:ICategory, action:IAction) {
 		return new Promise<IAction[]>((resolve, reject) => {
 			resolve(parentCategory.actions);
 		});
