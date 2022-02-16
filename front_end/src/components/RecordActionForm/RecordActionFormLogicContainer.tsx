@@ -62,6 +62,12 @@ export default class RecordActionFormLogicContainer
 	{
 		const goodSaveMessage = "Action saved successfully.";
 		const noActionMessage = "No action has been selected.";
+		const noCategoryMessage = "No category has been selected.";
+		
+		const selectedCategory = this.props.userService.getCategory(
+			this.state.selectedCategoryID, 
+			this.props.scale.id
+		);
 		
 		const selectedAction = this.props.userService.getAction(
 			this.state.selectedActionID, 
@@ -69,13 +75,17 @@ export default class RecordActionFormLogicContainer
 			this.props.scale.id
 		);
 		
-		if(!selectedAction)
+		if(!selectedCategory)
 		{
-			this.setState({ badSaveErrorMessage: noActionMessage , goodSaveMessage: undefined })
+			this.setState({ badSaveErrorMessage: noCategoryMessage , goodSaveMessage: undefined });
+		}
+		else if(!selectedAction)
+		{
+			this.setState({ badSaveErrorMessage: noActionMessage , goodSaveMessage: undefined });
 		}
 		else
 		{
-			this.props.userService.createTimespan(selectedAction, {
+			this.props.userService.createTimespan(this.props.scale, selectedCategory, selectedAction, {
 				date: new Date(this.state.timespan.date),
 				minuteCount: this.state.timespan.minuteCount
 			})
