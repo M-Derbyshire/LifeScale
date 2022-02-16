@@ -25,7 +25,6 @@ interface IActionsFormLogicContainerProps {
 	userService:IUserService;
 	scale:IScale;
 	category:ICategory;
-	onCategoryLoadError?:(errorMessage:string)=>void;
 }
 
 interface IActionsFormLogicContainerState {
