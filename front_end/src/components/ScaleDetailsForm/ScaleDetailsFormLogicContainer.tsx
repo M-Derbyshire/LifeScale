@@ -41,7 +41,29 @@ export default class ScaleDetailsFormLogicContainer
 		
 		return (
 			<div className="ScaleDetailsFormLogicContainer">
-				
+				<ScaleDetailsForm 
+					headingText="test"
+					badLoadErrorMessage={undefined}
+					backButtonHandler={()=>{}}
+					disableSubmit={undefined}
+					scaleItem={{
+						name: "",
+						setName: (name:string)=>{},
+						usesTimespans: true,
+						setUsesTimespans: (usesTimespans:boolean)=>{},
+						dayCount: 7,
+						setDayCount: (dayCount:number)=>{},
+												
+						categories: [],
+						
+						onSubmit: ()=>{},
+						onDelete: ()=>{},
+						badSaveErrorMessage: "test bad save message",
+						goodSaveMessage: "test good save message",
+						
+						addCategoryCallback: ()=>{},
+						editCategoryCallback: (categoryID:string)=>{}
+					}} />
 			</div>
 		);
 	}
