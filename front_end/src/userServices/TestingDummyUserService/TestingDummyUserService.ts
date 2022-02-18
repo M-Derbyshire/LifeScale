@@ -76,7 +76,7 @@ export default class TestingDummyUserService implements IUserService {
 	}
 	
 	
-	getScale(scaleID:string) {
+	getScale(scaleID:string):IScale|undefined {
 		return undefined;
 	}
 	
@@ -99,7 +99,7 @@ export default class TestingDummyUserService implements IUserService {
 	}
 	
 	
-	getCategory(categoryID:string, scaleID:string) {
+	getCategory(categoryID:string, scaleID:string):ICategory|undefined {
 		return undefined;
 	}
 	
@@ -122,7 +122,7 @@ export default class TestingDummyUserService implements IUserService {
 	}
 	
 	
-	getAction(actionID:string, categoryID:string, scaleID:string) {
+	getAction(actionID:string, categoryID:string, scaleID:string):|undefined {
 		return undefined;
 	}
 	
