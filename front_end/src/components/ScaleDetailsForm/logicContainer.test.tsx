@@ -201,7 +201,23 @@ test("ScaleDetailsFormLogicContainer will pass the addCategoryCallback to the fo
 	
 });
 
-// ScaleDetailsFormLogicContainer will pass the scale name within the headingText, if scaleID is provided
+
+
+test("ScaleDetailsFormLogicContainer will pass the scale name within the headingText, if scaleID is provided", () => {
+	
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={dummyUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	const heading = container.querySelector(".ScaleDetailsForm header");
+	
+	expect(heading.textContent).toEqual(expect.stringContaining(dummyScale.name));
+	
+});
 
 // ScaleDetailsFormLogicContainer will handle the form state
 

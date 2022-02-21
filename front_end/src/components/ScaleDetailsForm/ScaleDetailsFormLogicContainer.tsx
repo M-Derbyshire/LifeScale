@@ -75,12 +75,20 @@ export default class ScaleDetailsFormLogicContainer
 	
 	render()
 	{
+		const isCreating = (!this.state.scale.id);
 		
+		let headingText = "";
+		if(this.state.badLoadErrorMessage) 
+			headingText = "Error";
+		else if (!isCreating)
+			headingText = `Edit Scale - ${this.state.originalScale.name}`;
+		else
+			headingText = "Create Scale";
 		
 		return (
 			<div className="ScaleDetailsFormLogicContainer">
 				<ScaleDetailsForm 
-					headingText="test"
+					headingText={headingText}
 					badLoadErrorMessage={this.state.badLoadErrorMessage}
 					backButtonHandler={()=>{}}
 					disableSubmit={undefined}
