@@ -45,6 +45,8 @@ const dummyUserService = new TestingDummyUserService();
 dummyUserService.getScale = (scaleID) => dummyScale;
 
 
+const scaleLoadErrorMessage = "Unable to load the requested scale.";
+
 
 test("ScaleDetailsFormLogicContainer will display a ScaleDetailsForm", () => {
 	
@@ -107,15 +109,44 @@ test("ScaleDetailsFormLogicContainer will display the CardDisplay, with the cate
 	
 });
 
+
+
+test("ScaleDetailsFormLogicContainer will load the scale with the given scale ID, if a scale id is provided", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getScale = jest.fn().mockReturnValue(dummyScale);
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler} />);
+	
+	expect(mockUserService.getScale).toHaveBeenCalledWith(dummyScale.id);
+	
+});
+
+test("ScaleDetailsFormLogicContainer will pass a badLoadErrorMessage on bad scale load", () => {
+	
+	const errorMessage = scaleLoadErrorMessage;
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getScale = jest.fn().mockReturnValue(undefined);
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler} />);
+	
+	const scaleForm = container.querySelector(".ScaleDetailsForm");
+	expect(within(scaleForm).queryByText(errorMessage)).not.toBeNull();
+	
+});
+
 // ScaleDetailsFormLogicContainer will pass the addCategoryCallback to the form
 
 // // ScaleDetailsFormLogicContainer will pass the editCategoryCallback to the form
 
 // ScaleDetailsFormLogicContainer will pass the scale name within the headingText, if scaleID is provided
-
-// ScaleDetailsFormLogicContainer will load the scale with the given scale ID, if a scale id is provided
-
-// ScaleDetailsFormLogicContainer will pass a badLoadErrorMessage on bad scale load
 
 // ScaleDetailsFormLogicContainer will handle the form state
 

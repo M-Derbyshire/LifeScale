@@ -79,7 +79,7 @@ export default class ScaleDetailsFormLogicContainer
 			<div className="ScaleDetailsFormLogicContainer">
 				<ScaleDetailsForm 
 					headingText="test"
-					badLoadErrorMessage={undefined}
+					badLoadErrorMessage={this.state.badLoadErrorMessage}
 					backButtonHandler={()=>{}}
 					disableSubmit={undefined}
 					hideCategories={!this.props.scaleID}
