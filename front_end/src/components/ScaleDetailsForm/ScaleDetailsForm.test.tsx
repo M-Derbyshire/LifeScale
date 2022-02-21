@@ -372,3 +372,15 @@ test("ScaleDetailsForm will now render a CardDisplay (with the given categories 
 	
 	
 });
+
+test("ScaleDetailsForm will hide the categories section, if hideCategories is true", () => {
+
+	const { container } = render(<ScaleDetailsForm 
+		scaleItem={dummyScaleItem}
+		headingText={"test"}
+		backButtonHandler={dummyBackHandler}
+		hideCategories={true} />);
+	
+	expect(container.querySelector(".CardDisplay")).toBeNull();
+
+});

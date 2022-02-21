@@ -17,6 +17,8 @@ interface IScaleDetailsFormProps {
 	
 	backButtonHandler:()=>void;
 	disableSubmit?:boolean;
+
+	hideCategories?:boolean;
 }
 
 type mapCategoryToCardType = ((id:string, name:string)=>ReactElement);
@@ -102,10 +104,12 @@ class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 					</form>
 					
 					
-					<h2>Categories</h2>
-					<CardDisplay emptyDisplayMessage={this.emptyCardDisplayMessage}>
-						{cardDisplayItems}
-					</CardDisplay>
+					{!this.props.hideCategories && <div className="categorySection">
+						<h2>Categories</h2>
+						<CardDisplay emptyDisplayMessage={this.emptyCardDisplayMessage}>
+							{cardDisplayItems}
+						</CardDisplay>
+					</div>}
 					
 					
 				</div>} />

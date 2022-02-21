@@ -61,10 +61,6 @@ test("ScaleDetailsFormLogicContainer will display a ScaleDetailsForm", () => {
 
 test("ScaleDetailsFormLogicContainer will pass in the delete handler, if scaleID is provided", () => {
 	
-	//No actions, so no delete buttons for those
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getScale = (scaleID) => dummyScale;
-	
 	render(<ScaleDetailsFormLogicContainer
 		scaleID={dummyScale.id}
 		userService={dummyUserService}
@@ -77,10 +73,6 @@ test("ScaleDetailsFormLogicContainer will pass in the delete handler, if scaleID
 
 test("ScaleDetailsFormLogicContainer will not pass in the delete handler, if no scaleID is provided", () => {
 	
-	//No actions, so no delete buttons for those
-	const mockUserService = { ...dummyUserService };
-	mockUserService.getScale = (scaleID) => dummyScale;
-	
 	render(<ScaleDetailsFormLogicContainer
 		userService={dummyUserService}
 		backButtonHandler={dummyBackHandler} />);
@@ -89,9 +81,31 @@ test("ScaleDetailsFormLogicContainer will not pass in the delete handler, if no 
 	
 });
 
-// ScaleDetailsFormLogicContainer will not display the CardDisplay, if no scaleID is provided
 
-// ScaleDetailsFormLogicContainer will display the CardDisplay, with the categories passed in, if a scaleID is provided
+
+test("ScaleDetailsFormLogicContainer will not display the CardDisplay, if no scaleID is provided", () => {
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+		userService={dummyUserService}
+		backButtonHandler={dummyBackHandler} />);
+	
+	expect(container.querySelector(".CardDisplay")).toBeNull();
+	
+});
+
+test("ScaleDetailsFormLogicContainer will display the CardDisplay, with the categories passed in, if a scaleID is provided", () => {
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+		scaleID={dummyScale.id}
+		userService={dummyUserService}
+		backButtonHandler={dummyBackHandler} />);
+	
+	const cardDisplay = container.querySelector(".CardDisplay");
+	expect(cardDisplay).not.toBeNull();
+
+	dummyScale.categories.forEach(cat => expect(screen.getByText(cat.name)).not.toBeNull());
+	
+});
 
 // ScaleDetailsFormLogicContainer will pass the addCategoryCallback to the form
 

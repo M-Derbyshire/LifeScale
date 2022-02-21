@@ -13,7 +13,7 @@ interface IScaleDetailsFormLogicContainerProps {
 
 interface IScaleDetailsFormLogicContainerState {
 	scale:IScale;
-	originalScaleRef:IScale; // used when updating/deleting (and to keep the original
+	originalScale:IScale; // used when updating/deleting (and to keep the original
 							// header text during name change)
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
@@ -26,13 +26,49 @@ export default class ScaleDetailsFormLogicContainer
 	extends Component<IScaleDetailsFormLogicContainerProps, IScaleDetailsFormLogicContainerState>
 {
 	
+	stdScaleLoadErrorMessage = "Unable to load the requested scale.";
+
 	constructor(props:IScaleDetailsFormLogicContainerProps)
 	{
 		super(props);
 		
+		let badLoadErrorMessage;
+		
+		const scaleObjects = this.loadOrCreateScale(this.props.scaleID);
+		
+		//empty string is falsy
+		if(!scaleObjects.scale.id && this.props.scaleID)
+				badLoadErrorMessage = this.stdScaleLoadErrorMessage;
+		
+		this.state = {
+			scale: scaleObjects.scale,
+			originalScale: scaleObjects.scaleOriginal,
+			badLoadErrorMessage: badLoadErrorMessage,
+			disableSubmit: false
+		};
 		
 	}
 	
+
+	//If scale can't be loaded, create a default one
+	// scaleOriginal is returned to use when updating/deleting
+	loadOrCreateScale(scaleID?:string):{ scaleOriginal:IScale, scale:IScale }
+	{
+		//getScale may return undefined
+		let scaleOriginal:IScale|undefined = (scaleID) 
+							? this.props.userService.getScale(scaleID) 
+							: undefined;
+		
+		if(!scaleOriginal)
+		{
+			scaleOriginal = { id:"", name: "", usesTimespans: false, displayDayCount: 1, categories: [] };
+		}
+		
+		const scale = { ...scaleOriginal };
+		
+		
+		return { scale, scaleOriginal };
+	}
 	
 	
 	render()
@@ -46,6 +82,7 @@ export default class ScaleDetailsFormLogicContainer
 					badLoadErrorMessage={undefined}
 					backButtonHandler={()=>{}}
 					disableSubmit={undefined}
+					hideCategories={!this.props.scaleID}
 					scaleItem={{
 						name: "",
 						setName: (name:string)=>{},
@@ -54,7 +91,7 @@ export default class ScaleDetailsFormLogicContainer
 						dayCount: 7,
 						setDayCount: (dayCount:number)=>{},
 												
-						categories: [],
+						categories: this.state.originalScale.categories,
 						
 						onSubmit: ()=>{},
 						onDelete: (!this.props.scaleID) ? undefined : ()=>{},
