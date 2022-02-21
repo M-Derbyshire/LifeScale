@@ -94,12 +94,21 @@ export default class ScaleDetailsFormLogicContainer
 					disableSubmit={undefined}
 					hideCategories={!this.props.scaleID}
 					scaleItem={{
-						name: "",
-						setName: (name:string)=>{},
-						usesTimespans: true,
-						setUsesTimespans: (usesTimespans:boolean)=>{},
-						dayCount: 7,
-						setDayCount: (dayCount:number)=>{},
+						
+						name: this.state.scale.name,
+						setName: (name:string) => this.setState({
+							scale: { ...this.state.scale, name }
+						}),
+						
+						usesTimespans: this.state.scale.usesTimespans,
+						setUsesTimespans: (usesTimespans:boolean) => this.setState({
+							scale: { ...this.state.scale, usesTimespans }
+						}),
+						
+						dayCount: this.state.scale.displayDayCount,
+						setDayCount: (displayDayCount:number) => this.setState({
+							scale: { ...this.state.scale, displayDayCount }
+						}),
 												
 						categories: this.state.originalScale.categories,
 						

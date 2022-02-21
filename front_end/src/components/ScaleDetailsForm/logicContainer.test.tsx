@@ -219,7 +219,43 @@ test("ScaleDetailsFormLogicContainer will pass the scale name within the heading
 	
 });
 
-// ScaleDetailsFormLogicContainer will handle the form state
+
+
+test("ScaleDetailsFormLogicContainer will handle the form state", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	const originalScale = { ...dummyScale, name: "test", usesTimespans: true, displayDayCount: 7 };
+	mockUserService.getScale = (scaleID) => originalScale;
+	
+	const newName = "testNewTest";
+	const newUsesTimespans = false
+	const newDayCount = 13467;
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	const nameInput = screen.getByDisplayValue(originalScale.name);
+	
+	//may be more checkboxes in the future, so being explicit
+	const usesTimespansInput = container.querySelector(".scaleUsesTimespansInput");
+	expect(usesTimespansInput).toBeChecked();
+	
+	const dayCountInput = screen.getByDisplayValue(originalScale.displayDayCount);
+	
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	fireEvent.click(usesTimespansInput);
+	fireEvent.change(dayCountInput, { target: { value: newDayCount } });
+	
+	expect(nameInput.value).toBe(newName);
+	expect(usesTimespansInput).not.toBeChecked();
+	expect(Number(dayCountInput.value)).toBe(newDayCount);
+	
+});
 
 // ScaleDetailsFormLogicContainer will not change the header when changing the name state
 
