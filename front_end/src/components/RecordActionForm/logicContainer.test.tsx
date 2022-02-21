@@ -174,7 +174,7 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	});
 });
 
-test("If not using timespans, RecordActionFormLogicContainer will set minute count to 0", () => {
+test("If not using timespans, RecordActionFormLogicContainer will set minute count to 1", () => {
 	
 	const scale = dummyScaleNotTimespans;
 	
@@ -212,7 +212,7 @@ test("If not using timespans, RecordActionFormLogicContainer will set minute cou
 	
 	expect(mockUserService.createTimespan).toHaveBeenCalledWith(scale, expectedCategory, expectedAction, {
 		date: new Date(newDateValue),
-		minuteCount: 0
+		minuteCount: 1
 	});
 	
 });

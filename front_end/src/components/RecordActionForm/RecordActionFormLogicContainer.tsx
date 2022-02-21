@@ -49,7 +49,7 @@ export default class RecordActionFormLogicContainer
 			selectedActionID: (selectedAction) ? selectedAction.id : "",
 			timespan: {
 				id: "",
-				minuteCount: 0,
+				minuteCount: 1,
 				date: new Date()
 			},
 			badSaveErrorMessage: undefined,
