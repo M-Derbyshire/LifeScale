@@ -8,6 +8,8 @@ interface IScaleDetailsFormLogicContainerProps {
 	scaleID?:string; //If undefined, this form will be used to create. Otherwise, form will update
 	userService:IUserService;
 	backButtonHandler:()=>void;
+	editCategoryHandler:(categoryID:string)=>void;
+	addCategoryHandler:()=>void;
 	onSuccessfulDeleteHandler?:()=>void;
 };
 
@@ -98,8 +100,8 @@ export default class ScaleDetailsFormLogicContainer
 						badSaveErrorMessage: "test bad save message",
 						goodSaveMessage: "test good save message",
 						
-						addCategoryCallback: ()=>{},
-						editCategoryCallback: (categoryID:string)=>{}
+						addCategoryCallback: this.props.addCategoryHandler,
+						editCategoryCallback: this.props.editCategoryHandler
 					}} />
 			</div>
 		);

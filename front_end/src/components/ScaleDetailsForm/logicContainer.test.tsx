@@ -6,6 +6,8 @@ import IScale from '../../interfaces/IScale';
 
 
 const dummyBackHandler = ()=>{};
+const dummyEditCategoryHandler = (id)=>{};
+const dummyAddCategoryHandler = ()=>{};
 
 const dummyCategory1 = {
 	id: "testCat23132948284",
@@ -53,7 +55,9 @@ test("ScaleDetailsFormLogicContainer will display a ScaleDetailsForm", () => {
 	const { container } = render(<ScaleDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									userService={dummyUserService}
-									backButtonHandler={dummyBackHandler} />);
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
 	
 	const detailsForm = container.querySelector(".ScaleDetailsForm");
 	expect(detailsForm).not.toBeNull();
@@ -66,7 +70,9 @@ test("ScaleDetailsFormLogicContainer will pass in the delete handler, if scaleID
 	render(<ScaleDetailsFormLogicContainer
 		scaleID={dummyScale.id}
 		userService={dummyUserService}
-		backButtonHandler={dummyBackHandler} />);
+		backButtonHandler={dummyBackHandler}
+		editCategoryHandler={dummyEditCategoryHandler}
+		addCategoryHandler={dummyAddCategoryHandler} />);
 	
 	expect(screen.queryByRole("button", { name: /delete/i })).not.toBeNull();
 	
@@ -76,8 +82,10 @@ test("ScaleDetailsFormLogicContainer will pass in the delete handler, if scaleID
 test("ScaleDetailsFormLogicContainer will not pass in the delete handler, if no scaleID is provided", () => {
 	
 	render(<ScaleDetailsFormLogicContainer
-		userService={dummyUserService}
-		backButtonHandler={dummyBackHandler} />);
+			userService={dummyUserService}
+			backButtonHandler={dummyBackHandler}
+			editCategoryHandler={dummyEditCategoryHandler}
+			addCategoryHandler={dummyAddCategoryHandler} />);
 	
 	expect(screen.queryByRole("button", { name: /delete/i })).toBeNull();
 	
@@ -88,8 +96,10 @@ test("ScaleDetailsFormLogicContainer will not pass in the delete handler, if no 
 test("ScaleDetailsFormLogicContainer will not display the CardDisplay, if no scaleID is provided", () => {
 	
 	const { container } = render(<ScaleDetailsFormLogicContainer
-		userService={dummyUserService}
-		backButtonHandler={dummyBackHandler} />);
+									userService={dummyUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
 	
 	expect(container.querySelector(".CardDisplay")).toBeNull();
 	
@@ -98,9 +108,11 @@ test("ScaleDetailsFormLogicContainer will not display the CardDisplay, if no sca
 test("ScaleDetailsFormLogicContainer will display the CardDisplay, with the categories passed in, if a scaleID is provided", () => {
 	
 	const { container } = render(<ScaleDetailsFormLogicContainer
-		scaleID={dummyScale.id}
-		userService={dummyUserService}
-		backButtonHandler={dummyBackHandler} />);
+									scaleID={dummyScale.id}
+									userService={dummyUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
 	
 	const cardDisplay = container.querySelector(".CardDisplay");
 	expect(cardDisplay).not.toBeNull();
@@ -119,7 +131,9 @@ test("ScaleDetailsFormLogicContainer will load the scale with the given scale ID
 	const { container } = render(<ScaleDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									userService={mockUserService}
-									backButtonHandler={dummyBackHandler} />);
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
 	
 	expect(mockUserService.getScale).toHaveBeenCalledWith(dummyScale.id);
 	
@@ -135,16 +149,57 @@ test("ScaleDetailsFormLogicContainer will pass a badLoadErrorMessage on bad scal
 	const { container } = render(<ScaleDetailsFormLogicContainer
 									scaleID={dummyScale.id}
 									userService={mockUserService}
-									backButtonHandler={dummyBackHandler} />);
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
 	
 	const scaleForm = container.querySelector(".ScaleDetailsForm");
 	expect(within(scaleForm).queryByText(errorMessage)).not.toBeNull();
 	
 });
 
-// ScaleDetailsFormLogicContainer will pass the addCategoryCallback to the form
 
-// // ScaleDetailsFormLogicContainer will pass the editCategoryCallback to the form
+test("ScaleDetailsFormLogicContainer will pass the editCategoryCallback to the form", () => {
+	
+	const mockEditHandler = jest.fn();
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={dummyUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={mockEditHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	const cardDisplay = container.querySelector(".CardDisplay");
+	const editButtons = within(cardDisplay).queryAllByRole("button", { name: /edit/i });
+	expect(editButtons.length).toBe(dummyScale.categories.length);
+	
+	//We don't care what order the cards are displayed in
+	editButtons.forEach(button => fireEvent.click(button));
+	
+	dummyScale.categories.forEach(cat => expect(mockEditHandler).toHaveBeenCalledWith(cat.id));
+	
+});
+
+test("ScaleDetailsFormLogicContainer will pass the addCategoryCallback to the form", () => {
+	
+	const mockAddHandler = jest.fn();
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={dummyUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={mockAddHandler} />);
+	
+	const cardDisplay = container.querySelector(".CardDisplay");
+	const addButton = within(cardDisplay).queryByText("+");
+	
+	fireEvent.click(addButton);
+	
+	expect(mockAddHandler).toHaveBeenCalled();
+	
+});
 
 // ScaleDetailsFormLogicContainer will pass the scale name within the headingText, if scaleID is provided
 
