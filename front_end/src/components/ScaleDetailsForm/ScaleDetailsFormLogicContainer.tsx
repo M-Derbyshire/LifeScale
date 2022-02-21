@@ -57,7 +57,7 @@ export default class ScaleDetailsFormLogicContainer
 						categories: [],
 						
 						onSubmit: ()=>{},
-						onDelete: ()=>{},
+						onDelete: (!this.props.scaleID) ? undefined : ()=>{},
 						badSaveErrorMessage: "test bad save message",
 						goodSaveMessage: "test good save message",
 						

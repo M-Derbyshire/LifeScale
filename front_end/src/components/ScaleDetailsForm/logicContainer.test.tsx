@@ -1,6 +1,8 @@
 import ScaleDetailsFormLogicContainer from './ScaleDetailsFormLogicContainer';
 import { render, fireEvent, screen, within } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
+import IAction from '../../interfaces/IAction';
+import IScale from '../../interfaces/IScale';
 
 
 const dummyBackHandler = ()=>{};
@@ -10,7 +12,7 @@ const dummyCategory1 = {
 	name: "testcat1",
 	color: "",
 	desiredWeight: 1,
-	actions: []
+	actions: new Array<IAction>()
 };
 
 const dummyCategory2 = {
@@ -18,7 +20,7 @@ const dummyCategory2 = {
 	name: "testcat2",
 	color: "",
 	desiredWeight: 1,
-	actions: []
+	actions: new Array<IAction>()
 };
 
 const dummyCategory3 = {
@@ -26,7 +28,7 @@ const dummyCategory3 = {
 	name: "testcat3",
 	color: "",
 	desiredWeight: 1,
-	actions: []
+	actions: new Array<IAction>()
 }
 
 const dummyScale = {
@@ -56,9 +58,36 @@ test("ScaleDetailsFormLogicContainer will display a ScaleDetailsForm", () => {
 	
 });
 
-// ScaleDetailsFormLogicContainer will pass in the delete handler, if scaleID is provided
 
-// ScaleDetailsFormLogicContainer will not pass in the delete handler, if no scaleID is provided
+test("ScaleDetailsFormLogicContainer will pass in the delete handler, if scaleID is provided", () => {
+	
+	//No actions, so no delete buttons for those
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getScale = (scaleID) => dummyScale;
+	
+	render(<ScaleDetailsFormLogicContainer
+		scaleID={dummyScale.id}
+		userService={dummyUserService}
+		backButtonHandler={dummyBackHandler} />);
+	
+	expect(screen.queryByRole("button", { name: /delete/i })).not.toBeNull();
+	
+});
+
+
+test("ScaleDetailsFormLogicContainer will not pass in the delete handler, if no scaleID is provided", () => {
+	
+	//No actions, so no delete buttons for those
+	const mockUserService = { ...dummyUserService };
+	mockUserService.getScale = (scaleID) => dummyScale;
+	
+	render(<ScaleDetailsFormLogicContainer
+		userService={dummyUserService}
+		backButtonHandler={dummyBackHandler} />);
+	
+	expect(screen.queryByRole("button", { name: /delete/i })).toBeNull();
+	
+});
 
 // ScaleDetailsFormLogicContainer will not display the CardDisplay, if no scaleID is provided
 
