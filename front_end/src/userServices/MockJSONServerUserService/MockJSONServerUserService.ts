@@ -60,7 +60,7 @@ export default class MockJSONServerUserService implements IUserService {
 				this._currentUserPassword = users[0].password;
 				delete users[0].password;
 				
-				//The timespans will have strings as dates, rather than Date
+				//The timespans will have strings as dates, rather than Date, so correct this
 				users[0].scales.forEach((scale:IScale) => {
 					scale.categories.forEach((cat:ICategory) => {
 						cat.actions.forEach((act:IAction) => {
