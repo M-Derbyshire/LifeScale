@@ -257,7 +257,28 @@ test("ScaleDetailsFormLogicContainer will handle the form state", () => {
 	
 });
 
-// ScaleDetailsFormLogicContainer will not change the header when changing the name state
+
+
+test("ScaleDetailsFormLogicContainer will not change the header when changing the name state", () => {
+	
+	const newName = "aaaaaaabbbbbbbbbbccccccccc";
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={dummyUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	const nameInput = screen.getByDisplayValue(dummyScale.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	const header = container.querySelector(".ScaleDetailsForm header");
+	expect(header.textContent).toEqual(expect.stringContaining(dummyScale.name));
+	
+});
 
 // ScaleDetailsFormLogicContainer will pass down the backButtonHandler prop
 
