@@ -280,7 +280,26 @@ test("ScaleDetailsFormLogicContainer will not change the header when changing th
 	
 });
 
-// ScaleDetailsFormLogicContainer will pass down the backButtonHandler prop
+
+test("ScaleDetailsFormLogicContainer will pass down the backButtonHandler prop", () => {
+	
+	const mockBackButtonHandler = jest.fn();
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={dummyUserService}
+									backButtonHandler={mockBackButtonHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	const scaleDetailsForm = container.querySelector(".ScaleDetailsForm");
+	const backButton = within(scaleDetailsForm).getByRole("button", { name: /back/i })
+	
+	fireEvent.click(backButton);
+	
+	expect(mockBackButtonHandler).toHaveBeenCalled();
+	
+});
 
 // ScaleDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode
 
