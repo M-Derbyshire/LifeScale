@@ -384,7 +384,59 @@ test("ScaleDetailsFormLogicContainer will save new records with the apiAccessor,
 });
 
 
-// ScaleDetailsFormLogicContainer will update existing records with the apiAccessor
+test("ScaleDetailsFormLogicContainer will update existing records with the apiAccessor", async () => {
+	
+	const newName = "testNewTest";
+	const newUsesTimespans = !dummyScale.usesTimespans;
+	const newDayCount = 13467;
+	
+	const scaleToReturn = { 
+		id: dummyScale.id,
+		name: newName, 
+		usesTimespans: newUsesTimespans, 
+		displayDayCount: newDayCount,
+		categories: dummyScale.categories
+	};
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateScale = jest.fn().mockResolvedValue(scaleToReturn);
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//empty string, so being explicit with selector
+	const nameInput = container.querySelector(".scaleNameInput");
+	
+	//may be more checkboxes in the future, so being explicit with selector
+	const usesTimespansInput = container.querySelector(".scaleUsesTimespansInput");
+	
+	const dayCountInput = container.querySelector(".scaleDayCountInput");
+	
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	fireEvent.change(dayCountInput, { target: { value: newDayCount } });
+	if(usesTimespansInput.checked !== newUsesTimespans)
+		fireEvent.click(usesTimespansInput);
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(mockUserService.updateScale)
+			.toHaveBeenCalledWith(dummyScale, scaleToReturn);
+	});
+	
+});
 
 // ScaleDetailsFormLogicContainer will change the header after saving an update with name change
 

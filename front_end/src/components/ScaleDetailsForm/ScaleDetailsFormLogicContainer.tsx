@@ -113,6 +113,27 @@ export default class ScaleDetailsFormLogicContainer
 		
 	}
 	
+	updateScaleHandler()
+	{
+		this.props.userService.updateScale(this.state.originalScale, this.state.scale)
+			.then(updatedScale => this.setState({ 
+				originalScale: updatedScale,
+				goodSaveMessage: this.stdGoodSaveMessage,
+				badSaveErrorMessage: undefined,
+				disableSubmit: false
+			}))
+			.catch(err => this.setState({ 
+				badSaveErrorMessage: err.message,
+				goodSaveMessage: undefined,
+				disableSubmit: false
+			}));
+		
+		
+		this.setState({
+			disableSubmit: true
+		});
+	}
+	
 	
 	
 	
@@ -156,7 +177,7 @@ export default class ScaleDetailsFormLogicContainer
 												
 						categories: this.state.originalScale.categories,
 						
-						onSubmit: (isCreating) ? this.createScaleHandler.bind(this) : ()=>{},
+						onSubmit: (isCreating) ? this.createScaleHandler.bind(this) : this.updateScaleHandler.bind(this),
 						onDelete: (isCreating) ? undefined : ()=>{},
 						badSaveErrorMessage: "test bad save message",
 						goodSaveMessage: "test good save message",
