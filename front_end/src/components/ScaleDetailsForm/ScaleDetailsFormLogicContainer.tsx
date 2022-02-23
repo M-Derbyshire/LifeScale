@@ -156,7 +156,7 @@ export default class ScaleDetailsFormLogicContainer
 					headingText={headingText}
 					badLoadErrorMessage={this.state.badLoadErrorMessage}
 					backButtonHandler={this.props.backButtonHandler}
-					disableSubmit={undefined}
+					disableSubmit={this.state.disableSubmit}
 					hideCategories={isCreating}
 					scaleItem={{
 						
