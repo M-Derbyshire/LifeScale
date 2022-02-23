@@ -80,7 +80,7 @@ class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 				
 				<LoadedContentWrapper errorMessage={this.props.badLoadErrorMessage} render={this.props.scaleItem && <div>
 					
-					<form onSubmit={this.props.scaleItem.onSubmit}>
+					<form onSubmit={ (e) => { e.preventDefault(); this.props.scaleItem!.onSubmit(); } }>
 						
 						<ScaleDetailsFormPartial
 							name={this.props.scaleItem.name}

@@ -29,7 +29,10 @@ export default class ScaleDetailsFormLogicContainer
 {
 	
 	stdScaleLoadErrorMessage = "Unable to load the requested scale.";
+	
+	stdGoodSaveMessage = "Scale saved successfully.";
 
+	
 	constructor(props:IScaleDetailsFormLogicContainerProps)
 	{
 		super(props);
@@ -73,6 +76,47 @@ export default class ScaleDetailsFormLogicContainer
 	}
 	
 	
+	
+	createScaleHandler()
+	{
+		//Bad load message prop to be passed to form, if scale isn't there
+		if(this.state.scale)
+		{
+			//The state scale can have an ID, so for future safety's sake, we're 
+			//creating the new obect with the values
+			const scale = this.state.scale;
+			
+			this.props.userService.createScale({
+				name: scale.name,
+				usesTimespans: scale.usesTimespans,
+				displayDayCount: scale.displayDayCount,
+				categories: scale.categories
+			})
+				.then(newScale => this.setState({ 
+					scale: { ...newScale }, 
+					originalScale: newScale,
+					goodSaveMessage: this.stdGoodSaveMessage,
+					badSaveErrorMessage: undefined,
+					disableSubmit: false
+				}))
+				.catch(err => this.setState({ 
+					badSaveErrorMessage: err.message,
+					goodSaveMessage: undefined,
+					disableSubmit: false
+				}));
+			
+			
+			this.setState({
+				disableSubmit: true
+			});
+		}
+		
+	}
+	
+	
+	
+	
+	
 	render()
 	{
 		const isCreating = (!this.state.scale.id);
@@ -92,7 +136,7 @@ export default class ScaleDetailsFormLogicContainer
 					badLoadErrorMessage={this.state.badLoadErrorMessage}
 					backButtonHandler={this.props.backButtonHandler}
 					disableSubmit={undefined}
-					hideCategories={!this.props.scaleID}
+					hideCategories={isCreating}
 					scaleItem={{
 						
 						name: this.state.scale.name,
@@ -112,8 +156,8 @@ export default class ScaleDetailsFormLogicContainer
 												
 						categories: this.state.originalScale.categories,
 						
-						onSubmit: ()=>{},
-						onDelete: (!this.props.scaleID) ? undefined : ()=>{},
+						onSubmit: (isCreating) ? this.createScaleHandler.bind(this) : ()=>{},
+						onDelete: (isCreating) ? undefined : ()=>{},
 						badSaveErrorMessage: "test bad save message",
 						goodSaveMessage: "test good save message",
 						

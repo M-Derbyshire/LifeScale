@@ -1,5 +1,5 @@
 import ScaleDetailsFormLogicContainer from './ScaleDetailsFormLogicContainer';
-import { render, fireEvent, screen, within } from '@testing-library/react';
+import { render, fireEvent, screen, within, waitFor } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 import IAction from '../../interfaces/IAction';
 import IScale from '../../interfaces/IScale';
@@ -301,7 +301,88 @@ test("ScaleDetailsFormLogicContainer will pass down the backButtonHandler prop",
 	
 });
 
-// ScaleDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode
+
+
+test("ScaleDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode", async () => {
+	
+	const newName = "testNewTest";
+	const newUsesTimespans = false;
+	const newDayCount = 13467;
+	
+	const scaleToCreate = { 
+		name: newName, 
+		usesTimespans: newUsesTimespans, 
+		displayDayCount: newDayCount,
+		categories: [{
+			name: "testCat1",
+			id: "1",
+			color: "red",
+			desiredWeight: 1,
+			actions: []
+		}, {
+			name: "testCat2",
+			id: "2",
+			color: "red",
+			desiredWeight: 1,
+			actions: []
+		},
+		{
+			name: "testCat3",
+			id: "3",
+			color: "red",
+			desiredWeight: 1,
+			actions: []
+		}]
+	};
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createScale = jest.fn().mockResolvedValue({ ...scaleToCreate, id: "testID" });
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	//empty string, so being explicit with selector
+	const nameInput = container.querySelector(".scaleNameInput");
+	
+	//may be more checkboxes in the future, so being explicit with selector
+	const usesTimespansInput = container.querySelector(".scaleUsesTimespansInput");
+	
+	const dayCountInput = container.querySelector(".scaleDayCountInput");
+	
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	fireEvent.change(dayCountInput, { target: { value: newDayCount } });
+	if(usesTimespansInput.checked !== newUsesTimespans)
+		fireEvent.click(usesTimespansInput);
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(mockUserService.createScale)
+			.toHaveBeenCalledWith({ ...scaleToCreate, categories: [] });
+		
+		//Check we're now in editing mode
+		const scaleDetailsForm = container.querySelector(".ScaleDetailsForm form");
+		expect(within(scaleDetailsForm).queryByRole("button", { name: /delete/i })).not.toBeNull();
+		expect(container.querySelector(".ScaleDetailsForm header").textContent)
+			.toEqual(expect.stringContaining(newName));
+		
+		//Are we displaying categories as well
+		scaleToCreate.categories.forEach(cat => expect(screen.queryByText(cat.name)).not.toBeNull());
+	});
+	
+});
+
 
 // ScaleDetailsFormLogicContainer will update existing records with the apiAccessor
 
