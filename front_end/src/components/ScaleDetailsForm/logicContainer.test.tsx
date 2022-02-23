@@ -438,7 +438,43 @@ test("ScaleDetailsFormLogicContainer will update existing records with the apiAc
 	
 });
 
-// ScaleDetailsFormLogicContainer will change the header after saving an update with name change
+
+
+test("ScaleDetailsFormLogicContainer will change the header after saving an update with name change", async () => {
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	
+	const nameInput = screen.getByDisplayValue(dummyScale.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm header").textContent)
+			.toEqual(expect.stringContaining(newName));
+	});
+	
+});
 
 // ScaleDetailsFormLogicContainer will display an error message on bad create save
 
