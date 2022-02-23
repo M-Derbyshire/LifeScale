@@ -48,6 +48,7 @@ dummyUserService.getScale = (scaleID) => dummyScale;
 
 
 const scaleLoadErrorMessage = "Unable to load the requested scale.";
+const stdGoodSaveMessage = "Scale saved successfully.";
 
 
 test("ScaleDetailsFormLogicContainer will display a ScaleDetailsForm", () => {
@@ -476,19 +477,295 @@ test("ScaleDetailsFormLogicContainer will change the header after saving an upda
 	
 });
 
-// ScaleDetailsFormLogicContainer will display an error message on bad create save
 
-// ScaleDetailsFormLogicContainer will display an error message on bad update save
 
-// ScaleDetailsFormLogicContainer will display a good save message on good create save
 
-// ScaleDetailsFormLogicContainer will display a good save message on good update save
 
-// ScaleDetailsFormLogicContainer will clear good save message after a bad update save
+test("ScaleDetailsFormLogicContainer will display an error message on bad create save", async () => {
+	
+	const errorMessage = "Unable to save during creating";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createScale = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	const nameInput = container.querySelector(".scaleNameInput");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
 
-// ScaleDetailsFormLogicContainer will clear error save message after a good create save
+test("ScaleDetailsFormLogicContainer will display an error message on bad update save", async () => {
+	
+	const errorMessage = "Unable to save during updating";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateScale = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	const nameInput = screen.getByDisplayValue(dummyScale.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
 
-// ScaleDetailsFormLogicContainer will clear error save message after a good update save
+test("ScaleDetailsFormLogicContainer will display a good save message on good create save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	const nameInput = container.querySelector(".scaleNameInput");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(message));
+	});
+	
+});
+
+test("ScaleDetailsFormLogicContainer will display a good save message on good update save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	const nameInput = screen.getByDisplayValue(dummyScale.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(message));
+	});
+	
+});
+
+test("ScaleDetailsFormLogicContainer will clear good save message after a bad update save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	const errorMessage = "Test error";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	const nameInput = screen.getByDisplayValue(dummyScale.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(message));
+	});
+	
+	//Now change to reject
+	mockUserService.updateScale = jest.fn().mockRejectedValue(new Error(errorMessage));
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.not.toEqual(expect.stringContaining(message));
+	});
+	
+});
+
+test("ScaleDetailsFormLogicContainer will clear error save message after a good create save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	const errorMessage = "Test error";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.createScale = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	const nameInput = container.querySelector(".scaleNameInput");
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+	//Now change to reject
+	mockUserService.createScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.not.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
+
+test("ScaleDetailsFormLogicContainer will clear error save message after a good update save", async () => {
+	
+	const message = stdGoodSaveMessage;
+	const errorMessage = "Test error";
+	
+	const newName = "testNewTest";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.updateScale = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	// ----------- Set the values -----------------
+	
+	const nameInput = screen.getByDisplayValue(dummyScale.name);
+	expect(nameInput.value).not.toBe(newName);
+	
+	fireEvent.change(nameInput, { target: { value: newName } });
+	
+	
+	// ---------- Now save it -----------------
+	
+	const form = container.querySelector(".ScaleDetailsForm form");
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+	//Now change to reject
+	mockUserService.updateScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
+	fireEvent.submit(form);
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.not.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
 
 // ScaleDetailsFormLogicContainer will disable submit button when creating, then re-enable when done
 

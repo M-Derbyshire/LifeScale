@@ -179,8 +179,8 @@ export default class ScaleDetailsFormLogicContainer
 						
 						onSubmit: (isCreating) ? this.createScaleHandler.bind(this) : this.updateScaleHandler.bind(this),
 						onDelete: (isCreating) ? undefined : ()=>{},
-						badSaveErrorMessage: "test bad save message",
-						goodSaveMessage: "test good save message",
+						badSaveErrorMessage: this.state.badSaveErrorMessage,
+						goodSaveMessage: this.state.goodSaveMessage,
 						
 						addCategoryCallback: this.props.addCategoryHandler,
 						editCategoryCallback: this.props.editCategoryHandler
