@@ -134,6 +134,16 @@ export default class ScaleDetailsFormLogicContainer
 		});
 	}
 	
+	deleteScaleHandler()
+	{
+		this.props.userService.deleteScale(this.state.originalScale)
+			.then(scales => {
+				if(this.props.onSuccessfulDeleteHandler) 
+					this.props.onSuccessfulDeleteHandler()
+			})
+			.catch(err => this.setState({ badSaveErrorMessage: err.message }));
+	}
+	
 	
 	
 	
@@ -178,7 +188,7 @@ export default class ScaleDetailsFormLogicContainer
 						categories: this.state.originalScale.categories,
 						
 						onSubmit: (isCreating) ? this.createScaleHandler.bind(this) : this.updateScaleHandler.bind(this),
-						onDelete: (isCreating) ? undefined : ()=>{},
+						onDelete: (isCreating) ? undefined : this.deleteScaleHandler.bind(this),
 						badSaveErrorMessage: this.state.badSaveErrorMessage,
 						goodSaveMessage: this.state.goodSaveMessage,
 						

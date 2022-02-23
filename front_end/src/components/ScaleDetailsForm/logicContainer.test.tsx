@@ -950,9 +950,85 @@ test("ScaleDetailsFormLogicContainer will re-enable submit button after a error 
 	
 });
 
-// ScaleDetailsFormLogicContainer will use userService deletescale method to delete (passing original scale)
 
-// ScaleDetailsFormLogicContainer will display error if bad save during delete
 
-// ScaleDetailsFormLogicContainer will call onSuccessfulDeleteHandler after successful delete
+
+test("ScaleDetailsFormLogicContainer will use userService deletescale method to delete (passing original scale)", async () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.deleteScale = jest.fn().mockResolvedValue([]);
+	
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	const deleteButton = screen.getByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	
+	await waitFor(() => {
+		expect(mockUserService.deleteScale).toHaveBeenCalledWith(dummyScale);
+	});
+	
+});
+
+test("ScaleDetailsFormLogicContainer will display error if bad save during delete", async () => {
+	
+	const errorMessage = "test error on delete";
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.deleteScale = jest.fn().mockRejectedValue(new Error(errorMessage));
+	
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	const deleteButton = screen.getByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	
+	await waitFor(() => {
+		expect(container.querySelector(".ScaleDetailsForm").textContent)
+			.toEqual(expect.stringContaining(errorMessage));
+	});
+	
+});
+
+test("ScaleDetailsFormLogicContainer will call onSuccessfulDeleteHandler after successful delete", async () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.deleteScale = jest.fn().mockResolvedValue([]);
+	
+	const mockDeleteCallback = jest.fn();
+	
+	const { container } = render(<ScaleDetailsFormLogicContainer
+									scaleID={dummyScale.id}
+									userService={mockUserService}
+									backButtonHandler={dummyBackHandler}
+									editCategoryHandler={dummyEditCategoryHandler}
+									addCategoryHandler={dummyAddCategoryHandler}
+									onSuccessfulDeleteHandler={mockDeleteCallback} />);
+	
+	
+	const deleteButton = screen.getByRole("button", { name: /delete/i });
+	
+	fireEvent.click(deleteButton);
+	
+	await waitFor(() => {
+		expect(mockDeleteCallback).toHaveBeenCalled();
+	});
+	
+});
 
