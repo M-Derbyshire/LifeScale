@@ -105,7 +105,10 @@ export default class MockJSONServerUserService implements IUserService {
 	{
 		for(let i = 0; i < requiredProperties.length; i++)
 		{
-			if(!objToTest[requiredProperties[i]] && typeof(objToTest[requiredProperties[i]]) !== "number")
+			const typeOfProperty = typeof(objToTest[requiredProperties[i]]);
+			
+			//If property is number or bool, then 0 or false would count as falsy (but they're valid values)
+			if(!objToTest[requiredProperties[i]] && typeOfProperty !== "number" && typeOfProperty !== "boolean")
 				return `Some of the following required properties are missing: ${requiredProperties.join(", ")}.`;
 		}
 		
