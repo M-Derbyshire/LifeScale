@@ -8,9 +8,21 @@ import './UserHomeScreen.scss';
 
 interface IUserHomeScreenProps {
     userService:IUserService;
-    scale:IScale;
+    selectedScale?:IScale;
+    scaleLoadingError:string;
+    
+    onSuccessfulLogout:()=>void; //Called after successful logout
+    editScaleCallback:()=>void; //Called by the Edit Scale button
+    onSuccessfulTimespanSave?:()=>void;
+    amendHistoryCallback:()=>void; // The callback for the amend history button
+    
+	editUserURL:string;
+	createScaleURL:string; 
+	scaleURLBase:string; //E.g. "scales" in "/scales/id1234"
+    
     desiredBalanceItems:IScaleBalanceItem[];
 	currentBalanceItems:IScaleBalanceItem[];
+    
     statistics:IPercentageStatistic[];
 }
 
