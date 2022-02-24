@@ -31,6 +31,9 @@ interface IUserHomeScreenProps {
 }
 
 
+/*
+    Displays the home navigation bar, and the information about the selected scale (with a RecordActionForm, to record new timespans)
+*/
 const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
     
     return (

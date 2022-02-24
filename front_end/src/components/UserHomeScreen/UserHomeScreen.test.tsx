@@ -164,10 +164,11 @@ test("If user has no scales, UserHomeScreen will display an EmptyContentMessage,
 
 // If scale is provided, UserHomeScreen will enclose it's content in a NavigatableContentWrapper, with a LoadedContentWrapper within that
 
-// If no scale prop provided, UserHomeScreen will not pass anything to LoadedContentWrapper (which will be within a NavigatableContentWrapper) in the render prop
-
 // If a loading error is passed to the UserHomeScreen, it will pass this to the LoadedContentWrapper, through the errorMessage prop
 
+
+
+// UserHomeScreen will display the name of the passed in selected scale, as a heading
 
 
 
