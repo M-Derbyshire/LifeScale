@@ -19,7 +19,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 
 interface ICategoryDetailsFormLogicContainerState {
 	category:ICategory;
-	originalCategoryRef:ICategory; // used when updating/deleting (and to keep the original
+	categoryOriginal:ICategory; // used when updating/deleting (and to keep the original
 									// header text during name change)
 	scale?:IScale;
 	badSaveErrorMessage?:string;
@@ -63,7 +63,7 @@ export default class CategoryDetailsFormLogicContainer
 		
 		this.state = {
 			category: categoryObjects.category,
-			originalCategoryRef: categoryObjects.categoryRef,
+			categoryOriginal: categoryObjects.categoryOriginal,
 			scale, //may be undefined
 			badLoadErrorMessage, //may be undefined
 			disableSubmit: false
@@ -73,24 +73,24 @@ export default class CategoryDetailsFormLogicContainer
 	
 	
 	//If can't load a category, creates an empty one (no ID, for creating)
-	//categoryRef is a reference to the original category. category is a spread of the reference
-	loadOrCreateCategory(categoryID?:string):{ categoryRef:ICategory, category:ICategory }
+	//categoryOriginal is the original category from the userService. category is a clone of the original
+	loadOrCreateCategory(categoryID?:string):{ categoryOriginal:ICategory, category:ICategory }
 	{
 		//getCategory may return undefined
-		let categoryRef:ICategory|undefined = (categoryID) 
+		let categoryOriginal:ICategory|undefined = (categoryID) 
 							? this.props.userService.getCategory(categoryID!, this.props.scaleID) 
 							: undefined;
 		
-		if(!categoryRef)
+		if(!categoryOriginal)
 		{
 			const defaultColor = (this.colorList.length > 0) ? this.colorList[0].colorName : "";
-			categoryRef = { id:"", name: "", color: defaultColor, desiredWeight: 1, actions: [] };
+			categoryOriginal = { id:"", name: "", color: defaultColor, desiredWeight: 1, actions: [] };
 		}
 		
-		const category = { ...categoryRef };
+		const category = { ...categoryOriginal };
 		
 		
-		return { category, categoryRef };
+		return { category, categoryOriginal };
 	}
 	
 	
@@ -113,7 +113,7 @@ export default class CategoryDetailsFormLogicContainer
 			})
 				.then(newCategory => this.setState({ 
 					category: { ...newCategory }, 
-					originalCategoryRef: category,
+					categoryOriginal: category,
 					goodSaveMessage: this.stdGoodSaveMessage,
 					badSaveErrorMessage: undefined,
 					disableSubmit: false
@@ -135,9 +135,9 @@ export default class CategoryDetailsFormLogicContainer
 	updateCategoryHandler()
 	{
 		if(this.state.scale)
-			this.props.userService.updateCategory(this.state.scale, this.state.originalCategoryRef, this.state.category)
+			this.props.userService.updateCategory(this.state.scale, this.state.categoryOriginal, this.state.category)
 				.then(updatedCategory => this.setState({ 
-					originalCategoryRef: updatedCategory,
+					categoryOriginal: updatedCategory,
 					goodSaveMessage: this.stdGoodSaveMessage,
 					badSaveErrorMessage: undefined,
 					disableSubmit: false
@@ -157,7 +157,7 @@ export default class CategoryDetailsFormLogicContainer
 	deleteCategoryHandler()
 	{
 		if(this.state.scale)
-			this.props.userService.deleteCategory(this.state.scale, this.state.originalCategoryRef)
+			this.props.userService.deleteCategory(this.state.scale, this.state.categoryOriginal)
 				.then(categories => {
 					if(this.props.onSuccessfulDeleteHandler) 
 						this.props.onSuccessfulDeleteHandler()
@@ -185,7 +185,7 @@ export default class CategoryDetailsFormLogicContainer
 		if(this.state.badLoadErrorMessage) 
 			headingText = "Error";
 		else if (!isCreating)
-			headingText = `Edit Category - ${this.state.originalCategoryRef.name}`;
+			headingText = `Edit Category - ${this.state.categoryOriginal.name}`;
 		else
 			headingText = "Create Category";
 		

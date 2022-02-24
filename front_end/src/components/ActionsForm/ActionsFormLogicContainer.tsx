@@ -30,7 +30,7 @@ interface IActionsFormLogicContainerProps {
 interface IActionsFormLogicContainerState {
 	newAction:INewActionData;
 	actions:IAction[]; //Actions that we can edit as state
-	originalActions:IAction[]; //References to actions in userService (used when updating/deleting)
+	originalActions:IAction[]; //Original actions from the userService (used when updating/deleting)
 	lastActionSaveMessage:IActionSaveMessage; //We only need to display the last save message (good or bad)
 	displayNewActionForm:boolean;
 }
@@ -76,7 +76,7 @@ export default class ActionsFormLogicContainer
 	
 	//Return values:
 	//actions - are the actions that can be changed (as state)
-	//originalActions - are references to the action's references from the userService (used in updating/deleting)
+	//originalActions - are the actions that should stay the same (used in updating/deleting)
 	loadActionLists(category:ICategory):{ actions:IAction[], originalActions:IAction[] }
 	{
 		return {
