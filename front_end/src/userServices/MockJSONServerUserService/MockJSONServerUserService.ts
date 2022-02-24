@@ -385,8 +385,12 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	updateScale(currentScale:IScale, newScaleData:IScale):Promise<IScale> {
+		const scaleInternalObjectReference = this.getScale(currentScale.id);
+		if(!scaleInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested scale.")));
+		
 		return this._updateArrayItemInCurrentUser(
-			currentScale, 
+			scaleInternalObjectReference, 
 			newScaleData, 
 			"scale", 
 			[...this._scaleRequiredProperties, "id"]
@@ -411,12 +415,20 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	createCategory(parentScale:IScale, newCategory:Omit<ICategory, "id">):Promise<ICategory> {
-		return this._saveToArrayInCurrentUser(parentScale.categories, newCategory, "category", this._categoryRequiredProperties);
+		const parentScaleInternalObjectReference = this.getScale(parentScale.id);
+		if(!parentScaleInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested scale.")));
+			
+		return this._saveToArrayInCurrentUser(parentScaleInternalObjectReference.categories, newCategory, "category", this._categoryRequiredProperties);
 	}
 	
-	updateCategory(currentCategory:ICategory, newCategoryData:ICategory):Promise<ICategory> {
+	updateCategory(parentScale:IScale, currentCategory:ICategory, newCategoryData:ICategory):Promise<ICategory> {
+		const categoryInternalObjectReference = this.getCategory(currentCategory.id, parentScale.id);
+		if(!categoryInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested scale.")));
+		
 		return this._updateArrayItemInCurrentUser(
-			currentCategory, 
+			categoryInternalObjectReference, 
 			newCategoryData, 
 			"category", 
 			[...this._categoryRequiredProperties, "id"]
@@ -424,7 +436,11 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	deleteCategory(parentScale:IScale, category:ICategory):Promise<ICategory[]> {
-		return this._deleteArrayItemInCurrentUser(parentScale.categories, category, "category");
+		const parentScaleInternalObjectReference = this.getScale(parentScale.id);
+		if(!parentScaleInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested scale.")));
+		
+		return this._deleteArrayItemInCurrentUser(parentScaleInternalObjectReference.categories, category, "category");
 	}
 	
 	
@@ -440,12 +456,20 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	createAction(parentScale:IScale, parentCategory:ICategory, newAction:Omit<IAction, "id">):Promise<IAction> {
-		return this._saveToArrayInCurrentUser(parentCategory.actions, newAction, "action", this._actionRequiredProperties);
+		const parentCategoryInternalObjectReference = this.getCategory(parentCategory.id, parentScale.id);
+		if(!parentCategoryInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested category.")));
+			
+		return this._saveToArrayInCurrentUser(parentCategoryInternalObjectReference.actions, newAction, "action", this._actionRequiredProperties);
 	}
 	
 	updateAction(parentScale:IScale, parentCategory:ICategory, currentAction:IAction, newActionData:IAction):Promise<IAction> {
+		const actionInternalObjectReference = this.getAction(currentAction.id, parentCategory.id, parentScale.id);
+		if(!actionInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested action.")));
+		
 		return this._updateArrayItemInCurrentUser(
-			currentAction, 
+			actionInternalObjectReference, 
 			newActionData, 
 			"action", 
 			[...this._actionRequiredProperties, "id"]
@@ -453,7 +477,11 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	deleteAction(parentScale:IScale, parentCategory:ICategory, action:IAction):Promise<IAction[]> {
-		return this._deleteArrayItemInCurrentUser(parentCategory.actions, action, "action");
+		const parentCategoryInternalObjectReference = this.getCategory(parentCategory.id, parentScale.id);
+		if(!parentCategoryInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested category.")));
+			
+		return this._deleteArrayItemInCurrentUser(parentCategoryInternalObjectReference.actions, action, "action");
 	}
 	
 	
@@ -488,11 +516,19 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	createTimespan(parentScale:IScale, parentCategory:ICategory, parentAction:IAction, newTimespan:Omit<ITimespan, "id">):Promise<ITimespan> {
-		return this._saveToArrayInCurrentUser(parentAction.timespans, newTimespan, "timespan", this._timespanRequiredProperties);
+		const parentActionInternalObjectReference = this.getAction(parentAction.id, parentCategory.id, parentScale.id);
+		if(!parentActionInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested action.")));
+			
+		return this._saveToArrayInCurrentUser(parentActionInternalObjectReference.timespans, newTimespan, "timespan", this._timespanRequiredProperties);
 	}
 	
 	deleteTimespan(parentScale:IScale, parentCategory:ICategory, parentAction:IAction, timespan:ITimespan):Promise<ITimespan[]> {
-		return this._deleteArrayItemInCurrentUser(parentAction.timespans, timespan, "timespan");
+		const parentActionInternalObjectReference = this.getAction(parentAction.id, parentCategory.id, parentScale.id);
+		if(!parentActionInternalObjectReference)
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested action.")));
+			
+		return this._deleteArrayItemInCurrentUser(parentActionInternalObjectReference.timespans, timespan, "timespan");
 	}
 	
 }

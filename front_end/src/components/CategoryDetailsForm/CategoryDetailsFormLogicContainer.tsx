@@ -134,23 +134,24 @@ export default class CategoryDetailsFormLogicContainer
 	
 	updateCategoryHandler()
 	{
-		this.props.userService.updateCategory(this.state.originalCategoryRef, this.state.category)
-			.then(updatedCategory => this.setState({ 
-				originalCategoryRef: updatedCategory,
-				goodSaveMessage: this.stdGoodSaveMessage,
-				badSaveErrorMessage: undefined,
-				disableSubmit: false
-			}))
-			.catch(err => this.setState({ 
-				badSaveErrorMessage: err.message,
-				goodSaveMessage: undefined,
-				disableSubmit: false
-			}));
-		
-		
-		this.setState({
-			disableSubmit: true
-		});
+		if(this.state.scale)
+			this.props.userService.updateCategory(this.state.scale, this.state.originalCategoryRef, this.state.category)
+				.then(updatedCategory => this.setState({ 
+					originalCategoryRef: updatedCategory,
+					goodSaveMessage: this.stdGoodSaveMessage,
+					badSaveErrorMessage: undefined,
+					disableSubmit: false
+				}))
+				.catch(err => this.setState({ 
+					badSaveErrorMessage: err.message,
+					goodSaveMessage: undefined,
+					disableSubmit: false
+				}));
+			
+			
+			this.setState({
+				disableSubmit: true
+			});
 	}
 	
 	deleteCategoryHandler()

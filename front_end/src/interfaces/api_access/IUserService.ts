@@ -54,7 +54,7 @@ interface IUserService {
 	
 	getCategory:(categoryID:string, scaleID:string)=>ICategory|undefined; //Will return undefined if not found
 	createCategory:(parentScale:IScale, newCategory:Omit<ICategory, "id">)=>Promise<ICategory>;
-	updateCategory:(currentCategory:ICategory, newCategoryData:ICategory)=>Promise<ICategory>;
+	updateCategory:(parentScale:IScale, currentCategory:ICategory, newCategoryData:ICategory)=>Promise<ICategory>;
 	deleteCategory:(parentScale:IScale, category:ICategory)=>Promise<ICategory[]>;
 	
 	getAction:(actionID:string, categoryID:string, scaleID:string)=>IAction|undefined; //Will return undefined if not found

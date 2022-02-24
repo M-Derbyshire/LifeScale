@@ -109,7 +109,7 @@ export default class TestingDummyUserService implements IUserService {
 		});
 	}
 	
-	updateCategory(currentCategory:ICategory, newCategoryData:ICategory) {
+	updateCategory(parentScale:IScale, currentCategory:ICategory, newCategoryData:ICategory) {
 		return new Promise<ICategory>((resolve, reject) => {
 			resolve(newCategoryData);
 		});

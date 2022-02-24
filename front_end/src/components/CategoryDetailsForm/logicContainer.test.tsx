@@ -403,7 +403,7 @@ test("CategoryDetailsFormLogicContainer will update existing records with the ap
 	
 	await waitFor(() => {
 		expect(mockUserService.updateCategory)
-			.toHaveBeenCalledWith(dummyCategory, catToReturn);
+			.toHaveBeenCalledWith(dummyScale, dummyCategory, catToReturn);
 	});
 	
 });
