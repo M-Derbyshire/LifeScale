@@ -54,17 +54,17 @@ const dummyUser = {
 
 const dummyDesiredBalanceItems = [
     {
-        label: "test1",
+        label: "testDesired1",
         color: "red",
         weight: 1
     },
     {
-        label: "test2",
+        label: "testDesired2",
         color: "blue",
         weight: 2
     },
     {
-        label: "test3",
+        label: "testDesired3",
         color: "green",
         weight: 3
     }
@@ -72,17 +72,17 @@ const dummyDesiredBalanceItems = [
 
 const dummyCurrentBalanceItems = [
     {
-        label: "test1",
+        label: "testCurrent1",
         color: "red",
         weight: 3
     },
     {
-        label: "test2",
+        label: "testCurrent2",
         color: "blue",
         weight: 2
     },
     {
-        label: "test3",
+        label: "testCurrent3",
         color: "green",
         weight: 1
     }
@@ -273,11 +273,42 @@ test.each([
 
 
 
-// UserHomeScreen will pass the editScaleCallback prop to ScalePrimaryDisplay
+test("UserHomeScreen will pass the editScaleCallback prop to ScalePrimaryDisplay", () => {
+    
+    const mockCallback = jest.fn();
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } editScaleCallback={mockCallback} /></Router>);
+    
+    const primaryDisplay = container.querySelector(".ScalePrimaryDisplay");
+    
+    let editScaleButton = within(primaryDisplay).getByRole("button", { name: /edit/i });
+    if(!editScaleButton)
+        editScaleButton = within(primaryDisplay).getByText(/edit/i)
+    
+    fireEvent.click(editScaleButton);
+    
+    expect(mockCallback).toHaveBeenCalled();
+    
+});
 
-// UserHomeScreen will pass the desiredBalanceItems to ScalePrimaryDisplay
+test("UserHomeScreen will pass the desiredBalanceItems to ScalePrimaryDisplay", () => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } /></Router>);
+    
+    const primaryDisplay = container.querySelector(".ScalePrimaryDisplay");
+	
+	dummyDesiredBalanceItems.forEach(item => expect(primaryDisplay.textContent).toEqual(expect.stringContaining(item.label)));
+    
+});
 
-// UserHomeScreen will pass the currentBalanceItems to ScalePrimaryDisplay
+test("UserHomeScreen will pass the currentBalanceItems to ScalePrimaryDisplay", () => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } /></Router>);
+    
+    const primaryDisplay = container.querySelector(".ScalePrimaryDisplay");
+	
+	dummyCurrentBalanceItems.forEach(item => expect(primaryDisplay.textContent).toEqual(expect.stringContaining(item.label)));
+    
+});
 
 
 

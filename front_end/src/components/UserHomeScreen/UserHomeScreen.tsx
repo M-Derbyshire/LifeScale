@@ -8,6 +8,7 @@ import NavigatableContentWrapper from '../NavigatableContentWrapper/NavigatableC
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import EmptyContentMessage from '../EmptyContentMessage/EmptyContentMessage';
 import UserNavBarLogicContainer from '../UserNavBar/UserNavBarLogicContainer';
+import ScalePrimaryDisplay from '../ScalePrimaryDisplay/ScalePrimaryDisplay';
 
 
 interface IUserHomeScreenProps {
@@ -39,7 +40,7 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
     
     return (
         <div className='UserHomeScreen'>
-            <NavigatableContentWrapper smallScreenWidthPixels={500} navigationBar={
+            <NavigatableContentWrapper smallScreenWidthPixels={760} navigationBar={
                 <UserNavBarLogicContainer 
                     userService={props.userService}
                     onSuccessfulLogout={props.onSuccessfulLogout}
@@ -53,9 +54,18 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                     <div>
                         {props.scales.length === 0 && <EmptyContentMessage message="No scales have been created." />}
                         
-                        {props.selectedScale && <header>
-                            <h1>{props.selectedScale.name}</h1>
-                        </header>}
+                        {props.selectedScale && <div>
+                            
+                            <header>
+                                <h1>{props.selectedScale.name}</h1>
+                            </header>
+                            
+                            <ScalePrimaryDisplay 
+                                desiredBalanceItems={props.desiredBalanceItems}
+                                currentBalanceItems={props.currentBalanceItems}
+                                editScaleCallback={props.editScaleCallback} />
+                            
+                        </div>}
                         
                     </div>
                     
