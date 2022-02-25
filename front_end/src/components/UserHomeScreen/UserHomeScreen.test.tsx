@@ -1,5 +1,6 @@
 import UserHomeScreen from './UserHomeScreen';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { MemoryRouter as Router } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 import IAction from '../../interfaces/IAction';
 
@@ -37,6 +38,16 @@ const dummyScale = {
 	displayDayCount: 7,
 	categories: [dummyCategory1, dummyCategory2, dummyCategory3]
 }
+
+const dummyUser = {
+    id: "testUser847274298734",
+    email: "test@test.com",
+	forename: "test",
+	surname: "test",
+	scales: [
+        dummyScale
+    ]
+};
 
 
 
@@ -115,9 +126,12 @@ const dummyStatistics = [
 ];
 
 
+const dummyUserService = new TestingDummyUserService();
+dummyUserService.getLoadedUser = () => dummyUser;
+
 
 const defaultProps = {
-    userService: new TestingDummyUserService(),
+    userService: dummyUserService,
     scales: [ {...dummyScale, name: "scale1" }, {...dummyScale, name: "scale2" } ],
     selectedScale: dummyScale,
     scaleLoadingError: undefined,
@@ -138,7 +152,7 @@ const defaultProps = {
 
 test("If user has no scales, UserHomeScreen will display an EmptyContentMessage, within a NavigatableContentWrapper", () => {
     
-    const { container } = render(<UserHomeScreen { ...defaultProps } scales={[]} />);
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } scales={[]} /></Router>);
     
     const emptyMessage = container.querySelector(".NavigatableContentWrapper .EmptyContentMessage");
     
@@ -154,7 +168,7 @@ test.each([
     ["test2"]
 ])("UserHomeScreen will display the name of the passed in selected scale, as a heading, in a header", (scaleName) => {
     
-    const { container } = render(<UserHomeScreen { ...defaultProps } selectedScale={{ ...dummyScale, name: scaleName }} />);
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } selectedScale={{ ...dummyScale, name: scaleName }} /></Router>);
     
     const header = container.querySelector("header");
     expect(header).not.toBeNull();
@@ -167,24 +181,94 @@ test.each([
 
 
 
-// UserHomeScreen will pass UserNavBarLogicContainer to a NavigatableContentWrapper
+test("UserHomeScreen will pass UserNavBarLogicContainer to a NavigatableContentWrapper", () => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } /></Router>);
+    
+    const navBar = container.querySelector(".NavigatableContentWrapper .UserNavBarLogicContainer");
+    
+    expect(navBar).not.toBeNull();
+    
+});
 
-// UserHomeScreen will pass userService to the UserNavBarLogicContainer
+test.each([
+    ["testScaleName1"],
+    ["testScaleName2"]
+])("UserHomeScreen will pass userService to the UserNavBarLogicContainer", (scaleName) => {
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [{ ...dummyScale, name: scaleName }] });
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    const navBar = container.querySelector(".UserNavBarLogicContainer");
+    const scaleLink = within(navBar).queryByText(scaleName);
+    
+    expect(scaleLink).not.toBeNull();
+    
+});
 
-// UserHomeScreen will pass onSuccessfulLogout prop to UserNavBarLogicContainer
+test("UserHomeScreen will pass onSuccessfulLogout prop to UserNavBarLogicContainer", async () => {
+    
+    const mockCallback = jest.fn(); //This should be called after logout completes
+    const mockUserService = { ...dummyUserService };
+    mockUserService.logoutUser = jest.fn().mockResolvedValue(null); 
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } onSuccessfulLogout={mockCallback} /></Router>);
+    
+    const navBar = container.querySelector(".UserNavBarLogicContainer");
+    const logoutLink = within(navBar).queryByText(/logout/i);
+    
+    fireEvent.click(logoutLink);
+    
+    await waitFor(() => expect(mockCallback).toHaveBeenCalled());
+    
+});
 
-// UserHomeScreen will pass editUserURL prop to UserNavBarLogicContainer
+test.each([
+    ["/edit/test1"],
+    ["/edit/test2"]
+])("UserHomeScreen will pass editUserURL prop to UserNavBarLogicContainer", async (editUrl) => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } editUserURL={editUrl} /></Router>);
+    
+    const editUserLink = container.querySelector(`.UserNavBarLogicContainer a[href="${editUrl}"]`);
+    
+    expect(editUserLink).not.toBeNull();
+    
+});
 
-// UserHomeScreen will pass createScaleURL prop to UserNavBarLogicContainer
+test.each([
+    ["/create/test1"],
+    ["/create/test2"]
+])("UserHomeScreen will pass createScaleURL prop to UserNavBarLogicContainer", async (createUrl) => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } createScaleURL={createUrl} /></Router>);
+    
+    const createUserLink = container.querySelector(`.UserNavBarLogicContainer a[href="${createUrl}"]`);
+    
+    expect(createUserLink).not.toBeNull();
+    
+});
 
-// UserHomeScreen will pass scaleURLBase prop to UserNavBarLogicContainer
-
-
-
-// If scale is provided, UserHomeScreen will enclose it's content in a NavigatableContentWrapper, with a LoadedContentWrapper within that
-
-// If a loading error is passed to the UserHomeScreen, it will pass this to the LoadedContentWrapper, through the errorMessage prop
-
+test.each([
+    ["test1"],
+    ["test2"]
+])("UserHomeScreen will pass scaleURLBase prop to UserNavBarLogicContainer", async (baseUrl) => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } scaleURLBase={baseUrl} /></Router>);
+    
+    
+    dummyUser.scales.forEach(scale => {
+        
+        const link = screen.getByRole("link", { name: scale.name });
+        
+        const hrefRegex = new RegExp(`.*${baseUrl}.*${scale.id}.*`);
+        expect(link).toHaveAttribute("href", expect.stringMatching(hrefRegex));
+        
+    });
+    
+});
 
 
 
@@ -208,3 +292,10 @@ test.each([
 // UserHomeScreen will pass the statistics to ScaleStatisticDisplay
 
 // UserHomeScreen will pass the amendHistoryCallback to ScaleStatisticDisplay
+
+
+
+//Include header, but not nav, in the below
+// If scale is provided, UserHomeScreen will enclose it's content in a NavigatableContentWrapper, with a LoadedContentWrapper within that
+
+// If a loading error is passed to the UserHomeScreen, it will pass this to the LoadedContentWrapper, through the errorMessage prop

@@ -7,6 +7,7 @@ import IScaleBalanceItem from '../../interfaces/UI/IScaleBalanceItem';
 import NavigatableContentWrapper from '../NavigatableContentWrapper/NavigatableContentWrapper';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import EmptyContentMessage from '../EmptyContentMessage/EmptyContentMessage';
+import UserNavBarLogicContainer from '../UserNavBar/UserNavBarLogicContainer';
 
 
 interface IUserHomeScreenProps {
@@ -38,7 +39,14 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
     
     return (
         <div className='UserHomeScreen'>
-            <NavigatableContentWrapper navigationBar={(<nav>test</nav>)} smallScreenWidthPixels={500}>
+            <NavigatableContentWrapper smallScreenWidthPixels={500} navigationBar={
+                <UserNavBarLogicContainer 
+                    userService={props.userService}
+                    onSuccessfulLogout={props.onSuccessfulLogout}
+                    editUserURL={props.editUserURL}
+                    createScaleURL={props.createScaleURL}
+                    scaleURLBase={props.scaleURLBase} />
+            }>
                 
                 <LoadedContentWrapper render={(
                     
