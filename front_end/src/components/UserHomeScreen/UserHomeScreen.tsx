@@ -44,6 +44,11 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                     
                     <div>
                         {props.scales.length === 0 && <EmptyContentMessage message="No scales have been created." />}
+                        
+                        {props.selectedScale && <header>
+                            <h1>{props.selectedScale.name}</h1>
+                        </header>}
+                        
                     </div>
                     
                 )} />

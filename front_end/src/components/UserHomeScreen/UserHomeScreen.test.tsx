@@ -1,5 +1,5 @@
 import UserHomeScreen from './UserHomeScreen';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 import IAction from '../../interfaces/IAction';
 
@@ -148,6 +148,25 @@ test("If user has no scales, UserHomeScreen will display an EmptyContentMessage,
 
 
 
+
+test.each([
+    ["test1"],
+    ["test2"]
+])("UserHomeScreen will display the name of the passed in selected scale, as a heading, in a header", (scaleName) => {
+    
+    const { container } = render(<UserHomeScreen { ...defaultProps } selectedScale={{ ...dummyScale, name: scaleName }} />);
+    
+    const header = container.querySelector("header");
+    expect(header).not.toBeNull();
+    
+    const heading = within(header).queryByText(scaleName);
+    expect(heading).not.toBeNull();
+    
+});
+
+
+
+
 // UserHomeScreen will pass UserNavBarLogicContainer to a NavigatableContentWrapper
 
 // UserHomeScreen will pass userService to the UserNavBarLogicContainer
@@ -167,8 +186,6 @@ test("If user has no scales, UserHomeScreen will display an EmptyContentMessage,
 // If a loading error is passed to the UserHomeScreen, it will pass this to the LoadedContentWrapper, through the errorMessage prop
 
 
-
-// UserHomeScreen will display the name of the passed in selected scale, as a heading
 
 
 
