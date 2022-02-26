@@ -13,7 +13,7 @@ import ScalePrimaryDisplay from '../ScalePrimaryDisplay/ScalePrimaryDisplay';
 
 interface IUserHomeScreenProps {
     userService:IUserService;
-    scales:IScale[];
+    scales?:IScale[];
     selectedScale?:IScale;
     scaleLoadingError?:string;
     
@@ -38,6 +38,8 @@ interface IUserHomeScreenProps {
 */
 const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
     
+    const isScaleStillLoading = (!props.scales || (!props.selectedScale && props.scales.length !== 0));
+    
     return (
         <div className='UserHomeScreen'>
             <NavigatableContentWrapper smallScreenWidthPixels={760} navigationBar={
@@ -49,10 +51,10 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                     scaleURLBase={props.scaleURLBase} />
             }>
                 
-                <LoadedContentWrapper render={(
+                <LoadedContentWrapper render={(isScaleStillLoading) ? undefined : (
                     
                     <div>
-                        {props.scales.length === 0 && <EmptyContentMessage message="No scales have been created." />}
+                        {props.scales && props.scales.length === 0 && <EmptyContentMessage message="No scales have been created." />}
                         
                         {props.selectedScale && <div>
                             
