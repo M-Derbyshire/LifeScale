@@ -18,10 +18,11 @@
         //Therefore, just set to 0 below
         .UserNavBarLogicContainer {
             margin-top: 10vh;
+            margin-left: 1em;
         }
         
         .DropdownContentBar .UserNavBarLogicContainer {
-            margin-top: inherit;
+            margin: inherit;
         }
         
     }
