@@ -58,7 +58,7 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                     <div>
                         {props.scales && props.scales.length === 0 && <EmptyContentMessage message="No scales have been created." />}
                         
-                        {props.selectedScale && <div>
+                        {props.selectedScale && <main>
                             
                             <header>
                                 <h1>{props.selectedScale.name}</h1>
@@ -78,7 +78,7 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                                 statistics={props.statistics}
                                 amendHistoryCallback={props.amendHistoryCallback} />
                             
-                        </div>}
+                        </main>}
                         
                     </div>
                     

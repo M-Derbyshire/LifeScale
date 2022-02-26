@@ -1,0 +1,29 @@
+@import '../../stdStyles/stdColors.scss';
+
+.UserHomeScreen {
+    
+    main > header {
+        color: $stdPrimaryTxtColor;
+        text-align: center;
+        font-size: 1.5em;
+    }
+    
+    main > * {
+        margin: 1em;
+    }
+    
+    .NavigatableContentWrapper {
+        
+        //Can't use :not to check not a child of dropdown wrapper (not a simle enough selector for it to select)
+        //Therefore, just set to 0 below
+        .UserNavBarLogicContainer {
+            margin-top: 10vh;
+        }
+        
+        .DropdownContentBar .UserNavBarLogicContainer {
+            margin-top: inherit;
+        }
+        
+    }
+    
+}
