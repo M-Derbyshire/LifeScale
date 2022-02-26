@@ -437,7 +437,23 @@ test("UserHomeScreen will pass the amendHistoryCallback to ScaleStatisticDisplay
 
 
 
-//Include header, but not nav, in the below
-// If scale is provided, UserHomeScreen will enclose it's content in a NavigatableContentWrapper, with a LoadedContentWrapper within that
+
+test("If scale is provided, UserHomeScreen will enclose it's content in a NavigatableContentWrapper, with a LoadedContentWrapper within that", () => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } /></Router>);
+    
+    const containingClassSelector = ".NavigatableContentWrapper .LoadedContentWrapper";
+    
+    const header = container.querySelector(`${containingClassSelector} header`);
+    const primaryDisplay = container.querySelector(`${containingClassSelector} .ScalePrimaryDisplay`);
+    const recordActionForm = container.querySelector(`${containingClassSelector} .RecordActionFormLogicContainer`);
+    const statDisplay = container.querySelector(`${containingClassSelector} .ScaleStatisticDisplay`);
+    
+    expect(header).not.toBeNull();
+    expect(primaryDisplay).not.toBeNull();
+    expect(recordActionForm).not.toBeNull();
+    expect(statDisplay).not.toBeNull();
+    
+});
 
 // If a loading error is passed to the UserHomeScreen, it will pass this to the LoadedContentWrapper, through the errorMessage prop
