@@ -8,8 +8,8 @@ interface IUserHomeScreenLogicContainerProps {
     scaleURLBase:string; //E.g. "scales" in "/scales/id1234"
     
     onSuccessfulLogout:()=>void; //Called after successful logout
-    editScaleCallback:()=>void; //Called by the Edit Scale button
-    amendHistoryCallback:()=>void; // The callback for the amend history button
+    editScaleCallback:(scaleID:string)=>void; //Called by the Edit Scale button
+    amendHistoryCallback:(scaleID:string)=>void; // The callback for the amend history button
 };
 
 interface IUserHomeScreenLogicContainerState {
