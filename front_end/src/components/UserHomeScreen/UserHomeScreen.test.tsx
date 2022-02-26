@@ -456,4 +456,25 @@ test("If scale is provided, UserHomeScreen will enclose it's content in a Naviga
     
 });
 
-// If a loading error is passed to the UserHomeScreen, it will pass this to the LoadedContentWrapper, through the errorMessage prop
+test.each([
+    ["test error 1"],
+    ["test error 2"]
+])("If a loading error is passed to the UserHomeScreen, it will pass this to the LoadedContentWrapper, through the errorMessage prop", (errorMessage) => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } scaleLoadingError={errorMessage} /></Router>);
+    
+    const containingClassSelector = ".LoadedContentWrapper";
+    
+    const header = container.querySelector(`${containingClassSelector} header`);
+    const primaryDisplay = container.querySelector(`${containingClassSelector} .ScalePrimaryDisplay`);
+    const recordActionForm = container.querySelector(`${containingClassSelector} .RecordActionFormLogicContainer`);
+    const statDisplay = container.querySelector(`${containingClassSelector} .ScaleStatisticDisplay`);
+    expect(header).toBeNull();
+    expect(primaryDisplay).toBeNull();
+    expect(recordActionForm).toBeNull();
+    expect(statDisplay).toBeNull();
+    
+    const contentWrapper = container.querySelector(".LoadedContentWrapper");
+    expect(within(contentWrapper).queryByText(errorMessage)).not.toBeNull();
+    
+});

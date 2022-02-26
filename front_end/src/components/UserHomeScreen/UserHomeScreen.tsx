@@ -53,7 +53,7 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                     scaleURLBase={props.scaleURLBase} />
             }>
                 
-                <LoadedContentWrapper render={(isScaleStillLoading) ? undefined : (
+                <LoadedContentWrapper errorMessage={props.scaleLoadingError} render={(isScaleStillLoading) ? undefined : (
                     
                     <div>
                         {props.scales && props.scales.length === 0 && <EmptyContentMessage message="No scales have been created." />}
