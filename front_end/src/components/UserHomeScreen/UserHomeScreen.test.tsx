@@ -1,5 +1,6 @@
 import UserHomeScreen from './UserHomeScreen';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter as Router } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 import IAction from '../../interfaces/IAction';
@@ -12,7 +13,14 @@ const dummyCategory1 = {
 	name: "testcat1",
 	color: "",
 	desiredWeight: 1,
-	actions: new Array<IAction>()
+	actions: [
+        {
+            id: "testAct2348743749874",
+            name: "testAct1",
+            weight: 1,
+            timespans: []
+        }
+    ]
 };
 
 const dummyCategory2 = {
@@ -20,7 +28,14 @@ const dummyCategory2 = {
 	name: "testcat2",
 	color: "",
 	desiredWeight: 1,
-	actions: new Array<IAction>()
+	actions: [
+        {
+            id: "testAct897432897497",
+            name: "testAct2",
+            weight: 1,
+            timespans: []
+        }
+    ]
 };
 
 const dummyCategory3 = {
@@ -28,7 +43,14 @@ const dummyCategory3 = {
 	name: "testcat3",
 	color: "",
 	desiredWeight: 1,
-	actions: new Array<IAction>()
+	actions: [
+        {
+            id: "testAct28438290842038",
+            name: "testAct3",
+            weight: 1,
+            timespans: []
+        }
+    ]
 }
 
 const dummyScale = {
@@ -312,11 +334,65 @@ test("UserHomeScreen will pass the currentBalanceItems to ScalePrimaryDisplay", 
 
 
 
-// UserHomeScreen will pass the userService to RecordActionFormLogicContainer
+test("UserHomeScreen will pass the userService to RecordActionFormLogicContainer", async () => {
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getAction = (actID, catID, scaleID) => dummyScale.categories[0].actions[0];
+	mockUserService.getCategory = (catID, scaleID) => dummyScale.categories[0];
+    mockUserService.createTimespan = jest.fn().mockResolvedValue({
+        id: "8247734298374982347",
+        date: new Date,
+        minuteCount: 1
+    });
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    const form = container.querySelector(".RecordActionFormLogicContainer form");
+    fireEvent.submit(form);
+    
+    await waitFor(() => expect(mockUserService.createTimespan).toHaveBeenCalled());
+    
+});
 
-// UserHomeScreen will pass the scale to RecordActionFormLogicContainer
+test("UserHomeScreen will pass the scale to RecordActionFormLogicContainer", () => {
+    
+    const mockUserService = { ...dummyUserService };
+    
+    const { container, queryByText } = render(<Router><UserHomeScreen { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    
+    const defaultCategoryOption = queryByText((text) => text.toLowerCase() === dummyScale.categories[0].name);
+    expect(defaultCategoryOption).not.toBeNull();
+    
+});
 
-// UserHomeScreen will pass the onSuccessfulTimespanSave callback to RecordActionFormLogicContainer
+test("UserHomeScreen will pass the onSuccessfulTimespanSave callback to RecordActionFormLogicContainer", async () => {
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getAction = (actID, catID, scaleID) => dummyScale.categories[0].actions[0];
+	mockUserService.getCategory = (catID, scaleID) => dummyScale.categories[0];
+    mockUserService.createTimespan = jest.fn().mockResolvedValue({
+		id: "testTimespan",
+		date: new Date().toString(),
+		minuteCount: 0
+	});
+    
+    const mockCallback = jest.fn();
+    
+    const { container } = render(<Router><UserHomeScreen 
+                                            { ...defaultProps } 
+                                            userService={mockUserService}
+                                            onSuccessfulTimespanSave={mockCallback} /></Router>);
+    
+    const form = container.querySelector(".RecordActionFormLogicContainer form");
+    fireEvent.submit(form);
+    
+    await waitFor(() => {
+        expect(mockUserService.createTimespan).toHaveBeenCalled();
+        expect(mockCallback).toHaveBeenCalled();
+    });
+    
+});
 
 
 

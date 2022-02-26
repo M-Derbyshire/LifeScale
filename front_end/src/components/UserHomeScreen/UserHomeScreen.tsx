@@ -9,6 +9,7 @@ import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
 import EmptyContentMessage from '../EmptyContentMessage/EmptyContentMessage';
 import UserNavBarLogicContainer from '../UserNavBar/UserNavBarLogicContainer';
 import ScalePrimaryDisplay from '../ScalePrimaryDisplay/ScalePrimaryDisplay';
+import RecordActionFormLogicContainer from '../RecordActionForm/RecordActionFormLogicContainer';
 
 
 interface IUserHomeScreenProps {
@@ -66,6 +67,11 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                                 desiredBalanceItems={props.desiredBalanceItems}
                                 currentBalanceItems={props.currentBalanceItems}
                                 editScaleCallback={props.editScaleCallback} />
+                            
+                            <RecordActionFormLogicContainer 
+                                userService={props.userService}
+                                scale={props.selectedScale}
+                                onSuccessfulSave={props.onSuccessfulTimespanSave} />
                             
                         </div>}
                         
