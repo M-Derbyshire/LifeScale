@@ -10,6 +10,7 @@ import EmptyContentMessage from '../EmptyContentMessage/EmptyContentMessage';
 import UserNavBarLogicContainer from '../UserNavBar/UserNavBarLogicContainer';
 import ScalePrimaryDisplay from '../ScalePrimaryDisplay/ScalePrimaryDisplay';
 import RecordActionFormLogicContainer from '../RecordActionForm/RecordActionFormLogicContainer';
+import ScaleStatisticDisplay from '../ScaleStatisticDisplay/ScaleStatisticDisplay';
 
 
 interface IUserHomeScreenProps {
@@ -72,6 +73,10 @@ const UserHomeScreen:FC<IUserHomeScreenProps> = (props) => {
                                 userService={props.userService}
                                 scale={props.selectedScale}
                                 onSuccessfulSave={props.onSuccessfulTimespanSave} />
+                            
+                            <ScaleStatisticDisplay 
+                                statistics={props.statistics}
+                                amendHistoryCallback={props.amendHistoryCallback} />
                             
                         </div>}
                         

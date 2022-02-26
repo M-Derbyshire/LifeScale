@@ -396,9 +396,44 @@ test("UserHomeScreen will pass the onSuccessfulTimespanSave callback to RecordAc
 
 
 
-// UserHomeScreen will pass the statistics to ScaleStatisticDisplay
+test("UserHomeScreen will pass the statistics to ScaleStatisticDisplay", () => {
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } /></Router>);
+    
+    const statDisplay = container.querySelector(".ScaleStatisticDisplay");
+    
+    
+    const confirmStatIsDisplayed = (stat) => {
+        const statRegex = new RegExp(`.*${stat.label}.*${stat.percentage}.*`);
+        const statElement = within(statDisplay).queryByText(stat.label, { exact: false })?.closest("li");
+        expect(statElement).not.toBeUndefined();
+    };
+    
+    dummyStatistics.forEach(categoryStat => {
+        
+        confirmStatIsDisplayed(categoryStat);
+        
+        categoryStat.children.forEach(actionStat => confirmStatIsDisplayed(actionStat));
+        
+    });
+    
+});
 
-// UserHomeScreen will pass the amendHistoryCallback to ScaleStatisticDisplay
+test("UserHomeScreen will pass the amendHistoryCallback to ScaleStatisticDisplay", () => {
+    
+    const mockCallback = jest.fn();
+    
+    const { container } = render(<Router><UserHomeScreen { ...defaultProps } amendHistoryCallback={mockCallback} /></Router>);
+    
+    
+    const statDisplay = container.querySelector(".ScaleStatisticDisplay");
+    const amendButton = within(statDisplay).queryByRole("button", { name: /amend/i });
+    
+    fireEvent.click(amendButton);
+    
+    expect(mockCallback).toHaveBeenCalled();
+    
+});
 
 
 
