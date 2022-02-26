@@ -5,6 +5,7 @@ import UserHomeScreen from './UserHomeScreen';
 
 interface IUserHomeScreenLogicContainerProps {
     userService:IUserService;
+    selectedScaleID?:string;
     scaleURLBase:string; //E.g. "scales" in "/scales/id1234"
     
     onSuccessfulLogout:()=>void; //Called after successful logout
