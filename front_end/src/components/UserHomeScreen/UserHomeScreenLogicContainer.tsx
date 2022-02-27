@@ -91,8 +91,12 @@ export default class UserHomeScreenLogicContainer
                 const actionPercentageNum = action.timespans.reduce(
                     (acc, timespan) => {
                         const weightedMinuteCount = (timespan.minuteCount * action.weight);
-                        const percentageNum = (weightedMinuteCount / totalMinutes) * 100; //See https://www.bbc.co.uk/bitesize/guides/z9sgdxs/revision/3
-                        return (acc + percentageNum)
+                        
+                        let percentageNum = 0;
+                        if(totalMinutes > 0)
+                            percentageNum = (weightedMinuteCount / totalMinutes) * 100; //See https://www.bbc.co.uk/bitesize/guides/z9sgdxs/revision/3
+                        
+                        return (acc + percentageNum);
                     }, 
                     0
                 );
