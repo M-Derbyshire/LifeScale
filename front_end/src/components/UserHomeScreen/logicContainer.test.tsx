@@ -159,6 +159,25 @@ test.each([
     
 });
 
+test.each([
+    ["test1"],
+    ["test2"]
+])("UserHomeScreenLogicContainer will pass scaleURLBase prop to UserHomeScreen", (baseUrl) => {
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } scaleURLBase={baseUrl} /></Router>);
+    
+    
+    dummyUser.scales.forEach(scale => {
+        
+        const link = screen.getByRole("link", { name: scale.name });
+        
+        const hrefRegex = new RegExp(`.*${baseUrl}.*${scale.id}.*`);
+        expect(link).toHaveAttribute("href", expect.stringMatching(hrefRegex));
+        
+    });
+    
+});
+
 
 
 // use test.each, with expected results
