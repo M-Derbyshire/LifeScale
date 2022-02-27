@@ -33,6 +33,21 @@ test.each([
 	
 });
 
+test.each([
+	[100.501],
+	[20.001],
+	[1.123]
+])("PercentageStatistic will cut the given percentage to 2 decimal places", (percentage) => {
+	
+	render(<PercentageStatistic statistic={{ ...dummyStatistic, percentage }} />)
+	
+	//The plus, before percentage is transormed, turns it back into a number, so no trailing zeros (e.g. 1.10)
+	const percentElem = screen.getByText((+percentage.toFixed(2)) + "%");
+	
+	expect(percentElem).not.toBeNull();
+	
+});
+
 test("PercentageStatistic will display the given children in a list of PercentageStatistics", () => {
 	
 	const children = [
