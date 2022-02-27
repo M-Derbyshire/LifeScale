@@ -1,7 +1,8 @@
 import UserHomeScreenLogicContainer from './UserHomeScreenLogicContainer';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
+import { access } from 'fs';
 
 
 const stdScaleLoadError = "Unable to load the selected scale.";
@@ -180,8 +181,90 @@ test.each([
 
 
 
-// use test.each, with expected results
-// UserHomeScreenLogicContainer will calculate the statistics percentages for categories and actions, and pass them to UserHomeScreen
+
+
+test("UserHomeScreenLogicContainer will calculate the statistics percentages for categories and actions, and pass them to UserHomeScreen", () => {
+    
+    // We want to create some timespan details (minute counts, weights, and the expected percentages)
+    
+    //statisticDetails (total of 200)
+    // (we're purposefully not wanting to cause decimals here, so we don't fail due to decimal rounding decisons on the display side)
+    const scaleStatistics = [
+        //categories
+        {
+            expectedPercentageTotal: 40,
+            actions: [
+                //Actions with arrays of timespan minutes
+                { weight: 1, expectedPercentage: 30, actionTimespans: [5, 20, 5] },
+                { weight: 2, expectedPercentage: 10, actionTimespans: [ 5 ] }
+            ]
+        },
+        {
+            expectedPercentageTotal: 60,
+            actions: [
+                { weight: 1, expectedPercentage: 30, actionTimespans: [ 10, 5, 5, 10 ] },
+                { weight: 0.5, expectedPercentage: 30, actionTimespans: [ 20, 20, 20 ] }
+            ]
+        }
+    ];
+    
+    
+    // Now setup the mockUserService, to return the above, mapped into proper category/action/timespan objects
+    const mockScale = {
+        ...dummyUser.scales[0],
+        categories: scaleStatistics.map((categoryStats, i) => ({
+            id: "testCat" + i,
+            name: "testCat" + i,
+            color: "red",
+            desiredWeight: 1,
+            actions: categoryStats.actions.map((actionStat, i) => ({
+                id: "testAct" + i,
+                name: "testAct" + i,
+                weight: actionStat.weight,
+                timespans: actionStat.actionTimespans.map((minuteCount, i) => ({
+                    id: "testTS" + i,
+                    date: new Date(),
+                    minuteCount
+                }))
+            }))
+        }))
+    };
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    //Now we need to create a list of the expected percentages (category and statistic), in expected display order
+    const expectedPercentages = scaleStatistics.reduce((categoryAcc, categoryStat) => {
+        
+        return [
+            ...categoryAcc, 
+            categoryStat.expectedPercentageTotal, 
+            ...categoryStat.actions.reduce((actionAcc, actionStat) => {
+                
+                return [
+                    ...actionAcc,
+                    actionStat.expectedPercentage
+                ];
+                
+            }, new Array<number>())
+        ];
+        
+    }, new Array<number>());
+    
+    
+    
+    //Now we can actually setup the test
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    const statisticDisplay = container.querySelector(".ScaleStatisticDisplay");
+    const percentageDisplays = within(statisticDisplay).queryAllByText(/\%/);
+    
+    
+    expect(percentageDisplays.length).toBe(expectedPercentages.length);
+    expectedPercentages.forEach((expectedPercentage, i) => expect(percentageDisplays[i].textContent).toEqual(`${expectedPercentage}%`));
+    
+});
 
 // UserHomeScreenLogicContainer will calculate the desiredBalanceItems, and pass them to UserHomeScreen
 

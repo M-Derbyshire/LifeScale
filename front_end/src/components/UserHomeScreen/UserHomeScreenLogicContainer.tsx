@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import IUserService from '../../interfaces/api_access/IUserService';
 import IScale from '../../interfaces/IScale';
+import IPercentageStatistic from '../../interfaces/UI/IPercentageStatistic';
 import UserHomeScreen from './UserHomeScreen';
 
 
@@ -64,9 +65,68 @@ export default class UserHomeScreenLogicContainer
     }
     
     
+    
+    generateCategoryPercentageStatisticsFromScale(scale:IScale):IPercentageStatistic[]
+    {   
+        //Firstly, we need to get the total, so we can figure out percentages of it
+        const totalMinutes = scale.categories.reduce(
+            (catAcc, category) => catAcc + category.actions.reduce(
+                (actAcc, action) => actAcc + action.timespans.reduce(
+                    (tsAcc, timespan) => (tsAcc + (timespan.minuteCount * action.weight)),
+                    0
+                ),
+                0
+            ), 
+            0
+        );
+        
+        
+        // Now we make IPercentageStatistic objects, with the category/action percentages
+        return scale.categories.map((category) => {
+            
+            let categoryPercentage = 0;
+            
+            const actionPercentages = category.actions.map(action => {
+                
+                const actionPercentageNum = action.timespans.reduce(
+                    (acc, timespan) => {
+                        const weightedMinuteCount = (timespan.minuteCount * action.weight);
+                        const percentageNum = (weightedMinuteCount / totalMinutes) * 100; //See https://www.bbc.co.uk/bitesize/guides/z9sgdxs/revision/3
+                        return (acc + percentageNum)
+                    }, 
+                    0
+                );
+                
+                categoryPercentage += actionPercentageNum;
+                
+                return {
+                    id: action.id,
+                    label: action.name,
+                    percentage: actionPercentageNum
+                };
+                
+            });
+            
+            return {
+                id: category.id,
+                label: category.name,
+                percentage: categoryPercentage,
+                children: actionPercentages
+            };
+            
+        });
+    }
+    
+    
+    
+    
+    
+    
+    
     render()
     {
-        
+        const statistics = 
+            (!this.state.selectedScale) ? [] : this.generateCategoryPercentageStatisticsFromScale(this.state.selectedScale);
         
         return (
             <div className="UserHomeScreenLogicContainer">
@@ -87,7 +147,7 @@ export default class UserHomeScreenLogicContainer
                     
                     desiredBalanceItems={[]}
                     currentBalanceItems={[]}
-                    statistics={[]} />
+                    statistics={statistics} />
             </div>
         );
     }
