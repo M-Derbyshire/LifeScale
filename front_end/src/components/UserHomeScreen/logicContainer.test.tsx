@@ -133,9 +133,31 @@ test("UserHomeScreenLogicContainer will pass down a scale loading error, if erro
 
 
 
-// UserHomeScreenLogicContainer will pass the editUserUrl to UserHomeScreen
+test.each([
+    ["/edit/test1"],
+    ["/edit/test2"]
+])("UserHomeScreenLogicContainer will pass the editUserUrl to UserHomeScreen", (editUrl) => {
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } editUserURL={editUrl} /></Router>);
+    
+    const editUserLink = container.querySelector(`.UserNavBarLogicContainer a[href="${editUrl}"]`);
+    
+    expect(editUserLink).not.toBeNull();
+    
+});
 
-// UserHomeScreenLogicContainer will pass the createUserUrl to UserHomeScreen
+test.each([
+    ["/create/test1"],
+    ["/create/test2"]
+])("UserHomeScreenLogicContainer will pass the createScaleUrl to UserHomeScreen", (createUrl) => {
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } createScaleURL={createUrl} /></Router>);
+    
+    const createUserLink = container.querySelector(`.UserNavBarLogicContainer a[href="${createUrl}"]`);
+    
+    expect(createUserLink).not.toBeNull();
+    
+});
 
 
 

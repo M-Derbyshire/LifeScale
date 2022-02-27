@@ -250,7 +250,7 @@ test("UserHomeScreen will pass onSuccessfulLogout prop to UserNavBarLogicContain
 test.each([
     ["/edit/test1"],
     ["/edit/test2"]
-])("UserHomeScreen will pass editUserURL prop to UserNavBarLogicContainer", async (editUrl) => {
+])("UserHomeScreen will pass editUserURL prop to UserNavBarLogicContainer", (editUrl) => {
     
     const { container } = render(<Router><UserHomeScreen { ...defaultProps } editUserURL={editUrl} /></Router>);
     
@@ -263,7 +263,7 @@ test.each([
 test.each([
     ["/create/test1"],
     ["/create/test2"]
-])("UserHomeScreen will pass createScaleURL prop to UserNavBarLogicContainer", async (createUrl) => {
+])("UserHomeScreen will pass createScaleURL prop to UserNavBarLogicContainer", (createUrl) => {
     
     const { container } = render(<Router><UserHomeScreen { ...defaultProps } createScaleURL={createUrl} /></Router>);
     
@@ -276,7 +276,7 @@ test.each([
 test.each([
     ["test1"],
     ["test2"]
-])("UserHomeScreen will pass scaleURLBase prop to UserNavBarLogicContainer", async (baseUrl) => {
+])("UserHomeScreen will pass scaleURLBase prop to UserNavBarLogicContainer", (baseUrl) => {
     
     const { container } = render(<Router><UserHomeScreen { ...defaultProps } scaleURLBase={baseUrl} /></Router>);
     
