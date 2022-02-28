@@ -5,6 +5,7 @@
 	
 	.wrapperContentContainer {
 		display: flex;
+		margin: 1em;
 	}
 	
 	.wrapperContentContainer:not(.smallScreenWidth) {
@@ -16,6 +17,7 @@
 		.navigationBarContainer {
 			width: 25vw;
 			flex-shrink: 0;
+			padding-top: 10vh;
 		}
 		
 		.mainContentContainer {

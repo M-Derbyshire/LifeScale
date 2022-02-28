@@ -7,57 +7,12 @@ import { access } from 'fs';
 
 const stdScaleLoadError = "Unable to load the selected scale.";
 
-const dummyCategory1 = {
-	id: "testCat23132948284",
-	name: "testcat1",
-	color: "",
-	desiredWeight: 1,
-	actions: [
-        {
-            id: "testAct2348743749874",
-            name: "testAct1",
-            weight: 1,
-            timespans: []
-        }
-    ]
-};
-
-const dummyCategory2 = {
-	id: "testCatd3482384092348",
-	name: "testcat2",
-	color: "",
-	desiredWeight: 1,
-	actions: [
-        {
-            id: "testAct897432897497",
-            name: "testAct2",
-            weight: 1,
-            timespans: []
-        }
-    ]
-};
-
-const dummyCategory3 = {
-	id: "testCat32482934809438",
-	name: "testcat3",
-	color: "",
-	desiredWeight: 1,
-	actions: [
-        {
-            id: "testAct28438290842038",
-            name: "testAct3",
-            weight: 1,
-            timespans: []
-        }
-    ]
-}
-
 const dummyScale = {
 	id: "testScale",
 	name: "testscale",
 	usesTimespans: true,
 	displayDayCount: 7,
-	categories: [dummyCategory1, dummyCategory2, dummyCategory3]
+	categories: []
 }
 
 const dummyScales = [ {...dummyScale, name: "scale1", id: "testScale1" }, {...dummyScale, name: "scale2", id: "testScale2" } ];
@@ -69,6 +24,51 @@ const dummyUser = {
 	surname: "test",
 	scales: dummyScales
 };
+
+
+
+
+// ------- Dummy data for testing statistics ------------------------------------------------------
+
+//statisticDetails (total of 200)
+// (we're purposefully not wanting to cause decimals here, so we don't fail due to decimal rounding decisons on the display side)
+const dummyTestStatistics = [
+    //categories
+    {
+        expectedPercentageTotal: 40,
+        actions: [
+            //Actions with arrays of timespan minutes
+            { weight: 1, expectedPercentage: 30, actionTimespans: [5, 20, 5] },
+            { weight: 2, expectedPercentage: 10, actionTimespans: [ 5 ] }
+        ]
+    },
+    {
+        expectedPercentageTotal: 60,
+        actions: [
+            { weight: 1, expectedPercentage: 30, actionTimespans: [ 10, 5, 5, 10 ] },
+            { weight: 0.5, expectedPercentage: 30, actionTimespans: [ 20, 20, 20 ] }
+        ]
+    }
+];
+
+const dummyStatisticTestCategories = dummyTestStatistics.map((categoryStats, i) => ({
+    id: "testCat" + i,
+    name: "testCat" + i,
+    color: "red",
+    desiredWeight: 1,
+    actions: categoryStats.actions.map((actionStat, i) => ({
+        id: "testAct" + i,
+        name: "testAct" + i,
+        weight: actionStat.weight,
+        timespans: actionStat.actionTimespans.map((minuteCount, i) => ({
+            id: "testTS" + i,
+            date: new Date(),
+            minuteCount
+        }))
+    }))
+}));
+
+// ------------------------------------------------------------------------------------------------------
 
 
 
@@ -89,6 +89,7 @@ const defaultProps = {
     editScaleCallback: dummyCallbackSingleParam,
     amendHistoryCallback: dummyCallbackSingleParam,
 };
+
 
 
 
@@ -185,49 +186,9 @@ test.each([
 
 test("UserHomeScreenLogicContainer will calculate the statistics percentages for categories and actions, and pass them to UserHomeScreen", () => {
     
-    // We want to create some timespan details (minute counts, weights, and the expected percentages)
-    
-    //statisticDetails (total of 200)
-    // (we're purposefully not wanting to cause decimals here, so we don't fail due to decimal rounding decisons on the display side)
-    const scaleStatistics = [
-        //categories
-        {
-            expectedPercentageTotal: 40,
-            actions: [
-                //Actions with arrays of timespan minutes
-                { weight: 1, expectedPercentage: 30, actionTimespans: [5, 20, 5] },
-                { weight: 2, expectedPercentage: 10, actionTimespans: [ 5 ] }
-            ]
-        },
-        {
-            expectedPercentageTotal: 60,
-            actions: [
-                { weight: 1, expectedPercentage: 30, actionTimespans: [ 10, 5, 5, 10 ] },
-                { weight: 0.5, expectedPercentage: 30, actionTimespans: [ 20, 20, 20 ] }
-            ]
-        }
-    ];
-    
-    
-    // Now setup the mockUserService, to return the above, mapped into proper category/action/timespan objects
     const mockScale = {
         ...dummyUser.scales[0],
-        categories: scaleStatistics.map((categoryStats, i) => ({
-            id: "testCat" + i,
-            name: "testCat" + i,
-            color: "red",
-            desiredWeight: 1,
-            actions: categoryStats.actions.map((actionStat, i) => ({
-                id: "testAct" + i,
-                name: "testAct" + i,
-                weight: actionStat.weight,
-                timespans: actionStat.actionTimespans.map((minuteCount, i) => ({
-                    id: "testTS" + i,
-                    date: new Date(),
-                    minuteCount
-                }))
-            }))
-        }))
+        categories: dummyStatisticTestCategories
     };
     
     const mockUserService = { ...dummyUserService };
@@ -235,7 +196,7 @@ test("UserHomeScreenLogicContainer will calculate the statistics percentages for
     mockUserService.getScale = (id:string) => mockScale;
     
     //Now we need to create a list of the expected percentages (category and statistic), in expected display order
-    const expectedPercentages = scaleStatistics.reduce((categoryAcc, categoryStat) => {
+    const expectedPercentages = dummyTestStatistics.reduce((categoryAcc, categoryStat) => {
         
         return [
             ...categoryAcc, 
@@ -266,9 +227,9 @@ test("UserHomeScreenLogicContainer will calculate the statistics percentages for
     
 });
 
-// UserHomeScreenLogicContainer will calculate the desiredBalanceItems, and pass them to UserHomeScreen
+// UserHomeScreenLogicContainer will map the category percentages to currentBalanceItems, and pass them to UserHomeScreen
 
-// UserHomeScreenLogicContainer will calculate the currentBalanceItems, and pass them to UserHomeScreen
+// UserHomeScreenLogicContainer will map the desired weights of categories to desiredBalanceItems, and pass them to UserHomeScreen
 
 
 
