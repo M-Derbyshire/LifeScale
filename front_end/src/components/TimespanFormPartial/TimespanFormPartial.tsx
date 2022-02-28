@@ -16,7 +16,9 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 	//Number type inputs can be an issue with react. Also tried external modules, but didn't work in the way we wanted
 	//Instead, will use a regex and validation on text inputs. Also, using the below state to allow for things such as 
 	//empty values in the fields (if input value is valid, the minute state is set. Otherwise, only the display value is set).
-	//The form should then fail to submit, if correctlly formatted data is not provided
+	//The form should then fail to submit, if correctlly formatted data is not provided.
+	//At the end of they day, the components/interfaces higher up need to be decoupled from this, and external modules did not 
+	//properly handle minute input and hour input being bound to the same data. This is the best solution found for now.
 	const validNumberPattern = "[0-9]+\.?[0-9]{0,2}"; //up to 2 decimal places
 	const [minuteDisplayValue, setMinuteDisplayValue] = useState(props.minutes.toFixed(0));
 	const [hourDisplayValue, setHourDisplayValue] = useState((props.minutes / 60).toFixed(2));

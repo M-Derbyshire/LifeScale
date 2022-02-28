@@ -90,7 +90,6 @@ export default class RecordActionFormLogicContainer
 			})
 				.then(timespan => {
 					this.setState({ 
-						...this.getBlankFormData(),
 						goodSaveMessage 
 					});
 					
