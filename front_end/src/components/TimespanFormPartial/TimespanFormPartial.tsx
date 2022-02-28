@@ -35,6 +35,7 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 					className="timespanMinuteInput"
 					pattern={validNumberPattern}
 					value={minuteDisplayValue}
+					size={6}
 					onChange={(e) => {
 						if(e.target.validity.valid)
 						{
@@ -55,6 +56,7 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 					className="timespanHourInput"
 					pattern={validNumberPattern}
 					value={hourDisplayValue}
+					size={6}
 					onChange={(e) => {
 						if(e.target.validity.valid)
 						{
