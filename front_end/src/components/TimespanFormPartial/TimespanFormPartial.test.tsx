@@ -48,30 +48,8 @@ test("TimespanFormPartial will not allow minutes to be a negative number (and wi
 	
 	fireEvent.change(minuteInput, { target: { value: newVal } });
 	
-	expect(mockCB).toHaveBeenCalledWith(0);
 	expect(mockCB).not.toHaveBeenCalledWith(newVal);
 });
-
-test.each([
-	[1.2, 1],
-	[1.5, 2],
-	[1.7, 2]
-])("TimespanFormPartial will not allow minutes to be a decimal number (will round the number instead)", (newVal, expectedVal) => {
-	
-	const mockCB = jest.fn();
-	
-	const { container } = render(<TimespanFormPartial minutes={1} setMinutes={mockCB} />);
-	
-	const minuteInput = container.querySelector(".timespanMinuteInput");
-	
-	fireEvent.change(minuteInput, { target: { value: newVal } });
-	
-	expect(mockCB).not.toHaveBeenCalledWith(newVal);
-	expect(mockCB).toHaveBeenCalledWith(expectedVal);
-});
-
-
-
 
 
 test.each([
@@ -119,23 +97,5 @@ test("TimespanFormPartial will not allow hours to be a negative number (and will
 	
 	fireEvent.change(hourInput, { target: { value: newVal } });
 	
-	expect(mockCB).toHaveBeenCalledWith(0);
 	expect(mockCB).not.toHaveBeenCalledWith(newVal);
-});
-
-test.each([
-	[1.51, 91], //will round up
-	[1.24, 74], //will round down
-])("TimespanFormPartial will not allow minutes result from hours onChange to be a decimal (will round instead)", (newVal, expectedVal) => {
-	
-	const mockCB = jest.fn();
-	
-	const { container } = render(<TimespanFormPartial minutes={1} setMinutes={mockCB} />);
-	
-	const hourInput = container.querySelector(".timespanHourInput");
-	
-	fireEvent.change(hourInput, { target: { value: newVal } });
-	
-	expect(mockCB).not.toHaveBeenCalledWith(newVal);
-	expect(mockCB).toHaveBeenCalledWith(expectedVal);
 });
