@@ -306,6 +306,40 @@ test("In RecordActionFormLogicContainer, if the category has no actions, the sel
 	
 });
 
+test("In RecordActionFormLogicContainer, if the category is changed, the selected action will become the first action of the category", () => {
+	
+	const scale = { ...dummyScaleUsesTimespans, categories: [{
+		id: "testCat23132948284",
+		name: "work",
+		color: "red",
+		desiredWeight: 1,
+		actions:[]
+	},{
+		id: "testCat42384727",
+		name: "life",
+		color: "red",
+		desiredWeight: 1,
+		actions:[{
+			id: "testAct87348273",
+			name: "testAct",
+			weight: 1,
+			timespans: []
+		}]
+	}] };
+	
+	const { container } = render(<RecordActionFormLogicContainer
+									userService={new TestingDummyUserService()}
+									scale={scale} />);
+	
+	const categorySelect = container.querySelector(".categorySelect");
+	const actionSelect = container.querySelector(".actionSelect");
+	
+	userEvent.selectOptions(categorySelect, scale.categories[1].name);
+	
+	expect(actionSelect.value).toBe(scale.categories[1].actions[0].id);
+	
+});
+
 
 test("RecordActionFormLogicContainer will pass the successful save message to RecordActionForm to be rendered", async () => {
 	

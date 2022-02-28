@@ -110,7 +110,18 @@ export default class RecordActionFormLogicContainer
 		const formItem = {
 			...this.state,
 			categories: this.props.scale.categories,
-			setSelectedCategoryID: (selectedCategoryID:string) => this.setState({ selectedCategoryID }),
+			setSelectedCategoryID: (selectedCategoryID:string) => {
+				//We also want to set the action ID to the first action, if one available
+				let selectedActionID = "";
+				const selectedCategory = this.props.scale.categories.find(cat => cat.id === selectedCategoryID);
+				if(selectedCategory && selectedCategory.actions.length > 0)
+					selectedActionID = selectedCategory.actions[0].id;
+				
+				this.setState({ 
+					selectedCategoryID, 
+					selectedActionID
+				})
+			},
 			setSelectedActionID: (selectedActionID:string) => this.setState({ selectedActionID }),
 			setTimespan: (timespan:ITimespan) => this.setState({ timespan }),
 			usesTimespans: this.props.scale.usesTimespans,
