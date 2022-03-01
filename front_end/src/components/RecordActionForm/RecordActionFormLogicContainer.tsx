@@ -16,6 +16,8 @@ interface IRecordActionFormLogicContainerState {
 	selectedActionID:string;
 	
 	timespan:ITimespan;
+	minuteDisplayValue:string;
+	hourDisplayValue:string;
 	
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
@@ -42,15 +44,20 @@ export default class RecordActionFormLogicContainer
 		const selectedAction = 
 			(selectedCategory && selectedCategory.actions.length > 0) ? selectedCategory.actions[0] : undefined;
 		
+		const defaultMinuteCount = 1;
 		
 		return {
 			selectedCategoryID: (selectedCategory) ? selectedCategory.id : "",
 			selectedActionID: (selectedAction) ? selectedAction.id : "",
+			
 			timespan: {
 				id: "",
-				minuteCount: 1,
+				minuteCount: defaultMinuteCount,
 				date: new Date()
 			},
+			minuteDisplayValue: defaultMinuteCount.toString(),
+			hourDisplayValue: (defaultMinuteCount / 60).toFixed(2),
+			
 			badSaveErrorMessage: undefined,
 			goodSaveMessage: undefined
 		};
@@ -123,6 +130,8 @@ export default class RecordActionFormLogicContainer
 			},
 			setSelectedActionID: (selectedActionID:string) => this.setState({ selectedActionID }),
 			setTimespan: (timespan:ITimespan) => this.setState({ timespan }),
+			setMinuteDisplayValue: (value:string) => this.setState({ minuteDisplayValue: value }),
+			setHourDisplayValue: (value:string) => this.setState({ hourDisplayValue: value }),
 			usesTimespans: this.props.scale.usesTimespans,
 			onSubmit: this.handleSubmit.bind(this)
 		};

@@ -10,7 +10,13 @@ test.each([
 	[90]
 ])("TimespanFormPartial will display the given minute count", (mins) => {
 	
-	const { container } = render(<TimespanFormPartial minutes={mins} setMinutes={emptySetState} />);
+	const { container } = render(<TimespanFormPartial 
+									minutes={mins} 
+									setMinutes={emptySetState} 
+									minuteDisplayValue={mins.toString()}
+									setMinuteDisplayValue={emptySetState}
+									hourDisplayValue=""
+									setHourDisplayValue={emptySetState} />);
 	
 	const minuteInput = container.querySelector(".timespanMinuteInput");
 	
@@ -27,7 +33,13 @@ test.each([
 	
 	const mockSetState = jest.fn();
 	
-	const { container } = render(<TimespanFormPartial minutes={0} setMinutes={mockSetState} />);
+	const { container } = render(<TimespanFormPartial 
+									minutes={0} 
+									setMinutes={mockSetState}
+									minuteDisplayValue={"0"}
+									setMinuteDisplayValue={emptySetState}
+									hourDisplayValue=""
+									setHourDisplayValue={emptySetState}  />);
 	
 	const minuteInput = container.querySelector(".timespanMinuteInput");
 	
@@ -42,7 +54,13 @@ test("TimespanFormPartial will not allow minutes to be a negative number (and wi
 	const mockCB = jest.fn();
 	const newVal = -1;
 	
-	const { container } = render(<TimespanFormPartial minutes={1} setMinutes={mockCB} />);
+	const { container } = render(<TimespanFormPartial 
+									minutes={1} 
+									setMinutes={mockCB}
+									minuteDisplayValue={"1"}
+									setMinuteDisplayValue={emptySetState}
+									hourDisplayValue=""
+									setHourDisplayValue={emptySetState}  />);
 	
 	const minuteInput = container.querySelector(".timespanMinuteInput");
 	
@@ -57,13 +75,19 @@ test.each([
 	[240],
 	[350],
 	[90]
-])("TimespanFormPartial will display the hour count, based on the minutes, to 2 decimal places", (mins) => {
+])("TimespanFormPartial will display the minute count", (minutes) => {
 	
-	const { container } = render(<TimespanFormPartial minutes={mins} setMinutes={emptySetState} />);
+	const { container } = render(<TimespanFormPartial 
+									minutes={minutes} 
+									setMinutes={emptySetState}
+									minuteDisplayValue={minutes.toString()}
+									setMinuteDisplayValue={emptySetState}
+									hourDisplayValue={""}
+									setHourDisplayValue={emptySetState}  />);
 	
-	const hourInput = container.querySelector(".timespanHourInput");
+	const minuteInput = container.querySelector(".timespanMinuteInput");
 	
-	expect(hourInput.value).toEqual((mins / 60).toFixed(2).toString());
+	expect(minuteInput.value).toEqual(minutes.toString());
 	
 });
 
@@ -72,17 +96,44 @@ test.each([
 	[240],
 	[350],
 	[90]
-])("TimespanFormPartial will call the setMinutes prop with the hour value, multiplied by 60, when setting the hour input", (newMins) => {
+])("TimespanFormPartial will display the hour count", (hours) => {
 	
-	const mockSetState = jest.fn();
-	
-	const { container } = render(<TimespanFormPartial minutes={0} setMinutes={mockSetState} />);
+	const { container } = render(<TimespanFormPartial 
+									minutes={1} 
+									setMinutes={emptySetState}
+									minuteDisplayValue={"1"}
+									setMinuteDisplayValue={emptySetState}
+									hourDisplayValue={hours.toFixed(2)}
+									setHourDisplayValue={emptySetState}  />);
 	
 	const hourInput = container.querySelector(".timespanHourInput");
 	
-	fireEvent.change(hourInput, { target: { value: newMins } });
+	expect(hourInput.value).toEqual(hours.toFixed(2));
 	
-	expect(mockSetState).toHaveBeenCalledWith(newMins * 60);
+});
+
+test.each([
+	[120],
+	[240],
+	[350],
+	[90]
+])("TimespanFormPartial will call the setMinutes prop with the hour value, multiplied by 60, when setting the hour input", (newHours) => {
+	
+	const mockSetState = jest.fn();
+	
+	const { container } = render(<TimespanFormPartial 
+									minutes={0} 
+									setMinutes={mockSetState}
+									minuteDisplayValue={"0"}
+									setMinuteDisplayValue={emptySetState}
+									hourDisplayValue={""}
+									setHourDisplayValue={emptySetState} />);
+	
+	const hourInput = container.querySelector(".timespanHourInput");
+	
+	fireEvent.change(hourInput, { target: { value: newHours } });
+	
+	expect(mockSetState).toHaveBeenCalledWith(newHours * 60);
 	
 });
 
@@ -91,7 +142,13 @@ test("TimespanFormPartial will not allow hours to be a negative number (and will
 	const mockCB = jest.fn();
 	const newVal = -1;
 	
-	const { container } = render(<TimespanFormPartial minutes={1} setMinutes={mockCB} />);
+	const { container } = render(<TimespanFormPartial 
+									minutes={1} 
+									setMinutes={mockCB}
+									minuteDisplayValue={"0"}
+									setMinuteDisplayValue={emptySetState}
+									hourDisplayValue={""}
+									setHourDisplayValue={emptySetState} />);
 	
 	const hourInput = container.querySelector(".timespanHourInput");
 	

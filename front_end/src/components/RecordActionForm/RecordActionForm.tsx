@@ -99,10 +99,14 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						
 						{this.props.recordedAction.usesTimespans && <TimespanFormPartial 
 							minutes={this.props.recordedAction.timespan.minuteCount}
+							minuteDisplayValue={this.props.recordedAction.minuteDisplayValue}
+							hourDisplayValue={this.props.recordedAction.hourDisplayValue}
 							setMinutes={(mins:number) => this.props.recordedAction.setTimespan({
 								...this.props.recordedAction.timespan, 
 								minuteCount: mins
-							})} />}
+							})}
+							setMinuteDisplayValue={this.props.recordedAction.setMinuteDisplayValue}
+							setHourDisplayValue={this.props.recordedAction.setHourDisplayValue} />}
 						
 						
 						<input type="submit" disabled={disableSubmit} value="Record Action" />

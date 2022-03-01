@@ -2,6 +2,7 @@ import RecordActionFormLogicContainer from './RecordActionFormLogicContainer';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
+import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 
 
 const dummyScaleUsesTimespans = {
@@ -116,6 +117,7 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	
 	const newDateValue = "2010-12-01";
 	const newMinuteValue = 150;
+	const invalidNumberValue = "not a number";
 	const expectedCategory = scale.categories[1];
 	const expectedAction = scale.categories[1].actions[1];
 	
@@ -140,6 +142,7 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	const actionOptions = container.querySelectorAll(".actionSelect option");
 	const dateInput = container.querySelector(".actionDate");
 	const timepsanMinutesInput = container.querySelector(".timespanMinuteInput");
+	const timepsanHoursInput = container.querySelector(".timespanHourInput");
 	const form = container.querySelector("form");
 	
 	//Check the categories are all there as options
@@ -161,6 +164,15 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	});
 	expect(actionSelect.value).toBe(scale.categories[1].actions[0].id);
 	userEvent.selectOptions(actionSelect, scale.categories[1].actions[1].id);
+	
+	
+	//Want to make sure the display values for minute/hour are also being set
+	fireEvent.change(timepsanMinutesInput, { target: { value: invalidNumberValue } });
+	expect(timepsanMinutesInput.value).toEqual(invalidNumberValue);
+	fireEvent.change(timepsanHoursInput, { target: { value: invalidNumberValue } });
+	expect(timepsanHoursInput.value).toEqual(invalidNumberValue);
+	
+	
 	
 	fireEvent.change(dateInput, { target: { value: newDateValue } });
 	fireEvent.change(timepsanMinutesInput, { target: { value: newMinuteValue } });

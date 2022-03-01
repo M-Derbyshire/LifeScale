@@ -45,6 +45,10 @@ const dummyRecordedAction = {
 	setSelectedActionID: dummyEmpty,
 	timespan: dummyTimespan,
 	setTimespan: dummyEmpty,
+	minuteDisplayValue: dummyTimespan.minuteCount.toString(),
+	setMinuteDisplayValue: dummyEmpty,
+	hourDisplayValue: (dummyTimespan.minuteCount/60).toFixed(2),
+	setHourDisplayValue: dummyEmpty,
 	onSubmit: dummySubmit
 }
 
@@ -240,18 +244,28 @@ test("RecordActionForm will call the setTimespan prop, when changing the date, b
 test.each([
 	[678],
 	[345]
-])("If usesTimespans is true, RecordActionForm will render a TimespanFormPartial, with the given timespan prop's minuteCount", (minuteCount) => {
+])("If usesTimespans is true, RecordActionForm will render a TimespanFormPartial, with the given minuteDisplayValue, and hourDisplayValue props", (minuteCount) => {
+	
+	const hourCount = (minuteCount/60).toFixed(2);
 	
 	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: minuteCount };
 	
 	const { container } = render(<RecordActionForm 
-									recordedAction={{...dummyRecordedAction, timespan, usesTimespans: true}} />);
+									recordedAction={{
+										...dummyRecordedAction, 
+										timespan, 
+										usesTimespans: true, 
+										minuteDisplayValue: minuteCount.toString(),
+										hourDisplayValue: hourCount 
+									}} />);
 	
 	const timespanFormPartial = container.querySelector(".TimespanFormPartial");
 	expect(timespanFormPartial).not.toBeNull();
 	
-	const minuteInput = screen.getByDisplayValue(minuteCount);
+	const minuteInput = screen.getByDisplayValue(minuteCount.toString());
+	const hourInput = screen.getByDisplayValue(hourCount);
 	expect(minuteInput).not.toBeNull();
+	expect(hourInput).not.toBeNull();
 });
 
 test("If usesTimespans is false, RecordActionForm will not render a TimespanFormPartial", () => {
@@ -279,24 +293,63 @@ test("If usesTimespans prop is not given, RecordActionForm will not render a Tim
 	
 });
 
-test("RecordActionForm will pass the set timespan prop to TimespanFormPartial, but only the minuteCount will be affected", () => {
+test("RecordActionForm will pass the hour/minute display values to TimespanFormPartial, with their setters", () => {
+	
+	const invalidNumberValue = "not a number";
+	const newValue = "also not a number";
+	
+	const setMinuteDisplayValue = jest.fn();
+	const setHourDisplayValue = jest.fn();
+	
+	const { container } = render(<RecordActionForm 
+		recordedAction={{
+			...dummyRecordedAction, 
+			usesTimespans: true,
+			minuteDisplayValue: invalidNumberValue, 
+			hourDisplayValue: invalidNumberValue, 
+			setMinuteDisplayValue, 
+			setHourDisplayValue 
+		}} />);
+	
+	const timepsanMinutesInput = container.querySelector(".timespanMinuteInput");
+	const timepsanHoursInput = container.querySelector(".timespanHourInput");
+	
+	expect(timepsanMinutesInput.value).toEqual(invalidNumberValue);
+	expect(timepsanHoursInput.value).toEqual(invalidNumberValue);
+	
+	fireEvent.change(timepsanMinutesInput, { target: { value: newValue } });
+	fireEvent.change(timepsanHoursInput, { target: { value: newValue } });
+	
+	expect(setMinuteDisplayValue).toHaveBeenCalledWith(newValue);
+	expect(setHourDisplayValue).toHaveBeenCalledWith(newValue);
+	
+});
+
+test("RecordActionForm will pass the set timespan prop to TimespanFormPartial, but only the minuteCount and hour/minute display values will be affected", () => {
 	
 	const timespan = { date: new Date("1970-01-01"), id: "test", minuteCount: 10 };
 	const newMinuteCount = 20;
 	const mockSetTimespan = jest.fn();
+	const mockSetMinuteDisplay = jest.fn();
+	const mockSetHourDisplay = jest.fn();
 	
 	const { container } = render(<RecordActionForm 
 									recordedAction={{
 										...dummyRecordedAction, 
 										timespan,
 										setTimespan: mockSetTimespan,
-										usesTimespans: true
+										usesTimespans: true,
+										setMinuteDisplayValue: mockSetMinuteDisplay,
+										setHourDisplayValue: mockSetHourDisplay
 									}} />);
 	
-	const minuteInput = screen.getByDisplayValue(timespan.minuteCount);
-	fireEvent.change(minuteInput, { target: { value: newMinuteCount } });
+	const timepsanMinutesInput = container.querySelector(".timespanMinuteInput");
+	const timepsanHoursInput = container.querySelector(".timespanHourInput");
+	fireEvent.change(timepsanMinutesInput, { target: { value: newMinuteCount } });
 	
 	expect(mockSetTimespan).toHaveBeenCalledWith({ ...timespan, minuteCount: newMinuteCount });
+	expect(mockSetMinuteDisplay).toHaveBeenCalled();
+	expect(mockSetHourDisplay).toHaveBeenCalled();
 });
 
 

@@ -3,6 +3,14 @@ import React, { FC, useState } from 'react';
 interface ITimespanFormPartialProps {
 	minutes:number;
 	setMinutes:(minutes:number)=>void;
+	
+	//The minute/hour inputs of the RecordActionForm may need to temporarily by an invalid number (such 
+	//as an empty string). Therefore, these should be updated with every state change, whereas the timespan's
+	//minute value should only be updated when the input is a valid number.
+	minuteDisplayValue:string;
+	setMinuteDisplayValue:(value:string)=>void;
+	hourDisplayValue:string;
+	setHourDisplayValue:(value:string)=>void;
 }
 
 
@@ -14,14 +22,10 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 	
 	
 	//Number type inputs can be an issue with react. Also tried external modules, but didn't work in the way we wanted
-	//Instead, will use a regex and validation on text inputs. Also, using the below state to allow for things such as 
+	//Instead, will use a regex and validation on text inputs. Also, using the minute/hour display props to allow for things such as 
 	//empty values in the fields (if input value is valid, the minute state is set. Otherwise, only the display value is set).
 	//The form should then fail to submit, if correctlly formatted data is not provided.
-	//At the end of they day, the components/interfaces higher up need to be decoupled from this, and external modules did not 
-	//properly handle minute input and hour input being bound to the same data. This is the best solution found for now.
 	const validNumberPattern = "[0-9]+\.?[0-9]{0,2}"; //up to 2 decimal places
-	const [minuteDisplayValue, setMinuteDisplayValue] = useState(props.minutes.toFixed(0));
-	const [hourDisplayValue, setHourDisplayValue] = useState((props.minutes / 60).toFixed(2));
 	
 	const customNumberValidationMessage = "Please provide a valid number";
 	
@@ -34,19 +38,19 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 					type="text"
 					className="timespanMinuteInput"
 					pattern={validNumberPattern}
-					value={minuteDisplayValue}
+					value={props.minuteDisplayValue}
 					size={6}
 					onChange={(e) => {
 						if(e.target.validity.valid)
 						{
 							const minutes = Number(e.target.value);
 							props.setMinutes(minutes);
-							setHourDisplayValue((minutes / 60).toFixed(2));
+							props.setHourDisplayValue((minutes / 60).toFixed(2));
 						}
 						else
-							setHourDisplayValue("");
+							props.setHourDisplayValue("");
 						
-						setMinuteDisplayValue(e.target.value);
+						props.setMinuteDisplayValue(e.target.value);
 					}} />
 			</label>
 			
@@ -55,19 +59,19 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 					type="text"
 					className="timespanHourInput"
 					pattern={validNumberPattern}
-					value={hourDisplayValue}
+					value={props.hourDisplayValue}
 					size={6}
 					onChange={(e) => {
 						if(e.target.validity.valid)
 						{
 							const minutes = Number(e.target.value) * 60;
 							props.setMinutes(minutes);
-							setMinuteDisplayValue(minutes.toFixed(0));
+							props.setMinuteDisplayValue(minutes.toFixed(0));
 						}
 						else
-							setMinuteDisplayValue("");
+							props.setMinuteDisplayValue("");
 						
-						setHourDisplayValue(e.target.value);
+						props.setHourDisplayValue(e.target.value);
 					}} />
 			</label>
 			
