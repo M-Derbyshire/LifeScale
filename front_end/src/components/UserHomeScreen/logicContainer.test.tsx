@@ -1,8 +1,10 @@
 import UserHomeScreenLogicContainer from './UserHomeScreenLogicContainer';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within, fireEvent } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 import { access } from 'fs';
+import userEvent from '@testing-library/user-event';
+import ICategory from '../../interfaces/ICategory';
 
 
 const stdScaleLoadError = "Unable to load the selected scale.";
@@ -77,13 +79,13 @@ const dummyStatisticTestCategories = dummyTestStatistics.map((categoryStats, i) 
 // container - the container returned from a render call
 // balanceDisplayContainerClassname - the classname for the element that contains the correct ScaleBalanceDisplay
 // expectedValues - an array of numbers, that represents the values we expect to get
-const testBalanceDisplayValues = (container:any, balanceDisplayContainerClassname:string, expectedValues:number[]) => {
+const testBalanceDisplayValues = (container:any, balanceDisplayContainerClassname:string, categories:ICategory[], expectedValues:number[]) => {
     
     //This is more coupled than I'd like, but only way to ensure we get the correct balance display
     
     const scaleBalanceDisplay = container.querySelector(`.ScalePrimaryDisplay .${balanceDisplayContainerClassname} .ScaleBalanceDisplay`);
     const balanceItems = [];
-    dummyStatisticTestCategories.forEach(
+    categories.forEach(
         category => balanceItems.push(within(scaleBalanceDisplay).getByText(category.name))
     );
     
@@ -271,7 +273,7 @@ test("UserHomeScreenLogicContainer will map the category percentages to currentB
     const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
     
     
-    testBalanceDisplayValues(container, "currentBalanceContainer", expectedValues);
+    testBalanceDisplayValues(container, "currentBalanceContainer", dummyStatisticTestCategories, expectedValues);
     
 });
 
@@ -293,15 +295,79 @@ test("UserHomeScreenLogicContainer will map the desired weights of categories to
     const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
     
     
-    testBalanceDisplayValues(container, "desiredBalanceContainer", expectedValues);
+    testBalanceDisplayValues(container, "desiredBalanceContainer", dummyStatisticTestCategories, expectedValues);
     
 });
 
 
 
-// UserHomeScreenLogicContainer will refresh the percentage statistics after recording a new timespan
+test("UserHomeScreenLogicContainer will refresh the percentage statistics after recording a new timespan", async () => {
+    
+    const mockScale = {
+        ...dummyUser.scales[0],
+        categories: [ ...dummyStatisticTestCategories ]
+    };
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    mockUserService.getCategory = (catID:string, scaleID:string) => mockScale.categories[0];
+    mockUserService.getAction = (actID:string, catID:string, scaleID:string) => mockScale.categories[0].actions[0];
+    mockUserService.createTimespan = jest.fn().mockResolvedValue({
+        id: "8247734298374982347",
+        date: new Date,
+        minuteCount: 120
+    });
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    
+    //Now we want to change the category statistics to something different. Then submit and confirm the change
+    mockScale.categories = [mockScale.categories[0]]; // just one
+    
+    const form = container.querySelector(".RecordActionFormLogicContainer form");
+    fireEvent.submit(form);
+    
+    const statisticDisplay = container.querySelector(".ScaleStatisticDisplay");
+    const percentageDisplays = within(statisticDisplay).queryAllByText(/\%/);
+    
+    //Check the first (and only) category statistic
+    await waitFor(() => expect(percentageDisplays[0].textContent).toEqual("100%"));
+    
+});
 
-// UserHomeScreenLogicContainer will refresh the currentBalanceItems after recording a new timespan
+test("UserHomeScreenLogicContainer will refresh the currentBalanceItems after recording a new timespan", async () => {
+    
+    const mockScale = {
+        ...dummyUser.scales[0],
+        categories: [ ...dummyStatisticTestCategories ]
+    };
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    mockUserService.getCategory = (catID:string, scaleID:string) => mockScale.categories[0];
+    mockUserService.getAction = (actID:string, catID:string, scaleID:string) => mockScale.categories[0].actions[0];
+    mockUserService.createTimespan = jest.fn().mockResolvedValue({
+        id: "8247734298374982347",
+        date: new Date,
+        minuteCount: 120
+    });
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    
+    //Now we want to change the category statistics to something different. Then submit and confirm the change
+    mockScale.categories = [mockScale.categories[0]]; // just one
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    const form = container.querySelector(".RecordActionFormLogicContainer form");
+    
+    fireEvent.submit(form);
+    
+    await waitFor(() => testBalanceDisplayValues(container, "currentBalanceContainer", mockScale.categories, [100])); //Only one category, so 100 percent);
+    
+});
 
 
 

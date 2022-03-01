@@ -67,6 +67,13 @@ export default class UserHomeScreenLogicContainer
     }
     
     
+    
+    
+    
+    
+    
+    
+    
     //If the correct percentageStatistic cannot be found for a category, the item weight is set to 0
     generateCatgeoryBalanceItems(categories:ICategory[], percentageStatistics:IPercentageStatistic[]):IScaleBalanceItem[]
     {
@@ -145,6 +152,31 @@ export default class UserHomeScreenLogicContainer
     
     
     
+    onSuccessfulTimespanSaveHandler()
+    {
+        //Reload the scale, to get all the new timespan data
+        //We need this to keep the scales balances, and statistics, up to date
+        
+        let scaleLoadingError:string = "";
+        let selectedScale:IScale|undefined;
+        
+        if(this.props.selectedScaleID)
+        {
+            selectedScale = this.props.userService.getScale(this.props.selectedScaleID);
+            if(!selectedScale)
+                scaleLoadingError = this.stdScaleLoadErrorMessage;
+        }
+        
+        this.setState({
+            selectedScale,
+            scaleLoadingError
+        });
+    }
+    
+    
+    
+    
+    
     
     render()
     {
@@ -177,7 +209,7 @@ export default class UserHomeScreenLogicContainer
                     
                     onSuccessfulLogout={this.props.onSuccessfulLogout}
                     editScaleCallback={() => this.props.editScaleCallback("")}
-                    onSuccessfulTimespanSave={()=>{}}
+                    onSuccessfulTimespanSave={this.onSuccessfulTimespanSaveHandler.bind(this)}
                     amendHistoryCallback={() => this.props.amendHistoryCallback("")}
                     
                     editUserURL={this.props.editUserURL}
