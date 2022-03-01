@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import IUserService from '../../interfaces/api_access/IUserService';
+import ICategory from '../../interfaces/ICategory';
 import IScale from '../../interfaces/IScale';
 import IPercentageStatistic from '../../interfaces/UI/IPercentageStatistic';
+import IScaleBalanceItem from '../../interfaces/UI/IScaleBalanceItem';
 import UserHomeScreen from './UserHomeScreen';
 
 
@@ -65,11 +67,28 @@ export default class UserHomeScreenLogicContainer
     }
     
     
+    //If the correct percentageStatistic cannot be found for a category, the item weight is set to 0
+    generateCatgeoryBalanceItems(categories:ICategory[], percentageStatistics:IPercentageStatistic[]):IScaleBalanceItem[]
+    {
+        return categories.map((category) => {
+            
+            const percentageStat = percentageStatistics.find(stat => stat.id === category.id);
+            let percentage = 0;
+            if(percentageStat)
+                percentage = percentageStat.percentage
+            
+            return {
+                label: category.name,
+                weight: percentage,
+                color: category.color
+            }
+        });
+    }
     
-    generateCategoryPercentageStatisticsFromScale(scale:IScale):IPercentageStatistic[]
+    generateCategoryPercentageStatistics(categories:ICategory[]):IPercentageStatistic[]
     {   
         //Firstly, we need to get the total, so we can figure out percentages of it
-        const totalMinutes = scale.categories.reduce(
+        const totalMinutes = categories.reduce(
             (catAcc, category) => catAcc + category.actions.reduce(
                 (actAcc, action) => actAcc + action.timespans.reduce(
                     (tsAcc, timespan) => (tsAcc + (timespan.minuteCount * action.weight)),
@@ -82,7 +101,7 @@ export default class UserHomeScreenLogicContainer
         
         
         // Now we make IPercentageStatistic objects, with the category/action percentages
-        return scale.categories.map((category) => {
+        return categories.map((category) => {
             
             let categoryPercentage = 0;
             
@@ -129,8 +148,24 @@ export default class UserHomeScreenLogicContainer
     
     render()
     {
-        const statistics = 
-            (!this.state.selectedScale) ? [] : this.generateCategoryPercentageStatisticsFromScale(this.state.selectedScale);
+        let statistics:IPercentageStatistic[] = [];
+        let currentBalanceItems:IScaleBalanceItem[] = [];
+        let desiredBalanceItems:IScaleBalanceItem[] = [];
+        
+        if(this.state.selectedScale)
+        {
+            const categories = this.state.selectedScale.categories;
+            statistics = this.generateCategoryPercentageStatistics(categories);
+            currentBalanceItems = this.generateCatgeoryBalanceItems(categories, statistics);
+            
+            //Using the desired weights as the percentages
+            desiredBalanceItems = this.generateCatgeoryBalanceItems(categories, categories.map(category => ({
+                id: category.id,
+                label: category.name,
+                percentage: category.desiredWeight
+            })));
+        }
+        
         
         return (
             <div className="UserHomeScreenLogicContainer">
@@ -149,8 +184,8 @@ export default class UserHomeScreenLogicContainer
                     createScaleURL={this.props.createScaleURL}
                     scaleURLBase={this.props.scaleURLBase}
                     
-                    desiredBalanceItems={[]}
-                    currentBalanceItems={[]}
+                    desiredBalanceItems={desiredBalanceItems}
+                    currentBalanceItems={currentBalanceItems}
                     statistics={statistics} />
             </div>
         );

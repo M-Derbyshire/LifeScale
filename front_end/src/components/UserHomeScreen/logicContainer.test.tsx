@@ -71,6 +71,32 @@ const dummyStatisticTestCategories = dummyTestStatistics.map((categoryStats, i) 
 // ------------------------------------------------------------------------------------------------------
 
 
+// ----- Functions for testing balance displays ----------------------------------------------------------
+
+//Tests that a balance display has the correct values for the different categories.
+// container - the container returned from a render call
+// balanceDisplayContainerClassname - the classname for the element that contains the correct ScaleBalanceDisplay
+// expectedValues - an array of numbers, that represents the values we expect to get
+const testBalanceDisplayValues = (container:any, balanceDisplayContainerClassname:string, expectedValues:number[]) => {
+    
+    //This is more coupled than I'd like, but only way to ensure we get the correct balance display
+    
+    const scaleBalanceDisplay = container.querySelector(`.ScalePrimaryDisplay .${balanceDisplayContainerClassname} .ScaleBalanceDisplay`);
+    const balanceItems = [];
+    dummyStatisticTestCategories.forEach(
+        category => balanceItems.push(within(scaleBalanceDisplay).getByText(category.name))
+    );
+    
+    expect(balanceItems.length).toBe(expectedValues.length);
+    balanceItems.forEach((item, i) => expect(item.style.flexGrow).toEqual(expectedValues[i].toString()));
+    
+};
+
+//-----------------------------------------------------------------------------------------------------
+
+
+
+
 
 const dummyCallbackNoParam = () => {};
 const dummyCallbackSingleParam = (x:any) => {};
@@ -227,9 +253,49 @@ test("UserHomeScreenLogicContainer will calculate the statistics percentages for
     
 });
 
-// UserHomeScreenLogicContainer will map the category percentages to currentBalanceItems, and pass them to UserHomeScreen
+test("UserHomeScreenLogicContainer will map the category percentages to currentBalanceItems, and pass them to UserHomeScreen", () => {
+    
+    const mockScale = {
+        ...dummyUser.scales[0],
+        categories: dummyStatisticTestCategories
+    };
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    const expectedValues:number[] = dummyTestStatistics.map(categoryStat => categoryStat.expectedPercentageTotal);
+    
+    
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    
+    testBalanceDisplayValues(container, "currentBalanceContainer", expectedValues);
+    
+});
 
-// UserHomeScreenLogicContainer will map the desired weights of categories to desiredBalanceItems, and pass them to UserHomeScreen
+test("UserHomeScreenLogicContainer will map the desired weights of categories to desiredBalanceItems, and pass them to UserHomeScreen", () => {
+    
+    const mockScale = {
+        ...dummyUser.scales[0],
+        categories: dummyStatisticTestCategories
+    };
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    const expectedValues:number[] = dummyStatisticTestCategories.map(category => category.desiredWeight);
+    
+    
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    
+    testBalanceDisplayValues(container, "desiredBalanceContainer", expectedValues);
+    
+});
 
 
 
