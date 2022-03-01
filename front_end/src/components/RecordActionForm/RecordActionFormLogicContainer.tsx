@@ -97,7 +97,8 @@ export default class RecordActionFormLogicContainer
 			})
 				.then(timespan => {
 					this.setState({ 
-						goodSaveMessage 
+						...this.getBlankFormData(),
+						goodSaveMessage,
 					});
 					
 					if(this.props.onSuccessfulSave)
