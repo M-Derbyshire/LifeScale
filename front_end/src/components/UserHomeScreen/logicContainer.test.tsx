@@ -408,4 +408,18 @@ test("UserHomeScreenLogicContainer will pass editScaleCallback to UserHomeScreen
     
 });
 
-// UserHomeScreenLogicContainer will pass amendHistoryCallback to UserHomeScreen, and feed in the scale ID when calling it
+test("UserHomeScreenLogicContainer will pass amendHistoryCallback to UserHomeScreen, and feed in the scale ID when calling it", () => {
+    
+    const mockCallback = jest.fn();
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } amendHistoryCallback={mockCallback} /></Router>);
+    
+    
+    const statDisplay = container.querySelector(".ScaleStatisticDisplay");
+    const amendButton = within(statDisplay).queryByRole("button", { name: /amend/i });
+    
+    fireEvent.click(amendButton);
+    
+    expect(mockCallback).toHaveBeenCalledWith(defaultProps.selectedScaleID);
+    
+});

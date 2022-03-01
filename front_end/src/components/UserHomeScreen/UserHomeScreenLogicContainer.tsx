@@ -210,7 +210,7 @@ export default class UserHomeScreenLogicContainer
                     onSuccessfulLogout={this.props.onSuccessfulLogout}
                     editScaleCallback={() => this.props.editScaleCallback(this.props.selectedScaleID || "")}
                     onSuccessfulTimespanSave={this.onSuccessfulTimespanSaveHandler.bind(this)}
-                    amendHistoryCallback={() => this.props.amendHistoryCallback("")}
+                    amendHistoryCallback={() => this.props.amendHistoryCallback(this.props.selectedScaleID || "")}
                     
                     editUserURL={this.props.editUserURL}
                     createScaleURL={this.props.createScaleURL}
