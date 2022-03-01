@@ -391,6 +391,21 @@ test("UserHomeScreenLogicContainer will pass onSuccessfulLogout to UserHomeScree
     
 });
 
-// UserHomeScreenLogicContainer will pass editScaleCallback to UserHomeScreen, and feed in the scale ID when calling it
+test("UserHomeScreenLogicContainer will pass editScaleCallback to UserHomeScreen, and feed in the scale ID when calling it", () => {
+    
+    const mockCallback = jest.fn();
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } editScaleCallback={mockCallback} /></Router>);
+    
+    const primaryDisplay = container.querySelector(".ScalePrimaryDisplay");
+    
+    let editScaleButton = within(primaryDisplay).getByRole("button", { name: /edit/i });
+    if(!editScaleButton)
+        editScaleButton = within(primaryDisplay).getByText(/edit/i)
+    
+    fireEvent.click(editScaleButton);
+    
+    expect(mockCallback).toHaveBeenCalledWith(defaultProps.selectedScaleID);
+    
+});
 
 // UserHomeScreenLogicContainer will pass amendHistoryCallback to UserHomeScreen, and feed in the scale ID when calling it
