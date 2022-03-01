@@ -371,7 +371,25 @@ test("UserHomeScreenLogicContainer will refresh the currentBalanceItems after re
 
 
 
-// UserHomeScreenLogicContainer will pass onSuccessfulLogout to UserHomeScreen
+test("UserHomeScreenLogicContainer will pass onSuccessfulLogout to UserHomeScreen", async () => {
+    
+    const mockCallback = jest.fn(); //This should be called after logout completes
+    const mockUserService = { ...dummyUserService };
+    mockUserService.logoutUser = jest.fn().mockResolvedValue(null); 
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer 
+                                                { ...defaultProps } 
+                                                userService={mockUserService} 
+                                                onSuccessfulLogout={mockCallback} /></Router>);
+    
+    const navBar = container.querySelector(".UserNavBarLogicContainer");
+    const logoutLink = within(navBar).queryByText(/logout/i);
+    
+    fireEvent.click(logoutLink);
+    
+    await waitFor(() => expect(mockCallback).toHaveBeenCalled());
+    
+});
 
 // UserHomeScreenLogicContainer will pass editScaleCallback to UserHomeScreen, and feed in the scale ID when calling it
 
