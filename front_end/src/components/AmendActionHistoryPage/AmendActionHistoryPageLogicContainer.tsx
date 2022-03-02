@@ -29,6 +29,11 @@ interface IAmendActionHistoryPageLogicContainerState {
 }
 
 
+
+/*
+	Wrapper component that controls the business logic for the AmendActionHistoryPage component.
+	See the AmendActionHistoryPage component for more description.
+*/
 export default class AmendActionHistoryPageLogicContainer
 	extends Component<IAmendActionHistoryPageLogicContainerProps, IAmendActionHistoryPageLogicContainerState>
 {
