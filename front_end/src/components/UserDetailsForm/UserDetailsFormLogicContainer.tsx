@@ -24,6 +24,11 @@ interface IUserDetailsFormLogicContainerState {
 
 
 
+
+/*
+	Wrapper component that controls the business logic for the UserDetailsForm component.
+	See the UserDetailsForm component for more description.
+*/
 export default class UserDetailsFormLogicContainer 
 	extends Component<IUserDetailsFormLogicContainerProps, IUserDetailsFormLogicContainerState> 
 {
