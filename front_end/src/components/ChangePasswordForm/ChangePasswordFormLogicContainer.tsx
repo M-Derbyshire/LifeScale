@@ -16,6 +16,13 @@ interface IChangePasswordFormLogicContainerState {
 }
 
 
+
+
+
+/*
+	Wrapper component that controls the business logic for the ChangePasswordForm component.
+	See the ChangePasswordForm component for more description.
+*/
 export default class ChangePasswordFormLogicContainer 
 	extends Component<IChangePasswordFormLogicContainerProps, IChangePasswordFormLogicContainerState> 
 {
