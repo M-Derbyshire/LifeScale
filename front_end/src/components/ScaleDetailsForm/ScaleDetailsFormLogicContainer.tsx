@@ -24,6 +24,12 @@ interface IScaleDetailsFormLogicContainerState {
 };
 
 
+
+
+/*
+	Wrapper component that controls the business logic for the ScaleDetailsForm component.
+	See the ScaleDetailsForm component for more description.
+*/
 export default class ScaleDetailsFormLogicContainer
 	extends Component<IScaleDetailsFormLogicContainerProps, IScaleDetailsFormLogicContainerState>
 {
