@@ -18,6 +18,12 @@ interface ILoginPageLogicContainerState {
 
 
 
+
+
+/*
+	Wrapper component that controls the business logic for the LoginPage component.
+	See the LoginPage component for more description.
+*/
 export default class LoginPageLogicContainer 
 	extends Component<ILoginPageLogicContainerProps, ILoginPageLogicContainerState> 
 {
