@@ -24,6 +24,12 @@ interface IRecordActionFormLogicContainerState {
 }
 
 
+
+
+/*
+	Wrapper component that controls the business logic for the RecordActionForm component.
+	See the RecordActionForm component for more description.
+*/
 export default class RecordActionFormLogicContainer
 	extends Component<IRecordActionFormLogicContainerProps, IRecordActionFormLogicContainerState>
 {
