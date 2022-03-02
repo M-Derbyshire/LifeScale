@@ -20,6 +20,12 @@ interface IUserNavBarLogicContainerState {
 }
 
 
+
+
+/*
+	Wrapper component that controls the business logic for the UserNavBar component.
+	See the UserNavBar component for more description.
+*/
 export default class UserNavBarLogicContainer 
 	extends Component<IUserNavBarLogicContainerProps, IUserNavBarLogicContainerState>
 {
