@@ -5,6 +5,7 @@ import TestingDummyUserService from '../../userServices/TestingDummyUserService/
 import { access } from 'fs';
 import userEvent from '@testing-library/user-event';
 import ICategory from '../../interfaces/ICategory';
+import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/CategoryColorProvider';
 
 
 const stdScaleLoadError = "Unable to load the selected scale.";
@@ -75,6 +76,8 @@ const dummyStatisticTestCategories = dummyTestStatistics.map((categoryStats, i) 
 
 // ----- Functions for testing balance displays ----------------------------------------------------------
 
+const categoryColorProvider = new CategoryColorProvider();
+
 //Tests that a balance display has the correct values for the different categories.
 // container - the container returned from a render call
 // balanceDisplayContainerClassname - the classname for the element that contains the correct ScaleBalanceDisplay
@@ -90,7 +93,10 @@ const testBalanceDisplayValues = (container:any, balanceDisplayContainerClassnam
     );
     
     expect(balanceItems.length).toBe(expectedValues.length);
-    balanceItems.forEach((item, i) => expect(item.style.flexGrow).toEqual(expectedValues[i].toString()));
+    balanceItems.forEach((item, i) => {
+        expect(item.style.flexGrow).toEqual(expectedValues[i].toString());
+        expect(item).toHaveStyle(`background-color: ${categoryColorProvider.getRealColorFromName(categories[i].color)}`);
+    });
     
 };
 
@@ -116,6 +122,7 @@ const defaultProps = {
     onSuccessfulLogout: dummyCallbackNoParam,
     editScaleCallback: dummyCallbackSingleParam,
     amendHistoryCallback: dummyCallbackSingleParam,
+    categoryColorProvider: categoryColorProvider
 };
 
 

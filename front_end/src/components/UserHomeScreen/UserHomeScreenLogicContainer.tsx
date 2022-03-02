@@ -4,6 +4,7 @@ import ICategory from '../../interfaces/ICategory';
 import IScale from '../../interfaces/IScale';
 import IPercentageStatistic from '../../interfaces/UI/IPercentageStatistic';
 import IScaleBalanceItem from '../../interfaces/UI/IScaleBalanceItem';
+import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/CategoryColorProvider';
 import UserHomeScreen from './UserHomeScreen';
 
 
@@ -17,6 +18,8 @@ interface IUserHomeScreenLogicContainerProps {
     onSuccessfulLogout:()=>void; //Called after successful logout
     editScaleCallback:(scaleID:string)=>void; //Called by the Edit Scale button
     amendHistoryCallback:(scaleID:string)=>void; // The callback for the amend history button
+    
+    categoryColorProvider:CategoryColorProvider;
 };
 
 interface IUserHomeScreenLogicContainerState {
@@ -85,6 +88,10 @@ export default class UserHomeScreenLogicContainer
     {
         return categories.map((category) => {
             
+            let color = this.props.categoryColorProvider.getRealColorFromName(category.color);
+            if(!color)
+                color = "white";
+            
             const percentageStat = percentageStatistics.find(stat => stat.id === category.id);
             let percentage = 0;
             if(percentageStat)
@@ -93,7 +100,7 @@ export default class UserHomeScreenLogicContainer
             return {
                 label: category.name,
                 weight: percentage,
-                color: category.color
+                color
             }
         });
     }
