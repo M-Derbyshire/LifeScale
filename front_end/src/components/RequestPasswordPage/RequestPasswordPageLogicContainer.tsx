@@ -14,6 +14,12 @@ interface IRequestPasswordPageLogicContainerState {
 	goodSaveMessage?:string;
 }
 
+
+
+/*
+	Wrapper component that controls the business logic for the RequestPasswordPage component.
+	See the RequestPasswordPage component for more description.
+*/
 export default class RequestPasswordPageLogicContainer 
 	extends Component<IRequestPasswordPageLogicContainerProps, IRequestPasswordPageLogicContainerState> 
 {
