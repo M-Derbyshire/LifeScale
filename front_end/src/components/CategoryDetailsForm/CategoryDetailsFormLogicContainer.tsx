@@ -29,6 +29,12 @@ interface ICategoryDetailsFormLogicContainerState {
 };
 
 
+
+
+/*
+	Wrapper component that controls the business logic for the CategoryDetailsForm component.
+	See the CategoryDetailsForm component for more description.
+*/
 export default class CategoryDetailsFormLogicContainer
 	extends Component<ICategoryDetailsFormLogicContainerProps, ICategoryDetailsFormLogicContainerState>
 {
