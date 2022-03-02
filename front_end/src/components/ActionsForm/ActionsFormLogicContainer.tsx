@@ -36,6 +36,10 @@ interface IActionsFormLogicContainerState {
 }
 
 
+/*
+	Wrapper component that controls the business logic for the ActionsForm component.
+	See the ActionsForm component for more description.
+*/
 export default class ActionsFormLogicContainer
 	extends Component<IActionsFormLogicContainerProps, IActionsFormLogicContainerState>
 {
