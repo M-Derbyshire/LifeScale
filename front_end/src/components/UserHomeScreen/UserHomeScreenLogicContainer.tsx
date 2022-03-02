@@ -26,6 +26,12 @@ interface IUserHomeScreenLogicContainerState {
 };
 
 
+
+
+/*
+	Wrapper component that controls the business logic for the UserHomeScreen component.
+	See the UserHomeScreen component for more description.
+*/
 export default class UserHomeScreenLogicContainer
     extends Component<IUserHomeScreenLogicContainerProps, IUserHomeScreenLogicContainerState>
 {
