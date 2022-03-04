@@ -9,7 +9,11 @@ interface INavigatableContentWrapperProps {
 	smallScreenWidthPixels:number;
 }
 
-
+/*
+	Used when you want to render content that will be navigatable, and responsive. You provide the navigation 
+	bar in the navigationBar prop, and then provide the rest of the content as children. This component 
+	will then render these, in a responsive layout.
+*/
 const NavigatableContentWrapper:FC<INavigatableContentWrapperProps> = (props) => {
 	
 	const [screenWidth, setScreenWidth] = useState(window.innerWidth);
