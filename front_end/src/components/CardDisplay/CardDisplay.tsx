@@ -6,6 +6,9 @@ interface ICardDisplayProps {
 	emptyDisplayMessage:string; //The message to display if children is empty
 }
 
+/*
+	Acts as a flex container, to display its children
+*/
 const CardDisplay:FC<ICardDisplayProps> = (props) => {
 	
 	return (
