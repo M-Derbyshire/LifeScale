@@ -12,7 +12,7 @@ interface ILoginFormProps {
 }
 
 /*
-	Display layer component to display a form for users to request a new password
+	Display-layer component to display a form for users to log in
 */
 const LoginForm:FC<ILoginFormProps> = (props) => {
 	
