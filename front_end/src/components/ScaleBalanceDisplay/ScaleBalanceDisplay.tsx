@@ -21,7 +21,7 @@ class ScaleBalanceDisplay extends Component<IScaleBalanceDisplayProps> {
 				backgroundColor: scaleItem.color,
 				flexGrow: scaleItem.weight
 			}}>
-				{scaleItem.label}
+				<span>{scaleItem.label}</span>
 			</div>
 		);
 	}

@@ -14,12 +14,15 @@
 		overflow: hidden;
 		font-size: small;
 		
-		padding: 0.5em;
-		padding-left: 0.75em;
-		
 		//Allow the item to be smaller than its content
 		min-width: 0;
 		flex-basis: 0;
+		& > span {
+			//Apply padding to text, so we can have a 0 width on the div (box-sizing on the div didn't correct this issue)
+			display:inline-block;
+			padding: 0.5em;
+			padding-left: 0.75em;
+		}
 	}
 	
 	
