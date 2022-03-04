@@ -105,13 +105,17 @@ export default class UserHomeScreenLogicContainer
         });
     }
     
-    generateCategoryPercentageStatistics(categories:ICategory[]):IPercentageStatistic[]
+    generateCategoryPercentageStatistics(categories:ICategory[], displayDayCount:number):IPercentageStatistic[]
     {   
+        // Get the oldest date that can be included
+        const millisecondsToRemove = (3600 * 1000 * 24) * (displayDayCount - 1); //Remove 1, as if dayCount is 0, the date should be tomorrow
+        const oldestIncludedDateTime = new Date(Date.now() - millisecondsToRemove).setHours(0, 0, 0, 0); //Returns the milliseconds we want 
+        
         //Firstly, we need to get the total, so we can figure out percentages of it
         const totalMinutes = categories.reduce(
             (catAcc, category) => catAcc + category.actions.reduce(
                 (actAcc, action) => actAcc + action.timespans.reduce(
-                    (tsAcc, timespan) => (tsAcc + (timespan.minuteCount * action.weight)),
+                    (tsAcc, timespan) => (timespan.date.getTime() >= oldestIncludedDateTime) ? (tsAcc + (timespan.minuteCount * action.weight)) : 0,
                     0
                 ),
                 0
@@ -129,6 +133,10 @@ export default class UserHomeScreenLogicContainer
                 
                 const actionPercentageNum = action.timespans.reduce(
                     (acc, timespan) => {
+                        
+                        if(timespan.date.getTime() < oldestIncludedDateTime)
+                            return acc;
+                        
                         const weightedMinuteCount = (timespan.minuteCount * action.weight);
                         
                         let percentageNum = 0;
@@ -200,7 +208,7 @@ export default class UserHomeScreenLogicContainer
         if(this.state.selectedScale)
         {
             const categories = this.state.selectedScale.categories;
-            statistics = this.generateCategoryPercentageStatistics(categories);
+            statistics = this.generateCategoryPercentageStatistics(categories, this.state.selectedScale.displayDayCount);
             currentBalanceItems = this.generateCatgeoryBalanceItems(categories, statistics);
             
             //Using the desired weights as the percentages

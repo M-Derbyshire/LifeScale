@@ -14,7 +14,7 @@ const dummyScale = {
 	id: "testScale",
 	name: "testscale",
 	usesTimespans: true,
-	displayDayCount: 7,
+	displayDayCount: 100,
 	categories: []
 }
 
@@ -428,5 +428,282 @@ test("UserHomeScreenLogicContainer will pass amendHistoryCallback to UserHomeScr
     fireEvent.click(amendButton);
     
     expect(mockCallback).toHaveBeenCalledWith(defaultProps.selectedScaleID);
+    
+});
+
+
+
+
+
+test("UserHomeScreenLogicContainer will exclude dates older than scale's day count, from the percentage statistics", () => {
+    
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    const tooOldDate = new Date(Date.now() - (3600 * 1000 * 24));
+    tooOldDate.setHours(0, 0, 0, 0);
+    
+    // if this is working, 1st category should be 100%, not 10%
+    const mockScale = {
+        id: "test",
+        name: "testscale",
+        usesTimespans: true,
+        displayDayCount: 1,
+        categories: [
+            {
+                id: "testcat1",
+                name: "10percent", //10% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact1",
+                        name: "testact1",
+                        weight: 1,
+                        timespans: [{ id: "testts1", date: currentDate, minuteCount: 1 }]
+                    }
+                ]
+            },
+            {
+                id: "testcat2",
+                name: "90percent", //90% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact2",
+                        name: "testact2",
+                        weight: 1,
+                        timespans: [{ id: "testts2", date: tooOldDate, minuteCount: 9 }]
+                    }
+                ]
+            }
+        ]
+    };
+    
+    
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    const statisticDisplay = container.querySelector(".ScaleStatisticDisplay");
+    const percentageDisplaysHundredPercent = within(statisticDisplay).queryAllByText(/100%/);
+    
+    expect(percentageDisplaysHundredPercent.length).toBe(2);
+    
+});
+
+
+//generate the date we want to test with, based on the current date
+test.each([
+    [new Date(Date.now())],
+    [new Date(Date.now() - (3600 * 1000 * 24))],
+    [new Date(Date.now() - (3600 * 1000 * 48))],
+])("UserHomeScreenLogicContainer will not exclude dates that fall on -- or are after -- the scale's day count, from the percentage statistics", (dateToInclude) => {
+    
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    dateToInclude.setHours(0, 0, 0, 0);
+    
+    const testDayCount = 3;
+    
+    // if this is working, no category should be 100%
+    const mockScale = {
+        id: "test",
+        name: "testscale",
+        usesTimespans: true,
+        displayDayCount: testDayCount,
+        categories: [
+            {
+                id: "testcat1",
+                name: "10percent", //10% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact1",
+                        name: "testact1",
+                        weight: 1,
+                        timespans: [{ id: "testts1", date: currentDate, minuteCount: 1 }]
+                    }
+                ]
+            },
+            {
+                id: "testcat2",
+                name: "90percent", //90% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact2",
+                        name: "testact2",
+                        weight: 1,
+                        timespans: [{ id: "testts2", date: dateToInclude, minuteCount: 9 }]
+                    }
+                ]
+            }
+        ]
+    };
+    
+    
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    const statisticDisplay = container.querySelector(".ScaleStatisticDisplay");
+    const percentageDisplaysHundredPercent = within(statisticDisplay).queryAllByText(/100%/);
+    
+    expect(percentageDisplaysHundredPercent.length).toBe(0);
+    
+});
+
+
+test("UserHomeScreenLogicContainer will exclude dates older than scale's day count, from the current balance", () => {
+    
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    const tooOldDate = new Date(Date.now() - (3600 * 1000 * 24));
+    tooOldDate.setHours(0, 0, 0, 0);
+    
+    // if this is working, 1st category should be 100%, not 10%
+    const mockScale = {
+        id: "test",
+        name: "testscale",
+        usesTimespans: true,
+        displayDayCount: 1,
+        categories: [
+            {
+                id: "testcat1",
+                name: "10percent", //10% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact1",
+                        name: "testact1",
+                        weight: 1,
+                        timespans: [{ id: "testts1", date: currentDate, minuteCount: 1 }]
+                    }
+                ]
+            },
+            {
+                id: "testcat2",
+                name: "90percent", //90% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact2",
+                        name: "testact2",
+                        weight: 1,
+                        timespans: [{ id: "testts2", date: tooOldDate, minuteCount: 9 }]
+                    }
+                ]
+            }
+        ]
+    };
+    
+    
+    
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    
+    const expectedPercentages = [
+        100,
+        0
+    ];
+    
+    
+    testBalanceDisplayValues(container, "currentBalanceContainer", mockScale.categories, expectedPercentages);
+    
+});
+
+//generate the date we want to test with, based on the current date
+test.each([
+    [new Date(Date.now())],
+    [new Date(Date.now() - (3600 * 1000 * 24))],
+    [new Date(Date.now() - (3600 * 1000 * 48))],
+])("UserHomeScreenLogicContainer will not exclude dates that fall on -- or are after -- the scale's day count, from the current balance", (dateToInclude) => {
+    
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    dateToInclude.setHours(0, 0, 0, 0);
+    
+    const testDayCount = 3;
+    
+    // if this is working, no category should be 100%
+    const mockScale = {
+        id: "test",
+        name: "testscale",
+        usesTimespans: true,
+        displayDayCount: testDayCount,
+        categories: [
+            {
+                id: "testcat1",
+                name: "10percent", //10% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact1",
+                        name: "testact1",
+                        weight: 1,
+                        timespans: [{ id: "testts1", date: currentDate, minuteCount: 1 }]
+                    }
+                ]
+            },
+            {
+                id: "testcat2",
+                name: "90percent", //90% if including all the dates
+                color: "red",
+                desiredWeight: 1,
+                actions: [
+                    {
+                        id: "testact2",
+                        name: "testact2",
+                        weight: 1,
+                        timespans: [{ id: "testts2", date: dateToInclude, minuteCount: 9 }]
+                    }
+                ]
+            }
+        ]
+    };
+    
+    
+    
+    const mockUserService = { ...dummyUserService };
+    mockUserService.getLoadedUser = () => ({ ...dummyUser, scales: [mockScale] });
+    mockUserService.getScale = (id:string) => mockScale;
+    
+    
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } userService={mockUserService} /></Router>);
+    
+    
+    const expectedPercentages = [
+        10,
+        90
+    ];
+    
+    
+    testBalanceDisplayValues(container, "currentBalanceContainer", mockScale.categories, expectedPercentages);
     
 });
