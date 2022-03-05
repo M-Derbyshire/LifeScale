@@ -44,7 +44,7 @@ const dummyScale = {
 
 
 const dummyUserService = new TestingDummyUserService();
-
+dummyUserService.abortRequests = ()=>{}; // had to define explicitly
 
 
 test("ActionsFormLogicContainer will render a ActionsForm", () => {
@@ -510,5 +510,23 @@ test("ActionsFormLogicContainer will not display the new actions form after a cr
 	
 	// still returning no actions, so no existing action forms to display either
 	await waitFor(() => expect(container.querySelectorAll(".SingleActionForm").length).toBe(0));
+	
+});
+
+
+test("ActionsFormLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<ActionsFormLogicContainer
+		userService={mockUserService}
+		scale={dummyScale}
+		category={dummyCategoryNoActions} />);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
 	
 });

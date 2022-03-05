@@ -43,6 +43,7 @@ const dummyCategoryNoActions = { ...dummyCategory, actions: [] };
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getCategory = (catID, scaleID) => dummyCategory;
 dummyUserService.getScale = (scaleID) => dummyScale;
+dummyUserService.abortRequests = ()=>{}; // had to define explicitly
 
 
 

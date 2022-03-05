@@ -78,6 +78,15 @@ export default class ActionsFormLogicContainer
 	
 	
 	
+	componentWillUnmount()
+	{
+		this.props.userService.abortRequests();
+	}
+	
+	
+	
+	
+	
 	//Return values:
 	//actions - are the actions that can be changed (as state)
 	//originalActions - are the actions that should stay the same (used in updating/deleting)
