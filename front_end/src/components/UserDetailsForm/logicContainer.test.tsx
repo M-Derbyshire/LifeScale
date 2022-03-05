@@ -6,8 +6,11 @@ const dummyBackHandler = ()=>{};
 
 test("UserDetailsFormLogicContainer will render a UserDetailsForm", () => {
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
+	
 	const { container } = render(<UserDetailsFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									isNewUser={true}
 									backButtonHandler={dummyBackHandler} />);
 	
@@ -29,6 +32,7 @@ test("UserDetailsFormLogicContainer will handle the state and submission of User
 	const userToCreatePassword = "testpass";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.createUser = jest.fn().mockResolvedValue({ ...userToCreate, id: userToCreateId });
 	
 	const { container } = render(<UserDetailsFormLogicContainer
@@ -68,6 +72,7 @@ test("UserDetailsFormLogicContainer will not create user if the password is not 
 	};
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.createUser = jest.fn();
 	
 	const { container } = render(<UserDetailsFormLogicContainer
@@ -120,6 +125,7 @@ test("UserDetailsFormLogicContainer will handle the state and submission of User
 	const userToLoadId = "jashashsdh";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.getLoadedUser = () => { return { ...userToLoad, id: userToLoadId }; };
 	mockUserService.updateLoadedUser = jest.fn().mockResolvedValue({ ...userNewValues, id: userToLoadId });
 	
@@ -158,6 +164,7 @@ test("UserDetailsFormLogicContainer will render a ChangePasswordFormLogicContain
 	};
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.getLoadedUser = () => userToLoad;
 	
 	const { container } = render(<UserDetailsFormLogicContainer
@@ -173,6 +180,7 @@ test("UserDetailsFormLogicContainer will render a ChangePasswordFormLogicContain
 test("UserDetailsFormLogicContainer will not render a ChangePasswordFormLogicContainer when creating a user, but instead a PasswordFormPartial", () => {
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	
 	const { container } = render(<UserDetailsFormLogicContainer
 									userService={mockUserService}
@@ -199,6 +207,7 @@ test("UserDetailsFormLogicContainer will not render any password forms after cre
 	const userToCreatePassword = "testpass";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.createUser = jest.fn().mockResolvedValue({ ...userToCreate, id: userToCreateId });
 	
 	
@@ -236,6 +245,7 @@ test("UserDetailsFormLogicContainer will pass any load errors to the UserDetails
 	const errorMessage = "test error on loading";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.getLoadedUser = () => { throw new Error(errorMessage); };
 	
 	const { container } = render(<UserDetailsFormLogicContainer
@@ -253,6 +263,7 @@ test("UserDetailsFormLogicContainer will pass any on-create save errors to the U
 	const errorMessage = "test error on saving";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.createUser = jest.fn().mockRejectedValue(new Error(errorMessage));
 	
 	
@@ -301,6 +312,7 @@ test("UserDetailsFormLogicContainer will pass any on-update save errors to the U
 	const errorMessage = "test error on updating";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.updateLoadedUser = jest.fn().mockRejectedValue(new Error(errorMessage));
 	
 	
@@ -348,6 +360,7 @@ test("UserDetailsFormLogicContainer will disable submit on UserDetailsForm, when
 	const userToCreatePassword = "testpass";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.createUser = jest.fn().mockResolvedValue({ ...userToCreate, id: userToCreateId });
 	
 	
@@ -397,6 +410,7 @@ test("UserDetailsFormLogicContainer will disable submit on UserDetailsForm, when
 	};
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.getLoadedUser = () => userToLoad;
 	mockUserService.updateLoadedUser = jest.fn().mockResolvedValue(userToLoad);
 	
@@ -431,8 +445,11 @@ test("UserDetailsFormLogicContainer will pass the backButtonHandler down to User
 	
 	const mockBackHandler = jest.fn();
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
+	
 	const { container } = render(<UserDetailsFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									isNewUser={true}
 									backButtonHandler={mockBackHandler} />);
 	
@@ -441,5 +458,23 @@ test("UserDetailsFormLogicContainer will pass the backButtonHandler down to User
 	fireEvent.click(backButton);
 	
 	expect(mockBackHandler).toHaveBeenCalled();
+	
+});
+
+
+test("ScaleDetailsFormLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<UserDetailsFormLogicContainer
+		userService={mockUserService}
+		isNewUser={true}
+		backButtonHandler={dummyBackHandler} />);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
 	
 });
