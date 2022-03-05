@@ -6,8 +6,11 @@ const dummyBackHandler = ()=>{};
 
 test("Logic container for RequestPasswordPage will render a RequestPasswordPage component", () => {
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
+	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									backButtonHandler={dummyBackHandler} /> );
 	
 	expect(container.querySelector(".RequestPasswordPage")).not.toBeNull();
@@ -18,6 +21,7 @@ test("Logic container for RequestPasswordPage will render a RequestPasswordPage 
 test("Logic container for RequestPasswordPage will handle the state and submission of form data", () => {
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.requestNewPassword = jest.fn().mockResolvedValue(null);
 	
 	const expectedEmailValue = "test1@test1.com";
@@ -41,6 +45,7 @@ test("Logic container for RequestPasswordPage will pass on good save messages", 
 	const saveMessage = "A new password has now been sent via email.";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.requestNewPassword = (email:string) => new Promise((resolve, reject) => resolve(null));
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
@@ -65,6 +70,7 @@ test("Logic container for RequestPasswordPage will pass down bad save messages",
 	const saveMessage = "There was a problem with this request";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.requestNewPassword = 
 		(email:string) => new Promise((resolve, reject) => reject(new Error(saveMessage)));
 	
@@ -91,6 +97,7 @@ test("In logic container for RequestPasswordPage, a good request will clear the 
 	const saveMessage = "There was a problem with this request";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.requestNewPassword = 
 		(email:string) => new Promise((resolve, reject) => reject(new Error(saveMessage)));
 	
@@ -130,6 +137,7 @@ test("In logic container for RequestPasswordPage, a bad request will clear the g
 	const saveMessage = "A new password has now been sent via email.";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
 	mockUserService.requestNewPassword = (email:string) => new Promise((resolve, reject) => resolve(null));
 	
 	const { container } = render(<RequestPasswordPageLogicContainer 
@@ -167,8 +175,11 @@ test("Logic container for RequestPasswordPage will pass the given backButtonHand
 	
 	const mockBackCallback = jest.fn();
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = () => {};
+	
 	const { container } = render(<RequestPasswordPageLogicContainer 
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									backButtonHandler={mockBackCallback} /> );
 	
 	const backButton = container.querySelector(".RequestPasswordForm .backButton");
@@ -176,5 +187,23 @@ test("Logic container for RequestPasswordPage will pass the given backButtonHand
 	fireEvent.click(backButton);
 	
 	expect(mockBackCallback).toHaveBeenCalled();
+	
+});
+
+
+
+test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<RequestPasswordPageLogicContainer 
+		userService={mockUserService}
+		backButtonHandler={dummyBackHandler} /> );
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
 	
 });

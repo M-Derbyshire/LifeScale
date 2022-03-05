@@ -36,6 +36,13 @@ export default class RequestPasswordPageLogicContainer
 	}
 	
 	
+	
+	componentWillUnmount()
+	{
+		this.props.userService.abortRequests();
+	}
+	
+	
 	handleSubmit()
 	{
 		const standardGoodSaveMessage = "A new password has now been sent via email.";
