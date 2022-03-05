@@ -1035,7 +1035,7 @@ test("ScaleDetailsFormLogicContainer will call onSuccessfulDeleteHandler after s
 
 
 
-test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+test("ScaleDetailsFormLogicContainer will call userService abortRequests method on unmount", () => {
 	
 	const mockUserService = new TestingDummyUserService();
 	mockUserService.abortRequests = jest.fn();
