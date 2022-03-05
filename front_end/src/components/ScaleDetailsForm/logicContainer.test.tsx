@@ -45,6 +45,7 @@ const dummyScale = {
 
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getScale = (scaleID) => dummyScale;
+dummyUserService.abortRequests = () => {};
 
 
 const scaleLoadErrorMessage = "Unable to load the requested scale.";
@@ -1032,3 +1033,23 @@ test("ScaleDetailsFormLogicContainer will call onSuccessfulDeleteHandler after s
 	
 });
 
+
+
+test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<ScaleDetailsFormLogicContainer
+		scaleID={dummyScale.id}
+		userService={mockUserService}
+		backButtonHandler={dummyBackHandler}
+		editCategoryHandler={dummyEditCategoryHandler}
+		addCategoryHandler={dummyAddCategoryHandler} />);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
+	
+});

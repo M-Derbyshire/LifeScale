@@ -60,6 +60,14 @@ export default class ScaleDetailsFormLogicContainer
 		
 	}
 	
+	
+	
+	componentWillUnmount()
+	{
+		this.props.userService.abortRequests();
+	}
+	
+	
 
 	//If scale can't be loaded, create a default one
 	// scaleOriginal is returned to use when updating/deleting
