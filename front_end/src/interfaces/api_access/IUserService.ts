@@ -24,6 +24,9 @@ import ITimespan from '../ITimespan';
 */
 interface IUserService {
 	
+	abortRequests():void; //Ths will abort any active fetch requests
+	
+	
 	//Will load the user, and all its related entities, if logged in succesfully.
 	loginUser:(email:string, password:string)=>Promise<IUser>;
 	

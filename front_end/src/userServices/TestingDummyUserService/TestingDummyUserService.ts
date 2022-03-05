@@ -21,6 +21,8 @@ export default class TestingDummyUserService implements IUserService {
 	};
 	
 	
+	abortRequests() {}
+	
 	loginUser(email:string, password:string)
 	{
 		return new Promise<IUser>((resolve, reject) => {

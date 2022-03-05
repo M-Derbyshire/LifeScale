@@ -26,8 +26,14 @@ export default class MockJSONServerUserService implements IUserService {
 	_currentUser?:IUser;
 	_currentUserPassword:string = ""; //Aids with mocking password changes
 	
+	_abortController:any;
+	_abortSignal:any;
+	
 	constructor(apiProtocol:string, apiDomain:string, apiPort?:string, apiPath?:string)
 	{
+		this._abortController = new AbortController();
+		this._abortSignal = this._abortController.signal;
+		
 		this._apiURLBase=`${apiProtocol}://${apiDomain}`;
 		
 		if(apiPort)
@@ -42,6 +48,11 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
+	abortRequests()
+	{
+		this._abortController.abort();
+	}
+	
 	
 	
 	
@@ -51,7 +62,7 @@ export default class MockJSONServerUserService implements IUserService {
 		// As this is a mock API, for demonstration purposes this handles password validation
 		// ----------------------------------------------------------------------------------
 		
-		return fetch(`${this._apiURLBase}/users?email=${email}`)
+		return fetch(`${this._apiURLBase}/users?email=${email}`, { signal: this._abortSignal })
 			.then(response => response.json())
 			.then(users => {
 				if(users.length === 0 || users[0].password !== password)
@@ -146,6 +157,7 @@ export default class MockJSONServerUserService implements IUserService {
 		
 		
 		return fetch(url, {
+			signal: this._abortSignal,
 			method,
 			body: JSON.stringify(newUserData),
 			headers: {
