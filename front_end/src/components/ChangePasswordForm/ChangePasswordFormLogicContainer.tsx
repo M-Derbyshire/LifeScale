@@ -40,6 +40,14 @@ export default class ChangePasswordFormLogicContainer
 		};
 	}
 	
+	
+	componentWillUnmount()
+	{
+		this.props.userService.abortRequests();
+	}
+	
+	
+	
 	handleSubmit()
 	{
 		//If not, ChangePasswordForm currently displays a message to say it's incorrect
@@ -53,6 +61,8 @@ export default class ChangePasswordFormLogicContainer
 				.catch(err => this.setState({ badSaveErrorMessage: err.message, goodSaveMessage: undefined }));
 		}
 	}
+	
+	
 	
 	render()
 	{

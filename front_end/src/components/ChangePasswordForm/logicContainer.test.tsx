@@ -24,6 +24,7 @@ const setPasswordInputs = (container, expectedPasswordValues) => {
 test("LogicContainer for ChangePasswordForm will render a ChangePasswordForm, and handle state-change/form-submission", () => {
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.updateLoadedUserPassword = jest.fn().mockResolvedValue(mockUserService.getLoadedUser());
 	
 	const currentPassword = "testOld";
@@ -53,6 +54,7 @@ test("LogicContainer for ChangePasswordForm will render a ChangePasswordForm, an
 test("The logic container for ChangePasswordForm will not try to submit changes if the new password isn't confirmed", () => {
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.updateLoadedUserPassword = jest.fn().mockResolvedValue(mockUserService.getLoadedUser());
 	
 	const currentPassword = "testOld";
@@ -82,6 +84,7 @@ test("The logic container for ChangePasswordForm will pass a goodSaveMessage pro
 	const goodMessage = "Your password has now been changed.";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.updateLoadedUserPassword = jest.fn().mockResolvedValue(mockUserService.getLoadedUser());
 	
 	const currentPassword = "testOld";
@@ -109,6 +112,7 @@ test("The logic container for ChangePasswordForm will pass a badSaveErrorMessage
 	const badMessage = "Your password has not been changed.";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.updateLoadedUserPassword = jest.fn().mockRejectedValue(new Error(badMessage));
 	
 	const currentPassword = "testOld";
@@ -140,6 +144,7 @@ test("In the logic container for ChangePasswordForm a good save will clear previ
 	const badMessage = "Your password has not been changed.";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.updateLoadedUserPassword = jest.fn().mockRejectedValue(new Error(badMessage));
 	
 	
@@ -180,6 +185,7 @@ test("In the logic container for ChangePasswordForm a bad save will clear previo
 	const badMessage = "Your password has not been changed.";
 	
 	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.updateLoadedUserPassword = jest.fn().mockResolvedValue(mockUserService.getLoadedUser());
 	
 	
@@ -208,4 +214,19 @@ test("In the logic container for ChangePasswordForm a bad save will clear previo
 	fireEvent.click(saveButton);
 	
 	await waitFor(() => expect(screen.queryByText(goodMessage)).toBeNull());
+});
+
+
+test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	let mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<ChangePasswordFormLogicContainer userService={mockUserService}/>);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
+	
 });
