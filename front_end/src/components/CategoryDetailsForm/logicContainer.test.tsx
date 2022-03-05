@@ -1039,3 +1039,23 @@ test("CategoryDetailsFormLogicContainer will call onSuccessfulDeleteHandler afte
 	});
 	
 });
+
+
+test("CategoryDetailsFormLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<CategoryDetailsFormLogicContainer
+		scaleID={dummyScale.id}
+		categoryID={dummyCategory.id}
+		backButtonHandler={dummyBackHandler}
+		userService={mockUserService}
+		categoryColorProvider={dummyColorProvider} />);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
+	
+});

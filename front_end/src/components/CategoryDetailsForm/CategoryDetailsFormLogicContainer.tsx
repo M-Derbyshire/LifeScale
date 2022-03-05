@@ -78,6 +78,15 @@ export default class CategoryDetailsFormLogicContainer
 	
 	
 	
+	componentWillUnmount()
+	{
+		this.props.userService.abortRequests();
+	}
+	
+	
+	
+	
+	
 	//If can't load a category, creates an empty one (no ID, for creating)
 	//categoryOriginal is the original category from the userService. category is a clone of the original
 	loadOrCreateCategory(categoryID?:string):{ categoryOriginal:ICategory, category:ICategory }
