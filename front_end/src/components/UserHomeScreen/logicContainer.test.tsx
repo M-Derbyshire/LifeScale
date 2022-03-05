@@ -112,6 +112,7 @@ const dummyCallbackSingleParam = (x:any) => {};
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getLoadedUser = () => dummyUser;
 dummyUserService.getScale = (scaleID:string) => dummyUser.scales.filter(scale => scale.id === scaleID)[0];
+dummyUserService.abortRequests = () => {};
 
 const defaultProps = {
     userService: dummyUserService,

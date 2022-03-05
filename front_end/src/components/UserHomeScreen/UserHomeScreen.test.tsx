@@ -150,6 +150,7 @@ const dummyStatistics = [
 
 const dummyUserService = new TestingDummyUserService();
 dummyUserService.getLoadedUser = () => dummyUser;
+dummyUserService.abortRequests = () => {};
 
 
 const defaultProps = {

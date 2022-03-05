@@ -123,6 +123,7 @@ test("RecordActionFormLogicContainer will render a RecordActionForm, and handle 
 	
 	const mockUserService = new TestingDummyUserService();
 	
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
 		date: new Date().toString(),
@@ -196,6 +197,7 @@ test("If not using timespans, RecordActionFormLogicContainer will set minute cou
 	
 	const mockUserService = new TestingDummyUserService();
 	
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
 		date: new Date().toString(),
@@ -236,8 +238,11 @@ test.each([
 	
 	const scale = (usesTimespans) ? dummyScaleUsesTimespans : dummyScaleNotTimespans;
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
+	
 	const { container } = render(<RecordActionFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									scale={scale} />);
 	
 	if(usesTimespans)
@@ -255,8 +260,11 @@ test("RecordActionFormLogicContainer will pass in all the categories from the sc
 	
 	const scale = dummyScaleUsesTimespans;
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
+	
 	const { container } = render(<RecordActionFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									scale={scale} />);
 	
 	const categoryOptions = container.querySelectorAll(".categorySelect option");
@@ -272,8 +280,11 @@ test("RecordActionFormLogicContainer will set the selected category and action t
 	
 	const scale = dummyScaleUsesTimespans;
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
+	
 	const { container } = render(<RecordActionFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									scale={scale} />);
 	
 	const categorySelect = container.querySelector(".categorySelect");
@@ -288,8 +299,11 @@ test("In RecordActionFormLogicContainer, if the user has no categories, the sele
 	
 	const scale = { ...dummyScaleUsesTimespans, categories: [] };
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
+	
 	const { container } = render(<RecordActionFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									scale={scale} />);
 	
 	const categorySelect = container.querySelector(".categorySelect");
@@ -308,8 +322,11 @@ test("In RecordActionFormLogicContainer, if the category has no actions, the sel
 		actions:[]
 	}] };
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
+	
 	const { container } = render(<RecordActionFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									scale={scale} />);
 	
 	const actionSelect = container.querySelector(".actionSelect");
@@ -339,8 +356,12 @@ test("In RecordActionFormLogicContainer, if the category is changed, the selecte
 		}]
 	}] };
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
+	
+	
 	const { container } = render(<RecordActionFormLogicContainer
-									userService={new TestingDummyUserService()}
+									userService={mockUserService}
 									scale={scale} />);
 	
 	const categorySelect = container.querySelector(".categorySelect");
@@ -359,6 +380,7 @@ test("RecordActionFormLogicContainer will pass the successful save message to Re
 	const message = "Action saved successfully.";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
@@ -389,6 +411,7 @@ test("RecordActionFormLogicContainer will pass the failed save message to Record
 	const message = "Error while saving.";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.createTimespan = jest.fn().mockRejectedValue(new Error(message));
 	mockUserService.getAction = (actID, catID, scaleID) => scale.categories[0].actions[0];
 	mockUserService.getCategory = (catID, scaleID) => scale.categories[0];
@@ -415,6 +438,7 @@ test("RecordActionFormLogicContainer will call the onSuccessfulSave prop on succ
 	const mockSaveCallback = jest.fn();
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
@@ -444,6 +468,7 @@ test("RecordActionFormLogicContainer will not call the onSuccessfulSave prop on 
 	const mockSaveCallback = jest.fn();
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.createTimespan = jest.fn().mockRejectedValue(new Error("Test"));
 	
 	const scale = dummyScaleUsesTimespans;
@@ -470,6 +495,7 @@ test("RecordActionFormLogicContainer will not call createTimespan if no category
 	const scale = { ...dummyScaleUsesTimespans, categories: [] };
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.createTimespan = jest.fn();
 	mockUserService.getCategory = (catID, scaleID) => undefined;
 	mockUserService.getAction = (actID, catID, scaleID) => dummyScaleUsesTimespans.categories[0].actions[0];
@@ -502,6 +528,7 @@ test("RecordActionFormLogicContainer will not call createTimespan if no action a
 	}] };
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.createTimespan = jest.fn();
 	mockUserService.getCategory = (catID, scaleID) => scale.categories[0];
 	mockUserService.getAction = (actID, catID, scaleID) => undefined;
@@ -528,6 +555,7 @@ test("RecordActionFormLogicContainer will blank the form after a successful save
 	const scale = dummyScaleUsesTimespans;
 
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
@@ -582,6 +610,7 @@ test("RecordActionFormLogicContainer will blank the form after a successful save
 test("RecordActionFormLogicContainer will not blank the form after a failed save", async () => {
 
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{}; // had to define explicitly
 	mockUserService.createTimespan = jest.fn().mockResolvedValue({
 		id: "testTimespan",
 		date: new Date().toString(),
@@ -629,4 +658,21 @@ test("RecordActionFormLogicContainer will not blank the form after a failed save
 		expect(timepsanMinutesInput.value).not.toBe(minutesOriginalValue);
 	});
 
+});
+
+
+test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<RecordActionFormLogicContainer
+		userService={mockUserService}
+		scale={dummyScaleUsesTimespans} />);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
+	
 });
