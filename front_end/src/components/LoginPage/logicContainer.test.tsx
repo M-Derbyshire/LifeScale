@@ -7,9 +7,12 @@ const dummyOnLogin = () => {};
 
 test("Logic container for LoginPage will render a LoginPage component", () => {
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{};
+	
 	const { container } = render(<Router>
 									<LoginPageLogicContainer 
-										userService={new TestingDummyUserService()}
+										userService={mockUserService}
 										onSuccessfulLogin={dummyOnLogin}
 										registerPath="/"
 										forgotPasswordPath="/" />
@@ -26,6 +29,7 @@ test("Logic container for LoginPage will handle the state and submission of form
 	const expectedPasswordValue = "test123";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{};
 	mockUserService.loginUser = jest.fn().mockResolvedValue({
 		id: "test",
 		email: expectedEmailValue,
@@ -61,6 +65,7 @@ test("Logic container for LoginPage will pass the bad login error message to the
 	const message = "Test error message 123";
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{};
 	mockUserService.loginUser = jest.fn().mockRejectedValue(new Error(message));
 	
 	const { container } = render(<Router>
@@ -93,9 +98,12 @@ test("Logic container for LoginPage will pass the link paths to the LoginPage", 
 	const registerPath = "/testregister";
 	const forgotPath = "/testforgot";
 	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{};
+	
 	const { container } = render(<Router>
 									<LoginPageLogicContainer 
-										userService={new TestingDummyUserService()}
+										userService={mockUserService}
 										onSuccessfulLogin={dummyOnLogin}
 										registerPath={registerPath}
 										forgotPasswordPath={forgotPath} />
@@ -113,6 +121,7 @@ test("Logic container for LoginPage will pass the link paths to the LoginPage", 
 test("Logic container for LoginPage will call the onSuccesfulLogin prop on good login", async () => {
 	
 	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = ()=>{};
 	mockUserService.loginUser = jest.fn().mockResolvedValue({
 		id: "test",
 		email: "test@test.com",
@@ -141,5 +150,26 @@ test("Logic container for LoginPage will call the onSuccesfulLogin prop on good 
 	fireEvent.submit(form);
 	
 	await waitFor(() => expect(mockOnLogin).toHaveBeenCalled());
+	
+});
+
+
+test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = new TestingDummyUserService();
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<Router>
+		<LoginPageLogicContainer 
+			userService={mockUserService}
+			onSuccessfulLogin={dummyOnLogin}
+			registerPath={""}
+			forgotPasswordPath={""} />
+	</Router>);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
 	
 });

@@ -40,6 +40,12 @@ export default class LoginPageLogicContainer
 	}
 	
 	
+	componentWillUnmount()
+	{
+		this.props.userService.abortRequests();
+	}
+	
+	
 	handleLogin()
 	{
 		this.props.userService.loginUser(this.state.email, this.state.password)
