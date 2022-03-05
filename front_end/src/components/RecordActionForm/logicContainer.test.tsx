@@ -661,7 +661,7 @@ test("RecordActionFormLogicContainer will not blank the form after a failed save
 });
 
 
-test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+test("RecordActionFormLogicContainer will call userService abortRequests method on unmount", () => {
 	
 	const mockUserService = new TestingDummyUserService();
 	mockUserService.abortRequests = jest.fn();

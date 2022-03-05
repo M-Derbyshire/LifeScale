@@ -154,7 +154,7 @@ test("Logic container for LoginPage will call the onSuccesfulLogin prop on good 
 });
 
 
-test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+test("Logic container for LoginPage will call userService abortRequests method on unmount", () => {
 	
 	const mockUserService = new TestingDummyUserService();
 	mockUserService.abortRequests = jest.fn();

@@ -192,7 +192,7 @@ test("Logic container for RequestPasswordPage will pass the given backButtonHand
 
 
 
-test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+test("RequestPasswordPage logic container will call userService abortRequests method on unmount", () => {
 	
 	const mockUserService = new TestingDummyUserService();
 	mockUserService.abortRequests = jest.fn();

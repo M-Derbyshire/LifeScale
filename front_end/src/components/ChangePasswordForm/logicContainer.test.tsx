@@ -217,7 +217,7 @@ test("In the logic container for ChangePasswordForm a bad save will clear previo
 });
 
 
-test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+test("logic container for ChangePasswordForm will call userService abortRequests method on unmount", () => {
 	
 	let mockUserService = new TestingDummyUserService();
 	mockUserService.abortRequests = jest.fn();
