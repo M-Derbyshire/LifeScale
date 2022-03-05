@@ -81,6 +81,16 @@ export default class AmendActionHistoryPageLogicContainer
 	
 	
 	
+	
+	componentWillUnmount()
+	{
+		this.props.userService.abortRequests();
+	}
+	
+	
+	
+	
+	
 	getRefreshedHistoryItemList(scale = this.state.scale)
 	{
 		try 

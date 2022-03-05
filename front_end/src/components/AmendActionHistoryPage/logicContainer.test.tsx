@@ -41,6 +41,7 @@ const dummyScale = {
 
 
 const dummyUserService = new TestingDummyUserService();
+dummyUserService.abortRequests = ()=>{}; // had to define explicitly
 dummyUserService.getScale = scaleID => dummyScale;
 dummyUserService.getScaleTimespans = 
 	(scale, reverseOrder) => dummyScale.categories[0].actions[0].timespans.map((timespan) => {
@@ -326,5 +327,23 @@ test("AmendActionHistoryPageLogicContainer will pass through error message if er
 		
 		expect(currentItemList[0].textContent).toEqual(expect.stringContaining(message));
 	});
+	
+});
+
+
+test("AmendActionHistoryPageLogicContainer will call userService abortRequests method on unmount", () => {
+	
+	const mockUserService = { ...dummyUserService };
+	mockUserService.abortRequests = jest.fn();
+	
+	const { container, unmount } = render(<AmendActionHistoryPageLogicContainer
+		scaleID={dummyScale.id}
+		userService={mockUserService}
+		backButtonHandler={()=>{}} />);
+	
+	
+	unmount();
+	
+	expect(mockUserService.abortRequests).toHaveBeenCalled();
 	
 });
