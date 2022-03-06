@@ -56,7 +56,8 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 					<form onSubmit={(e) => { e.preventDefault(); this.props.recordedAction.onSubmit() }}>
 						
 						<label>
-							Category: <select className="categorySelect" 
+							Category: <select className="categorySelect"
+											required 
 											value={this.props.recordedAction.selectedCategoryID} 
 											onChange={
 												(e) => this.props.recordedAction.setSelectedCategoryID(e.target.value)
@@ -72,6 +73,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						
 						<label>
 							Action: <select className="actionSelect" 
+										required
 										value={this.props.recordedAction.selectedActionID} 
 										onChange={
 											(e) => this.props.recordedAction.setSelectedActionID(e.target.value)
@@ -87,7 +89,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						
 						
 						<label>
-							Date: <DatePicker 
+							Date: <DatePicker
 									className="actionDate" 
 									value={convertDateToInputString(this.props.recordedAction.timespan.date)}
 									

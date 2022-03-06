@@ -35,6 +35,7 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 			
 			<label>
 				Time spent (in minutes): <input 
+					required
 					type="text"
 					className="timespanMinuteInput"
 					pattern={validNumberPattern}
