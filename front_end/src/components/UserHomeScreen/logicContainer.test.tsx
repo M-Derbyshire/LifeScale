@@ -89,7 +89,7 @@ const testBalanceDisplayValues = (container:any, balanceDisplayContainerClassnam
     const scaleBalanceDisplay = container.querySelector(`.ScalePrimaryDisplay .${balanceDisplayContainerClassname} .ScaleBalanceDisplay`);
     const balanceItems = [];
     categories.forEach(
-        category => balanceItems.push(within(scaleBalanceDisplay).getByText(category.name))
+        category => balanceItems.push(within(scaleBalanceDisplay).getByText(category.name).closest("div"))
     );
     
     expect(balanceItems.length).toBe(expectedValues.length);

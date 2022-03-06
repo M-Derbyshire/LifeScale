@@ -11,7 +11,7 @@ test("ScaleBalanceDisplay will display all given items, with their label text", 
 	
 	render(<ScaleBalanceDisplay scaleItems={items} />);
 	
-	items.forEach( item => expect(screen.getByText(item.label)).not.toBeNull() );
+	items.forEach( item => expect(screen.getByText(item.label).closest("div")).not.toBeNull() );
 	
 });
 
@@ -24,7 +24,7 @@ test.each([
 	
 	render(<ScaleBalanceDisplay scaleItems={[item]} />);
 	
-	const itemElem = screen.getByText(item.label);
+	const itemElem = screen.getByText(item.label).closest("div");
 	
 	expect(itemElem.style).toHaveProperty("backgroundColor", item.color);
 	
@@ -39,7 +39,7 @@ test.each([
 	
 	render(<ScaleBalanceDisplay scaleItems={[item]} />);
 	
-	const itemElem = screen.getByText(item.label);
+	const itemElem = screen.getByText(item.label).closest("div");
 	
 	expect(itemElem.style).toHaveProperty("flexGrow", item.weight.toString());
 	
