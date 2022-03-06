@@ -21,6 +21,7 @@ const ScaleDetailsFormPartial:FC<IScaleDetailsFormPartialProps> = (props) => {
 			<label>
 				Name: <input 
 						className="scaleNameInput" 
+						required
 						type="text" 
 						value={props.name} 
 						onChange={(e)=>props.setName(e.target.value)} />
@@ -31,6 +32,7 @@ const ScaleDetailsFormPartial:FC<IScaleDetailsFormPartialProps> = (props) => {
 				Scale Day Count: <input 
 					type="number" 
 					className="scaleDayCountInput" 
+					required
 					min="0" 
 					step="1"
 					value={props.dayCount} 
