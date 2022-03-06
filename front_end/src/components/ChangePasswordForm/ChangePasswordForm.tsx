@@ -27,6 +27,7 @@ const ChangePasswordForm:FC<IChangePasswordFormProps> = (props) => {
 		
 			<label className="currentPasswordInputLabel">
 				Current Password: <input className="currentPasswordInput" 
+									required
 									type="password"
 									value={props.currentPassword} 
 									onChange={(e) => props.setCurrentPassword(e.target.value)} />

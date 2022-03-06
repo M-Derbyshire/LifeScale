@@ -61,12 +61,12 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 			<div className="PasswordFormPartial">
 				
 				<label className="passwordInputLabel">
-					{labelText}: <input className="passwordInput" type="password" value={this.props.password} onChange={(e) => this.handleSetPassword(e.target.value)} />
+					{labelText}: <input className="passwordInput" required type="password" value={this.props.password} onChange={(e) => this.handleSetPassword(e.target.value)} />
 				</label>
 				<br/>
 				
 				<label className="confirmPasswordInputLabel">
-					Confirm {labelText}: <input className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} 
+					Confirm {labelText}: <input className="confirmPasswordInput" required type="password" value={this.state.confirmedPassword} 
 											onChange={(e) => this.handleSetConfirmedPassword(e.target.value)} />
 				</label>
 				
