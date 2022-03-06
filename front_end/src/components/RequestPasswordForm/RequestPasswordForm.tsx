@@ -24,7 +24,7 @@ const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 			
 			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); }}>
 				<label>
-					Email: <input type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+					Email: <input type="email" required value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
 				</label>
 				<br />
 				
