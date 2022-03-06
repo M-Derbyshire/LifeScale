@@ -21,12 +21,12 @@ const LoginForm:FC<ILoginFormProps> = (props) => {
 			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); }}>
 				
 				<label>
-					Email: <input type="email" value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+					Email: <input type="email" required value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
 				</label>
 				<br/>
 				
 				<label>
-					Password: <input type="password" value={props.password} onChange={(e)=>props.setPassword(e.target.value)} />
+					Password: <input type="password" required value={props.password} onChange={(e)=>props.setPassword(e.target.value)} />
 				</label>
 				
 				<br />
