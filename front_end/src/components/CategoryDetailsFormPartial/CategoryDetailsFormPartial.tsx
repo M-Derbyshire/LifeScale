@@ -44,6 +44,7 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 				Name: <input 
 						className="categoryNameInput" 
 						type="text" 
+						required
 						value={props.name} 
 						onChange={(e)=>props.setName(e.target.value)} />
 			</label>
@@ -51,11 +52,12 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			
 			<label className="categoryColorInputLabel">
 				Color: <select 
-						style={{ borderColor: realCategoryColorValue }}
-						className="categoryColorInput" 
-						value={realCategoryColorValue} 
-						onChange={(e)=>props.setColor(e.target.value)}>
-							{props.colorList.map(mapColorDataToOptionElement)}
+							required
+							style={{ borderColor: realCategoryColorValue }}
+							className="categoryColorInput" 
+							value={realCategoryColorValue} 
+							onChange={(e)=>props.setColor(e.target.value)}>
+								{props.colorList.map(mapColorDataToOptionElement)}
 						</select>
 			</label>
 			<br/>
@@ -63,6 +65,7 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			<label>
 				Desired Weight: <input 
 					type="number" 
+					required
 					className="categoryDesiredWeightInput" 
 					min="0" 
 					step="1"
