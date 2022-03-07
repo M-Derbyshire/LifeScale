@@ -1,21 +1,89 @@
-import React from 'react';
+import React, { FC, ReactElement } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.scss';
-import NavigatableContentWrapper from '../NavigatableContentWrapper/NavigatableContentWrapper';
-import UserNavBar from '../UserNavBar/UserNavBar';
-import ScaleStatisticDisplay from '../ScaleStatisticDisplay/ScaleStatisticDisplay';
+import UserHomeScreenLogicContainer from '../UserHomeScreen/UserHomeScreenLogicContainer';
+import MockJSONServerUserService from '../../userServices/MockJSONServerUserService/MockJSONServerUserService';
+import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/CategoryColorProvider';
+import LoginPageLogicContainer from '../LoginPage/LoginPageLogicContainer';
 
-function App() {
+const userService = new MockJSONServerUserService(
+	process.env.REACT_APP_API_PROTOCOL!,
+	process.env.REACT_APP_API_DOMAIN!,
+	process.env.REACT_APP_API_PORT!
+);
+
+
+//Call this, passing in a component at a route that requires auth, and you'll redirect if not logged in
+const handlePrivateComponent = (element:ReactElement):ReactElement => {
 	
-	const dummyEmpty = (x:any)=>console.log(x);
-	const dummySubmit = ()=>console.log("submitted");
+	if(userService.isLoggedIn())
+		return element;
+	
+	return <Navigate to="/login" />;
+}
+
+
+
+const App:FC = () => {
 	
 	return (
 		<div className="App">
-			<NavigatableContentWrapper smallScreenWidthPixels={500} navigationBar={
-				<UserNavBar scaleLinks={[]} editUserURL="/edit" logoutCallback={dummySubmit} createScaleURL="/create" />
-			}>
-				<ScaleStatisticDisplay amendHistoryCallback={dummySubmit} statistics={[]} />
-			</NavigatableContentWrapper>
+			
+			<Routes>
+				
+				<Route 
+					path="/login" 
+					element={<LoginPageLogicContainer userService={userService} onSuccessfulLogin={()=>{}} registerPath="" forgotPasswordPath="" />} />
+				
+				
+				
+				<Route
+					path="/user/edit"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				
+					
+				<Route
+					path="/history"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				
+					
+				<Route
+					path="/category/edit/:id"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				<Route
+					path="/category/create"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				
+				
+				
+				<Route
+					path="/scale/edit/:id"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				<Route
+					path="/scale/create"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				<Route
+					path="/scale/:id"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				
+				
+				
+				<Route
+					path="/"
+					element={handlePrivateComponent(<div></div>)} />
+				
+				<Route
+					path="*"
+					element={handlePrivateComponent(<Navigate to="/" />)} />
+				
+			</Routes>
 		</div>
 	);
 }
