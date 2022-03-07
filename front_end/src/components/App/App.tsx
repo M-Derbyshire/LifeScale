@@ -1,10 +1,11 @@
 import React, { FC, ReactElement } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './App.scss';
 import UserHomeScreenLogicContainer from '../UserHomeScreen/UserHomeScreenLogicContainer';
 import MockJSONServerUserService from '../../userServices/MockJSONServerUserService/MockJSONServerUserService';
 import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/CategoryColorProvider';
 import LoginPageLogicContainer from '../LoginPage/LoginPageLogicContainer';
+import RequestPasswordPageLogicContainer from '../RequestPasswordPage/RequestPasswordPageLogicContainer';
 
 const userService = new MockJSONServerUserService(
 	process.env.REACT_APP_API_PROTOCOL!,
@@ -13,18 +14,25 @@ const userService = new MockJSONServerUserService(
 );
 
 
-//Call this, passing in a component at a route that requires auth, and you'll redirect if not logged in
-const handlePrivateComponent = (element:ReactElement):ReactElement => {
+//Returns a function that you call with a component that's at a route that requires auth. When that's called, if not logged in, user will
+//be redirected to the login route that's provided
+const getPrivateComponentHandler = (loginPageRoute:string) => (element:ReactElement):ReactElement => {
 	
 	if(userService.isLoggedIn())
 		return element;
 	
-	return <Navigate to="/login" />;
+	return <Navigate to={loginPageRoute} />;
 }
 
 
 
 const App:FC = () => {
+	
+	const navigate = useNavigate();
+	
+	const loginPageRoute = "/login";
+	const handlePrivateComponent = getPrivateComponentHandler(loginPageRoute);
+	
 	
 	return (
 		<div className="App">
@@ -35,6 +43,9 @@ const App:FC = () => {
 					path="/login" 
 					element={<LoginPageLogicContainer userService={userService} onSuccessfulLogin={()=>{}} registerPath="" forgotPasswordPath="" />} />
 				
+				<Route 
+					path="/forgotpassword" 
+					element={<RequestPasswordPageLogicContainer userService={userService} backButtonHandler={() => navigate(loginPageRoute)} />} />
 				
 				
 				<Route

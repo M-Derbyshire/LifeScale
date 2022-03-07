@@ -1,5 +1,5 @@
 import App from './App';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
 
@@ -58,9 +58,32 @@ test.each([
 
 
 
-// App will render a RequestPasswordPageLogicContainer, when at the correct route
+test("App will render a RequestPasswordPageLogicContainer, when at the correct route", () => {
+    
+    const { container } = render(<Router initialEntries={["/forgotpassword"]}>
+        <App />
+    </Router>);
+    
+    const forgotPage = container.querySelector(".RequestPasswordPageLogicContainer");
+    expect(forgotPage).not.toBeNull();
+    
+});
 
-// App will pass in the backButtonHandler prop for RequestPasswordPageLogicContainer, which will redirect to the login page
+test("App will pass in the backButtonHandler prop for RequestPasswordPageLogicContainer, which will redirect to the login page", () => {
+    
+    const { container } = render(<Router initialEntries={["/forgotpassword"]}>
+        <App />
+    </Router>);
+    
+    const forgotPage = container.querySelector(".RequestPasswordPageLogicContainer");
+    const backButton = within(forgotPage).getByRole("button", { name: /back/i });
+    
+    fireEvent.click(backButton);
+    
+    const loginPage = container.querySelector(".LoginPage");
+    expect(loginPage).not.toBeNull();
+    
+});
 
 
 
