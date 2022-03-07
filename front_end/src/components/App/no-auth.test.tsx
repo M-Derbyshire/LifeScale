@@ -1,20 +1,14 @@
 import App from './App';
-import { render, fireEvent, within } from '@testing-library/react';
+import { render, fireEvent, within, waitFor } from '@testing-library/react';
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
+import IUserService from '../../interfaces/api_access/IUserService';
 
 
-beforeEach(async () => {
-    
-    process.env.REACT_APP_API_PROTOCOL = "http";
-    process.env.REACT_APP_API_DOMAIN = "test.com";
-    
-    const mockUserService = new TestingDummyUserService();
-    mockUserService.isLoggedIn = () => false
-    jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserService', () => mockUserService);
-});
+process.env.REACT_APP_API_PROTOCOL = "http";
+process.env.REACT_APP_API_DOMAIN = "test.com";
 
-
+jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserService');
 
 
 
@@ -36,7 +30,7 @@ test.each([
         <App />
     </Router>);
     
-    const loginPage = container.querySelector(".LoginPage");
+    const loginPage = container.querySelector(".LoginPageLogicContainer");
     expect(loginPage).not.toBeNull();
     
 });
@@ -51,10 +45,81 @@ test.each([
         <App />
     </Router>);
     
-    const loginPage = container.querySelector(".LoginPage");
+    const loginPage = container.querySelector(".LoginPageLogicContainer");
     expect(loginPage).not.toBeNull();
     
 });
+
+
+
+
+
+test("App will render a LoginPageLogicContainer, when at the correct route", () => {
+    
+    const { container } = render(<Router initialEntries={["/login"]}>
+        <App />
+    </Router>);
+    
+    const loginPage = container.querySelector(".LoginPageLogicContainer");
+    expect(loginPage).not.toBeNull();
+    
+});
+
+test("App will direct to the home route after a succesful login from LoginPageLogicContainer", async () => {
+    
+    const { container } = render(<Router initialEntries={["/login"]}>
+        <App />
+    </Router>);
+    
+    const loginPage = container.querySelector(".LoginPageLogicContainer");
+    const loginButton = within(loginPage).getByRole("button", { name: /log/i });
+    
+    const emailInput = container.querySelector("input[type=email]");
+    fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+    const psswordInput = container.querySelector("input[type=password]");
+    fireEvent.change(psswordInput, { target: { value: "test" } });
+    
+    fireEvent.click(loginButton);
+    
+    await waitFor(() => {
+        const homeScreen = container.querySelector(".UserHomeScreenLogicContainer");
+        expect(homeScreen).not.toBeNull();
+    });
+    
+});
+
+test("App will pass the registerPath prop to LoginPageLogicContainer", () => {
+    
+    const registerRoute = "/register";
+    
+    const { container } = render(<Router initialEntries={["/login"]}>
+        <App />
+    </Router>);
+    
+    const loginPage = container.querySelector(".LoginPageLogicContainer");
+    const registerLink = within(loginPage).getByText(/register/i);
+    
+    expect(registerLink).toHaveAttribute("href", registerRoute);
+    
+});
+
+test("App will pass the the forgotPaswordPath to LoginPageLogicContainer", () => {
+    
+    const forgotRoute = "/forgotpassword";
+    
+    const { container } = render(<Router initialEntries={["/login"]}>
+        <App />
+    </Router>);
+    
+    const loginPage = container.querySelector(".LoginPageLogicContainer");
+    const forgotLink = within(loginPage).getByText(/forgot/i);
+    
+    expect(forgotLink).toHaveAttribute("href", forgotRoute);
+    
+});
+
+
+
 
 
 
@@ -84,18 +149,6 @@ test("App will pass in the backButtonHandler prop for RequestPasswordPageLogicCo
     expect(loginPage).not.toBeNull();
     
 });
-
-
-
-
-
-// App will render a LoginPageLogicContainer, when at the correct route
-
-// App will direct to the home route after a succesful login from LoginPageLogicContainer
-
-// App will pass the registerPath prop to LoginPageLogicContainer
-
-// App will pass the the forgotPaswordPath to LoginPageLogicContainer
 
 
 

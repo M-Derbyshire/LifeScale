@@ -41,11 +41,16 @@ const App:FC = () => {
 				
 				<Route 
 					path="/login" 
-					element={<LoginPageLogicContainer userService={userService} onSuccessfulLogin={()=>{}} registerPath="" forgotPasswordPath="" />} />
+					element={<LoginPageLogicContainer 
+									userService={userService} 
+									onSuccessfulLogin={() => navigate("/")} 
+									registerPath="/register" 
+									forgotPasswordPath="/forgotpassword" />} />
 				
 				<Route 
 					path="/forgotpassword" 
 					element={<RequestPasswordPageLogicContainer userService={userService} backButtonHandler={() => navigate(loginPageRoute)} />} />
+				
 				
 				
 				<Route
@@ -88,7 +93,16 @@ const App:FC = () => {
 				
 				<Route
 					path="/"
-					element={handlePrivateComponent(<div></div>)} />
+					element={handlePrivateComponent(<UserHomeScreenLogicContainer 
+														userService={userService}
+														selectedScaleID={""}
+														scaleURLBase="scale"
+														editUserURL="/"
+														createScaleURL="/"
+														onSuccessfulLogout={()=>{}}
+														editScaleCallback={(scaleID:string)=>{}}
+														amendHistoryCallback={(scaleID:string)=>{}}
+														categoryColorProvider={new CategoryColorProvider()} />)} />
 				
 				<Route
 					path="*"
