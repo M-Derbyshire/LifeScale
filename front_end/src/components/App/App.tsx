@@ -15,8 +15,9 @@ const userService = new MockJSONServerUserService(
 );
 
 
-//Returns a function that you call with a component that's at a route that requires auth. When that's called, if not logged in, user will
-//be redirected to the login route that's provided
+//Returns a function.
+//You can call the returned function with a component that's at a route that requires auth. If not logged in, the user will
+//then be redirected to the login route that's provided.
 const getPrivateComponentHandler = (loginPageRoute:string) => (element:ReactElement):ReactElement => {
 	
 	if(userService.isLoggedIn())
