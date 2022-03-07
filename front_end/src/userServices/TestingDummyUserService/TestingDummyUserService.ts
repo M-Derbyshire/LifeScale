@@ -21,6 +21,8 @@ export default class TestingDummyUserService implements IUserService {
 	};
 	
 	
+	mockLoggedInStatus:boolean = false;
+	
 	abortRequests() {}
 	
 	loginUser(email:string, password:string)
