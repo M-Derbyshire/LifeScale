@@ -6,6 +6,7 @@ import MockJSONServerUserService from '../../userServices/MockJSONServerUserServ
 import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/CategoryColorProvider';
 import LoginPageLogicContainer from '../LoginPage/LoginPageLogicContainer';
 import RequestPasswordPageLogicContainer from '../RequestPasswordPage/RequestPasswordPageLogicContainer';
+import UserDetailsFormLogicContainer from '../UserDetailsForm/UserDetailsFormLogicContainer';
 
 const userService = new MockJSONServerUserService(
 	process.env.REACT_APP_API_PROTOCOL!,
@@ -51,6 +52,14 @@ const App:FC = () => {
 					path="/forgotpassword" 
 					element={<RequestPasswordPageLogicContainer userService={userService} backButtonHandler={() => navigate(loginPageRoute)} />} />
 				
+				<Route 
+					path="/register" 
+					element={<UserDetailsFormLogicContainer 
+									userService={userService} 
+									isNewUser={true}
+									backButtonHandler={()=> navigate(loginPageRoute)} />} />
+				
+				
 				
 				
 				<Route
@@ -58,6 +67,8 @@ const App:FC = () => {
 					element={handlePrivateComponent(<div></div>)} />
 				
 				
+					
+					
 					
 				<Route
 					path="/history"
@@ -76,6 +87,7 @@ const App:FC = () => {
 				
 				
 				
+				
 				<Route
 					path="/scale/edit/:id"
 					element={handlePrivateComponent(<div></div>)} />
@@ -87,6 +99,8 @@ const App:FC = () => {
 				<Route
 					path="/scale/:id"
 					element={handlePrivateComponent(<div></div>)} />
+				
+				
 				
 				
 				

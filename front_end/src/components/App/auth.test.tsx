@@ -14,7 +14,7 @@
 
 // App will pass backButtonHandler prop to UserDetailsFormLogicContainer, at edit route, which will redirect to home route
 
-// App will pass isNewUser prop as true to UserDetailsFormLogicContainer, if at edit route
+// App will pass isNewUser prop as false to UserDetailsFormLogicContainer, if at edit route
 
 
 

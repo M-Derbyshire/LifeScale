@@ -154,8 +154,42 @@ test("App will pass in the backButtonHandler prop for RequestPasswordPageLogicCo
 
 
 
-// App will render a UserDetailsFormLogicContainer, when at the create route
+test("App will render a UserDetailsFormLogicContainer, when at the create route", () => {
+    
+    const { container } = render(<Router initialEntries={["/register"]}>
+        <App />
+    </Router>);
+    
+    const userForm = container.querySelector(".UserDetailsFormLogicContainer");
+    expect(userForm).not.toBeNull();
+    
+});
 
-// App will pass backButtonHandler prop to UserDetailsFormLogicContainer, at create route, which will redirect to login route
+test("App will pass backButtonHandler prop to UserDetailsFormLogicContainer, at create route, which will redirect to login route", () => {
+    
+    const { container } = render(<Router initialEntries={["/register"]}>
+        <App />
+    </Router>);
+    
+    const userForm = container.querySelector(".UserDetailsFormLogicContainer");
+    const backButton = within(userForm).getByRole("button", { name: /back/i });
+    
+    fireEvent.click(backButton);
+    
+    const loginPage = container.querySelector(".LoginPage");
+    expect(loginPage).not.toBeNull();
+    
+});
 
-// App will pass isNewUser prop as false to UserDetailsFormLogicContainer, if at create route
+test("App will pass isNewUser prop as true to UserDetailsFormLogicContainer, if at create route", () => {
+    
+    const { container } = render(<Router initialEntries={["/register"]}>
+        <App />
+    </Router>);
+    
+    const userFormHeading = container.querySelector(".UserDetailsFormLogicContainer header");
+    const registerText = within(userFormHeading).queryByText(/register/i);
+    
+    expect(registerText).not.toBeNull();
+    
+});
