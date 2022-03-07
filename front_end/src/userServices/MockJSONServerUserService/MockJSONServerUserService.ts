@@ -26,14 +26,10 @@ export default class MockJSONServerUserService implements IUserService {
 	_currentUser?:IUser;
 	_currentUserPassword:string = ""; //Aids with mocking password changes
 	
-	_abortController:any;
-	_abortSignal:any;
+	_abortControllers:AbortController[] = [];
 	
 	constructor(apiProtocol:string, apiDomain:string, apiPort?:string, apiPath?:string)
-	{
-		this._abortController = new AbortController();
-		this._abortSignal = this._abortController.signal;
-		
+	{	
 		this._apiURLBase=`${apiProtocol}://${apiDomain}`;
 		
 		if(apiPort)
@@ -47,10 +43,22 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
+	//Call this before making any FETCH calls
+	_getNewAbortController():AbortController
+	{
+		//First, clear out any controllers that have aborted
+		//There's no way to tell if one's finished if it wasn't aborted, but we're not expecting more than 100 in one sitting
+		this._abortControllers = this._abortControllers.filter(controller => !controller.signal.aborted);
+		
+		const newAbortController = new AbortController();
+		this._abortControllers.push(newAbortController);
+		
+		return newAbortController;
+	}
 	
 	abortRequests()
 	{
-		this._abortController.abort();
+		this._abortControllers.forEach(controller => controller.abort());
 	}
 	
 	
@@ -62,7 +70,9 @@ export default class MockJSONServerUserService implements IUserService {
 		// As this is a mock API, for demonstration purposes this handles password validation
 		// ----------------------------------------------------------------------------------
 		
-		return fetch(`${this._apiURLBase}/users?email=${email}`, { signal: this._abortSignal })
+		const abortController = this._getNewAbortController();
+		
+		return fetch(`${this._apiURLBase}/users?email=${email}`, { signal: abortController.signal })
 			.then(response => response.json())
 			.then(users => {
 				if(users.length === 0 || users[0].password !== password)
@@ -156,8 +166,10 @@ export default class MockJSONServerUserService implements IUserService {
 		}
 		
 		
+		const abortController = this._getNewAbortController();
+		
 		return fetch(url, {
-			signal: this._abortSignal,
+			signal: abortController.signal,
 			method,
 			body: JSON.stringify(newUserData),
 			headers: {
