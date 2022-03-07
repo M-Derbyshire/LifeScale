@@ -26,6 +26,9 @@ interface IUserHomeScreenLogicContainerState {
     scales:IScale[];
     selectedScale?:IScale;
     scaleLoadingError:string;
+    statistics:IPercentageStatistic[];
+    currentBalanceItems:IScaleBalanceItem[];
+    desiredBalanceItems:IScaleBalanceItem[];
 };
 
 
@@ -39,7 +42,7 @@ export default class UserHomeScreenLogicContainer
     extends Component<IUserHomeScreenLogicContainerProps, IUserHomeScreenLogicContainerState>
 {
     
-    stdScaleLoadErrorMessage = "Unable to load the selected scale.";
+    static stdScaleLoadErrorMessage = "Unable to load the selected scale.";
     
     constructor(props:IUserHomeScreenLogicContainerProps)
     {
@@ -63,7 +66,7 @@ export default class UserHomeScreenLogicContainer
         {
             selectedScale = this.props.userService.getScale(this.props.selectedScaleID);
             if(!selectedScale)
-                scaleLoadingError = this.stdScaleLoadErrorMessage;
+                scaleLoadingError = UserHomeScreenLogicContainer.stdScaleLoadErrorMessage;
         }
         
         
@@ -72,7 +75,76 @@ export default class UserHomeScreenLogicContainer
             scaleLoadingError,
             scales,
             selectedScale,
+            
+            //Set the below when getDerviedStateFromProps runs
+            statistics: [],
+            currentBalanceItems: [],
+            desiredBalanceItems: []
         };
+    }
+    
+    
+    static getDerivedStateFromProps(props:IUserHomeScreenLogicContainerProps, state:IUserHomeScreenLogicContainerState)
+    {
+        return { ...state, ...UserHomeScreenLogicContainer.regenerateScaleAndTimespanDisplays(props, state) };
+    }
+    
+    
+    
+    
+    
+    //Regenerate the statistics and scale balance items, from a newly refreshed scale
+    static regenerateScaleAndTimespanDisplays(props:IUserHomeScreenLogicContainerProps, state:IUserHomeScreenLogicContainerState):{
+        statistics:IPercentageStatistic[],
+        currentBalanceItems:IScaleBalanceItem[],
+        desiredBalanceItems:IScaleBalanceItem[],
+        scaleLoadingError:string,
+        selectedScale:IScale|undefined
+    }
+    {
+        let statistics:IPercentageStatistic[] = [];
+        let currentBalanceItems:IScaleBalanceItem[] = [];
+        let desiredBalanceItems:IScaleBalanceItem[] = [];
+        let scaleLoadingError:string = state.scaleLoadingError;
+        let selectedScale:IScale|undefined;
+        
+        
+        if(props.selectedScaleID)
+        {
+            selectedScale = props.userService.getScale(props.selectedScaleID);
+            
+            if(!selectedScale)
+                scaleLoadingError = this.stdScaleLoadErrorMessage;
+            else
+            {
+                const categories = selectedScale.categories;
+                statistics = this.generateCategoryPercentageStatistics(categories, selectedScale.displayDayCount);
+                currentBalanceItems = this.generateCatgeoryBalanceItems(categories, statistics, props.categoryColorProvider);
+                
+                
+                //Categories can't change while this component is still mounted, so only run if none already set
+                if(!state.desiredBalanceItems || state.desiredBalanceItems.length === 0)
+                {   
+                    //Using the desired weights as the percentages
+                    desiredBalanceItems = this.generateCatgeoryBalanceItems(categories, categories.map(category => ({
+                        id: category.id,
+                        label: category.name,
+                        percentage: category.desiredWeight
+                    })), props.categoryColorProvider); 
+                }
+                
+            }
+        }
+        
+        
+        return {
+            statistics,
+            currentBalanceItems,
+            desiredBalanceItems,
+            scaleLoadingError,
+            selectedScale
+        };
+        
     }
     
     
@@ -81,14 +153,15 @@ export default class UserHomeScreenLogicContainer
     
     
     
-    
-    
     //If the correct percentageStatistic cannot be found for a category, the item weight is set to 0
-    generateCatgeoryBalanceItems(categories:ICategory[], percentageStatistics:IPercentageStatistic[]):IScaleBalanceItem[]
+    static generateCatgeoryBalanceItems(
+        categories:ICategory[], 
+        percentageStatistics:IPercentageStatistic[], 
+        categoryColorProvider:CategoryColorProvider):IScaleBalanceItem[]
     {
         return categories.map((category) => {
             
-            let color = this.props.categoryColorProvider.getRealColorFromName(category.color);
+            let color = categoryColorProvider.getRealColorFromName(category.color);
             if(!color)
                 color = "white";
             
@@ -105,7 +178,7 @@ export default class UserHomeScreenLogicContainer
         });
     }
     
-    generateCategoryPercentageStatistics(categories:ICategory[], displayDayCount:number):IPercentageStatistic[]
+    static generateCategoryPercentageStatistics(categories:ICategory[], displayDayCount:number):IPercentageStatistic[]
     {   
         // Get the oldest date that can be included
         const millisecondsToRemove = (3600 * 1000 * 24) * (displayDayCount - 1); //Remove 1, as if dayCount is 0, the date should be tomorrow
@@ -177,21 +250,7 @@ export default class UserHomeScreenLogicContainer
     {
         //Reload the scale, to get all the new timespan data
         //We need this to keep the scales balances, and statistics, up to date
-        
-        let scaleLoadingError:string = "";
-        let selectedScale:IScale|undefined;
-        
-        if(this.props.selectedScaleID)
-        {
-            selectedScale = this.props.userService.getScale(this.props.selectedScaleID);
-            if(!selectedScale)
-                scaleLoadingError = this.stdScaleLoadErrorMessage;
-        }
-        
-        this.setState({
-            selectedScale,
-            scaleLoadingError
-        });
+       this.setState({ ...UserHomeScreenLogicContainer.regenerateScaleAndTimespanDisplays(this.props, this.state) });
     }
     
     
@@ -201,25 +260,6 @@ export default class UserHomeScreenLogicContainer
     
     render()
     {
-        let statistics:IPercentageStatistic[] = [];
-        let currentBalanceItems:IScaleBalanceItem[] = [];
-        let desiredBalanceItems:IScaleBalanceItem[] = [];
-        
-        if(this.state.selectedScale)
-        {
-            const categories = this.state.selectedScale.categories;
-            statistics = this.generateCategoryPercentageStatistics(categories, this.state.selectedScale.displayDayCount);
-            currentBalanceItems = this.generateCatgeoryBalanceItems(categories, statistics);
-            
-            //Using the desired weights as the percentages
-            desiredBalanceItems = this.generateCatgeoryBalanceItems(categories, categories.map(category => ({
-                id: category.id,
-                label: category.name,
-                percentage: category.desiredWeight
-            })));
-        }
-        
-        
         return (
             <div className="UserHomeScreenLogicContainer">
                 <UserHomeScreen 
@@ -237,9 +277,9 @@ export default class UserHomeScreenLogicContainer
                     createScaleURL={this.props.createScaleURL}
                     scaleURLBase={this.props.scaleURLBase}
                     
-                    desiredBalanceItems={desiredBalanceItems}
-                    currentBalanceItems={currentBalanceItems}
-                    statistics={statistics} />
+                    desiredBalanceItems={this.state.desiredBalanceItems}
+                    currentBalanceItems={this.state.currentBalanceItems}
+                    statistics={this.state.statistics} />
             </div>
         );
     }
