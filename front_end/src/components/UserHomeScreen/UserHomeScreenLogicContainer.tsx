@@ -61,13 +61,22 @@ export default class UserHomeScreenLogicContainer
             scaleLoadingError = err.message;
         }
         
-        
-        if(this.props.selectedScaleID && !scaleLoadingError)
+        //If no loading error -- and either there's a selectedScaleID, or scales available
+        if(!scaleLoadingError)
         {
-            selectedScale = this.props.userService.getScale(this.props.selectedScaleID);
+            if(this.props.selectedScaleID)
+            {
+                selectedScale = this.props.userService.getScale(this.props.selectedScaleID);
+            }
+            else if(scales.length > 0)
+            {
+                selectedScale = scales[0];
+            }
+            
             if(!selectedScale)
-                scaleLoadingError = UserHomeScreenLogicContainer.stdScaleLoadErrorMessage;
+                    scaleLoadingError = UserHomeScreenLogicContainer.stdScaleLoadErrorMessage;
         }
+        
         
         
         
@@ -106,7 +115,7 @@ export default class UserHomeScreenLogicContainer
         let currentBalanceItems:IScaleBalanceItem[] = [];
         let desiredBalanceItems:IScaleBalanceItem[] = [];
         let scaleLoadingError:string = state.scaleLoadingError;
-        let selectedScale:IScale|undefined;
+        let selectedScale:IScale|undefined = state.selectedScale;
         
         
         if(props.selectedScaleID)

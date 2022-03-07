@@ -142,6 +142,16 @@ test.each(dummyUser.scales.map(scale => [scale.id, scale.name]))
     
 });
 
+test("UserHomeScreenLogicContainer will load the first scale if there are scales, but no selectedScaleID, and pass it down to UserHomeScreen", () => {
+    
+    const { container } = render(<Router><UserHomeScreenLogicContainer {...defaultProps} selectedScaleID={undefined} /></Router>);
+    
+    const header = container.querySelector("header");
+    
+    expect(header.textContent).toEqual(expect.stringContaining(defaultProps.userService.getLoadedUser()!.scales[0].name));
+    
+});
+
 test("UserHomeScreenLogicContainer will pass down a scale loading error, if error loading user", () => {
     
     const errorMessage = "Unable to load user, test error";
