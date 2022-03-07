@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 
 interface ITimespanFormPartialProps {
 	minutes:number;
@@ -25,9 +25,8 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 	//Instead, will use a regex and validation on text inputs. Also, using the minute/hour display props to allow for things such as 
 	//empty values in the fields (if input value is valid, the minute state is set. Otherwise, only the display value is set).
 	//The form should then fail to submit, if correctlly formatted data is not provided.
+	//eslint-disable-next-line
 	const validNumberPattern = "[0-9]+\.?[0-9]{0,2}"; //up to 2 decimal places
-	
-	const customNumberValidationMessage = "Please provide a valid number";
 	
 	
 	return (
