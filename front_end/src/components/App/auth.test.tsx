@@ -1,5 +1,5 @@
 import App from './App';
-import { render, fireEvent, within, waitFor } from '@testing-library/react';
+import { render, fireEvent, within, waitFor, screen } from '@testing-library/react';
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 
 
@@ -21,7 +21,22 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
             email: "mock@user.com",
             forename: "mock",
             surname: "user",
-            scales: []
+            scales: [
+                {
+                    id: "testscale1",
+                    name: "testScale1",
+                    usesTimespans: true,
+                    displayDayCount: 1,
+                    categories: []
+                },
+                {
+                    id: "testscale2",
+                    name: "testScale2",
+                    usesTimespans: true,
+                    displayDayCount: 1,
+                    categories: []
+                }
+            ]
         };
         
         getLoadedUser = () => this.loadedUser;
@@ -29,6 +44,8 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
         isLoggedIn = () => this.mockLoggedInStatus;
         
         abortRequests = () => {};
+        
+        getScale = (id:string) => this.loadedUser.scales.filter(scale => scale.id === id)[0];
         
     };
 });
@@ -114,11 +131,49 @@ test("App will pass isNewUser prop as false to UserDetailsFormLogicContainer, if
 
 
 
-// App will render a AmendActionHistoryPageLogicContainer, when at the correct route
+test("App will render a AmendActionHistoryPageLogicContainer, when at the correct route", () => {
+    
+    const { container } = render(<Router initialEntries={["/scale/history/testscale1"]}>
+        <App />
+    </Router>);
+    
+    const historyPage = container.querySelector(".AmendActionHistoryPageLogicContainer");
+    expect(historyPage).not.toBeNull();
+    
+});
 
-// App will pass the scaleID prop to AmendActionHistoryPageLogicContainer
+test.each([
+    ["testscale1", "testScale1"],
+    ["testscale2", "testScale2"]
+])("App will pass the scaleID prop to AmendActionHistoryPageLogicContainer", (scaleID, scaleName) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com/scale/history/${scaleID}`);
+    
+    const { container } = render(<Router initialEntries={[`/scale/history/${scaleID}`]}>
+        <App />
+    </Router>);
+    
+    const historyPageHeader = container.querySelector(".AmendActionHistoryPageLogicContainer header");
+    expect(historyPageHeader.textContent).toEqual(expect.stringContaining(scaleName));
+    
+});
 
-// App will pass the backButtonHandler prop to AmendActionHistoryPageLogicContainer, which will redirect to home route
+test("App will pass the backButtonHandler prop to AmendActionHistoryPageLogicContainer, which will redirect to home route", () => {
+    
+    const { container } = render(<Router initialEntries={["/scale/history/testscale1"]}>
+        <App />
+    </Router>);
+    
+    const historyPage = container.querySelector(".AmendActionHistoryPageLogicContainer");
+    const backButton = within(historyPage).getByRole("button", { name: /back/i });
+    
+    fireEvent.click(backButton);
+    
+    const homePage = container.querySelector(".UserHomeScreenLogicContainer");
+    expect(homePage).not.toBeNull();
+    
+});
 
 
 

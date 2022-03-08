@@ -8,6 +8,7 @@ import LoginPageLogicContainer from '../LoginPage/LoginPageLogicContainer';
 import RequestPasswordPageLogicContainer from '../RequestPasswordPage/RequestPasswordPageLogicContainer';
 import UserDetailsFormLogicContainer from '../UserDetailsForm/UserDetailsFormLogicContainer';
 import IUserService from '../../interfaces/api_access/IUserService';
+import AmendActionHistoryPageLogicContainer from '../AmendActionHistoryPage/AmendActionHistoryPageLogicContainer';
 
 
 
@@ -25,7 +26,15 @@ const getRedirectHandler = (userService:IUserService, authIsRequired:boolean, re
 
 
 const App:FC = () => {
+	
 	const navigate = useNavigate();
+	
+	
+	//Using this technique, instead of a hook in the individual components,
+	//so the ID can be known here, and the individual screen components don't have to 
+	//handle it
+	const pathnameParts = window.location.pathname.split("/");
+	const entityID = pathnameParts[pathnameParts.length - 1];
 	
 	//Need to use this as state, as if it's global its login status doesn't get reset after each test
 	const [userService] = useState(new MockJSONServerUserService(
@@ -81,8 +90,11 @@ const App:FC = () => {
 					
 					
 				<Route
-					path="/history"
-					element={handlePrivateComponent(<div></div>)} />
+					path="scale/history/:id"
+					element={handlePrivateComponent(<AmendActionHistoryPageLogicContainer 
+						scaleID={entityID}
+						userService={userService}
+						backButtonHandler={()=> navigate(homePageRoute)} />)} />
 				
 				
 					
@@ -119,13 +131,13 @@ const App:FC = () => {
 					path={homePageRoute}
 					element={handlePrivateComponent(<UserHomeScreenLogicContainer 
 														userService={userService}
-														selectedScaleID={""}
+														selectedScaleID={undefined}
 														scaleURLBase="scale"
 														editUserURL="/user/edit"
 														createScaleURL="/"
 														onSuccessfulLogout={()=>{}}
 														editScaleCallback={(scaleID:string)=>{}}
-														amendHistoryCallback={(scaleID:string)=>{}}
+														amendHistoryCallback={(scaleID:string)=>navigate(`/scale/history/${scaleID}`)}
 														categoryColorProvider={new CategoryColorProvider()} />)} />
 				
 				<Route
