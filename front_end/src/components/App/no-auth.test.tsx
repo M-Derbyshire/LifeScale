@@ -1,6 +1,6 @@
 import App from './App';
-import { render, fireEvent, within, waitFor, screen } from '@testing-library/react';
-import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
+import { render, fireEvent, within, waitFor } from '@testing-library/react';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 
 process.env.REACT_APP_API_PROTOCOL = "http";
