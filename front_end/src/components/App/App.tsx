@@ -10,6 +10,7 @@ import UserDetailsFormLogicContainer from '../UserDetailsForm/UserDetailsFormLog
 import IUserService from '../../interfaces/api_access/IUserService';
 import AmendActionHistoryPageLogicContainer from '../AmendActionHistoryPage/AmendActionHistoryPageLogicContainer';
 import CategoryDetailsFormLogicContainer from '../CategoryDetailsForm/CategoryDetailsFormLogicContainer';
+import ScaleDetailsFormLogicContainer from '../ScaleDetailsForm/ScaleDetailsFormLogicContainer';
 
 
 
@@ -102,7 +103,7 @@ const App:FC = () => {
 						backButtonHandler={()=> navigate(homePageRoute)} />)} />
 				
 				
-					
+				
 				<Route
 					path="/category/edit/:scaleid/:categoryid"
 					element={handlePrivateComponent(<CategoryDetailsFormLogicContainer 
@@ -127,15 +128,25 @@ const App:FC = () => {
 				
 				<Route
 					path="/scale/edit/:id"
-					element={handlePrivateComponent(<div></div>)} />
+					element={handlePrivateComponent(<ScaleDetailsFormLogicContainer 
+						scaleID={pathnameParams[2]}
+						userService={userService}
+						backButtonHandler={()=>navigate(`/scale/${pathnameParams[2]}`)}
+						editCategoryHandler={(categoryID:string)=>navigate(`/category/edit/${pathnameParams[2]}/${categoryID}`)}
+						addCategoryHandler={() => navigate(`/category/create/${pathnameParams[2]}`)}
+						onSuccessfulDeleteHandler={() => navigate(`/scale/${pathnameParams[2]}`)} />)} />
 				
 				<Route
 					path="/scale/create"
-					element={handlePrivateComponent(<div></div>)} />
+					element={handlePrivateComponent(<ScaleDetailsFormLogicContainer 
+						userService={userService}
+						backButtonHandler={()=>navigate(`/scale/${pathnameParams[2]}`)}
+						editCategoryHandler={(categoryID:string)=>navigate(`/category/edit/unknown/${categoryID}`)} //We won't display CardDisplay anyway
+						addCategoryHandler={() => navigate(`/category/create/unknown`)}  />)} /> //We won't display CardDisplay anyway
 				
 				<Route
 					path="/scale/:id"
-					element={handlePrivateComponent(<div></div>)} />
+					element={handlePrivateComponent(<Navigate to="/" />)} />
 				
 				
 				
@@ -149,10 +160,10 @@ const App:FC = () => {
 														selectedScaleID={undefined}
 														scaleURLBase="scale"
 														editUserURL="/user/edit"
-														createScaleURL="/"
+														createScaleURL="/scale/create"
 														onSuccessfulLogout={()=>{}}
-														editScaleCallback={(scaleID:string)=>{}}
-														amendHistoryCallback={(scaleID:string)=>navigate(`/scale/history/${scaleID}`)}
+														editScaleCallback={(scaleID:string)=>navigate(`/scale/edit/${scaleID}`)}
+														amendHistoryCallback={(scaleID:string)=>console.log(`/scale/history/${scaleID}`)}
 														categoryColorProvider={categoryColorProvider} />)} />
 				
 				<Route

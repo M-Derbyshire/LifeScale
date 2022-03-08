@@ -65,6 +65,13 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
                             color: "red",
                             desiredWeight: 1,
                             actions: []
+                        },
+                        {
+                            id: "testcategory5",
+                            name: "testCategory5",
+                            color: "red",
+                            desiredWeight: 1,
+                            actions: []
                         }
                     ]
                 }
@@ -83,6 +90,8 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
             this.loadedUser.scales.filter(scale => scale.id === scaleID)![0].categories.filter(cat => cat.id === catID)[0];
         
         deleteCategory = (scale:IScale, category:ICategory) => new Promise((resolve, reject) => resolve([]));
+        
+        deleteScale = (scale:IScale) => new Promise((resolve, reject) => resolve([]));
         
     };
 });
@@ -216,23 +225,177 @@ test("App will pass the backButtonHandler prop to AmendActionHistoryPageLogicCon
 
 
 
-//use each for both edit/create route
-// App will render a ScaleDetailsFormLogicContainer, when at the correct routes
 
-//use each for both routes
-// App will pass backButtonHandler prop to ScaleDetailsFormLogicContainer, at correct routes, which will redirect back to home route
 
-// App will not pass scaleID prop to ScaleDetailsFormLogicContainer, if at create route
+test.each([
+    ["/scale/create"],
+    ["/scale/edit/testscale1"],
+    ["/scale/edit/testscale2"]
+])("App will render a ScaleDetailsFormLogicContainer, when at the correct routes", (route) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const scalePage = container.querySelector(".ScaleDetailsFormLogicContainer");
+    expect(scalePage).not.toBeNull();
+    
+});
 
-// App will pass scaleID prop to ScaleDetailsFormLogicContainer, if at edit route
+test.each([
+    ["/scale/create"],
+    ["/scale/edit/testscale1"],
+    ["/scale/edit/testscale2"]
+])("App will pass backButtonHandler prop to ScaleDetailsFormLogicContainer, at correct routes, which will redirect back to home route", (route) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const scalePage = container.querySelector(".ScaleDetailsFormLogicContainer");
+    const backButton = within(scalePage).getByRole("button", { name: /back/i });
+    
+    fireEvent.click(backButton);
+    
+    const homePage = container.querySelector(".UserHomeScreenLogicContainer");
+    expect(homePage).not.toBeNull();
+    
+});
 
-// App will not pass onSuccessfulDeleteHandler prop to ScaleDetailsFormLogicContainer, if at create route
+test("App will not pass scaleID prop to ScaleDetailsFormLogicContainer, if at create route", () => {
+    
+    const route = "/scale/create";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const scalePageHeader = container.querySelector(".ScaleDetailsFormLogicContainer header");
+    
+    expect(scalePageHeader.textContent.toLowerCase()).toEqual(expect.stringContaining("create"));
+    
+});
 
-// App will pass onSuccessfulDeleteHandler prop to ScaleDetailsFormLogicContainer, if at edit route, which will redirect to home route
 
-// App will pass editCategoryHandler prop to ScaleDetailsFormLogicContainer, if at edit route, and take you to the correct category route when triggered
+test.each([
+    ["/scale/edit/testscale1", "testScale1"],
+    ["/scale/edit/testscale2", "testScale2"]
+])("App will pass scaleID prop to ScaleDetailsFormLogicContainer, if at edit route", (route, scaleName) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const scalePageHeader = container.querySelector(".ScaleDetailsFormLogicContainer header");
+    
+    expect(scalePageHeader.textContent).toEqual(expect.stringContaining(scaleName));
+    
+});
 
-// App will pass addCategoryHandler prop to ScaleDetailsFormLogicContainer, if at edit route, and take you to the new category route when triggered
+test("App will not pass onSuccessfulDeleteHandler prop to ScaleDetailsFormLogicContainer, if at create route", () => {
+    
+    const route = "/scale/create";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const scalePage = container.querySelector(".ScaleDetailsFormLogicContainer");
+    const deleteButton = within(scalePage).queryByRole("button", { name: /delete/i });
+    
+    expect(deleteButton).toBeNull();
+    
+});
+
+test("App will pass onSuccessfulDeleteHandler prop to ScaleDetailsFormLogicContainer, if at edit route, which will redirect to home route", async () => {
+    
+    const route = "/scale/edit/testscale1";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const scalePage = container.querySelector(".ScaleDetailsFormLogicContainer");
+    const deleteButton = within(scalePage).queryByRole("button", { name: /delete/i });
+    
+    fireEvent.click(deleteButton)
+    
+    await waitFor(() => expect(container.querySelector(".UserHomeScreenLogicContainer")).not.toBeNull());
+    
+});
+
+test("App will pass editCategoryHandler prop to ScaleDetailsFormLogicContainer, if at edit route, and take you to the correct category route when triggered", () => {
+    
+    const route = "/scale/edit/testscale1";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    //Bit more coupled than I'd like, but wanted specificity
+    const categoryName = "testCategory1";
+    const cardDisplay = container.querySelector(".ScaleDetailsFormLogicContainer .CardDisplay");
+    const editCardForCategory = within(cardDisplay).queryByText(categoryName)?.closest("div");
+    const editButton = within(editCardForCategory).queryByRole("button", { name: /edit/i });
+    
+    // This line won't affect routing, just the pathname that the IDs are pulled from
+    window.location = new URL(`https://www.test.com/category/edit/testscale1/testcategory1`);
+    
+    fireEvent.click(editButton);
+    
+    
+    const categoryPageHeader = container.querySelector(".CategoryDetailsFormLogicContainer header");
+    
+    expect(categoryPageHeader?.textContent).toEqual(expect.stringContaining(categoryName));
+    
+});
+
+test("App will pass addCategoryHandler prop to ScaleDetailsFormLogicContainer, if at edit route, and take you to the new category route when triggered", () => {
+    
+    const route = "/scale/edit/testscale2";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    //Way more coupled than I'd like, but no way around it
+    const addItemCard = container.querySelector(".AddItemCard");
+    
+    
+    // This line won't affect routing, just the pathname that the IDs are pulled from
+    window.location = new URL(`https://www.test.com/category/create/testscale2`);
+    
+    fireEvent.click(addItemCard);
+    
+    
+    const categoryPageHeader = container.querySelector(".CategoryDetailsFormLogicContainer header");
+    expect(categoryPageHeader?.textContent?.toLowerCase()).toEqual(expect.stringContaining("create"));
+    
+});
 
 
 
@@ -262,7 +425,7 @@ test.each([
 test.each([
     ["/category/create/testscale1", "testScale1"],
     ["/category/edit/testscale1/testcategory1", "testScale1"],
-    ["/category/edit/testscale2/testcategory3", "testScale1"]
+    ["/category/edit/testscale2/testcategory3", "testScale2"]
 ])("App will pass backButtonHandler prop to CategoryDetailsFormLogicContainer, at correct routes, which will redirect to the scale", (route, scaleName) => {
     
     delete window.location;
