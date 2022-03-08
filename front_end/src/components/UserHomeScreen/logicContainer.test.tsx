@@ -426,11 +426,14 @@ test("UserHomeScreenLogicContainer will pass editScaleCallback to UserHomeScreen
     
 });
 
-test("UserHomeScreenLogicContainer will pass amendHistoryCallback to UserHomeScreen, and feed in the scale ID when calling it", () => {
+test.each([
+    ...dummyUser.scales.map(scale => [scale.id, scale.id]),
+    [undefined, dummyUser.scales[0].id] //we also want to make sure the first ID is fed in here
+])("UserHomeScreenLogicContainer will pass amendHistoryCallback to UserHomeScreen, and feed in the scale ID when calling it", (selectedID, expectedID) => {
     
     const mockCallback = jest.fn();
     
-    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } amendHistoryCallback={mockCallback} /></Router>);
+    const { container } = render(<Router><UserHomeScreenLogicContainer { ...defaultProps } selectedScaleID={selectedID} amendHistoryCallback={mockCallback} /></Router>);
     
     
     const statDisplay = container.querySelector(".ScaleStatisticDisplay");
@@ -438,7 +441,7 @@ test("UserHomeScreenLogicContainer will pass amendHistoryCallback to UserHomeScr
     
     fireEvent.click(amendButton);
     
-    expect(mockCallback).toHaveBeenCalledWith(defaultProps.selectedScaleID);
+    expect(mockCallback).toHaveBeenCalledWith(expectedID);
     
 });
 
