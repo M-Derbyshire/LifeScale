@@ -71,7 +71,10 @@ const App:FC = () => {
 				
 				<Route
 					path="/user/edit"
-					element={handlePrivateComponent(<div></div>)} />
+					element={handlePrivateComponent(<UserDetailsFormLogicContainer 
+						userService={userService} 
+						isNewUser={false}
+						backButtonHandler={()=> navigate(homePageRoute)} />)} />
 				
 				
 					
@@ -118,7 +121,7 @@ const App:FC = () => {
 														userService={userService}
 														selectedScaleID={""}
 														scaleURLBase="scale"
-														editUserURL="/"
+														editUserURL="/user/edit"
 														createScaleURL="/"
 														onSuccessfulLogout={()=>{}}
 														editScaleCallback={(scaleID:string)=>{}}

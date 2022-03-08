@@ -1,20 +1,113 @@
+import App from './App';
+import { render, fireEvent, within, waitFor } from '@testing-library/react';
+import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
+
+
+process.env.REACT_APP_API_PROTOCOL = "http";
+process.env.REACT_APP_API_DOMAIN = "test.com";
+
+jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserService', () => {
+    return class { 
+    
+        mockLoggedInStatus;
+        
+        constructor()
+        {
+            this.mockLoggedInStatus = true;
+        }
+        
+        loadedUser = {
+            id: "mock-user",
+            email: "mock@user.com",
+            forename: "mock",
+            surname: "user",
+            scales: []
+        };
+        
+        getLoadedUser = () => this.loadedUser;
+        
+        isLoggedIn = () => this.mockLoggedInStatus;
+        
+        abortRequests = () => {};
+        
+    };
+});
 
 
 
 
-// App will redirect to main scales page if the user is logged in, and they're at a non-auth route
+
+
+test.each([
+    ["/login"],
+    ["/forgotpassword"],
+    ["/register"]
+])("App will redirect to home route if the user is logged in, and they're at a non-auth route", (initialRoute) => {
+    
+    const { container } = render(<Router initialEntries={[initialRoute]}>
+        <App />
+    </Router>);
+    
+    const homePage = container.querySelector(".UserHomeScreenLogicContainer");
+    expect(homePage).not.toBeNull();
+    
+});
+
+test.each([
+    ["/test1"],
+    ["/test2/test2"]
+])("If going to an unknown route when logged in, App will redirect to home route", (initialRoute) => {
+    
+    const { container } = render(<Router initialEntries={[initialRoute]}>
+        <App />
+    </Router>);
+    
+    const homePage = container.querySelector(".UserHomeScreenLogicContainer");
+    expect(homePage).not.toBeNull();
+    
+});
 
 
 
-//If going to an unknown route when logged in, App will redirect to main scales page route
+test("App will render a UserDetailsFormLogicContainer, when at the edit user route", () => {
+    
+    const { container } = render(<Router initialEntries={["/user/edit"]}>
+        <App />
+    </Router>);
+    
+    const userForm = container.querySelector(".UserDetailsFormLogicContainer");
+    expect(userForm).not.toBeNull();
+    
+});
 
+test("App will pass backButtonHandler prop to UserDetailsFormLogicContainer, at edit route, which will redirect to home route", () => {
+    
+    const { container } = render(<Router initialEntries={["/user/edit"]}>
+        <App />
+    </Router>);
+    
+    const userForm = container.querySelector(".UserDetailsFormLogicContainer");
+    const backButton = within(userForm).getByRole("button", { name: /back/i });
+    
+    fireEvent.click(backButton);
+    
+    const homePage = container.querySelector(".UserHomeScreenLogicContainer");
+    expect(homePage).not.toBeNull();
+    
+});
 
-
-// App will render a UserDetailsFormLogicContainer, when at the edit route
-
-// App will pass backButtonHandler prop to UserDetailsFormLogicContainer, at edit route, which will redirect to home route
-
-// App will pass isNewUser prop as false to UserDetailsFormLogicContainer, if at edit route
+test("App will pass isNewUser prop as false to UserDetailsFormLogicContainer, if at edit route", () => {
+    
+    const { container } = render(<Router initialEntries={["/user/edit"]}>
+        <App />
+    </Router>);
+    
+    const userFormHeading = container.querySelector(".UserDetailsFormLogicContainer header");
+    const registerText = within(userFormHeading).queryByText(/register/i);
+    
+    expect(registerText).toBeNull();
+    
+});
 
 
 
