@@ -278,7 +278,7 @@ export default class UserHomeScreenLogicContainer
                     scaleLoadingError={this.state.scaleLoadingError}
                     
                     onSuccessfulLogout={this.props.onSuccessfulLogout}
-                    editScaleCallback={() => this.props.editScaleCallback(this.props.selectedScaleID || "")}
+                    editScaleCallback={() => this.props.editScaleCallback((this.state.selectedScale && this.state.selectedScale.id) || "")}
                     onSuccessfulTimespanSave={this.onSuccessfulTimespanSaveHandler.bind(this)}
                     amendHistoryCallback={() => this.props.amendHistoryCallback((this.state.selectedScale && this.state.selectedScale.id) || "")}
                     
