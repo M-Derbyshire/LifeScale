@@ -1,5 +1,5 @@
 import App from './App';
-import { render, fireEvent, within, waitFor } from '@testing-library/react';
+import { render, fireEvent, within, waitFor, screen } from '@testing-library/react';
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 
 
@@ -9,7 +9,20 @@ process.env.REACT_APP_API_DOMAIN = "test.com";
 jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserService', () => {
     return class { 
     
-        mockLoggedInStatus = false;
+        mockLoggedInStatus;
+        
+        constructor()
+        {
+            this.mockLoggedInStatus = false;
+        }
+        
+        loadedUser = {
+            id: "mock-user",
+            email: "mock@user.com",
+            forename: "mock",
+            surname: "user",
+            scales: []
+        };
         
         isLoggedIn = () => this.mockLoggedInStatus;
         
@@ -17,21 +30,16 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
         loginUser = (email, password) => { 
             this.mockLoggedInStatus = true;
             return new Promise((resolve, reject)=>{
-                resolve({
-                    id: "mock-user",
-                    email: "mock@user.com",
-                    forename: "mock",
-                    surname: "user",
-                    scales: []
-                });
+                resolve(this.loadedUser);
             });
         }
+        
+        getLoadedUser = () => this.loadedUser;
         
         abortRequests = ()=>{};
         
     };
 });
-
 
 
 
@@ -120,6 +128,7 @@ test("App will pass the registerPath prop to LoginPageLogicContainer", () => {
     </Router>);
     
     const loginPage = container.querySelector(".LoginPageLogicContainer");
+    
     const registerLink = within(loginPage).getByText(/register/i);
     
     expect(registerLink).toHaveAttribute("href", registerRoute);

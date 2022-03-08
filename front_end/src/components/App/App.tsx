@@ -1,4 +1,4 @@
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './App.scss';
 import UserHomeScreenLogicContainer from '../UserHomeScreen/UserHomeScreenLogicContainer';
@@ -7,33 +7,38 @@ import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/C
 import LoginPageLogicContainer from '../LoginPage/LoginPageLogicContainer';
 import RequestPasswordPageLogicContainer from '../RequestPasswordPage/RequestPasswordPageLogicContainer';
 import UserDetailsFormLogicContainer from '../UserDetailsForm/UserDetailsFormLogicContainer';
-
-const userService = new MockJSONServerUserService(
-	process.env.REACT_APP_API_PROTOCOL!,
-	process.env.REACT_APP_API_DOMAIN!,
-	process.env.REACT_APP_API_PORT!
-);
+import IUserService from '../../interfaces/api_access/IUserService';
 
 
-//Returns a function.
-//You can call the returned function with a component that's at a route that requires auth. If not logged in, the user will
-//then be redirected to the login route that's provided.
-const getPrivateComponentHandler = (loginPageRoute:string) => (element:ReactElement):ReactElement => {
+
+//Returns a function, that creates a function to redirect somewhere, based on the user's auth status.
+//You can call the returned function with a component that's at a route that does/doesn't require auth. If user is/isnt logged in, they will
+//then be redirected to the correct route. The given element will only be returned if the user has the correct auth status
+const getRedirectHandler = (userService:IUserService, authIsRequired:boolean, redirectToRoute:string) => (element:ReactElement):ReactElement => {
 	
-	if(userService.isLoggedIn())
+	if(userService.isLoggedIn() === authIsRequired)
 		return element;
 	
-	return <Navigate to={loginPageRoute} />;
+	return <Navigate to={redirectToRoute} />;
 }
 
 
 
 const App:FC = () => {
-	
 	const navigate = useNavigate();
 	
+	//Need to use this as state, as if it's global its login status doesn't get reset after each test
+	const [userService] = useState(new MockJSONServerUserService(
+		process.env.REACT_APP_API_PROTOCOL!,
+		process.env.REACT_APP_API_DOMAIN!,
+		process.env.REACT_APP_API_PORT!
+	));
+	
+	
 	const loginPageRoute = "/login";
-	const handlePrivateComponent = getPrivateComponentHandler(loginPageRoute);
+	const homePageRoute = "/";
+	const handlePrivateComponent = getRedirectHandler(userService, true, loginPageRoute);
+	const handleNoAuthComponent = getRedirectHandler(userService, false, homePageRoute);
 	
 	return (
 		<div className="App">
@@ -41,23 +46,25 @@ const App:FC = () => {
 			<Routes>
 				
 				<Route 
-					path="/login" 
-					element={<LoginPageLogicContainer 
+					path={loginPageRoute} 
+					element={handleNoAuthComponent(<LoginPageLogicContainer 
 									userService={userService} 
 									onSuccessfulLogin={() => navigate("/")} 
 									registerPath="/register" 
-									forgotPasswordPath="/forgotpassword" />} />
+									forgotPasswordPath="/forgotpassword" />)} />
 				
 				<Route 
 					path="/forgotpassword" 
-					element={<RequestPasswordPageLogicContainer userService={userService} backButtonHandler={() => navigate(loginPageRoute)} />} />
+					element={handleNoAuthComponent(<RequestPasswordPageLogicContainer 
+									userService={userService} 
+									backButtonHandler={() => navigate(loginPageRoute)} />)} />
 				
 				<Route 
 					path="/register" 
-					element={<UserDetailsFormLogicContainer 
+					element={handleNoAuthComponent(<UserDetailsFormLogicContainer 
 									userService={userService} 
 									isNewUser={true}
-									backButtonHandler={()=> navigate(loginPageRoute)} />} />
+									backButtonHandler={()=> navigate(loginPageRoute)} />)} />
 				
 				
 				
@@ -106,7 +113,7 @@ const App:FC = () => {
 				
 				
 				<Route
-					path="/"
+					path={homePageRoute}
 					element={handlePrivateComponent(<UserHomeScreenLogicContainer 
 														userService={userService}
 														selectedScaleID={""}
