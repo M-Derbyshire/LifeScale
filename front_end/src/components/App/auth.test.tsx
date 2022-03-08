@@ -1,6 +1,8 @@
 import App from './App';
-import { render, fireEvent, within, waitFor, screen } from '@testing-library/react';
+import { render, fireEvent, within, waitFor, screen, wait } from '@testing-library/react';
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
+import IScale from '../../interfaces/IScale';
+import ICategory from '../../interfaces/ICategory';
 
 
 process.env.REACT_APP_API_PROTOCOL = "http";
@@ -27,14 +29,44 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
                     name: "testScale1",
                     usesTimespans: true,
                     displayDayCount: 1,
-                    categories: []
+                    categories: [
+                        {
+                            id: "testcategory1",
+                            name: "testCategory1",
+                            color: "red",
+                            desiredWeight: 1,
+                            actions: []
+                        },
+                        {
+                            id: "testcategory2",
+                            name: "testCategory2",
+                            color: "red",
+                            desiredWeight: 1,
+                            actions: []
+                        }
+                    ]
                 },
                 {
                     id: "testscale2",
                     name: "testScale2",
                     usesTimespans: true,
                     displayDayCount: 1,
-                    categories: []
+                    categories: [
+                        {
+                            id: "testcategory3",
+                            name: "testCategory3",
+                            color: "red",
+                            desiredWeight: 1,
+                            actions: []
+                        },
+                        {
+                            id: "testcategory4",
+                            name: "testCategory4",
+                            color: "red",
+                            desiredWeight: 1,
+                            actions: []
+                        }
+                    ]
                 }
             ]
         };
@@ -46,6 +78,11 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
         abortRequests = () => {};
         
         getScale = (id:string) => this.loadedUser.scales.filter(scale => scale.id === id)[0];
+        
+        getCategory = (catID:string, scaleID:string) => 
+            this.loadedUser.scales.filter(scale => scale.id === scaleID)![0].categories.filter(cat => cat.id === catID)[0];
+        
+        deleteCategory = (scale:IScale, category:ICategory) => new Promise((resolve, reject) => resolve([]));
         
     };
 });
@@ -179,33 +216,6 @@ test("App will pass the backButtonHandler prop to AmendActionHistoryPageLogicCon
 
 
 
-
-//use each for both edit/create route
-// App will render a CategoryDetailsFormLogicContainer, when at the correct routes
-
-//use each for both routes
-// App will pass backButtonHandler prop to CategoryDetailsFormLogicContainer, at correct routes, which will redirect to home route
-
-//use each for both routes
-// App will pass scaleID prop to CategoryDetailsFormLogicContainer, at correct routes
-
-//use each for both routes
-// App will pass categoryColorProvider prop to CategoryDetailsFormLogicContainer, at correct routes
-
-// App will not pass categoryID prop to CategoryDetailsFormLogicContainer, if at create route
-
-// App will pass categoryID prop to CategoryDetailsFormLogicContainer, if at edit route
-
-// App will not pass onSuccessfulDeleteHandler prop to CategoryDetailsFormLogicContainer, if at create route
-
-// App will pass onSuccessfulDeleteHandler prop to CategoryDetailsFormLogicContainer, if at edit route, and take you back to the scale when triggered
-
-
-
-
-
-
-
 //use each for both edit/create route
 // App will render a ScaleDetailsFormLogicContainer, when at the correct routes
 
@@ -223,6 +233,133 @@ test("App will pass the backButtonHandler prop to AmendActionHistoryPageLogicCon
 // App will pass editCategoryHandler prop to ScaleDetailsFormLogicContainer, if at edit route, and take you to the correct category route when triggered
 
 // App will pass addCategoryHandler prop to ScaleDetailsFormLogicContainer, if at edit route, and take you to the new category route when triggered
+
+
+
+
+
+
+
+
+test.each([
+    ["/category/create/testscale1"],
+    ["/category/edit/testscale1/testcategory1"],
+    ["/category/edit/testscale2/testcategory3"]
+])("App will render a CategoryDetailsFormLogicContainer, when at the correct routes", (route) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const categoryPage = container.querySelector(".CategoryDetailsFormLogicContainer");
+    expect(categoryPage).not.toBeNull();
+    
+});
+
+test.each([
+    ["/category/create/testscale1", "testScale1"],
+    ["/category/edit/testscale1/testcategory1", "testScale1"],
+    ["/category/edit/testscale2/testcategory3", "testScale1"]
+])("App will pass backButtonHandler prop to CategoryDetailsFormLogicContainer, at correct routes, which will redirect to the scale", (route, scaleName) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const categoryPage = container.querySelector(".CategoryDetailsFormLogicContainer");
+    const backButton = within(categoryPage).getByRole("button", { name: /back/i });
+    
+    fireEvent.click(backButton);
+    
+    const scalePageHeader = container.querySelector(".ScaleDetailsFormLogicContainer header");
+    expect(scalePageHeader).not.toBeNull();
+    expect(scalePageHeader.textContent).toEqual(expect.stringContaining(scaleName));
+    
+});
+
+test.each([
+    ["/category/edit/testscale1/testcategory1", "testCategory1"],
+    ["/category/edit/testscale1/testcategory2", "testCategory2"],
+    ["/category/edit/testscale2/testcategory3", "testCategory3"],
+    ["/category/edit/testscale2/testcategory4", "testCategory4"],
+])("App will pass scaleID and categoryID props to CategoryDetailsFormLogicContainer, at correct edit routes", (route, expectedName) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const categoryPageHeader = container.querySelector(".CategoryDetailsFormLogicContainer header");
+    
+    expect(categoryPageHeader.textContent).toEqual(expect.stringContaining(expectedName));
+    
+});
+
+test("App will not pass categoryID prop to CategoryDetailsFormLogicContainer, if at create route", () => {
+    
+    const route = "/category/create/testscale1";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const categoryPageHeader = container.querySelector(".CategoryDetailsFormLogicContainer header");
+    
+    expect(categoryPageHeader.textContent.toLowerCase()).toEqual(expect.stringContaining("create"));
+    expect(categoryPageHeader.textContent.toLocaleLowerCase()).not.toEqual(expect.stringContaining("test"));
+    
+});
+
+test("App will not pass onSuccessfulDeleteHandler prop to CategoryDetailsFormLogicContainer, if at create route", () => {
+    
+    const route = "/category/create/testscale1";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const categoryPage = container.querySelector(".CategoryDetailsFormLogicContainer");
+    const deleteButton = within(categoryPage).queryByRole("button", { name: /delete/i });
+    
+    expect(deleteButton).toBeNull();
+    
+});
+
+test("App will pass onSuccessfulDeleteHandler prop to CategoryDetailsFormLogicContainer, if at edit route, and take you back to the scale when triggered", async () => {
+    
+    const route = "/category/edit/testscale1/testcategory1";
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const categoryPage = container.querySelector(".CategoryDetailsFormLogicContainer");
+    const deleteButton = within(categoryPage).getByRole("button", { name: /delete/i });
+    
+    fireEvent.click(deleteButton)
+    
+    await waitFor(() => expect(container.querySelector(".ScaleDetailsFormLogicContainer")).not.toBeNull());
+    
+});
+
+
 
 
 

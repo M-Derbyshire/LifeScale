@@ -9,6 +9,7 @@ import RequestPasswordPageLogicContainer from '../RequestPasswordPage/RequestPas
 import UserDetailsFormLogicContainer from '../UserDetailsForm/UserDetailsFormLogicContainer';
 import IUserService from '../../interfaces/api_access/IUserService';
 import AmendActionHistoryPageLogicContainer from '../AmendActionHistoryPage/AmendActionHistoryPageLogicContainer';
+import CategoryDetailsFormLogicContainer from '../CategoryDetailsForm/CategoryDetailsFormLogicContainer';
 
 
 
@@ -32,9 +33,11 @@ const App:FC = () => {
 	
 	//Using this technique, instead of a hook in the individual components,
 	//so the ID can be known here, and the individual screen components don't have to 
-	//handle it
-	const pathnameParts = window.location.pathname.split("/");
-	const entityID = pathnameParts[pathnameParts.length - 1];
+	//handle it (the logic container components are all class-based anyway, and I don't believe
+	//this.props.match.params.* is valid anymore)
+	const pathnameParams = window.location.pathname.split("/").filter(param => param !== ""); //May get empty string at start, so remove
+	
+	
 	
 	//Need to use this as state, as if it's global its login status doesn't get reset after each test
 	const [userService] = useState(new MockJSONServerUserService(
@@ -43,6 +46,8 @@ const App:FC = () => {
 		process.env.REACT_APP_API_PORT!
 	));
 	
+	
+	const [categoryColorProvider] = useState(new CategoryColorProvider());
 	
 	const loginPageRoute = "/login";
 	const homePageRoute = "/";
@@ -90,21 +95,31 @@ const App:FC = () => {
 					
 					
 				<Route
-					path="scale/history/:id"
+					path="/scale/history/:id"
 					element={handlePrivateComponent(<AmendActionHistoryPageLogicContainer 
-						scaleID={entityID}
+						scaleID={pathnameParams[2]}
 						userService={userService}
 						backButtonHandler={()=> navigate(homePageRoute)} />)} />
 				
 				
 					
 				<Route
-					path="/category/edit/:id"
-					element={handlePrivateComponent(<div></div>)} />
+					path="/category/edit/:scaleid/:categoryid"
+					element={handlePrivateComponent(<CategoryDetailsFormLogicContainer 
+						scaleID={pathnameParams[2]}
+						categoryID={pathnameParams[3]}
+						userService={userService}
+						onSuccessfulDeleteHandler={()=>navigate(`/scale/edit/${pathnameParams[2]}`)}
+						backButtonHandler={()=>navigate(`/scale/edit/${pathnameParams[2]}`)}
+						categoryColorProvider={categoryColorProvider} />)} />
 				
 				<Route
-					path="/category/create"
-					element={handlePrivateComponent(<div></div>)} />
+					path="/category/create/:scaleid"
+					element={handlePrivateComponent(<CategoryDetailsFormLogicContainer 
+						scaleID={pathnameParams[2]}
+						userService={userService}
+						backButtonHandler={()=> navigate(`/scale/edit/${pathnameParams[2]}`)}
+						categoryColorProvider={categoryColorProvider} />)} />
 				
 				
 				
@@ -138,7 +153,7 @@ const App:FC = () => {
 														onSuccessfulLogout={()=>{}}
 														editScaleCallback={(scaleID:string)=>{}}
 														amendHistoryCallback={(scaleID:string)=>navigate(`/scale/history/${scaleID}`)}
-														categoryColorProvider={new CategoryColorProvider()} />)} />
+														categoryColorProvider={categoryColorProvider} />)} />
 				
 				<Route
 					path="*"
