@@ -35,7 +35,6 @@ const App:FC = () => {
 	const loginPageRoute = "/login";
 	const handlePrivateComponent = getPrivateComponentHandler(loginPageRoute);
 	
-	
 	return (
 		<div className="App">
 			

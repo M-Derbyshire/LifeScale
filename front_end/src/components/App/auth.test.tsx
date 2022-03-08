@@ -87,6 +87,8 @@
 // use each
 // App will pass selectedScaleID to UserHomeScreenLogicContainer, if one exists in the route
 
+// App will set selectedScaleID on UserHomeScreenLogicContainer to undefined, if at home route
+
 // App will pass correct scaleURLBase prop into UserHomeScreenLogicContainer
 
 // App will pass editUserUrl prop into UserHomeScreenLogicContainer

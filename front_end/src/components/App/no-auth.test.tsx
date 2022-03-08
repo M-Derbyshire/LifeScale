@@ -1,15 +1,43 @@
 import App from './App';
 import { render, fireEvent, within, waitFor } from '@testing-library/react';
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
-import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
-import IUserService from '../../interfaces/api_access/IUserService';
 
 
 process.env.REACT_APP_API_PROTOCOL = "http";
 process.env.REACT_APP_API_DOMAIN = "test.com";
 
-jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserService');
+jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserService', () => {
+    return class { 
+    
+        mockLoggedInStatus = false;
+        
+        isLoggedIn = () => this.mockLoggedInStatus;
+        
+        
+        loginUser = (email, password) => { 
+            this.mockLoggedInStatus = true;
+            return new Promise((resolve, reject)=>{
+                resolve({
+                    id: "mock-user",
+                    email: "mock@user.com",
+                    forename: "mock",
+                    surname: "user",
+                    scales: []
+                });
+            });
+        }
+        
+        abortRequests = ()=>{};
+        
+    };
+});
 
+
+beforeEach(() => {
+    
+    
+    
+});
 
 
 test.each([
