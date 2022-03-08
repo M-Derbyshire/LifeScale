@@ -24,7 +24,7 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	
 	
 	return (
-		<div className="UserNavBar">
+		<nav className="UserNavBar">
 			
 			<NavLink className="editUserLink stdLink" to={props.editUserURL}>Edit My Details</NavLink>
 			
@@ -38,7 +38,7 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 			
 			<ScalesNavList scaleLinks={props.scaleLinks} />
 			
-		</div>
+		</nav>
 	);
 	
 };
