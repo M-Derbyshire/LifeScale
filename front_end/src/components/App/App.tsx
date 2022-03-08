@@ -140,13 +140,22 @@ const App:FC = () => {
 					path="/scale/create"
 					element={handlePrivateComponent(<ScaleDetailsFormLogicContainer 
 						userService={userService}
-						backButtonHandler={()=>navigate(`/scale/${pathnameParams[2]}`)}
+						backButtonHandler={()=>navigate(`/`)}
 						editCategoryHandler={(categoryID:string)=>navigate(`/category/edit/unknown/${categoryID}`)} //We won't display CardDisplay anyway
-						addCategoryHandler={() => navigate(`/category/create/unknown`)}  />)} /> //We won't display CardDisplay anyway
+						addCategoryHandler={() => navigate(`/category/create/unknown`)}  />)} /> 
 				
 				<Route
 					path="/scale/:id"
-					element={handlePrivateComponent(<Navigate to="/" />)} />
+					element={handlePrivateComponent(<UserHomeScreenLogicContainer 
+						userService={userService}
+						selectedScaleID={pathnameParams[1]}
+						scaleURLBase="scale"
+						editUserURL="/user/edit"
+						createScaleURL="/scale/create"
+						onSuccessfulLogout={()=>navigate(loginPageRoute)}
+						editScaleCallback={(scaleID:string)=>navigate(`/scale/edit/${scaleID}`)}
+						amendHistoryCallback={(scaleID:string)=>navigate(`/scale/history/${scaleID}`)}
+						categoryColorProvider={categoryColorProvider} />)} />
 				
 				
 				
@@ -156,15 +165,15 @@ const App:FC = () => {
 				<Route
 					path={homePageRoute}
 					element={handlePrivateComponent(<UserHomeScreenLogicContainer 
-														userService={userService}
-														selectedScaleID={undefined}
-														scaleURLBase="scale"
-														editUserURL="/user/edit"
-														createScaleURL="/scale/create"
-														onSuccessfulLogout={()=>{}}
-														editScaleCallback={(scaleID:string)=>navigate(`/scale/edit/${scaleID}`)}
-														amendHistoryCallback={(scaleID:string)=>console.log(`/scale/history/${scaleID}`)}
-														categoryColorProvider={categoryColorProvider} />)} />
+						userService={userService}
+						selectedScaleID={undefined}
+						scaleURLBase="scale"
+						editUserURL="/user/edit"
+						createScaleURL="/scale/create"
+						onSuccessfulLogout={()=>navigate(loginPageRoute)}
+						editScaleCallback={(scaleID:string)=>navigate(`/scale/edit/${scaleID}`)}
+						amendHistoryCallback={(scaleID:string)=>navigate(`/scale/history/${scaleID}`)}
+						categoryColorProvider={categoryColorProvider} />)} />
 				
 				<Route
 					path="*"

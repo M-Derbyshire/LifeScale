@@ -93,6 +93,11 @@ jest.mock('../../userServices/MockJSONServerUserService/MockJSONServerUserServic
         
         deleteScale = (scale:IScale) => new Promise((resolve, reject) => resolve([]));
         
+        logoutUser = () => {
+            this.mockLoggedInStatus = false;
+            return new Promise((resolve, reject) => resolve(null));
+        }
+        
     };
 });
 
@@ -529,22 +534,146 @@ test("App will pass onSuccessfulDeleteHandler prop to CategoryDetailsFormLogicCo
 
 
 
-//Use each, and include route without scale id
-// App will render UserHomeScreenLogicContainer, when at the correct routes
+test.each([
+    ["/", "testScale1"],
+    ["/scale/testscale1", "testScale1"],
+    ["/scale/testscale2", "testScale2"]
+])("App will render UserHomeScreenLogicContainer, when at the correct routes, and pass in the selected scale ID if one in the URL", (route, scaleName) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const homePageHeader = container.querySelector(".UserHomeScreenLogicContainer header");
+    expect(homePageHeader?.textContent).toEqual(expect.stringContaining(scaleName));
+    
+});
 
-// use each
-// App will pass selectedScaleID to UserHomeScreenLogicContainer, if one exists in the route
+test("App will set selectedScaleID on UserHomeScreenLogicContainer to undefined, if at home route", () => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com`);
+    
+    const { container } = render(<Router initialEntries={["/"]}>
+        <App />
+    </Router>);
+    
+    const homePageHeader = container.querySelector(".UserHomeScreenLogicContainer header");
+    expect(homePageHeader?.textContent).toEqual(expect.stringContaining("testScale1"));
+    
+});
 
-// App will set selectedScaleID on UserHomeScreenLogicContainer to undefined, if at home route
+test.each([
+    ["/"],
+    ["/scale/testscale1"]
+])("App will pass correct scaleURLBase prop into UserHomeScreenLogicContainer", (route) => {
+    
+    const { container } = render(<Router initialEntries={["/"]}>
+        <App />
+    </Router>);
+    
+    const scaleLink = container.querySelector("a[href='/scale/testscale1']");
+    
+    expect(scaleLink).not.toBeNull();
+    
+});
 
-// App will pass correct scaleURLBase prop into UserHomeScreenLogicContainer
+test.each([
+    ["/"],
+    ["/scale/testscale1"]
+])("App will pass editUserUrl prop into UserHomeScreenLogicContainer", (route) => {
+    
+    const { container } = render(<Router initialEntries={["/"]}>
+        <App />
+    </Router>);
+    
+    const editUserLink = container.querySelector("a[href='/user/edit']");
+    
+    expect(editUserLink).not.toBeNull();
+    
+});
 
-// App will pass editUserUrl prop into UserHomeScreenLogicContainer
+test.each([
+    ["/"],
+    ["/scale/testscale1"]
+])("App will pass createScaleUrl prop into UserHomeScreenLogicContainer", (route) => {
+    
+    const { container } = render(<Router initialEntries={["/"]}>
+        <App />
+    </Router>);
+    
+    const createScaleLink = container.querySelector("a[href='/scale/create']");
+    
+    expect(createScaleLink).not.toBeNull();
+    
+});
 
-// App will pass createUserUrl prop into UserHomeScreenLogicContainer
+test.each([
+    ["/"],
+    ["/scale/testscale1"]
+])("App will redirect to the login page route, after a successful logout", async (route) => {
+    
+    const { container } = render(<Router initialEntries={[route]}>
+        <App />
+    </Router>);
+    
+    const navArea = container.querySelector("nav");
+    const logout = within(navArea).getByText(/logout/i);
+    
+    fireEvent.click(logout);
+    
+    await waitFor(() => {
+        const loginPage = container.querySelector(".LoginPageLogicContainer");
+        expect(loginPage).not.toBeNull(); 
+    });
+    
+});
 
-// App will redirect to the login page route, after a successful logout
+test.each([
+    ["/", "testscale1", "testScale1"],
+    ["/scale/testscale2", "testscale2", "testScale2"]
+])("App will pass the editScaleCallback to UserHomeScreenLogicContainer, which will take you to the edit route for the scale ID that the callback was called with", (route, scaleID, scaleName) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={["/"]}>
+        <App />
+    </Router>);
+    
+    const editScaleButton = screen.getByRole("button", { name: /edit scale/i });
+    
+    window.location = new URL(`https://www.test.com/scale/edit/${scaleID}`); //Won't affect routing, just the params in the URL
+    
+    fireEvent.click(editScaleButton);
+    
+    const scaleFormHeader = container.querySelector(".ScaleDetailsFormLogicContainer header");
+    expect(scaleFormHeader?.textContent).toEqual(expect.stringContaining(scaleName));
+    
+});
 
-// App will pass the editScaleCallback to UserHomeScreenLogicContainer, which will take you to the edit route for the scale ID that the callback was called with
-
-// App will pass the amendHistoryCallback prop to UserHomeScreenLogicContainer, which will take you to the amend action history route for the scale ID that the callback was called with
+test.each([
+    ["/", "testscale1", "testScale1"],
+    ["/scale/testscale2", "testscale2", "testScale2"]
+])("App will pass the amendHistoryCallback prop to UserHomeScreenLogicContainer, which will take you to the amend action history route for the scale ID that the callback was called with", (route, scaleID, scaleName) => {
+    
+    delete window.location;
+    window.location = new URL(`https://www.test.com${route}`);
+    
+    const { container } = render(<Router initialEntries={["/"]}>
+        <App />
+    </Router>);
+    
+    const amendButton = screen.getByRole("button", { name: /amend/i });
+    
+    window.location = new URL(`https://www.test.com/scale/history/${scaleID}`); //Won't affect routing, just the params in the URL
+    
+    fireEvent.click(amendButton);
+    
+    const amendPageHeader = container.querySelector(".AmendActionHistoryPageLogicContainer header");
+    expect(amendPageHeader?.textContent).toEqual(expect.stringContaining(scaleName));
+    
+});
