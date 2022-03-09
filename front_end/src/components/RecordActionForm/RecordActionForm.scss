@@ -12,6 +12,10 @@
 		display: flex;
 		flex-wrap: wrap;
 		
+		.react-datepicker-wrapper, .react-datepicker__input-container {
+			display: inline;
+		}
+		
 		label, .TimespanFormPartial {
 			display: inline-block;
 		}
