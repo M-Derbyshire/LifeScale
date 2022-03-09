@@ -1,8 +1,16 @@
 @import '../../stdStyles/stdForms.scss';
 @import '../../stdStyles/stdButtons.scss';
 
+$fontSize: 1.25em;
+
 .LoginForm {
 	@include stdForm;
+	
+	font-size: $fontSize;
+	
+	input {
+		font-size: $fontSize;
+	}
 	
 	input[type=submit] {
 		@include stdPrimaryButton;
