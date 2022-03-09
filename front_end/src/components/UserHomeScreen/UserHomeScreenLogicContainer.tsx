@@ -118,9 +118,9 @@ export default class UserHomeScreenLogicContainer
         let selectedScale:IScale|undefined = state.selectedScale;
         
         
-        if(props.selectedScaleID)
+        if(props.selectedScaleID || state.selectedScale)
         {
-            selectedScale = props.userService.getScale(props.selectedScaleID);
+            selectedScale = props.userService.getScale(props.selectedScaleID || state.selectedScale!.id);
             
             if(!selectedScale)
                 scaleLoadingError = this.stdScaleLoadErrorMessage;
@@ -131,16 +131,12 @@ export default class UserHomeScreenLogicContainer
                 currentBalanceItems = this.generateCatgeoryBalanceItems(categories, statistics, props.categoryColorProvider);
                 
                 
-                //Categories can't change while this component is still mounted, so only run if none already set
-                if(!state.desiredBalanceItems || state.desiredBalanceItems.length === 0)
-                {   
-                    //Using the desired weights as the percentages
-                    desiredBalanceItems = this.generateCatgeoryBalanceItems(categories, categories.map(category => ({
-                        id: category.id,
-                        label: category.name,
-                        percentage: category.desiredWeight
-                    })), props.categoryColorProvider); 
-                }
+                //Using the desired weights as the percentages
+                desiredBalanceItems = this.generateCatgeoryBalanceItems(categories, categories.map(category => ({
+                    id: category.id,
+                    label: category.name,
+                    percentage: category.desiredWeight
+                })), props.categoryColorProvider); 
                 
             }
         }
