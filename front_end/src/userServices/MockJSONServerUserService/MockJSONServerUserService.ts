@@ -120,31 +120,11 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
-	//Returns empty string if given object has all the given required properties (and they are truthy),
-	// and otherwise and error message
-	_validateObjectHasAllProperties(objToTest:any, requiredProperties:string[]):string
-	{
-		for(let i = 0; i < requiredProperties.length; i++)
-		{
-			const typeOfProperty = typeof(objToTest[requiredProperties[i]]);
-			
-			//If property is number or bool, then 0 or false would count as falsy (but they're valid values)
-			if(!objToTest[requiredProperties[i]] && typeOfProperty !== "number" && typeOfProperty !== "boolean")
-				return `Some of the following required properties are missing: ${requiredProperties.join(", ")}.`;
-		}
-		
-		return "";
-	}
 	
 	
 	
-	_userRequiredProperties = [
-		"email",
-		"password",
-		"forename",
-		"surname",
-		"scales"
-	];
+	
+	
 	
 	//If id is undefined, this will be treated as a new user
 	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, id:string|undefined):Promise<IUser>
@@ -154,16 +134,6 @@ export default class MockJSONServerUserService implements IUserService {
 		if(id)
 			url += `/${id}`;
 		
-		
-		
-		const requiredPropertiesError = 
-			this._validateObjectHasAllProperties(newUserData, this._userRequiredProperties);
-		if(requiredPropertiesError !== "")
-		{
-			return new Promise((resolve, reject) => {
-				reject(new Error(requiredPropertiesError));
-			});
-		}
 		
 		
 		const abortController = this._getNewAbortController();
@@ -208,18 +178,6 @@ export default class MockJSONServerUserService implements IUserService {
 	{
 		let userDataForUpdate:any = { ...newUserData };
 		delete userDataForUpdate.id;
-		
-		
-		
-		const requiredPropertiesError = 
-			this._validateObjectHasAllProperties(newUserData, [...this._userRequiredProperties, "id"]);
-		if(requiredPropertiesError !== "")
-		{
-			return new Promise<IUser>((resolve, reject) => {
-				reject(new Error(requiredPropertiesError));
-			});
-		}
-		
 		
 		
 		return this._saveUser({ ...userDataForUpdate, password: this._currentUserPassword }, newUserData.id)
@@ -269,19 +227,9 @@ export default class MockJSONServerUserService implements IUserService {
 		
 		newItem should be an object, that requires an ID but doesn't currently have one
 		entityTypeName could be "scale", "category", "action", etc (all lower case)
-		requiredProperties are the properties required on the object
 	*/
-	_saveToArrayInCurrentUser(currentArray:any[], newItem:any, entityTypeName:string, requiredProperties:string[]):Promise<any>
+	_saveToArrayInCurrentUser(currentArray:any[], newItem:any, entityTypeName:string):Promise<any>
 	{
-		
-		const requiredPropertiesError = this._validateObjectHasAllProperties(newItem, requiredProperties);
-		if(requiredPropertiesError !== "")
-		{
-			return new Promise((resolve, reject) => {
-				reject(new Error(requiredPropertiesError));
-			});
-		}
-		
 		const originalArray = [...currentArray];
 		
 		//We need to generate IDs ourselves when it comes to internal arrays
@@ -305,19 +253,9 @@ export default class MockJSONServerUserService implements IUserService {
 		currentItem and newItemData should both be objects.
 		newItemData should match the interface of currentItem's type
 		entityTypeName could be "scale", "category", "action", etc (all lower case)
-		requiredProperties are the properties required on the object
 	*/
-	_updateArrayItemInCurrentUser(currentItem:any, newItemData:any, entityTypeName:string, requiredProperties:string[]):Promise<any>
+	_updateArrayItemInCurrentUser(currentItem:any, newItemData:any, entityTypeName:string):Promise<any>
 	{
-		const requiredPropertiesError = this._validateObjectHasAllProperties(newItemData, requiredProperties);
-		if(requiredPropertiesError !== "")
-		{
-			return new Promise((resolve, reject) => {
-				reject(new Error(requiredPropertiesError));
-			});
-		}
-		
-		
 		const originalItemData = { ...currentItem };
 		
 		//We can't just assign the new obj to the current (and spreading new obj won't work either)
@@ -392,12 +330,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	_scaleRequiredProperties = [
-		"name",
-		"usesTimespans",
-		"displayDayCount",
-		"categories"
-	];
+	
 	
 	getScale(scaleID:string) {
 		try { return this._currentUser!.scales.find(scale => scale.id === scaleID); }
@@ -405,7 +338,7 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	createScale(newScale:Omit<IScale, "id">):Promise<IScale> { 
-		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale", this._scaleRequiredProperties);
+		return this._saveToArrayInCurrentUser(this._currentUser!.scales, newScale, "scale");
 	}
 	
 	updateScale(currentScale:IScale, newScaleData:IScale):Promise<IScale> {
@@ -413,12 +346,7 @@ export default class MockJSONServerUserService implements IUserService {
 		if(!scaleInternalObjectReference)
 			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested scale.")));
 		
-		return this._updateArrayItemInCurrentUser(
-			scaleInternalObjectReference, 
-			newScaleData, 
-			"scale", 
-			[...this._scaleRequiredProperties, "id"]
-		);
+		return this._updateArrayItemInCurrentUser(scaleInternalObjectReference, newScaleData, "scale");
 	}
 	
 	deleteScale(scale:IScale):Promise<IScale[]> {
@@ -426,12 +354,9 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
-	_categoryRequiredProperties = [
-		"name",
-		"color",
-		"desiredWeight",
-		"actions"
-	];
+	
+	
+	
 	
 	getCategory(categoryID:string, scaleID:string) {
 		try { return this.getScale(scaleID)!.categories.find(cat => cat.id === categoryID); }
@@ -443,20 +368,15 @@ export default class MockJSONServerUserService implements IUserService {
 		if(!parentScaleInternalObjectReference)
 			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested scale.")));
 			
-		return this._saveToArrayInCurrentUser(parentScaleInternalObjectReference.categories, newCategory, "category", this._categoryRequiredProperties);
+		return this._saveToArrayInCurrentUser(parentScaleInternalObjectReference.categories, newCategory, "category");
 	}
 	
 	updateCategory(parentScale:IScale, currentCategory:ICategory, newCategoryData:ICategory):Promise<ICategory> {
 		const categoryInternalObjectReference = this.getCategory(currentCategory.id, parentScale.id);
 		if(!categoryInternalObjectReference)
-			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested scale.")));
+			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested category.")));
 		
-		return this._updateArrayItemInCurrentUser(
-			categoryInternalObjectReference, 
-			newCategoryData, 
-			"category", 
-			[...this._categoryRequiredProperties, "id"]
-		);
+		return this._updateArrayItemInCurrentUser(categoryInternalObjectReference, newCategoryData, "category");
 	}
 	
 	deleteCategory(parentScale:IScale, category:ICategory):Promise<ICategory[]> {
@@ -468,11 +388,10 @@ export default class MockJSONServerUserService implements IUserService {
 	}
 	
 	
-	_actionRequiredProperties = [
-		"name",
-		"weight",
-		"timespans"
-	];
+	
+	
+	
+	
 	
 	getAction(actionID:string, categoryID:string, scaleID:string) {
 		try { return this.getCategory(categoryID, scaleID)!.actions.find(act => act.id === actionID); }
@@ -484,7 +403,7 @@ export default class MockJSONServerUserService implements IUserService {
 		if(!parentCategoryInternalObjectReference)
 			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested category.")));
 			
-		return this._saveToArrayInCurrentUser(parentCategoryInternalObjectReference.actions, newAction, "action", this._actionRequiredProperties);
+		return this._saveToArrayInCurrentUser(parentCategoryInternalObjectReference.actions, newAction, "action");
 	}
 	
 	updateAction(parentScale:IScale, parentCategory:ICategory, currentAction:IAction, newActionData:IAction):Promise<IAction> {
@@ -492,12 +411,7 @@ export default class MockJSONServerUserService implements IUserService {
 		if(!actionInternalObjectReference)
 			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested action.")));
 		
-		return this._updateArrayItemInCurrentUser(
-			actionInternalObjectReference, 
-			newActionData, 
-			"action", 
-			[...this._actionRequiredProperties, "id"]
-		);
+		return this._updateArrayItemInCurrentUser(actionInternalObjectReference, newActionData, "action");
 	}
 	
 	deleteAction(parentScale:IScale, parentCategory:ICategory, action:IAction):Promise<IAction[]> {
@@ -511,10 +425,7 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	
 	
-	_timespanRequiredProperties = [
-		"date",
-		"minuteCount"
-	];
+	
 	
 	getScaleTimespans(scale:IScale, reverseOrder:boolean = false) {
 		let allTimespansInfo = new Array<({ timespan:ITimespan, category:ICategory, action:IAction })>();
@@ -544,7 +455,7 @@ export default class MockJSONServerUserService implements IUserService {
 		if(!parentActionInternalObjectReference)
 			return new Promise((resolve, reject) => reject(new Error("Unable to find the requested action.")));
 			
-		return this._saveToArrayInCurrentUser(parentActionInternalObjectReference.timespans, newTimespan, "timespan", this._timespanRequiredProperties);
+		return this._saveToArrayInCurrentUser(parentActionInternalObjectReference.timespans, newTimespan, "timespan");
 	}
 	
 	deleteTimespan(parentScale:IScale, parentCategory:ICategory, parentAction:IAction, timespan:ITimespan):Promise<ITimespan[]> {
