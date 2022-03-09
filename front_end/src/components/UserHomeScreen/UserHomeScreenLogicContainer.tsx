@@ -73,7 +73,7 @@ export default class UserHomeScreenLogicContainer
                 selectedScale = scales[0];
             }
             
-            if(!selectedScale)
+            if(!selectedScale && scales.length > 0)
                     scaleLoadingError = UserHomeScreenLogicContainer.stdScaleLoadErrorMessage;
         }
         
