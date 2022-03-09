@@ -28,6 +28,8 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	_abortControllers:AbortController[] = [];
 	
+	_isLoggedIn = false;
+	
 	constructor(apiProtocol:string, apiDomain:string, apiPort?:string, apiPath?:string)
 	{	
 		this._apiURLBase=`${apiProtocol}://${apiDomain}`;
@@ -94,6 +96,8 @@ export default class MockJSONServerUserService implements IUserService {
 				
 				this._currentUser = users[0];
 				
+				this._isLoggedIn = true;
+				
 				return users[0];
 				
 			}).catch(err => { throw err; });
@@ -103,13 +107,14 @@ export default class MockJSONServerUserService implements IUserService {
 	{
 		return new Promise<null>((resolve, reject) => {
 			this._currentUser = undefined;
+			this._isLoggedIn = false;
 			resolve(null);
 		});
 	}
 	
 	isLoggedIn()
 	{
-		return !!this._currentUser;
+		return this._isLoggedIn;
 	}
 	
 	requestNewPassword(email:string)
@@ -171,6 +176,7 @@ export default class MockJSONServerUserService implements IUserService {
 	{
 		return this._saveUser(newUser, undefined)
 			.then(user => { 
+				this._currentUser = user;
 				this._currentUserPassword = newUser.password; //If we edit the user after registration, we don't want to blank the password
 				return user;
 			})
