@@ -3,6 +3,7 @@
 .ScaleBalanceDisplay {
 	
 	@include stdSecondaryBorder;
+	border-radius: 0;
 	
 	display: flex;
 	padding: 0.35em;
@@ -23,20 +24,6 @@
 			padding: 0.5em;
 			padding-left: 0.75em;
 		}
-	}
-	
-	
-	//Border curves for the first and last items
-	$itemsBorderRadius: 1vw;
-	
-	& > .scaleBalanceItem:first-child {
-		border-top-left-radius: $itemsBorderRadius;
-		border-bottom-left-radius: $itemsBorderRadius;
-	}
-	
-	& > .scaleBalanceItem:last-child {
-		border-top-right-radius: $itemsBorderRadius;
-		border-bottom-right-radius: $itemsBorderRadius;
 	}
 	
 }
