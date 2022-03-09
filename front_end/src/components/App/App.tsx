@@ -107,7 +107,7 @@ const App:FC = () => {
 					element={handlePrivateComponent(<AmendActionHistoryPageLogicContainer 
 						scaleID={pathnameParams[2]}
 						userService={userService}
-						backButtonHandler={()=> navigate(homePageRoute)} />)} />
+						backButtonHandler={()=> navigate(`/scale/${pathnameParams[2]}`)} />)} />
 				
 				
 				
