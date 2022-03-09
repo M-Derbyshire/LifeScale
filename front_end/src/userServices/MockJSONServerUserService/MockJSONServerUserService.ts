@@ -134,6 +134,9 @@ export default class MockJSONServerUserService implements IUserService {
 	//If id is undefined, this will be treated as a new user
 	_saveUser(newUserData: Omit<IUser, "id"> & { password:string }, id:string|undefined):Promise<IUser>
 	{
+		if(!newUserData.password)
+			return new Promise((resolve, reject) => reject(new Error("The provided password was not valid")));
+		
 		const method = (!id) ? "POST" : "PUT";
 		let url = `${this._apiURLBase}/users`;
 		if(id)
