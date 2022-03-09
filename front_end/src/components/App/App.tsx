@@ -126,6 +126,7 @@ const App:FC = () => {
 					element={handlePrivateComponent(<CategoryDetailsFormLogicContainer 
 						scaleID={pathnameParams[2]}
 						userService={userService}
+						onSuccessfulCreateHandler={()=>navigate(`/scale/edit/${pathnameParams[2]}`)}
 						backButtonHandler={()=> navigate(`/scale/edit/${pathnameParams[2]}`)}
 						categoryColorProvider={categoryColorProvider} />)} />
 				

@@ -293,7 +293,7 @@ test("CategoryDetailsFormLogicContainer will pass down the backButtonHandler pro
 	
 });
 
-test("CategoryDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode", async () => {
+test("CategoryDetailsFormLogicContainer will save new records with the apiAccessor", () => {
 	
 	const newName = "testNewTest";
 	const newColor = dummyColorList[1].colorName;
@@ -340,16 +340,8 @@ test("CategoryDetailsFormLogicContainer will save new records with the apiAccess
 	const form = container.querySelector(".CategoryDetailsForm form");
 	fireEvent.submit(form);
 	
-	await waitFor(() => {
-		expect(mockUserService.createCategory)
-			.toHaveBeenCalledWith(dummyScale, catToCreate);
-		
-		//Check we're now in editing mode
-		const categoryDetailsForm = container.querySelector(".CategoryDetailsForm form");
-		expect(within(categoryDetailsForm).queryByRole("button", { name: /delete/i })).not.toBeNull();
-		expect(container.querySelector(".CategoryDetailsForm header").textContent)
-			.toEqual(expect.stringContaining(newName));
-	});
+	expect(mockUserService.createCategory)
+		.toHaveBeenCalledWith(dummyScale, catToCreate);
 	
 });
 
@@ -534,62 +526,6 @@ test("CategoryDetailsFormLogicContainer will display an error message on bad upd
 	
 });
 
-test("CategoryDetailsFormLogicContainer will display a good save message on good create save", async () => {
-	
-	const message = stdGoodSaveMessage;
-	
-	const newName = "testNewTest";
-	const newColor = dummyColorList[1].colorName;
-	const newWeight = 13467;
-	
-	const catToReturn = { 
-		id: "testID",
-		name: newName, 
-		color: newColor, 
-		desiredWeight: newWeight,
-		actions: dummyCategory.actions
-	};
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.createCategory = jest.fn().mockResolvedValue(catToReturn);
-	
-	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScale.id}
-									backButtonHandler={dummyBackHandler}
-									userService={mockUserService}
-									categoryColorProvider={dummyColorProvider} />);
-	
-	
-	// ----------- Set the values -----------------
-	
-	//Can't use getByDisplayValue, as empty string
-	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
-	expect(nameInput.value).not.toBe(newName);
-	
-	//We can't use getByDisplayValue for selects
-	const colorInput = container.querySelector(".CategoryDetailsForm select"); 
-	expect(colorInput.value).not.toBe(dummyColorProvider.getRealColorFromName(newColor));
-	
-	// value shows up too often to use getByDisplayValue
-	const weightInput = container.querySelector(".CategoryDetailsForm input[type=number]");
-	expect(Number(weightInput.value)).not.toBe(newWeight);
-	
-	fireEvent.change(nameInput, { target: { value: newName } });
-	userEvent.selectOptions(colorInput, dummyColorProvider.getRealColorFromName(newColor));
-	fireEvent.change(weightInput, { target: { value: newWeight } });
-	
-	
-	// ---------- Now save it -----------------
-	
-	const form = container.querySelector(".CategoryDetailsForm form");
-	fireEvent.submit(form);
-	
-	await waitFor(() => {
-		expect(container.querySelector(".CategoryDetailsForm").textContent)
-			.toEqual(expect.stringContaining(message));
-	});
-	
-});
 
 test("CategoryDetailsFormLogicContainer will display a good save message on good save", async () => {
 	
@@ -678,52 +614,6 @@ test("CategoryDetailsFormLogicContainer will clear good save message after a bad
 });
 
 
-test("CategoryDetailsFormLogicContainer will clear error save message after a good create save", async () => {
-	
-	const errorMessage = "Test error";
-	
-	const newName = "testNewTest";
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.createCategory = jest.fn().mockRejectedValue(new Error(errorMessage));
-	
-	const { container } = render(<CategoryDetailsFormLogicContainer
-									scaleID={dummyScale.id}
-									backButtonHandler={dummyBackHandler}
-									userService={mockUserService}
-									categoryColorProvider={dummyColorProvider} />);
-	
-	
-	// ----------- Set the values -----------------
-	
-	//Can't use getByDisplayValue, as empty string
-	const nameInput = container.querySelector(".CategoryDetailsForm input[type=text]");
-	expect(nameInput.value).not.toBe(newName);
-	
-	fireEvent.change(nameInput, { target: { value: newName } });
-	
-	
-	// ---------- Now save it -----------------
-	
-	const form = container.querySelector(".CategoryDetailsForm form");
-	fireEvent.submit(form);
-	
-	await waitFor(() => {
-		expect(container.querySelector(".CategoryDetailsForm").textContent)
-			.toEqual(expect.stringContaining(errorMessage));
-	});
-	
-	//Now change to reject (in editing mode)
-	mockUserService.createCategory = jest.fn().mockResolvedValue({ ...dummyCategory, name: newName });
-	fireEvent.submit(form);
-	
-	await waitFor(() => {
-		expect(container.querySelector(".CategoryDetailsForm").textContent)
-			.not.toEqual(expect.stringContaining(errorMessage));
-	});
-	
-});
-
 test("CategoryDetailsFormLogicContainer will clear error save message after a good update save", async () => {
 	
 	const errorMessage = "Test error";
@@ -773,7 +663,7 @@ test("CategoryDetailsFormLogicContainer will clear error save message after a go
 
 
 
-test("CategoryDetailsFormLogicContainer will disable submit button when creating, then re-enable when done", async () => {
+test("CategoryDetailsFormLogicContainer will disable submit button when creating, then call onSuccessfulCreateHandler", async () => {
 	
 	const newName = "testNewTest";
 	const newColor = dummyColorList[1].colorName;
@@ -788,11 +678,14 @@ test("CategoryDetailsFormLogicContainer will disable submit button when creating
 	};
 	
 	
+	const mockCreateHandler = jest.fn();
+	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.createCategory = jest.fn().mockResolvedValue(catToReturn);
 	
 	const { container } = render(<CategoryDetailsFormLogicContainer
 									scaleID={dummyScale.id}
+									onSuccessfulCreateHandler={mockCreateHandler}
 									backButtonHandler={dummyBackHandler}
 									userService={mockUserService}
 									categoryColorProvider={dummyColorProvider} />);
@@ -819,7 +712,7 @@ test("CategoryDetailsFormLogicContainer will disable submit button when creating
 	
 	//Re-enable
 	await waitFor(() => {
-		expect(submitButton).not.toBeDisabled();
+		expect(mockCreateHandler).toHaveBeenCalled();
 	});
 	
 });

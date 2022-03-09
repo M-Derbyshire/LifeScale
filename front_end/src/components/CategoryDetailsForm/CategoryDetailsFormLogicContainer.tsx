@@ -14,6 +14,7 @@ interface ICategoryDetailsFormLogicContainerProps {
 	userService:IUserService;
 	backButtonHandler:()=>void;
 	onSuccessfulDeleteHandler?:()=>void;
+	onSuccessfulCreateHandler?:()=>void;
 	categoryColorProvider:CategoryColorProvider;
 };
 
@@ -126,13 +127,10 @@ export default class CategoryDetailsFormLogicContainer
 				desiredWeight: category.desiredWeight,
 				actions: category.actions
 			})
-				.then(newCategory => this.setState({ 
-					category: { ...newCategory }, 
-					categoryOriginal: category,
-					goodSaveMessage: this.stdGoodSaveMessage,
-					badSaveErrorMessage: undefined,
-					disableSubmit: false
-				}))
+				.then(newCategory => {
+					if(this.props.onSuccessfulCreateHandler) 
+						this.props.onSuccessfulCreateHandler();
+				})
 				.catch(err => this.setState({ 
 					badSaveErrorMessage: err.message,
 					goodSaveMessage: undefined,
