@@ -170,7 +170,10 @@ export default class MockJSONServerUserService implements IUserService {
 	createUser(newUser: Omit<IUser, "id"> & { password:string })
 	{
 		return this._saveUser(newUser, undefined)
-			.then(user => { return user })
+			.then(user => { 
+				this._currentUserPassword = newUser.password; //If we edit the user after registration, we don't want to blank the password
+				return user;
+			})
 			.catch(err => { throw err; });
 	}
 	
