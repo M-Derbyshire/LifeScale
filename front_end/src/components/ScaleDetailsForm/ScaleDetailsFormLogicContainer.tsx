@@ -10,6 +10,7 @@ interface IScaleDetailsFormLogicContainerProps {
 	backButtonHandler:()=>void;
 	editCategoryHandler:(categoryID:string)=>void;
 	addCategoryHandler:()=>void;
+	onSuccessfulCreateHandler?:(scaleID:string)=>void;
 	onSuccessfulDeleteHandler?:()=>void;
 };
 
@@ -106,13 +107,10 @@ export default class ScaleDetailsFormLogicContainer
 				displayDayCount: scale.displayDayCount,
 				categories: scale.categories
 			})
-				.then(newScale => this.setState({ 
-					scale: { ...newScale }, 
-					originalScale: newScale,
-					goodSaveMessage: this.stdGoodSaveMessage,
-					badSaveErrorMessage: undefined,
-					disableSubmit: false
-				}))
+				.then(newScale => {
+					if(this.props.onSuccessfulCreateHandler) 
+						this.props.onSuccessfulCreateHandler(newScale.id);
+				})
 				.catch(err => this.setState({ 
 					badSaveErrorMessage: err.message,
 					goodSaveMessage: undefined,

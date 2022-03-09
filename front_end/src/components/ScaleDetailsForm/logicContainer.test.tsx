@@ -305,7 +305,7 @@ test("ScaleDetailsFormLogicContainer will pass down the backButtonHandler prop",
 
 
 
-test("ScaleDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode", async () => {
+test("ScaleDetailsFormLogicContainer will save new records with the apiAccessor, and then change to editing mode", () => {
 	
 	const newName = "testNewTest";
 	const newUsesTimespans = false;
@@ -369,19 +369,9 @@ test("ScaleDetailsFormLogicContainer will save new records with the apiAccessor,
 	const form = container.querySelector(".ScaleDetailsForm form");
 	fireEvent.submit(form);
 	
-	await waitFor(() => {
-		expect(mockUserService.createScale)
+	
+	expect(mockUserService.createScale)
 			.toHaveBeenCalledWith({ ...scaleToCreate, categories: [] });
-		
-		//Check we're now in editing mode
-		const scaleDetailsForm = container.querySelector(".ScaleDetailsForm form");
-		expect(within(scaleDetailsForm).queryByRole("button", { name: /delete/i })).not.toBeNull();
-		expect(container.querySelector(".ScaleDetailsForm header").textContent)
-			.toEqual(expect.stringContaining(newName));
-		
-		//Are we displaying categories as well
-		scaleToCreate.categories.forEach(cat => expect(screen.queryByText(cat.name)).not.toBeNull());
-	});
 	
 });
 
@@ -439,45 +429,6 @@ test("ScaleDetailsFormLogicContainer will update existing records with the apiAc
 	});
 	
 });
-
-
-
-test("ScaleDetailsFormLogicContainer will change the header after saving an update with name change", async () => {
-	
-	const newName = "testNewTest";
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.updateScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
-	
-	const { container } = render(<ScaleDetailsFormLogicContainer
-									scaleID={dummyScale.id}
-									userService={mockUserService}
-									backButtonHandler={dummyBackHandler}
-									editCategoryHandler={dummyEditCategoryHandler}
-									addCategoryHandler={dummyAddCategoryHandler} />);
-	
-	
-	// ----------- Set the values -----------------
-	
-	
-	const nameInput = screen.getByDisplayValue(dummyScale.name);
-	expect(nameInput.value).not.toBe(newName);
-	
-	fireEvent.change(nameInput, { target: { value: newName } });
-	
-	
-	// ---------- Now save it -----------------
-	
-	const form = container.querySelector(".ScaleDetailsForm form");
-	fireEvent.submit(form);
-	
-	await waitFor(() => {
-		expect(container.querySelector(".ScaleDetailsForm header").textContent)
-			.toEqual(expect.stringContaining(newName));
-	});
-	
-});
-
 
 
 
@@ -551,42 +502,6 @@ test("ScaleDetailsFormLogicContainer will display an error message on bad update
 	await waitFor(() => {
 		expect(container.querySelector(".ScaleDetailsForm").textContent)
 			.toEqual(expect.stringContaining(errorMessage));
-	});
-	
-});
-
-test("ScaleDetailsFormLogicContainer will display a good save message on good create save", async () => {
-	
-	const message = stdGoodSaveMessage;
-	
-	const newName = "testNewTest";
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.createScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
-	
-	const { container } = render(<ScaleDetailsFormLogicContainer
-									userService={mockUserService}
-									backButtonHandler={dummyBackHandler}
-									editCategoryHandler={dummyEditCategoryHandler}
-									addCategoryHandler={dummyAddCategoryHandler} />);
-	
-	
-	// ----------- Set the values -----------------
-	
-	const nameInput = container.querySelector(".scaleNameInput");
-	expect(nameInput.value).not.toBe(newName);
-	
-	fireEvent.change(nameInput, { target: { value: newName } });
-	
-	
-	// ---------- Now save it -----------------
-	
-	const form = container.querySelector(".ScaleDetailsForm form");
-	fireEvent.submit(form);
-	
-	await waitFor(() => {
-		expect(container.querySelector(".ScaleDetailsForm").textContent)
-			.toEqual(expect.stringContaining(message));
 	});
 	
 });
@@ -675,51 +590,6 @@ test("ScaleDetailsFormLogicContainer will clear good save message after a bad up
 	
 });
 
-test("ScaleDetailsFormLogicContainer will clear error save message after a good create save", async () => {
-	
-	const message = stdGoodSaveMessage;
-	const errorMessage = "Test error";
-	
-	const newName = "testNewTest";
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.createScale = jest.fn().mockRejectedValue(new Error(errorMessage));
-	
-	const { container } = render(<ScaleDetailsFormLogicContainer
-									userService={mockUserService}
-									backButtonHandler={dummyBackHandler}
-									editCategoryHandler={dummyEditCategoryHandler}
-									addCategoryHandler={dummyAddCategoryHandler} />);
-	
-	
-	// ----------- Set the values -----------------
-	
-	const nameInput = container.querySelector(".scaleNameInput");
-	expect(nameInput.value).not.toBe(newName);
-	
-	fireEvent.change(nameInput, { target: { value: newName } });
-	
-	
-	// ---------- Now save it -----------------
-	
-	const form = container.querySelector(".ScaleDetailsForm form");
-	fireEvent.submit(form);
-	
-	await waitFor(() => {
-		expect(container.querySelector(".ScaleDetailsForm").textContent)
-			.toEqual(expect.stringContaining(errorMessage));
-	});
-	
-	//Now change to reject
-	mockUserService.createScale = jest.fn().mockResolvedValue({ ...dummyScale, name: newName });
-	fireEvent.submit(form);
-	
-	await waitFor(() => {
-		expect(container.querySelector(".ScaleDetailsForm").textContent)
-			.not.toEqual(expect.stringContaining(errorMessage));
-	});
-	
-});
 
 test("ScaleDetailsFormLogicContainer will clear error save message after a good update save", async () => {
 	
@@ -770,7 +640,7 @@ test("ScaleDetailsFormLogicContainer will clear error save message after a good 
 
 
 
-test("ScaleDetailsFormLogicContainer will disable submit button when creating, then re-enable when done", async () => {
+test("ScaleDetailsFormLogicContainer will disable submit button when creating, then call onSuccessfulCreateHandler when done", async () => {
 	
 	const newName = "testNewTest";
 	const newUsesTimespans = !dummyScale.usesTimespans;
@@ -785,11 +655,14 @@ test("ScaleDetailsFormLogicContainer will disable submit button when creating, t
 	};
 	
 	
+	const mockCreateHandler = jest.fn();
+	
 	const mockUserService = { ...dummyUserService };
 	mockUserService.createScale = jest.fn().mockResolvedValue(scaleToReturn);
 	
 	const { container } = render(<ScaleDetailsFormLogicContainer
 									userService={mockUserService}
+									onSuccessfulCreateHandler={mockCreateHandler}
 									backButtonHandler={dummyBackHandler}
 									editCategoryHandler={dummyEditCategoryHandler}
 									addCategoryHandler={dummyAddCategoryHandler} />);
@@ -813,15 +686,14 @@ test("ScaleDetailsFormLogicContainer will disable submit button when creating, t
 	
 	expect(submitButton).toBeDisabled();
 	
-	//Re-enable
+	
 	await waitFor(() => {
-		expect(submitButton).not.toBeDisabled();
+		expect(mockCreateHandler).toHaveBeenCalledWith(dummyScale.id);
 	});
 	
 });
 
-// ScaleDetailsFormLogicContainer will disable submit button when updating, then re-enable when done
-test("ScaleDetailsFormLogicContainer will disable submit button when creating, then re-enable when done", async () => {
+test("ScaleDetailsFormLogicContainer will disable submit button when updating", async () => {
 	
 	const newName = "testNewTest";
 	const newUsesTimespans = !dummyScale.usesTimespans;
@@ -910,47 +782,6 @@ test("ScaleDetailsFormLogicContainer will re-enable submit button after a error 
 	});
 	
 });
-
-test("ScaleDetailsFormLogicContainer will re-enable submit button after a error during update", async () => {
-	
-	const newName = "testNewTest";
-	
-	const mockUserService = { ...dummyUserService };
-	mockUserService.updateScale = jest.fn().mockRejectedValue(new Error("test"));
-	
-	const { container } = render(<ScaleDetailsFormLogicContainer
-									scaleID={dummyScale.id}
-									userService={mockUserService}
-									backButtonHandler={dummyBackHandler}
-									editCategoryHandler={dummyEditCategoryHandler}
-									addCategoryHandler={dummyAddCategoryHandler} />);
-	
-	
-	// ----------- Set the values -----------------
-	
-	const nameInput = container.querySelector(".scaleNameInput");
-	expect(nameInput.value).not.toBe(newName);
-	
-	fireEvent.change(nameInput, { target: { value: newName } });
-	
-	
-	// ---------- Now save it -----------------
-	
-	const form = container.querySelector(".ScaleDetailsForm form");
-	const submitButton = container.querySelector(".ScaleDetailsForm form input[type=submit]");
-	expect(submitButton).not.toBeDisabled();
-	
-	fireEvent.submit(form);
-	
-	expect(submitButton).toBeDisabled();
-	
-	//Re-enable
-	await waitFor(() => {
-		expect(submitButton).not.toBeDisabled();
-	});
-	
-});
-
 
 
 

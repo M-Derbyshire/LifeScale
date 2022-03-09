@@ -141,12 +141,13 @@ const App:FC = () => {
 						backButtonHandler={()=>navigate(`/scale/${pathnameParams[2]}`)}
 						editCategoryHandler={(categoryID:string)=>navigate(`/category/edit/${pathnameParams[2]}/${categoryID}`)}
 						addCategoryHandler={() => navigate(`/category/create/${pathnameParams[2]}`)}
-						onSuccessfulDeleteHandler={() => navigate(`/scale/${pathnameParams[2]}`)} />)} />
+						onSuccessfulDeleteHandler={() => navigate(`/`)} />)} />
 				
 				<Route
 					path="/scale/create"
 					element={handlePrivateComponent(<ScaleDetailsFormLogicContainer 
 						userService={userService}
+						onSuccessfulCreateHandler={scaleID=>navigate(`/scale/${scaleID}`)}
 						backButtonHandler={()=>navigate(`/`)}
 						editCategoryHandler={(categoryID:string)=>navigate(`/category/edit/unknown/${categoryID}`)} //We won't display CardDisplay anyway
 						addCategoryHandler={() => navigate(`/category/create/unknown`)}  />)} /> 
