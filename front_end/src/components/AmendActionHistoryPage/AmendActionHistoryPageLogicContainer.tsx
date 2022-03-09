@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import AmendActionHistoryPage from './AmendActionHistoryPage';
 import IUserService from '../../interfaces/api_access/IUserService';
-import IUser from '../../interfaces/IUser';
 import IScale from '../../interfaces/IScale';
 import ITimespan from '../../interfaces/ITimespan';
 import ICategory from '../../interfaces/ICategory';
