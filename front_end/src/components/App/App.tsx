@@ -27,6 +27,13 @@ const getRedirectHandler = (userService:IUserService, authIsRequired:boolean, re
 
 
 
+
+/*
+	Entry point for application (that being said, this needs to be wrapped in a router component, in the index.tsx file).
+	
+	This will handle the display of components, based on the current route. It will also handle the redirecting when a user is 
+	at a route they shouldn't be on, based on their auth status.
+*/
 const App:FC = () => {
 	
 	const navigate = useNavigate();
