@@ -1,5 +1,6 @@
 @import './stdColors.scss';
 @import './stdBorders.scss';
+@import './stdResponsiveConfig.scss';
 
 @mixin stdForm {
 	
@@ -27,6 +28,19 @@
 	
 	.ErrorMessageDisplay {
 		margin: 0.5em 0;
+	}
+	
+	@media only screen and (max-width: $smallScreenWidthPixels) {
+			
+		input:not(input[type=submit]), .react-datepicker-wrapper, .react-datepicker__input-container {
+			margin: 0 !important;
+		}
+		
+		
+		label {
+			display: block;
+			margin: 0.1em 0.25em;
+		}
 	}
 	
 }
