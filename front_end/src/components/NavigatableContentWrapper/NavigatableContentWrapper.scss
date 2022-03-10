@@ -5,7 +5,6 @@
 	
 	.wrapperContentContainer {
 		display: flex;
-		margin: 1em;
 	}
 	
 	.wrapperContentContainer:not(.smallScreenWidth) {
@@ -32,6 +31,10 @@
 		
 		.navigationBarContainer {
 			margin-bottom: 0.25em;
+		}
+		
+		.mainContentContainer {
+			padding: 1em;
 		}
 	}
 	
