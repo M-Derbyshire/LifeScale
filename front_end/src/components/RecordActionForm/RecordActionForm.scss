@@ -24,6 +24,10 @@
 			margin: 0.5em;
 		}
 		
+		select {
+			width: 100%;
+		}
+		
 		input[type=submit] {
 			@include stdPrimaryButton;
 		}
