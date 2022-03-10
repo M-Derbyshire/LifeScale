@@ -1,1 +1,5 @@
 $smallScreenWidthPixels: 760px;
+
+@mixin stdResponsiveUserTextConfig {
+    word-wrap: break-word;
+}

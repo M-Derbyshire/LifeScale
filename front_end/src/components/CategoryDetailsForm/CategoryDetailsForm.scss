@@ -1,9 +1,12 @@
 @import '../../stdStyles/stdForms.scss';
 @import '../../stdStyles/stdButtons.scss';
+@import '../../stdStyles/stdResponsiveConfig.scss';
 
 .CategoryDetailsForm {
 	
 	@include stdForm;
+	@include stdResponsiveUserTextConfig;
+	
 	
 	margin: 1em;
 	

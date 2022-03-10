@@ -1,5 +1,9 @@
+@import './stdResponsiveConfig.scss';
+
 
 @mixin stdPercentageStatistic {
+	
+	@include stdResponsiveUserTextConfig;
 	
 	.statisticLabel {
 		font-weight: bold;

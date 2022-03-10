@@ -1,5 +1,6 @@
 @import '../../stdStyles/stdBorders.scss';
 @import '../../stdStyles/stdColors.scss';
+@import '../../stdStyles/stdResponsiveConfig.scss';
 
 .ScalesNavList {
 	
@@ -12,6 +13,7 @@
 		li a {
 			
 			color: $stdSecondaryTxtColor;
+			@include stdResponsiveUserTextConfig;
 			
 			&:hover {
 				background-color: darken($stdSecondaryBackColor, 5);

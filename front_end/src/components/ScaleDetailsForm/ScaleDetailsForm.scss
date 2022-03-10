@@ -1,5 +1,6 @@
 @import '../../stdStyles/stdForms.scss';
 @import '../../stdStyles/stdButtons.scss';
+@import '../../stdStyles/stdResponsiveConfig.scss';
 
 .ScaleDetailsForm {
 	
@@ -8,6 +9,10 @@
 	margin: 1em;
 	
 	min-height: 50vh;
+	
+	header {
+		@include stdResponsiveUserTextConfig;
+	}
 	
 	input[type=submit], button {
 		@include stdPrimaryButton;

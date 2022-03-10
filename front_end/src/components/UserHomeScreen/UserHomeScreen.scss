@@ -1,8 +1,10 @@
 @import '../../stdStyles/stdColors.scss';
+@import '../../stdStyles/stdResponsiveConfig.scss';
 
 .UserHomeScreen {
     
     main > header {
+        @include stdResponsiveUserTextConfig;
         color: $stdPrimaryTxtColor;
         text-align: center;
         font-size: 1.5em;

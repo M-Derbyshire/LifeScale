@@ -5,7 +5,10 @@
 	@include stdCard;
 	
 	span {
-		font-size: 1.5em;
+		font-size: 1.25em;
+		overflow: hidden;
+		width: 100%;
+		display: block;
 	}
 	
 	// Position relative on the parent will allow us to put the child to the bottom of the div

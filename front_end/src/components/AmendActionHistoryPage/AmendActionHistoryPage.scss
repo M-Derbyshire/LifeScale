@@ -1,6 +1,7 @@
 @import '../../stdStyles/stdBorders.scss';
 @import '../../stdStyles/stdColors.scss';
 @import '../../stdStyles/stdButtons.scss';
+@import '../../stdStyles/stdResponsiveConfig.scss';
 
 .AmendActionHistoryPage {
 	
@@ -19,6 +20,7 @@
 	
 	header {
 		margin: 0.75em 1em;
+		@include stdResponsiveUserTextConfig;
 	}
 	
 	.historyItemsArea {
