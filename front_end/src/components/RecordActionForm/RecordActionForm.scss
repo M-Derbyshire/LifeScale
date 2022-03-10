@@ -1,5 +1,6 @@
 @import '../../stdStyles/stdForms.scss';
 @import '../../stdStyles/stdButtons.scss';
+@import '../../stdStyles/stdResponsiveConfig.scss';
 
 .RecordActionForm {
 	@include stdForm;
@@ -24,12 +25,14 @@
 			margin: 0.5em;
 		}
 		
-		select {
-			width: 100%;
-		}
-		
 		input[type=submit] {
 			@include stdPrimaryButton;
+		}
+		
+		@media screen and (max-width: $smallScreenWidthPixels) {
+			select {
+				width: 100%;
+			}
 		}
 	}
 }
