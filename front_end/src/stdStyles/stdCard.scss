@@ -1,20 +1,32 @@
 @import './stdBorders.scss'; 
+@import './stdResponsiveConfig.scss';
 
 $cardBorderColor: #478ce6;
 $cardTextColor: #b649b0;
 $cardBackgroundColor: #97daeb; 
 
+$cardSmallScreenWidthPixels: $smallScreenWidthPixels;
+
 @mixin stdCard {
 	
 	@include stdBorder($cardBorderColor, 3px);
+	@include stdResponsiveUserTextConfig;
+	
+	overflow: hidden;
+	
 	
 	color: $cardTextColor;
 	background-color: $cardBackgroundColor;
 	
-	min-width: 10em;
+	width: 10em;
 	height: 7em;
 	
 	padding: 1em;
+	
+	@media (max-width: $cardSmallScreenWidthPixels) {
+		width: 100%;
+	}
+	
 }
 
 //To be used in a span, when a card is just displaying a single charcter (such as a plus/minus/etc)

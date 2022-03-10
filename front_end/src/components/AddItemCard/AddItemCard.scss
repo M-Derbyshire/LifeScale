@@ -2,6 +2,13 @@
 
 .AddItemCard {
 	cursor: pointer;
+	
+	width: fit-content;
+	box-sizing: content-box;
+	
+	@media (max-width: $cardSmallScreenWidthPixels) {
+		width: 100%;
+	}
 }
 
 .addItemCardContent {
@@ -10,4 +17,9 @@
 	span {
 		@include stdCardSingleCharacterSpan;
 	}
+	
+	@media (max-width: $cardSmallScreenWidthPixels) {
+		width: initial;
+	}
+	
 }
