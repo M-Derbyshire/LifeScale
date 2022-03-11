@@ -3,7 +3,7 @@
 .CategoryDetailsFormPartial {
 	
 	.categoryColorInputLabel select {
-		@include stdBorder(#000000, 3px); //Color should get replaced by the state color
+		border: 3px solid black; //Color should be replaced by the category color, by the javascript
 		outline:none; //This removes black outline, which would be seen on focus
 		padding: 0.25em;
 	}
