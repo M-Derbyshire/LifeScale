@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 type SaveMessageProps = {
 	message:string;
-	removeMessageCallback?:()=>void;
+	removeMessageCallback?:()=>void; // Called when clicking the button/text/etc that triggers the closure of the message
 };
 
 /*

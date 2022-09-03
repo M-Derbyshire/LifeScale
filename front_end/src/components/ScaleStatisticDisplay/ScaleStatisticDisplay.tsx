@@ -11,11 +11,10 @@ interface IScaleStatisticDisplayProps {
 
 
 /*
-	Displays statistic percentage data for categories/actions. Also has a button to go to the page to 
+	Displays statistic percentage data for categories/actions. Also has a button to go to the page that lets users 
 	amend the action history for this scale
 */
 const ScaleStatisticDisplay:FC<IScaleStatisticDisplayProps> = (props) => {
-	
 	
 	return (
 		<div className="ScaleStatisticDisplay">

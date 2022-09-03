@@ -16,7 +16,8 @@ interface ISingleActionFormProps {
 }
 
 /*
-	Used to display and save an action (not a usage of an action, but the details of the action-type itself)
+	Used to display and create/update an action (not a usage of the action, but the details of the action entity itself).
+	See ActionsForm and ActionsFormLogicContainer components for more information on usage/logic
 */
 const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 	
@@ -25,19 +26,24 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit() }}>
 				
 				<label>
-					Name: <input type="text" required className="singleActionNameInput" value={props.name} onChange={(e)=>props.setName(e.target.value)} />
+					Name: <input 
+							type="text" 
+							required 
+							className="singleActionNameInput" 
+							value={props.name} 
+							onChange={(e)=>props.setName(e.target.value)} />
 				</label>
 				<br/>
 				
 				<label>
 					Weight: <input 
-						type="number" 
-						required
-						className="singleActionWeightInput" 
-						min="0" 
-						step="1"
-						value={props.weight} 
-						onChange={(e)=>props.setWeight( (Number(e.target.value) < 0) ? 0 : Math.round(Number(e.target.value)) )} />
+								type="number" 
+								required
+								className="singleActionWeightInput" 
+								min="0" 
+								step="1"
+								value={props.weight} 
+								onChange={(e)=>props.setWeight( (Number(e.target.value) < 0) ? 0 : Math.round(Number(e.target.value)) )} />
 				</label>
 				<br/>
 				
@@ -46,7 +52,7 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 				{props.goodSaveMessage && 
 							<GoodSaveMessage message={props.goodSaveMessage} />}
 				
-				{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
+				
 				<input type="submit" value="Save" />
 				{props.onDelete && <button type="button" onClick={props.onDelete}>Delete</button>} 
 				

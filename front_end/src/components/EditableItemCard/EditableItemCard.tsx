@@ -3,12 +3,12 @@ import './EditableItemCard.scss';
 
 interface IEditableItemCardProps {
 	name:string;
-	editCallback:()=>void;
+	editCallback:()=>void; //Should take the user to the edit screen for the entity
 }
 
 /*
 	Card to be an item in a flex container. This card will be used to display items that can be edited 
-	on another screen (the Edit button will take you to the other scree -- via the editCallback prop)
+	on another screen (the Edit button will take you to the other screen -- via the editCallback prop)
 */
 const EditableItemCard:FC<IEditableItemCardProps> = (props) => {
 	

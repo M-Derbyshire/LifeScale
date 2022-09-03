@@ -16,7 +16,7 @@ interface ITimespanFormPartialProps {
 
 /*
 	Used to display and set an amount of time (in minutes). This will also provide the ability to set it in hours 
-	(however the component will still pass back up the value in minutes)
+	(however, the component will still pass back up the value in minutes)
 */
 const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 	
@@ -24,7 +24,7 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 	//Number type inputs can be an issue with react. Also tried external modules, but didn't work in the way we wanted
 	//Instead, will use a regex and validation on text inputs. Also, using the minute/hour display props to allow for things such as 
 	//empty values in the fields (if input value is valid, the minute state is set. Otherwise, only the display value is set).
-	//The form should then fail to submit, if correctlly formatted data is not provided.
+	//The form should then fail to submit, if correctly formatted data is not provided.
 	//eslint-disable-next-line
 	const validNumberPattern = "[0-9]+\.?[0-9]{0,2}"; //up to 2 decimal places
 	
@@ -48,7 +48,9 @@ const TimespanFormPartial:FC<ITimespanFormPartialProps> = (props) => {
 							props.setHourDisplayValue((minutes / 60).toFixed(2));
 						}
 						else
+						{
 							props.setHourDisplayValue("");
+						}
 						
 						props.setMinuteDisplayValue(e.target.value);
 					}} />

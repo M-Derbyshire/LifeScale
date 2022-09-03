@@ -9,7 +9,7 @@ interface IChangePasswordFormProps {
 	setCurrentPassword:(password:string)=>void;
 	newPassword:string;
 	setNewPassword:(password:string)=>void;
-	setNewPasswordIsConfirmed:(confirmed:boolean)=>void
+	setNewPasswordIsConfirmed:(confirmed:boolean)=>void // do the password and password confirmation fields match?
 	
 	onSubmit:()=>void;
 	badSaveErrorMessage?:string;

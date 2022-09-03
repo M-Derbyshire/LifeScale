@@ -61,7 +61,7 @@ export default class UserHomeScreenLogicContainer
             scaleLoadingError = err.message;
         }
         
-        //If no loading error -- and either there's a selectedScaleID, or scales available
+        //If no loading error, and there's either a selectedScaleID or scales available
         if(!scaleLoadingError)
         {
             if(this.props.selectedScaleID)
@@ -85,7 +85,7 @@ export default class UserHomeScreenLogicContainer
             scales,
             selectedScale,
             
-            //Set the below when getDerviedStateFromProps runs
+            //Will set the below when getDerviedStateFromProps runs
             statistics: [],
             currentBalanceItems: [],
             desiredBalanceItems: []
@@ -93,6 +93,7 @@ export default class UserHomeScreenLogicContainer
     }
     
     
+    //Used to recreate the scale balance items, and the percentage statistics, with the new props
     static getDerivedStateFromProps(props:IUserHomeScreenLogicContainerProps, state:IUserHomeScreenLogicContainerState)
     {
         return { ...state, ...UserHomeScreenLogicContainer.regenerateScaleAndTimespanDisplays(props, state) };
@@ -102,7 +103,12 @@ export default class UserHomeScreenLogicContainer
     
     
     
-    //Regenerate the statistics and scale balance items, from a newly refreshed scale
+    
+    
+    
+    //Regenerate the statistics and scale balance items, from a newly refreshed scale (as well 
+    //as new scaleLoadingError and selectedScale values).
+    //This data is then used in the scale displays, and the statistic breakdowns.
     static regenerateScaleAndTimespanDisplays(props:IUserHomeScreenLogicContainerProps, state:IUserHomeScreenLogicContainerState):{
         statistics:IPercentageStatistic[],
         currentBalanceItems:IScaleBalanceItem[],
@@ -123,19 +129,21 @@ export default class UserHomeScreenLogicContainer
             selectedScale = props.userService.getScale(props.selectedScaleID || state.selectedScale!.id);
             
             if(!selectedScale)
+            {
                 scaleLoadingError = this.stdScaleLoadErrorMessage;
+            }
             else
             {
                 const categories = selectedScale.categories;
+                
                 statistics = this.generateCategoryPercentageStatistics(categories, selectedScale.displayDayCount);
                 currentBalanceItems = this.generateCatgeoryBalanceItems(categories, statistics, props.categoryColorProvider);
                 
                 
-                //Using the desired weights as the percentages
                 desiredBalanceItems = this.generateCatgeoryBalanceItems(categories, categories.map(category => ({
                     id: category.id,
                     label: category.name,
-                    percentage: category.desiredWeight
+                    percentage: category.desiredWeight //Using the desired weights as the percentages
                 })), props.categoryColorProvider); 
                 
             }
@@ -154,46 +162,18 @@ export default class UserHomeScreenLogicContainer
     
     
     
-    
-    
-    
-    
-    //If the correct percentageStatistic cannot be found for a category, the item weight is set to 0
-    static generateCatgeoryBalanceItems(
-        categories:ICategory[], 
-        percentageStatistics:IPercentageStatistic[], 
-        categoryColorProvider:CategoryColorProvider):IScaleBalanceItem[]
-    {
-        return categories.map((category) => {
-            
-            let color = categoryColorProvider.getRealColorFromName(category.color);
-            if(!color)
-                color = "white";
-            
-            const percentageStat = percentageStatistics.find(stat => stat.id === category.id);
-            let percentage = 0;
-            if(percentageStat)
-                percentage = percentageStat.percentage
-            
-            return {
-                label: category.name,
-                weight: percentage,
-                color
-            }
-        });
-    }
-    
+    // Get percentage statistics for the each category and their actions (as in, what percentage of the scale does each take up)
     static generateCategoryPercentageStatistics(categories:ICategory[], displayDayCount:number):IPercentageStatistic[]
     {   
-        // Get the oldest date that can be included
+        // Get the oldest date that can be included, based on displayDayCount (how many days worth of data should we include?)
         const millisecondsToRemove = (3600 * 1000 * 24) * (displayDayCount - 1); //Remove 1, as if dayCount is 0, the date should be tomorrow
-        const oldestIncludedDateTime = new Date(Date.now() - millisecondsToRemove).setHours(0, 0, 0, 0); //Returns the milliseconds we want 
+        const oldestIncludedDateTimeMS = new Date(Date.now() - millisecondsToRemove).setHours(0, 0, 0, 0); //Returns the milliseconds we want 
         
-        //Firstly, we need to get the total, so we can figure out percentages of it
+        //Firstly, we need to get the total minutes for the category (this value is 100% of the scale, so our percentages will be based on it)
         const totalMinutes = categories.reduce(
             (catAcc, category) => catAcc + category.actions.reduce(
                 (actAcc, action) => actAcc + action.timespans.reduce(
-                    (tsAcc, timespan) => (timespan.date.getTime() >= oldestIncludedDateTime) ? (tsAcc + (timespan.minuteCount * action.weight)) : 0,
+                    (tsAcc, timespan) => (timespan.date.getTime() >= oldestIncludedDateTimeMS) ? (tsAcc + (timespan.minuteCount * action.weight)) : 0,
                     0
                 ),
                 0
@@ -205,15 +185,15 @@ export default class UserHomeScreenLogicContainer
         // Now we make IPercentageStatistic objects, with the category/action percentages
         return categories.map((category) => {
             
-            let categoryPercentage = 0;
+            let categoryPercentage = 0; //The total percentage for actions in this category (increased when generating actionPercentages)
             
             const actionPercentages = category.actions.map(action => {
                 
                 const actionPercentageNum = action.timespans.reduce(
                     (acc, timespan) => {
                         
-                        if(timespan.date.getTime() < oldestIncludedDateTime)
-                            return acc;
+                        if(timespan.date.getTime() < oldestIncludedDateTimeMS)
+                            return acc; //ignore this timespan
                         
                         const weightedMinuteCount = (timespan.minuteCount * action.weight);
                         
@@ -248,15 +228,48 @@ export default class UserHomeScreenLogicContainer
     
     
     
+    //Generate IScaleBalanceItem data (The data used when displaying items on a scale display) for the given categories.
+    //If percentageStatistic cannot be found for a category, the item's weight is set to 0
+    static generateCatgeoryBalanceItems(
+        categories:ICategory[], 
+        percentageStatistics:IPercentageStatistic[], 
+        categoryColorProvider:CategoryColorProvider):IScaleBalanceItem[]
+    {
+        return categories.map((category) => {
+            
+            let color = categoryColorProvider.getRealColorFromName(category.color);
+            if(!color)
+                color = "white";
+            
+            const percentageStat = percentageStatistics.find(stat => stat.id === category.id);
+            let percentage = 0;
+            if(percentageStat)
+                percentage = percentageStat.percentage
+            
+            return {
+                label: category.name,
+                weight: percentage,
+                color
+            }
+        });
+    }
+    
+    
+    
+    
+    
+    
+    
     
     
     
     onSuccessfulTimespanSaveHandler()
     {
         //Reload the scale, to get all the new timespan data
-        //We need this to keep the scales balances, and statistics, up to date
+        //We need this to keep the scale's balances and statistics up to date
        this.setState({ ...UserHomeScreenLogicContainer.regenerateScaleAndTimespanDisplays(this.props, this.state) });
     }
+    
     
     
     

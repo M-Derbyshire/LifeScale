@@ -19,11 +19,11 @@ interface ICategoryDetailsFormProps {
 	backButtonHandler:()=>void;
 	disableSubmit?:boolean;
 	
-	actionsForm?:ReactElement;
+	actionsForm?:ReactElement; //The form component used to add actions (this may not be given, if we're creating a category instead of updating)
 }
 
 /*
-	This is used to create and edit categoires in the system. The container component should handle the logic
+	This is used to create and edit categories in the system. The container component should handle the logic
 */
 const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 	
@@ -54,14 +54,13 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 						{props.categoryItem.goodSaveMessage && 
 							<GoodSaveMessage message={props.categoryItem.goodSaveMessage} />}
 						
-						{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
+						
 						<input type="submit" value="Save" disabled={props.disableSubmit} />
 						{props.categoryItem.onDelete && 
 							<button 
 								className="categoryDeleteButton" 
 								type="button" 
-								onClick={props.categoryItem.onDelete}
-							>Delete</button>} 
+								onClick={props.categoryItem.onDelete}>Delete</button>} 
 						
 					</form>
 					

@@ -13,30 +13,31 @@ interface IUserDetailsFormProps {
 	
 	headingText:string;
 	badLoadErrorMessage?:string;
-	passwordForm?:ReactElement;
+	passwordForm?:ReactElement; // The form used to set or change the user's password
 	
 	backButtonHandler:()=>void;
 	
 	onSubmit:()=>void;
 	disableSubmit?:boolean;
 	submitButtonText:string;
+	
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
 }
 
 
 /*
-	This is used to create and edit users in the system. The container should provide an IUser, with blank or 
+	This is used to create and edit users in the system. The logic container component should provide an IUser, with blank or 
 	default data (the ID can be whatever the container decides -- probably a blank string).
 	
-	The container can also enter a password form to be rendered (will differ depending on if it's a creation, or
-	password change)
+	The container can also enter a password form to be rendered (could be a form for a new user's password, or a form for
+	password changes)
 	
-	(This was originally a more complex component, with a state interface. So, now it's simpler, maybe 
-	turn into a functional component in the future)
+	
+	TODO: This was originally a more complex component, with a state interface. So, now it's simpler, maybe 
+	turn into a functional component in the future
 */
 export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
-	
 	
 	render()
 	{
@@ -61,8 +62,8 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 							setSurname={(newSurname) => this.props.setUser({ ...this.props.user!, surname: newSurname})} />
 						
 						
-						{/* We're checking explicitly before rendering the area div, 
-						to make sure styles aren't applied when the content isn't there */}
+						{/* We're checking explicitly before rendering the containing div (rather than just for the passwordForm), 
+						to make sure styles aren't applied when the passwordForm isn't provided */}
 						{this.props.passwordForm && <div className="passwordFormArea">
 							{this.props.passwordForm}
 						</div>}

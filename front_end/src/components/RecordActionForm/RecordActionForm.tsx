@@ -19,7 +19,7 @@ interface IRecordActionFormProps {
 export default class RecordActionForm extends Component<IRecordActionFormProps>
 {
 	
-	// Used to map categories and actions to option elements
+	// Used to map categories and actions to <option> elements
 	mapItemToOptionElem(name:string, id:any)
 	{
 		return (
@@ -34,7 +34,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 									.find(cat => cat.id === this.props.recordedAction.selectedCategoryID)
 		
 		const selectedAction = (!selectedCategory) ? undefined 
-			: selectedCategory.actions.find(act => act.id === this.props.recordedAction.selectedActionID);
+													: selectedCategory.actions.find(act => act.id === this.props.recordedAction.selectedActionID);
 		
 		const disableSubmit = (
 			this.props.recordedAction.categories.length === 0 
@@ -63,6 +63,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 												(e) => this.props.recordedAction.setSelectedCategoryID(e.target.value)
 											}>
 								
+								{/* <option> elements for this <select> */}
 								{this.props.recordedAction.categories.map(
 									(cat) => this.mapItemToOptionElem(cat.name, cat.id)
 								)}
@@ -79,10 +80,11 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 											(e) => this.props.recordedAction.setSelectedActionID(e.target.value)
 										}>
 								
+								{/* <option> elements for this <select> */}
 								{this.props.recordedAction.categories.length > 0 && selectedCategory &&
-								selectedCategory.actions.map(
-									(act) => this.mapItemToOptionElem(act.name, act.id)
-								)}
+									selectedCategory.actions.map(
+										(act) => this.mapItemToOptionElem(act.name, act.id)
+									)}
 								
 							</select>
 						</label>

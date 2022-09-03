@@ -14,9 +14,10 @@ import ScaleDetailsFormLogicContainer from '../ScaleDetailsForm/ScaleDetailsForm
 
 
 
-//Returns a function, that creates a function to redirect somewhere, based on the user's auth status.
+//Returns a function that can be used to redirect somewhere, based on the user's auth status.
 //You can call the returned function with a component that's at a route that does/doesn't require auth. If user is/isnt logged in, they will
-//then be redirected to the correct route. The given element will only be returned if the user has the correct auth status
+//then be redirected to the correct route. The given element (element parameter) will only be returned if the user has the correct auth status, 
+//otherwise the redirecting Navigate component will be returned.
 const getRedirectHandler = (userService:IUserService, authIsRequired:boolean, redirectToRoute:string) => (element:ReactElement):ReactElement => {
 	
 	if(userService.isLoggedIn() === authIsRequired)

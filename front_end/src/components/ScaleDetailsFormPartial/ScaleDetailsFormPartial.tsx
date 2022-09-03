@@ -11,7 +11,8 @@ interface IScaleDetailsFormPartialProps {
 
 
 /*
-	Used to display and set basic scale details (not including setting categories)
+	Used to display and set basic scale details (doesn't including updating/creating categories).
+	See ScaleDetailsForm and ScaleDetailsFormLogicContainer components for logic of this.
 */
 const ScaleDetailsFormPartial:FC<IScaleDetailsFormPartialProps> = (props) => {
 	

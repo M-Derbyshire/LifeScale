@@ -8,11 +8,12 @@ interface IScalesNavListProps {
 }
 
 /*
-	Takes an array of IScaleLink objects (defined in this file) and creates a ul of react-router Links
+	Takes an array of IScaleLink objects and creates a ul of react-router <NavLink> components.
+	See the UserNavBar and UserNavBarLogicContainer components for usage/logic.
 */
 class ScalesNavList extends Component<IScalesNavListProps> {
 	
-	
+	// map IScaleLink to <li>, with <NavLink> in it
 	mapScaleLinkToLi(scaleLink:IScaleLink):ReactElement
 	{
 		return (

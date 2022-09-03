@@ -14,7 +14,7 @@ interface IUserDetailsFormLogicContainerProps {
 
 interface IUserDetailsFormLogicContainerState {
 	user?:IUser|Omit<IUser, "id"> & { password:string };
-	passwordIsConfirmed:boolean;
+	passwordIsConfirmed:boolean; // Does the new password field match the password confirmation field?
 	userSavedPreviously:boolean; //Have any saves been completed (during this use), even if this is a new user
 	badLoadErrorMessage?:string;
 	badSaveErrorMessage?:string;
@@ -74,11 +74,13 @@ export default class UserDetailsFormLogicContainer
 	}
 	
 	
-	
 	componentWillUnmount()
 	{
 		this.props.userService.abortRequests();
 	}
+	
+	
+	
 	
 	
 	
@@ -147,6 +149,8 @@ export default class UserDetailsFormLogicContainer
 	
 	
 	
+	
+	
 	render()
 	{
 		const isCreatingUser = (this.props.isNewUser && !this.state.userSavedPreviously);
@@ -155,6 +159,7 @@ export default class UserDetailsFormLogicContainer
 		
 		let passwordForm:ReactElement|undefined = undefined; //undefined if editing user that is not logged in
 		if(isCreatingUser)
+		{
 			passwordForm = (<PasswordFormPartial 
 								password={("password" in this.state.user!) ? this.state.user!.password : ""}
 								setPassword={(password) => this.setState({
@@ -163,8 +168,11 @@ export default class UserDetailsFormLogicContainer
 								setPasswordIsConfirmed={(isConfirmed) => this.setState({
 									passwordIsConfirmed: isConfirmed
 								})} />);
+		}
 		else if (!this.props.isNewUser)
+		{
 			passwordForm = (<ChangePasswordFormLogicContainer userService={this.props.userService} />);
+		}
 		
 		
 		

@@ -6,7 +6,7 @@ interface IPercentageStatisticProps {
 	statistic: IPercentageStatistic;
 }
 
-
+// Map IPercentageStatistic to <li>
 const mapPercentageStatisticToLi = (child:IPercentageStatistic):ReactElement => (<li key={child.id}>
 	<PercentageStatistic statistic={child} />
 </li>);
@@ -14,8 +14,8 @@ const mapPercentageStatisticToLi = (child:IPercentageStatistic):ReactElement => 
 
 
 /*
-	Used to display percentage information for actions/categories/etc that the user has recorded (say, what 
-	percentage of events on a scale are of the action type in question)
+	Used to display percentage information for actions/categories/etc that the user has recorded (for example, what percentage of events on a 
+	scale are of a particular action type)
 */
 const PercentageStatistic:FC<IPercentageStatisticProps> = (props) => {
 	

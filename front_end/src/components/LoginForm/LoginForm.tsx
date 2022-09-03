@@ -12,7 +12,8 @@ interface ILoginFormProps {
 }
 
 /*
-	Display-layer component to display a form for users to log in
+	Display-layer component to display a form for users to log in.
+	See LoginPage and LoginPageLogicContainer components for login logic
 */
 const LoginForm:FC<ILoginFormProps> = (props) => {
 	

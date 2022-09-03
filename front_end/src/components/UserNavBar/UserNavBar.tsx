@@ -6,7 +6,7 @@ import ScalesNavList from '../ScalesNavList/ScalesNavList';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 interface IUserNavBarProps {
-	scaleLinks:IScaleLink[];
+	scaleLinks:IScaleLink[]; //The links to the user's scales
 	editUserURL:string;
 	createScaleURL:string;
 	logoutCallback:()=>void;
@@ -15,10 +15,10 @@ interface IUserNavBarProps {
 
 
 /*
-	Navigation, once logged into the app. This provides links to edit user details, create scales, and view 
-	scales.
+	The navigation bar. This provides links to edit the user's details, create new scales, and view current scales.
+	If the scales list is still being loaded, the scaleLinks prop should be an empty array.
 	
-	If the scales list is still being loaded, the scaleLinks prop should be an empty array
+	See UserNavBarLogicContainer component.
 */
 const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	

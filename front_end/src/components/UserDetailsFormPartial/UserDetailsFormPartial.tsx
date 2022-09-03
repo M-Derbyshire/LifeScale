@@ -10,7 +10,8 @@ interface IUserDetailsFormPartialProps {
 }
 
 /*
-	Used to display and set basic user account details (not including password set/reset)
+	Used to display and set basic user account details (not including password set/reset).
+	See UserDetailsForm and UserDetailsFormLogicContainer components for more details on usage/logic
 */
 const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 	

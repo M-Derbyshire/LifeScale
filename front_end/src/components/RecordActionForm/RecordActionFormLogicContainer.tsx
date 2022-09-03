@@ -42,7 +42,6 @@ export default class RecordActionFormLogicContainer
 	}
 	
 	
-	
 	componentWillUnmount()
 	{
 		this.props.userService.abortRequests();
@@ -50,7 +49,9 @@ export default class RecordActionFormLogicContainer
 	
 	
 	
-	getBlankFormData()
+	
+	// Get "blank" default values for the form data
+	getBlankFormData():IRecordActionFormLogicContainerState
 	{
 		const selectedCategory = 
 			(this.props.scale.categories.length > 0) ? this.props.scale.categories[0] : undefined;
@@ -75,6 +76,10 @@ export default class RecordActionFormLogicContainer
 			goodSaveMessage: undefined
 		};
 	}
+	
+	
+	
+	
 	
 	
 	handleSubmit()
@@ -110,8 +115,8 @@ export default class RecordActionFormLogicContainer
 			})
 				.then(timespan => {
 					this.setState({ 
-						...this.getBlankFormData(),
-						goodSaveMessage,
+						...this.getBlankFormData(), // reset the form
+						goodSaveMessage, // but also include a good save message
 					});
 					
 					if(this.props.onSuccessfulSave)

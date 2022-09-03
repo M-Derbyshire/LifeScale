@@ -10,7 +10,7 @@ import CategoryColorProvider from '../../utility_classes/CategoryColorProvider/C
 
 interface ICategoryDetailsFormLogicContainerProps {
 	scaleID:string;
-	categoryID?:string; //If undefined, this form will be used to create. Otherwise, form will update
+	categoryID?:string; //If undefined, this form will be used to create. Otherwise, form will be used to update
 	userService:IUserService;
 	backButtonHandler:()=>void;
 	onSuccessfulDeleteHandler?:()=>void;
@@ -19,9 +19,9 @@ interface ICategoryDetailsFormLogicContainerProps {
 };
 
 interface ICategoryDetailsFormLogicContainerState {
-	category:ICategory;
-	categoryOriginal:ICategory; // used when updating/deleting (and to keep the original
-									// header text during name change)
+	categoryOriginal:ICategory; // used when updating/deleting (and to keep the original header text during name change). 
+								// Don't change this state, unless after save of some kind
+	category:ICategory; // A clone of the original category (above). We can change this state
 	scale?:IScale;
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
@@ -88,11 +88,11 @@ export default class CategoryDetailsFormLogicContainer
 	
 	
 	
-	//If can't load a category, creates an empty one (no ID, for creating)
-	//categoryOriginal is the original category from the userService. category is a clone of the original
+	//If we can't load a category, this creates an empty one (with no ID)
+	//categoryOriginal is the original category from the userService. Category is a clone of the original
 	loadOrCreateCategory(categoryID?:string):{ categoryOriginal:ICategory, category:ICategory }
 	{
-		//getCategory may return undefined
+		//userService.getCategory may return undefined
 		let categoryOriginal:ICategory|undefined = (categoryID) 
 							? this.props.userService.getCategory(categoryID!, this.props.scaleID) 
 							: undefined;
@@ -114,13 +114,11 @@ export default class CategoryDetailsFormLogicContainer
 	
 	createCategoryHandler()
 	{
-		//Bad load message prop to be passed to form, if scale isn't there (category gets set to blank if none)
 		if(this.state.scale)
 		{
-			//The state category can have an ID, so for future safety's sake, we're 
-			//creating the new obect with the values
 			const category = this.state.category;
 			
+			//The category in state could have an ID, so we're creating a new obect with the values (except ID)
 			this.props.userService.createCategory(this.state.scale, {
 				name: category.name,
 				color: category.color,
@@ -183,7 +181,7 @@ export default class CategoryDetailsFormLogicContainer
 	
 	render()
 	{
-		const isCreating = (!this.state.category.id);
+		const isCreating = (!this.state.category.id); //Are we creating a new category, or updating an existing one?
 		
 		let actionsForm;
 		if (!isCreating && this.state.scale) //If no scale, bad load message should be displayed anyway 

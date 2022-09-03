@@ -10,7 +10,7 @@ interface IChangePasswordFormLogicContainerProps {
 interface IChangePasswordFormLogicContainerState {
 	currentPassword:string;
 	newPassword:string;
-	newPasswordIsConfirmed:boolean;
+	newPasswordIsConfirmed:boolean; // do the password and password confirmation fields match?
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
 }

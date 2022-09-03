@@ -13,7 +13,8 @@ interface IRequestPasswordFormProps {
 }
 
 /*
-	Display layer component to display a form for users to request a new password
+	Display layer component to display a form for users to request a new password.
+	See RequestPasswordPage and RequestPasswordPageLogicContainer components for the logic to do this.
 */
 const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 	
@@ -33,7 +34,7 @@ const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 				{props.goodSaveMessage && 
 							<GoodSaveMessage message={props.goodSaveMessage} />}
 				
-				{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
+				
 				<input type="submit" value="Request New Password" />
 				<button className="backButton" type="button" onClick={props.backButtonHandler}>
 					Back to Login

@@ -5,19 +5,19 @@ import IScale from '../../interfaces/IScale';
 
 
 interface IScaleDetailsFormLogicContainerProps {
-	scaleID?:string; //If undefined, this form will be used to create. Otherwise, form will update
+	scaleID?:string; //If undefined, this form will be used to create. Otherwise, form will be used to update
 	userService:IUserService;
 	backButtonHandler:()=>void;
-	editCategoryHandler:(categoryID:string)=>void;
-	addCategoryHandler:()=>void;
+	editCategoryHandler:(categoryID:string)=>void; //Callback to run when user wants to edit a category
+	addCategoryHandler:()=>void; //Callback to run when user wants to add a new category
 	onSuccessfulCreateHandler?:(scaleID:string)=>void;
 	onSuccessfulDeleteHandler?:()=>void;
 };
 
 interface IScaleDetailsFormLogicContainerState {
-	scale:IScale;
-	originalScale:IScale; // used when updating/deleting (and to keep the original
-							// header text during name change)
+	originalScale:IScale; // needed when updating/deleting (and to keep the original
+							// header text during name change). Don't change this state, unless after a save
+	scale:IScale; //Clone of the above originalScale. We're OK to change this state
 	badSaveErrorMessage?:string;
 	goodSaveMessage?:string;
 	badLoadErrorMessage?:string;
@@ -62,7 +62,6 @@ export default class ScaleDetailsFormLogicContainer
 	}
 	
 	
-	
 	componentWillUnmount()
 	{
 		this.props.userService.abortRequests();
@@ -70,8 +69,10 @@ export default class ScaleDetailsFormLogicContainer
 	
 	
 
+	
+	
 	//If scale can't be loaded, create a default one
-	// scaleOriginal is returned to use when updating/deleting
+	//scaleOriginal is the original scale from the userService. scale is a clone of the original
 	loadOrCreateScale(scaleID?:string):{ scaleOriginal:IScale, scale:IScale }
 	{
 		//getScale may return undefined
@@ -92,15 +93,16 @@ export default class ScaleDetailsFormLogicContainer
 	
 	
 	
+	
+	
+	
 	createScaleHandler()
 	{
-		//Bad load message prop to be passed to form, if scale isn't there
 		if(this.state.scale)
 		{
-			//The state scale can have an ID, so for future safety's sake, we're 
-			//creating the new obect with the values
 			const scale = this.state.scale;
 			
+			//The state.scale can have an ID, so we're creating the new object with the values
 			this.props.userService.createScale({
 				name: scale.name,
 				usesTimespans: scale.usesTimespans,
@@ -162,7 +164,7 @@ export default class ScaleDetailsFormLogicContainer
 	
 	render()
 	{
-		const isCreating = (!this.state.scale.id);
+		const isCreating = (!this.state.scale.id); //Are we creating a new scale, or updating an existing one?
 		
 		let headingText = "";
 		if(this.state.badLoadErrorMessage) 

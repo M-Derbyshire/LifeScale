@@ -13,6 +13,7 @@ interface ICategoryDetailsFormPartialProps {
 }
 
 
+// map ICategoryColorData to an <option> element
 const mapColorDataToOptionElement = (color:ICategoryColorData):ReactElement => {
 	
 	return (

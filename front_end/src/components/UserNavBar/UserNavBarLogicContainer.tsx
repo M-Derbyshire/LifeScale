@@ -11,7 +11,7 @@ interface IUserNavBarLogicContainerProps {
 	onSuccessfulLogout:()=>void; //Called after successful logout
 	editUserURL:string;
 	createScaleURL:string; 
-	scaleURLBase:string; //E.g. "scale" in "/scales/id1234"
+	scaleURLBase:string; //E.g. "scales" in "/scales/id1234"
 }
 
 interface IUserNavBarLogicContainerState {
@@ -42,10 +42,13 @@ export default class UserNavBarLogicContainer
 		} catch {};
 		
 		this.state = {
-			user,
+			user, //May be undefined
 			failedLogoutErrorMessage: undefined
 		};
 	}
+	
+	
+	
 	
 	
 	mapScaleToScaleLink(scale:IScale):IScaleLink
@@ -57,6 +60,9 @@ export default class UserNavBarLogicContainer
 	}
 	
 	
+	
+	
+	
 	logoutCallback()
 	{
 		this.props.userService.logoutUser()
@@ -65,6 +71,7 @@ export default class UserNavBarLogicContainer
 				failedLogoutErrorMessage: "Error while logging out: " + err.message 
 			}));
 	}
+	
 	
 	
 	

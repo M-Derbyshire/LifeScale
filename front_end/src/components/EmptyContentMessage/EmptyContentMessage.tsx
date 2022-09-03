@@ -5,7 +5,9 @@ interface IEmptyContentMessageProps {
 	message:string;
 }
 
-
+/*
+	Displays the given message. To be used when there's no content to display
+*/
 const EmptyContentMessage:FC<IEmptyContentMessageProps> = (props) => {
 	
 	

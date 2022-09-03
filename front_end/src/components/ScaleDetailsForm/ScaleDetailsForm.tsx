@@ -18,7 +18,7 @@ interface IScaleDetailsFormProps {
 	backButtonHandler:()=>void;
 	disableSubmit?:boolean;
 
-	hideCategories?:boolean;
+	hideCategories?:boolean; //When creating, we won't want to display the category section (as you need to create the scale first)
 }
 
 type mapCategoryToCardType = ((id:string, name:string)=>ReactElement);
@@ -26,8 +26,8 @@ type mapCategoryToCardType = ((id:string, name:string)=>ReactElement);
 
 /*
 
-	This is used to create and edit scales in the system (it also displays a CardDisplay, to provide 
-	links to create/edit categories). The container component should handle the logic
+	This is used to create and edit scales in the system (it can also display a CardDisplay component, to provide 
+	links to create/edit categories). The logic container component should handle the logic.
 */
 class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 {
@@ -37,23 +37,22 @@ class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 	{
 		super(props);
 		
-		//In theory, this should never be displayed as we'll always pass an AddItemCard, however this is required
-		//by the CardDisplay, and is good for future-proofing.
+		//If there are no "card" components to dislay in the category section. In theory, this should never be displayed 
+		//as we'll always pass an AddItemCard, however this is required by the CardDisplay, and is good for future-proofing.
 		this.emptyCardDisplayMessage = "There are no categories for this scale.";
 	}
 	
+	// Map category info to a "card" component
 	mapCategoryToCard:mapCategoryToCardType = (id:string, name:string) => {
 		return (
-			<EditableItemCard key={id} name={name} editCallback={
-				() => this.props.scaleItem!.editCategoryCallback(id)
-			} />
+			<EditableItemCard key={id} name={name} editCallback={() => this.props.scaleItem!.editCategoryCallback(id)} />
 		);
 	}
 	
 	
 	render()
 	{
-		//Set this if scaleItem is defined (used to display categories in CardDisplay)
+		//Set this if scaleItem is defined (used to display categories in CardDisplay component)
 		let cardDisplayItems:ReactElement[] = [];
 		
 		if(this.props.scaleItem && this.props.scaleItem.categories) //Have to check both, to stop jest complaining
@@ -96,7 +95,7 @@ class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 						{this.props.scaleItem.goodSaveMessage && 
 								<GoodSaveMessage message={this.props.scaleItem.goodSaveMessage} />}
 						
-						{/* Any buttons other than submit need to have type="button", to avoid submit behaviour */}
+						
 						<input type="submit" value="Save" disabled={this.props.disableSubmit} />
 						{this.props.scaleItem.onDelete && 
 							<button type="button" onClick={this.props.scaleItem.onDelete}>Delete</button>}

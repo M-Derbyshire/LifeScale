@@ -10,8 +10,8 @@ interface IRequestPasswordPageLogicContainerProps {
 
 interface IRequestPasswordPageLogicContainerState {
 	email:string;
-	badSaveErrorMessage?:string;
-	goodSaveMessage?:string;
+	badSaveErrorMessage?:string; // Error when negative result to the request
+	goodSaveMessage?:string; // Message when positive result to the request
 }
 
 
@@ -36,11 +36,13 @@ export default class RequestPasswordPageLogicContainer
 	}
 	
 	
-	
 	componentWillUnmount()
 	{
 		this.props.userService.abortRequests();
 	}
+	
+	
+	
 	
 	
 	handleSubmit()
@@ -57,6 +59,9 @@ export default class RequestPasswordPageLogicContainer
 				goodSaveMessage: undefined
 			}));
 	}
+	
+	
+	
 	
 	render()
 	{

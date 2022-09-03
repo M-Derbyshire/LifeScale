@@ -5,6 +5,9 @@ interface IErrorMessageDisplayProps {
 	message:string;
 }
 
+/*
+	Used to display error messages
+*/
 const ErrorMessageDisplay:FC<IErrorMessageDisplayProps> = (props) => {
 	
 	return (

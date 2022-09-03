@@ -11,11 +11,10 @@ interface IScalePrimaryDisplayProps {
 
 
 /*
-	Used to display the desired balance scale, and the current balance scale. Also provides a button, 
-	to be used to take the user to the screen to edit the scale details.
+	Used to display the "desired balance" scale, and the "current balance" scale. Also provides a button 
+	that will take the user to the screen where they can edit the scale details.
 */
 const ScalePrimaryDisplay:FC<IScalePrimaryDisplayProps> = (props) => {
-	
 	
 	return (
 		<div className="ScalePrimaryDisplay">

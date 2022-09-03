@@ -28,6 +28,7 @@ interface IUserHomeScreenProps {
 	createScaleURL:string; 
 	scaleURLBase:string; //E.g. "scales" in "/scales/id1234"
     
+    //Items for the scale displays
     desiredBalanceItems:IScaleBalanceItem[];
 	currentBalanceItems:IScaleBalanceItem[];
     

@@ -4,7 +4,10 @@ import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 type PasswordFormPartialProps = {
 	password:string;
 	setPassword:(password:string)=>void;
-	setPasswordIsConfirmed:(isconfirmed:boolean)=>void;
+	setPasswordIsConfirmed:(isconfirmed:boolean)=>void; // Do the password and password confirmation fields match?
+	
+	/* The passwordLabel prop will determine what the form labels say (maybe you want it to say "New Password", instead of just "Password"). 
+	The confirmation label will always start with "Confirm". The default passwordLabel is "Password" */
 	passwordLabel?:string;
 };
 
@@ -61,12 +64,19 @@ export default class PasswordFormPartial extends Component<PasswordFormPartialPr
 			<div className="PasswordFormPartial">
 				
 				<label className="passwordInputLabel">
-					{labelText}: <input className="passwordInput" type="password" value={this.props.password} onChange={(e) => this.handleSetPassword(e.target.value)} />
+					{labelText}: <input 
+									className="passwordInput" 
+									type="password" 
+									value={this.props.password} 
+									onChange={(e) => this.handleSetPassword(e.target.value)} />
 				</label>
 				<br/>
 				
 				<label className="confirmPasswordInputLabel">
-					Confirm {labelText}: <input className="confirmPasswordInput" type="password" value={this.state.confirmedPassword} 
+					Confirm {labelText}: <input 
+											className="confirmPasswordInput" 
+											type="password" 
+											value={this.state.confirmedPassword} 
 											onChange={(e) => this.handleSetConfirmedPassword(e.target.value)} />
 				</label>
 				

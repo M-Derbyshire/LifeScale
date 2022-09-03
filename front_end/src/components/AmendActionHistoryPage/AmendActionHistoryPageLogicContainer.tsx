@@ -21,10 +21,10 @@ interface IAmendActionHistoryPageLogicContainerProps {
 }
 
 interface IAmendActionHistoryPageLogicContainerState {
-	historyItems?:IActionHistoryItem[];
-	scale?:IScale;
+	historyItems?:IActionHistoryItem[]; // The action history
+	scale?:IScale; 
 	loadingError?:string;
-	lastHistoryDeleteError:IHistoryItemDeleteError; //We only need to display the last one
+	lastHistoryDeleteError:IHistoryItemDeleteError; // The error from the last delete attempt
 }
 
 
@@ -89,16 +89,14 @@ export default class AmendActionHistoryPageLogicContainer
 	
 	
 	
-	
-	getRefreshedHistoryItemList(scale = this.state.scale)
+	// Get the latest historyItems from the userService
+	getRefreshedHistoryItemList(scale = this.state.scale):IActionHistoryItem[]|undefined
 	{
 		try 
 		{
 			if(scale)
 			{
-				return this.props.userService.getScaleTimespans(scale, true).map(
-					this.mapTimespanToHistoryItem.bind(this)
-				);
+				return this.props.userService.getScaleTimespans(scale, true).map(this.mapTimespanToHistoryItem.bind(this));
 			}
 		} 
 		catch {}
@@ -106,35 +104,7 @@ export default class AmendActionHistoryPageLogicContainer
 		return undefined;
 	}
 	
-	reloadHistoryItemList(scale = this.state.scale)
-	{
-		const historyItems = this.getRefreshedHistoryItemList(scale);
-		let loadingError:string|undefined = undefined;
-		
-		if(!historyItems)
-			loadingError = this.stdTimespanLoadError;
-		
-		this.setState({
-			historyItems,
-			loadingError
-		});
-	}
-	
-	
-	
-	timespanDeleteHandler(timespan:ITimespan, parentAction:IAction, parentCategory:ICategory, parentScale:IScale)
-	{
-		this.props.userService.deleteTimespan(parentScale, parentCategory, parentAction, timespan)
-			.then(timespans => this.reloadHistoryItemList())
-			.catch(err => {
-				this.setState({ 
-					lastHistoryDeleteError: { itemID: timespan.id, errorMessage: err.message } 
-				});
-				this.reloadHistoryItemList();
-			});
-	}
-	
-	
+	// convert timespan details from userServie to IActionHistoryItem
 	mapTimespanToHistoryItem(timespanDetails:({ timespan:ITimespan, category:ICategory, action:IAction })):IActionHistoryItem
 	{
 		const hasDeleteError = (this.state && this.state.lastHistoryDeleteError &&
@@ -154,11 +124,46 @@ export default class AmendActionHistoryPageLogicContainer
 		};
 	}
 	
+	// Get the latest historyItems from the userService, and set them in state
+	reloadHistoryItemList(scale = this.state.scale)
+	{
+		const historyItems = this.getRefreshedHistoryItemList(scale);
+		let loadingError:string|undefined = undefined;
+		
+		if(!historyItems)
+			loadingError = this.stdTimespanLoadError;
+		
+		this.setState({
+			historyItems,
+			loadingError
+		});
+	}
+	
+	
+	
+	
+	
+	
+	
+	timespanDeleteHandler(timespan:ITimespan, parentAction:IAction, parentCategory:ICategory, parentScale:IScale)
+	{
+		this.props.userService.deleteTimespan(parentScale, parentCategory, parentAction, timespan)
+			.then(timespans => this.reloadHistoryItemList())
+			.catch(err => {
+				this.setState({ 
+					lastHistoryDeleteError: { itemID: timespan.id, errorMessage: err.message } 
+				});
+				this.reloadHistoryItemList();
+			});
+	}
+	
 	
 	onSuccessfulItemCreate()
 	{
 		this.reloadHistoryItemList();
 	}
+	
+	
 	
 	
 	

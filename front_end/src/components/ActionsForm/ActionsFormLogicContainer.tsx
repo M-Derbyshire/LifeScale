@@ -15,11 +15,14 @@ interface IActionSaveMessage {
 	saveMessage:string;
 }
 
+// Used as the state for a new action, before it is saved (the data for the form that you are creating the action with)
 interface INewActionData {
 	name:string;
 	weight:number;
 	badSaveErrorMessage?:string;
 }
+
+
 
 interface IActionsFormLogicContainerProps {
 	userService:IUserService;
@@ -28,11 +31,11 @@ interface IActionsFormLogicContainerProps {
 }
 
 interface IActionsFormLogicContainerState {
-	newAction:INewActionData;
-	actions:IAction[]; //Actions that we can edit as state
-	originalActions:IAction[]; //Original actions from the userService (used when updating/deleting)
-	lastActionSaveMessage:IActionSaveMessage; //We only need to display the last save message (good or bad)
-	displayNewActionForm:boolean;
+	newAction:INewActionData; //When creating a new action, this is the state
+	actions:IAction[]; //The current action's data
+	originalActions:IAction[]; //Original action data from the userService (needed when updating/deleting). We shouldn't change these
+	lastActionSaveMessage:IActionSaveMessage; //Message from last save attempt. (We only need to display the last one)
+	displayNewActionForm:boolean; // Should the form used to create a new action be displayed?
 }
 
 
@@ -64,6 +67,7 @@ export default class ActionsFormLogicContainer
 			badSaveErrorMessage: undefined,
 		};
 		
+		//get the original action list from the userService, along with a clone of that list (the latter is what we should edit)
 		const actionLists = this.loadActionLists(this.props.category);
 		
 		this.state = {
@@ -89,7 +93,7 @@ export default class ActionsFormLogicContainer
 	
 	//Return values:
 	//actions - are the actions that can be changed (as state)
-	//originalActions - are the actions that should stay the same (used in updating/deleting)
+	//originalActions - are the actions that shouldn't be changed once set in state, unless after save (used in updating/deleting)
 	loadActionLists(category:ICategory):{ actions:IAction[], originalActions:IAction[] }
 	{
 		return {
@@ -99,7 +103,7 @@ export default class ActionsFormLogicContainer
 	}
 	
 	
-	
+	// Get cloned actions, from a category
 	getRefreshedActionList(category:ICategory)
 	{
 		return category.actions.map(action => ({ ...action }));
@@ -124,15 +128,20 @@ export default class ActionsFormLogicContainer
 	}
 	
 	
-	
 	refreshCategoryActionListStates()
 	{
+		//get the original action list from the userService, along with a clone of that list (the latter is what we should edit)
+		// and set them in the state again
 		const actionLists = this.loadActionLists(this.props.category);
 		this.setState({
 			actions: actionLists.actions,
 			originalActions: actionLists.originalActions,
 		});
 	}
+	
+	
+	
+	
 	
 	
 	
@@ -204,6 +213,10 @@ export default class ActionsFormLogicContainer
 	
 	
 	
+	
+	
+	// ActionsForm component takes an IActionFormItem[] as the actions prop. This converts an IAction to IActionFormItem
+	// index is the action's index in the state.actions array
 	mapActionToFormItem(action:IAction, index:number, isNewAction = false):IActionFormItem
 	{
 		const lastActionSaveMessage = this.state.lastActionSaveMessage;
