@@ -1,4 +1,5 @@
 
+//Converts a date object to a string that can be passed to a DatePicker component (3rd part component)
 function convertDateToInputString(date:Date):string
 {
 	const day = date.getDate();
