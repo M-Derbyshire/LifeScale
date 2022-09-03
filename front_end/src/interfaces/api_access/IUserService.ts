@@ -45,7 +45,7 @@ interface IUserService {
 	
 	
 	// When retrieving these relations, the full data will already have been loaded (as 
-	// per the rules state for this interface). That being said, retrieval methods do 
+	// per the rules stated for this interface). That being said, retrieval methods do 
 	// not return promises.
 	// -- Also, the retrieval methods will return undefined if not found
 	
