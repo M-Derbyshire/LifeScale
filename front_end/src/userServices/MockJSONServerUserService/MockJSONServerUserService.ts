@@ -177,13 +177,27 @@ export default class MockJSONServerUserService implements IUserService {
 	
 	createUser(newUser: Omit<IUser, "id"> & { password:string })
 	{
-		return this._saveUser(newUser, undefined)
-			.then(user => { 
-				this._currentUser = user;
-				this._currentUserPassword = newUser.password; //If we edit the user after registration, we don't want to blank the password
-				return user;
-			})
-			.catch(err => { throw err; });
+		//First we need to make sure the email hasn't been used already. Then we can create the user
+		
+		const emailCheckAbortController = this._getNewAbortController();
+		
+		return fetch(`${this._apiURLBase}/users?email=${newUser.email}`, { signal: emailCheckAbortController.signal })
+			.then(response => response.json())
+			.then(users => {
+				if(users.length > 0)
+					throw new Error("The entered email is already in use.");
+				
+				
+				//Now we return a promise to create the user
+				return this._saveUser(newUser, undefined)
+							.then(user => { 
+								this._currentUser = user;
+								this._currentUserPassword = newUser.password; //If we edit the user after registration, we don't want to blank the password
+								return user;
+							})
+							.catch(err => { throw err; });
+				
+			}).catch(err => { throw err; });
 	}
 	
 	updateLoadedUser(newUserData:IUser)
