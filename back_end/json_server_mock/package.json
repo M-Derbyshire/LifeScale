@@ -5,7 +5,8 @@
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"serve": "json-server --watch db.json --port 3002"
+	"serve": "json-server --watch db.json --port 3002",
+  "serve-test": "json-server --watch e2e-test-db.json --port 3002"
   },
   "author": "",
   "license": "ISC",
