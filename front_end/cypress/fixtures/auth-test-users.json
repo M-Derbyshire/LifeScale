@@ -1,0 +1,9 @@
+[
+    {
+        "email": "test@test.com",
+        "password": "test",
+        "forename": "test",
+        "surname": "testing",
+        "scales": []
+    }
+]
