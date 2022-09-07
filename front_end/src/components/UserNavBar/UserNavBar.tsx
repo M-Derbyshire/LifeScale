@@ -26,15 +26,15 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	return (
 		<nav className="UserNavBar">
 			
-			<NavLink className="editUserLink stdLink" to={props.editUserURL}>Edit My Details</NavLink>
+			<NavLink className="editUserLink stdLink" data-test="editUserNavLink" to={props.editUserURL}>Edit My Details</NavLink>
 			
-			<span className="userLogoutSpan stdLink" onClick={props.logoutCallback}>Logout</span>
+			<span className="userLogoutSpan stdLink" data-test="logoutNavLink" onClick={props.logoutCallback}>Logout</span>
 			
 			{props.failedLogoutErrorMessage && <BadSaveMessage message={props.failedLogoutErrorMessage} />}
 			
 			<hr/>
 			
-			<NavLink className="createScaleLink stdLink" to={props.createScaleURL}>Create New Scale</NavLink>
+			<NavLink className="createScaleLink stdLink" data-test="createScaleNavLink" to={props.createScaleURL}>Create New Scale</NavLink>
 			
 			<ScalesNavList scaleLinks={props.scaleLinks} />
 			

@@ -34,8 +34,8 @@ const LoginPage:FC<ILoginPageProps> = (props) => {
 					badLoginErrorMessage={props.badLoginErrorMessage} />
 				
 				<div className="LoginPageLinksContainer">
-					<Link to={props.registerUserLinkPath}>Register</Link>
-					<Link to={props.forgotPasswordLinkPath}>Forgot Password</Link>
+					<Link to={props.registerUserLinkPath} data-test="registerLink">Register</Link>
+					<Link to={props.forgotPasswordLinkPath} data-test="forgotPasswordLink">Forgot Password</Link>
 				</div>
 			</div>
 		</div>

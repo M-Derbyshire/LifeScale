@@ -25,7 +25,12 @@ const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 			
 			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); }}>
 				<label>
-					Email: <input type="email" required value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+					Email: <input 
+								type="email"
+								data-test="requestPasswordEmailInput" 
+								required 
+								value={props.email}
+								onChange={(e)=>props.setEmail(e.target.value)} />
 				</label>
 				<br />
 				
@@ -35,8 +40,8 @@ const RequestPasswordForm:FC<IRequestPasswordFormProps> = (props) => {
 							<GoodSaveMessage message={props.goodSaveMessage} />}
 				
 				
-				<input type="submit" value="Request New Password" />
-				<button className="backButton" type="button" onClick={props.backButtonHandler}>
+				<input type="submit" data-test="requestPasswordBtn" value="Request New Password" />
+				<button className="backButton" data-test="requestPasswordBackBtn" type="button" onClick={props.backButtonHandler}>
 					Back to Login
 				</button>
 			</form>

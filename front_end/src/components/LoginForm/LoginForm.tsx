@@ -22,12 +22,21 @@ const LoginForm:FC<ILoginFormProps> = (props) => {
 			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); }}>
 				
 				<label>
-					Email: <input type="email" required value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+					Email: <input 
+								type="email" 
+								data-test="loginEmailInput" 
+								required value={props.email} 
+								onChange={(e)=>props.setEmail(e.target.value)} />
 				</label>
 				<br/>
 				
 				<label>
-					Password: <input type="password" required value={props.password} onChange={(e)=>props.setPassword(e.target.value)} />
+					Password: <input 
+								type="password" 
+								data-test="loginPasswordInput" 
+								required 
+								value={props.password} 
+								onChange={(e)=>props.setPassword(e.target.value)} />
 				</label>
 				
 				<br />
@@ -35,7 +44,7 @@ const LoginForm:FC<ILoginFormProps> = (props) => {
 				{props.badLoginErrorMessage && 
 							<BadSaveMessage message={props.badLoginErrorMessage} />}
 				
-				<input type="submit" value="Login" />
+				<input type="submit" value="Login" data-test="loginBtn" />
 			</form>
 		</div>
 	);
