@@ -1,9 +1,9 @@
 /// <reference types="../support" />
 
-const loginRoute = "/login";
-let authTestUsersFixture = [];
-
 describe('Auth functionality', () => {
+  
+  const loginRoute = "/login";
+  let authTestUsersFixture = [];
   
   beforeEach(() => {
     //Load the data used for the tests
