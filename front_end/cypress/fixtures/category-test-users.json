@@ -1,0 +1,25 @@
+[
+    {
+        "email": "test@test.com",
+        "password": "test",
+        "forename": "test",
+        "surname": "testing",
+        "scales": [
+            {
+                "id": "testscaleid123",
+                "name": "testScale",
+                "usesTimespans": true,
+                "displayDayCount": 7,
+                "categories": [
+                    {
+                        "id": "testcategoryid123",
+                        "name": "testCategory",
+                        "color": "blue",
+                        "desiredWeight": 3,
+                        "actions": []
+                    }
+                ]
+            }
+        ]
+    }
+]

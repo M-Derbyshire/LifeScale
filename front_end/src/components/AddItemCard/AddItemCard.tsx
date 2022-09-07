@@ -12,7 +12,7 @@ interface IAddItemCardProps {
 const AddItemCard:FC<IAddItemCardProps> = (props) => {
 	
 	return (
-		<div className="AddItemCard" onClick={props.onClick}>
+		<div className="AddItemCard" data-test="addItemCard" onClick={props.onClick}>
 			{/* Inner div used for styling purposes (we want the cursor to be pointer on the padding as well) */}
 			<div className="addItemCardContent">
 				<span>+</span>

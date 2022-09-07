@@ -32,7 +32,7 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 			
 			<header>
 				<h1>{props.headingText}</h1>
-				<button className="categoryBackButton" onClick={props.backButtonHandler}>Back</button>
+				<button className="categoryBackButton" data-test="categoryDetailsBackButton" onClick={props.backButtonHandler}>Back</button>
 			</header>
 			
 			<LoadedContentWrapper errorMessage={props.badLoadErrorMessage} render={props.categoryItem && 
@@ -55,10 +55,11 @@ const CategoryDetailsForm:FC<ICategoryDetailsFormProps> = (props) => {
 							<GoodSaveMessage message={props.categoryItem.goodSaveMessage} />}
 						
 						
-						<input type="submit" value="Save" disabled={props.disableSubmit} />
+						<input type="submit" data-test="categorySaveBtn" value="Save" disabled={props.disableSubmit} />
 						{props.categoryItem.onDelete && 
 							<button 
 								className="categoryDeleteButton" 
+								data-test="categoryDeleteBtn"
 								type="button" 
 								onClick={props.categoryItem.onDelete}>Delete</button>} 
 						

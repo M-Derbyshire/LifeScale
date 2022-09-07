@@ -44,6 +44,7 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			<label>
 				Name: <input 
 						className="categoryNameInput" 
+						data-test="categoryNameInput"
 						type="text" 
 						required
 						value={props.name} 
@@ -54,6 +55,7 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 			<label className="categoryColorInputLabel">
 				Color: <select 
 							required
+							data-test="categoryColorSelect"
 							style={{ borderColor: realCategoryColorValue }}
 							className="categoryColorInput" 
 							value={realCategoryColorValue} 
@@ -68,6 +70,7 @@ const CategoryDetailsFormPartial:FC<ICategoryDetailsFormPartialProps> = (props) 
 					type="number" 
 					required
 					className="categoryDesiredWeightInput" 
+					data-test="categoryDesiredWeightInput"
 					min="0" 
 					step="1"
 					value={props.desiredWeight} 
