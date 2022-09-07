@@ -64,6 +64,23 @@ Cypress.Commands.add('setupUsersData', (users:IUser[]) => {
             
         });
         
+    });
+});
+
+
+Cypress.Commands.add("deleteGivenUsers", (users:IUser[]) => {
+    cy.fixture("api-config").then((apiConfig) => {
+        
+        users.forEach(user => {
+            cy.request("GET", `${apiConfig.baseUrl}/users?email=${user.email}`).then(response => {
+                
+                if(response.body.length > 0 && response.body[0].hasOwnProperty("id")) //did we find it?
+                {
+                    cy.request("DELETE", `${apiConfig.baseUrl}/users/${response.body[0].id}`);
+                }
+                
+            });
+        });
         
     });
 });

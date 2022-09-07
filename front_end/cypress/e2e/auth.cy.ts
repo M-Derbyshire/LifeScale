@@ -1,7 +1,7 @@
 /// <reference types="../support" />
 
 const loginRoute = "/login";
-let authTestUsersFixture;
+let authTestUsersFixture = [];
 
 describe('Auth functionality', () => {
   
@@ -11,6 +11,10 @@ describe('Auth functionality', () => {
       authTestUsersFixture = authTestUsers;
       cy.setupUsersData(authTestUsers);
     });
+  });
+  
+  after(() => {
+    cy.deleteGivenUsers(authTestUsersFixture);
   });
   
   
