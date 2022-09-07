@@ -2,9 +2,6 @@
 
 import IUser from "../../src/interfaces/IUser";
 
-const loginRoute = "/login";
-const registerRoute = "/register";
-let authTestUsersFixture = [];
 
 describe("User functionality", () => {
     
