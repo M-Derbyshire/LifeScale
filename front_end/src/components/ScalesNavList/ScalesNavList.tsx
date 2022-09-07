@@ -18,7 +18,7 @@ class ScalesNavList extends Component<IScalesNavListProps> {
 	{
 		return (
 			<li key={`${scaleLink.label}-${scaleLink.url}`}>
-				<NavLink to={scaleLink.url}>{scaleLink.label}</NavLink>
+				<NavLink data-test="scaleNavLink" to={scaleLink.url}>{scaleLink.label}</NavLink>
 			</li>
 		);
 	}

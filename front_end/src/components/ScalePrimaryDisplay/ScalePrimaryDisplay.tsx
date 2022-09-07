@@ -32,7 +32,7 @@ const ScalePrimaryDisplay:FC<IScalePrimaryDisplayProps> = (props) => {
 			</div>
 			
 			<div className="scaleButtonsContainer">
-				<button className="editScaleButton" onClick={props.editScaleCallback}>Edit Scale</button>
+				<button className="editScaleButton" data-test="scaleEditButton" onClick={props.editScaleCallback}>Edit Scale</button>
 			</div>
 			
 		</div>

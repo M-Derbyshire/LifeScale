@@ -74,7 +74,7 @@ class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 				
 				<header>
 					<h1>{this.props.headingText}</h1>
-					<button className="scaleBackButton" onClick={this.props.backButtonHandler}>Back</button>
+					<button className="scaleBackButton" data-test="scaleDetailsBackBtn" onClick={this.props.backButtonHandler}>Back</button>
 				</header>
 				
 				<LoadedContentWrapper errorMessage={this.props.badLoadErrorMessage} render={this.props.scaleItem && <div>
@@ -96,9 +96,9 @@ class ScaleDetailsForm extends Component<IScaleDetailsFormProps>
 								<GoodSaveMessage message={this.props.scaleItem.goodSaveMessage} />}
 						
 						
-						<input type="submit" value="Save" disabled={this.props.disableSubmit} />
+						<input type="submit" data-test="scaleDetailsSaveBtn" value="Save" disabled={this.props.disableSubmit} />
 						{this.props.scaleItem.onDelete && 
-							<button type="button" onClick={this.props.scaleItem.onDelete}>Delete</button>}
+							<button type="button" data-test="scaleDeleteBtn" onClick={this.props.scaleItem.onDelete}>Delete</button>}
 						
 					</form>
 					
