@@ -26,7 +26,9 @@ const ChangePasswordForm:FC<IChangePasswordFormProps> = (props) => {
 		<div className="ChangePasswordForm">
 		
 			<label className="currentPasswordInputLabel">
-				Current Password: <input className="currentPasswordInput" 
+				Current Password: <input 
+									className="currentPasswordInput" 
+									data-test="changePasswordCurrentInput"
 									type="password"
 									value={props.currentPassword} 
 									onChange={(e) => props.setCurrentPassword(e.target.value)} />
@@ -43,7 +45,7 @@ const ChangePasswordForm:FC<IChangePasswordFormProps> = (props) => {
 			{props.goodSaveMessage && 
 							<GoodSaveMessage message={props.goodSaveMessage} />}
 			
-			<button type="button" onClick={props.onSubmit}>Change Password</button>
+			<button type="button" data-test="changePasswordBtn" onClick={props.onSubmit}>Change Password</button>
 			
 		</div>
 	);

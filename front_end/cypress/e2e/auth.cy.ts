@@ -1,9 +1,11 @@
 /// <reference types="../support" />
 
+import IUser from "../../src/interfaces/IUser";
+
 describe('Auth functionality', () => {
   
   const loginRoute = "/login";
-  let authTestUsersFixture = [];
+  let authTestUsersFixture:(Omit<IUser, "id"> & { password:string })[];
   
   beforeEach(() => {
     //Load the data used for the tests
@@ -68,7 +70,7 @@ describe('Auth functionality', () => {
     cy.get('[data-test="forgotPasswordLink"]').click();
     
     cy.url().should("include", "/forgotpassword");
-    cy.get('[data-test="requestPasswordEmailInput"]').type(authTestUsersFixture[0].email)
+    cy.get('[data-test="requestPasswordEmailInput"]').type(authTestUsersFixture[0].email!);
     cy.get('[data-test="requestPasswordBtn"]').click();
     
     cy.get('[data-test="saveMessage"]');
@@ -100,7 +102,7 @@ describe('Auth functionality', () => {
   it("can't login with the wrong password", () => {
     cy.visit(loginRoute);
     
-    cy.get('[data-test="loginEmailInput"]').type(authTestUsersFixture[0].email);
+    cy.get('[data-test="loginEmailInput"]').type(authTestUsersFixture[0].email!);
     cy.get('[data-test="loginPasswordInput"]').type("incorrectpassword");
     
     cy.get('[data-test="loginBtn"]').click();
@@ -111,8 +113,8 @@ describe('Auth functionality', () => {
   it("can login with correct details", () => {
     cy.visit(loginRoute);
     
-    cy.get('[data-test="loginEmailInput"]').type(authTestUsersFixture[0].email);
-    cy.get('[data-test="loginPasswordInput"]').type(authTestUsersFixture[0].password);
+    cy.get('[data-test="loginEmailInput"]').type(authTestUsersFixture[0].email!);
+    cy.get('[data-test="loginPasswordInput"]').type(authTestUsersFixture[0].password!);
     
     cy.get('[data-test="loginBtn"]').click();
     
@@ -122,8 +124,8 @@ describe('Auth functionality', () => {
   it("can logout", () => {
     cy.visit(loginRoute);
     
-    cy.get('[data-test="loginEmailInput"]').type(authTestUsersFixture[0].email);
-    cy.get('[data-test="loginPasswordInput"]').type(authTestUsersFixture[0].password);
+    cy.get('[data-test="loginEmailInput"]').type(authTestUsersFixture[0].email!);
+    cy.get('[data-test="loginPasswordInput"]').type(authTestUsersFixture[0].password!);
     
     cy.get('[data-test="loginBtn"]').click();
     

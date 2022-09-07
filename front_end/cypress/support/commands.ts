@@ -84,3 +84,19 @@ Cypress.Commands.add("deleteGivenUsers", (users:IUser[]) => {
         
     });
 });
+
+
+//Should put yoyr test code in .then() of result
+Cypress.Commands.add("loginUser", (user:(Omit<IUser, "id"> & { password:string })) => {
+    
+    cy.fixture("api-config").then((apiConfig) => {
+        
+        cy.visit("/login");
+        cy.get('[data-test="loginEmailInput"]').type(user.email);
+        cy.get('[data-test="loginPasswordInput"]').type(user.password);
+        
+        return cy.get('[data-test="loginBtn"]').click();
+        
+    });
+    
+});

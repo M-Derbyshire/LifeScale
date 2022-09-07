@@ -19,17 +19,34 @@ const UserDetailsFormPartial:FC<IUserDetailsFormPartialProps> = (props) => {
 		<div className="UserDetailsFormPartial">
 			
 			<label>
-				Email: <input type="email" required value={props.email} onChange={(e)=>props.setEmail(e.target.value)} />
+				Email: <input 
+							type="email" 
+							data-test="userDetailsEmail" 
+							required 
+							value={props.email} 
+							onChange={(e)=>props.setEmail(e.target.value)} />
 			</label>
 			<br/>
 			
 			<label>
-				Forename: <input className="userForenameInput" required type="text" value={props.forename} onChange={(e)=>props.setForename(e.target.value)} />
+				Forename: <input 
+								className="userForenameInput" 
+								data-test="userDetailsForename" 
+								required 
+								type="text" 
+								value={props.forename} 
+								onChange={(e)=>props.setForename(e.target.value)} />
 			</label>
 			<br/>
 			
 			<label>
-				Surname: <input className="userSurnameInput" required type="text" value={props.surname} onChange={(e)=>props.setSurname(e.target.value)} />
+				Surname: <input 
+								className="userSurnameInput" 
+								data-test="userDetailsSurname" 
+								required 
+								type="text" 
+								value={props.surname} 
+								onChange={(e)=>props.setSurname(e.target.value)} />
 			</label>
 			
 		</div>

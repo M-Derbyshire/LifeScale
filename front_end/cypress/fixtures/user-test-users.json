@@ -1,0 +1,16 @@
+[
+    {
+        "email": "existing@test.com",
+        "password": "test",
+        "forename": "test",
+        "surname": "testing",
+        "scales": []
+    },
+    {
+        "email": "existing2@test.com",
+        "password": "test",
+        "forename": "test",
+        "surname": "testing",
+        "scales": []
+    }
+]

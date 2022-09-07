@@ -47,7 +47,7 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 				
 				<header>
 					<h1>{this.props.headingText}</h1>
-					<button className="userDetailsBackButton" onClick={this.props.backButtonHandler}>Back</button>
+					<button className="userDetailsBackButton" data-test="userDetailsBackButton" onClick={this.props.backButtonHandler}>Back</button>
 				</header>
 				
 				<LoadedContentWrapper errorMessage={this.props.badLoadErrorMessage} render={this.props.user && 
@@ -74,7 +74,7 @@ export default class UserDetailsForm extends Component<IUserDetailsFormProps> {
 						{this.props.goodSaveMessage && 
 							<GoodSaveMessage message={this.props.goodSaveMessage} />}
 						
-						<input type="submit" value={this.props.submitButtonText} disabled={this.props.disableSubmit} />
+						<input type="submit" data-test="userDetailsSaveBtn" value={this.props.submitButtonText} disabled={this.props.disableSubmit} />
 						
 					</form>
 				} />
