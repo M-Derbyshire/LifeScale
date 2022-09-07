@@ -205,17 +205,41 @@ export default class MockJSONServerUserService implements IUserService {
 		let userDataForUpdate:any = { ...newUserData };
 		delete userDataForUpdate.id;
 		
+		// We don't want to run this yet, as first we need to check the email (if changed) isn't already in use
+		const saveUserData = () => {
+			return this._saveUser({ ...userDataForUpdate, password: this._currentUserPassword }, newUserData.id)
+				.then(data => {
+					this._currentUser = {
+						...this._currentUser,
+						...newUserData
+					};
+					
+					return this._currentUser;
+				})
+				.catch(err => { throw err; });
+		};
 		
-		return this._saveUser({ ...userDataForUpdate, password: this._currentUserPassword }, newUserData.id)
-			.then(data => {
-				this._currentUser = {
-					...this._currentUser,
-					...newUserData
-				};
-				
-				return this._currentUser;
-			})
-			.catch(err => { throw err; });
+		
+		
+		if(newUserData.email !== this._currentUser!.email)
+		{
+			const emailCheckAbortController = this._getNewAbortController();
+			
+			return fetch(`${this._apiURLBase}/users?email=${newUserData.email}`, { signal: emailCheckAbortController.signal })
+					.then(response => response.json())
+					.then(users => {
+						if(users.length > 0)
+							throw new Error("The entered email is already in use.");
+						
+						return saveUserData();
+					})
+					.catch(err => {throw err;});
+		}
+		else
+		{
+			return saveUserData();
+		}
+		
 	}
 	
 	updateLoadedUserPassword(currentPassword:string, newPassword:string)
