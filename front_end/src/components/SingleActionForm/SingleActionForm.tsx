@@ -22,7 +22,7 @@ interface ISingleActionFormProps {
 const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 	
 	return (
-		<div className="SingleActionForm">
+		<div className="SingleActionForm" data-test="singleActionForm">
 			<form onSubmit={(e) => { e.preventDefault(); props.onSubmit() }}>
 				
 				<label>
@@ -30,6 +30,7 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 							type="text" 
 							required 
 							className="singleActionNameInput" 
+							data-test="actionNameInput"
 							value={props.name} 
 							onChange={(e)=>props.setName(e.target.value)} />
 				</label>
@@ -40,6 +41,7 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 								type="number" 
 								required
 								className="singleActionWeightInput" 
+								data-test="actionWeightInput"
 								min="0" 
 								step="1"
 								value={props.weight} 
@@ -53,8 +55,8 @@ const SingleActionForm:FC<ISingleActionFormProps> = (props) => {
 							<GoodSaveMessage message={props.goodSaveMessage} />}
 				
 				
-				<input type="submit" value="Save" />
-				{props.onDelete && <button type="button" onClick={props.onDelete}>Delete</button>} 
+				<input type="submit" data-test="actionSaveBtn" value="Save" />
+				{props.onDelete && <button type="button" data-test="actionDeleteBtn" onClick={props.onDelete}>Delete</button>} 
 				
 			</form>
 		</div>

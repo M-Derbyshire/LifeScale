@@ -43,6 +43,7 @@ export default class ActionsForm extends Component<IActionsFormProps> {
 				
 				{!this.props.displayNewActionForm && <button 
 					className="newActionButton" 
+					data-test="newActionFormDisplayBtn"
 					onClick={() => this.props.setDisplayNewActionForm(true)} >
 						Add New Action
 				</button>}
