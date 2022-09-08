@@ -46,7 +46,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 		);
 		
 		return (
-			<div className="RecordActionForm">
+			<div className="RecordActionForm" data-test="recordActionForm">
 				
 				<header>
 					<h2>Record Action</h2>
@@ -57,6 +57,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						
 						<label>
 							Category: <select className="categorySelect"
+											data-test="recordActionCategorySelect"
 											required 
 											value={this.props.recordedAction.selectedCategoryID} 
 											onChange={
@@ -75,6 +76,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 						<label>
 							Action: <select className="actionSelect" 
 										required
+										data-test="recordActionActionSelect"
 										value={this.props.recordedAction.selectedActionID} 
 										onChange={
 											(e) => this.props.recordedAction.setSelectedActionID(e.target.value)
@@ -113,7 +115,7 @@ export default class RecordActionForm extends Component<IRecordActionFormProps>
 							setHourDisplayValue={this.props.recordedAction.setHourDisplayValue} />}
 						
 						
-						<input type="submit" disabled={disableSubmit} value="Record Action" />
+						<input type="submit" data-test="recordActionSaveBtn" disabled={disableSubmit} value="Record Action" />
 						
 						
 						{this.props.recordedAction.badSaveErrorMessage && 

@@ -44,7 +44,12 @@ export default class AmendActionHistoryPage extends Component<IAmendActionHistor
 				
 				<header>
 					<h1>Amend Action History - {this.props.scale && this.props.scale.name}</h1>
-					<button className="actionHistoryBackButton" onClick={this.props.backButtonHandler}>Back</button>
+					<button 
+						className="actionHistoryBackButton" 
+						data-test="actionHistoryBackButton" 
+						onClick={this.props.backButtonHandler}>
+							Back
+					</button>
 				</header>
 				
 				<LoadedContentWrapper 

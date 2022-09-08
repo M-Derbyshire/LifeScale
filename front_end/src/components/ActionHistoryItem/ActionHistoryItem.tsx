@@ -20,7 +20,7 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 	
 	
 	return (
-		<div className="ActionHistoryItem">
+		<div className="ActionHistoryItem" data-test="actionHistoryItem">
 			
 			<div className="historyItemDetailsContainer">
 				
@@ -44,7 +44,7 @@ const ActionHistoryItem:FC<IActionHistoryItemProps> = (props) => {
 					<span className="itemInfoLabel">Time spent (in hours): </span> {(props.actionHistoryItem.timespan.minuteCount / 60).toFixed(2)}
 				</div>}
 				
-				<button onClick={props.actionHistoryItem.deleteHandler}>Delete</button>
+				<button onClick={props.actionHistoryItem.deleteHandler} data-test="actionHistoryDeleteBtn">Delete</button>
 				
 			</div>
 			

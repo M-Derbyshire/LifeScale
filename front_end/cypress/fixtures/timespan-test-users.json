@@ -1,0 +1,64 @@
+[
+    {
+        "email": "test@test.com",
+        "password": "test",
+        "forename": "test",
+        "surname": "testing",
+        "scales": [
+            {
+                "id": "testscaleid123",
+                "name": "testScale",
+                "usesTimespans": true,
+                "displayDayCount": 7,
+                "categories": [
+                    {
+                        "id": "testcategoryid123",
+                        "name": "testCategory1",
+                        "color": "blue",
+                        "desiredWeight": 1,
+                        "actions": [
+                            {
+                                "id": "testactionid123",
+                                "name": "testAction1.1",
+                                "weight": 1,
+                                "timespans": [
+                                    {
+                                        "id": "testtimespanid123",
+                                        "date": "2022-09-08T12:50:09.064Z",
+                                        "minuteCount": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "testactionid456",
+                                "name": "testAction1.2",
+                                "weight": 1,
+                                "timespans": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "testcategoryid456",
+                        "name": "testCategory2",
+                        "color": "blue",
+                        "desiredWeight": 1,
+                        "actions": [
+                            {
+                                "id": "testactionid789",
+                                "name": "testAction2.1",
+                                "weight": 1,
+                                "timespans": []
+                            },
+                            {
+                                "id": "testactionid000",
+                                "name": "testAction2.2",
+                                "weight": 1,
+                                "timespans": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

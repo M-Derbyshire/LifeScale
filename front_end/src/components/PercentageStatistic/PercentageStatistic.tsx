@@ -22,7 +22,7 @@ const PercentageStatistic:FC<IPercentageStatisticProps> = (props) => {
 	return (
 		<div className="PercentageStatistic">
 			<span className="statisticLabel">{props.statistic.label}: </span>
-			<span className="statisticPercentage">{+props.statistic.percentage.toFixed(2)}%</span>
+			<span className="statisticPercentage" test-data="actionStatisticDisplayPercentage">{+props.statistic.percentage.toFixed(2)}%</span>
 			
 			{props.statistic.children && <ul className="statisticChildren">
 				{props.statistic.children.map(mapPercentageStatisticToLi)}

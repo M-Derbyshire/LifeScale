@@ -27,7 +27,7 @@ const ScaleStatisticDisplay:FC<IScaleStatisticDisplayProps> = (props) => {
 				{props.statistics.map(mapPercentageStatisticToLi)}
 			</ul>
 			
-			<button onClick={props.amendHistoryCallback}>
+			<button data-test="amendActionHistoryNavBtn" onClick={props.amendHistoryCallback}>
 				Amend Action History
 			</button>
 			
