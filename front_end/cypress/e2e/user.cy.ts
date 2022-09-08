@@ -102,9 +102,8 @@ describe("User functionality", () => {
         
         cy.get('[data-test="userDetailsSaveBtn"]').click();
         
-        //One for the message that's displayed anyway (to tell the user their mistake), and the
-        //other for the failed submission
-        cy.get('[data-savemessagetype="badSaveMessage"]').should("have.length", 2);
+        //There may be a message in the PasswordFormPartial, so we don't want to select that one
+        cy.get('[data-savemessagetype="badSaveMessage"]:not(.PasswordFormPartial [data-savemessagetype="badSaveMessage"])');
     });
     
     
