@@ -76,8 +76,8 @@ describe("Action functionality", () => {
             
             cy.get('[data-test="newActionFormDisplayBtn"]').click();
             
-            cy.get('[data-test="actionNameInput"][value=""]').should("not.eq", newName).invoke("val", "").type(newName);
-            cy.get('[data-test="actionWeightInput"][value="0"]').should("not.eq", newWeight).invoke("val", "").type(newWeight);
+            cy.get('[data-test="actionNameInput"][value=""]').should("not.have.value", newName).invoke("val", "").type(newName);
+            cy.get('[data-test="actionWeightInput"][value="0"]').should("not.have.value", newWeight).invoke("val", "").type(newWeight);
             
             //Want to make sure we get the one for the new action form
             cy.get(`[data-test="actionSaveBtn"]`).first().click();
@@ -131,9 +131,9 @@ describe("Action functionality", () => {
                 .should("have.length", initialActionCount);
             
             cy.get(`[data-test="actionNameInput"][value="${initialAction.name}"]`)
-                .should("not.eq", newName).invoke("val", "").type(newName);
+                .should("not.have.value", newName).invoke("val", "").type(newName);
             cy.get(`[data-test="actionWeightInput"][value="${initialAction.weight}"]`)
-                .should("not.eq", newWeight).invoke("val", "").type(newWeight);
+                .should("not.have.value", newWeight).invoke("val", "").type(newWeight);
             
             
             cy.get(`[data-test="actionSaveBtn"]`).last().click();
