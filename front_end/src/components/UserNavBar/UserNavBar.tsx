@@ -24,7 +24,7 @@ const UserNavBar:FC<IUserNavBarProps> = (props) => {
 	
 	
 	return (
-		<nav className="UserNavBar">
+		<nav className="UserNavBar" data-test="userNavBar">
 			
 			<NavLink className="editUserLink stdLink" data-test="editUserNavLink" to={props.editUserURL}>Edit My Details</NavLink>
 			

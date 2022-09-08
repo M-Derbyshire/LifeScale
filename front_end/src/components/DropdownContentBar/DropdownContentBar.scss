@@ -40,6 +40,11 @@ $background: darken($stdSecondaryBackColor, 50);
 		padding-top: 0;
 		padding-bottom: 0;
 		overflow: hidden;
+		
+		//Now hide any children, as cypress's not.be.visible will not work unless they're hidden
+		& > * {
+			display: none;
+		}
 	}
 	
 }

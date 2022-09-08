@@ -18,7 +18,7 @@ const DropdownContentBar:FC<IDropdownContentBarProps> = (props) => {
 		<div className="DropdownContentBar">
 			
 			<div className="dropdownBarHead">
-				<ListIcon onClick={() => setBarExpanded(!barExpanded)} />
+				<ListIcon data-test="dropdownToggleIcon" onClick={() => setBarExpanded(!barExpanded)} />
 			</div>
 			
 			<div className={`dropdownContent ${ (!barExpanded) ? hiddenContentClass : "" }`}>
