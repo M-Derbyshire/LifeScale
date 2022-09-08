@@ -40,7 +40,7 @@ describe("Category functionality", () => {
     };
     
     //Should put your test code in .then() of result
-    //Should only be used on category with single scale
+    //Should only be used on scale with single category
     const navToSingleCategoryEditRoute = (scaleID:string, user:(Omit<IUser, "id"> & { password:string })) => {
         return cy.loginUser(user)
             .then(() => cy.get(`a[href="${scaleViewRouteBase + scaleID}"]`).click()) //using .visit() can make the app think we're logged out
