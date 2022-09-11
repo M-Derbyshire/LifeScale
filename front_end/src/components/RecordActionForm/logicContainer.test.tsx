@@ -2,7 +2,6 @@ import RecordActionFormLogicContainer from './RecordActionFormLogicContainer';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
-import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
 
 
 const dummyScaleUsesTimespans = {

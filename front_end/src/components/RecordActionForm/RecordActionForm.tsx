@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './RecordActionForm.scss';
 import IRecordedActionFormItem from '../../interfaces/UI/IRecordedActionFormItem';
-import TimespanFormPartial from '../TimespanFormPartial/TimespanFormPartial';
+import TimespanFormPartial from './TimespanFormPartial/TimespanFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 import convertDateToInputString from '../../utility_functions/convertDateToInputString';
