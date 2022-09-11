@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import './ActionHistoryItem.scss';
-import BadSaveMessage from '../SaveMessage/BadSaveMessage';
-import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
+import BadSaveMessage from '../../SaveMessage/BadSaveMessage';
+import IActionHistoryItem from '../../../interfaces/UI/IActionHistoryItem';
 
 interface IActionHistoryItemProps {
 	actionHistoryItem:IActionHistoryItem;

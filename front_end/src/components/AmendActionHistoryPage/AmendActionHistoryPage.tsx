@@ -4,7 +4,7 @@ import IActionHistoryItem from '../../interfaces/UI/IActionHistoryItem';
 import IScale from '../../interfaces/IScale';
 import IUserService from '../../interfaces/api_access/IUserService';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
-import ActionHistoryItem from '../ActionHistoryItem/ActionHistoryItem';
+import ActionHistoryItem from './ActionHistoryItem/ActionHistoryItem';
 import RecordActionFormLogicContainer from '../RecordActionForm/RecordActionFormLogicContainer';
 
 
