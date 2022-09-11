@@ -1,6 +1,6 @@
 import ChangePasswordFormLogicContainer from './ChangePasswordFormLogicContainer';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
+import TestingDummyUserService from '../../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 
 const setPasswordInputs = (container, expectedPasswordValues) => {

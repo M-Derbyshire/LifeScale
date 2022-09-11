@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import IUserService from '../../interfaces/api_access/IUserService';
-import IUser from '../../interfaces/IUser';
+import IUserService from '../../../interfaces/api_access/IUserService';
+import IUser from '../../../interfaces/IUser';
 import ChangePasswordForm from './ChangePasswordForm';
 
 interface IChangePasswordFormLogicContainerProps {

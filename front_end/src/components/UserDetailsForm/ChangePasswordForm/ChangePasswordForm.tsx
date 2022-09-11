@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import './ChangePasswordForm.scss';
 import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
-import BadSaveMessage from '../SaveMessage/BadSaveMessage';
-import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
+import BadSaveMessage from '../../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../../SaveMessage/GoodSaveMessage';
 
 interface IChangePasswordFormProps {
 	currentPassword:string;

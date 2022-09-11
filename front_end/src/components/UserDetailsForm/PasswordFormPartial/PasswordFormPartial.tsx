@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import BadSaveMessage from '../../SaveMessage/BadSaveMessage';
 
 type PasswordFormPartialProps = {
 	password:string;

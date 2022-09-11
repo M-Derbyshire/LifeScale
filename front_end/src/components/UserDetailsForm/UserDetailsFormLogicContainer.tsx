@@ -1,7 +1,7 @@
 import React, { Component, ReactElement } from 'react';
 import UserDetailsForm from './UserDetailsForm';
-import PasswordFormPartial from '../PasswordFormPartial/PasswordFormPartial';
-import ChangePasswordFormLogicContainer from '../ChangePasswordForm/ChangePasswordFormLogicContainer';
+import PasswordFormPartial from './PasswordFormPartial/PasswordFormPartial';
+import ChangePasswordFormLogicContainer from './ChangePasswordForm/ChangePasswordFormLogicContainer';
 import IUserService from '../../interfaces/api_access/IUserService';
 import IUser from '../../interfaces/IUser';
 
@@ -165,7 +165,7 @@ export default class UserDetailsFormLogicContainer
 								setPassword={(password) => this.setState({
 									 user: { ...this.state.user!, password } 
 								})}
-								setPasswordIsConfirmed={(isConfirmed) => this.setState({
+								setPasswordIsConfirmed={(isConfirmed:boolean) => this.setState({
 									passwordIsConfirmed: isConfirmed
 								})} />);
 		}
