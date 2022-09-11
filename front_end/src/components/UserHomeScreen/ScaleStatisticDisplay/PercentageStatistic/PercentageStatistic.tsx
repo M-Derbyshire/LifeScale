@@ -1,6 +1,6 @@
 import React, { FC, ReactElement } from 'react';
 import './PercentageStatistic.scss';
-import IPercentageStatistic from '../../interfaces/UI/IPercentageStatistic';
+import IPercentageStatistic from '../../../../interfaces/UI/IPercentageStatistic';
 
 interface IPercentageStatisticProps {
 	statistic: IPercentageStatistic;

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import './ScaleStatisticDisplay.scss';
-import { mapPercentageStatisticToLi } from '../PercentageStatistic/PercentageStatistic';
-import IPercentageStatistic from '../../interfaces/UI/IPercentageStatistic';
+import { mapPercentageStatisticToLi } from './PercentageStatistic/PercentageStatistic';
+import IPercentageStatistic from '../../../interfaces/UI/IPercentageStatistic';
 
 
 interface IScaleStatisticDisplayProps {

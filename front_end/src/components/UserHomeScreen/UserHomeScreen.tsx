@@ -10,7 +10,7 @@ import EmptyContentMessage from '../EmptyContentMessage/EmptyContentMessage';
 import UserNavBarLogicContainer from '../UserNavBar/UserNavBarLogicContainer';
 import ScalePrimaryDisplay from '../ScalePrimaryDisplay/ScalePrimaryDisplay';
 import RecordActionFormLogicContainer from '../RecordActionForm/RecordActionFormLogicContainer';
-import ScaleStatisticDisplay from '../ScaleStatisticDisplay/ScaleStatisticDisplay';
+import ScaleStatisticDisplay from './ScaleStatisticDisplay/ScaleStatisticDisplay';
 
 
 interface IUserHomeScreenProps {
