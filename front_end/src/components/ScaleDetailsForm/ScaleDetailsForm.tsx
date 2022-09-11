@@ -2,7 +2,7 @@ import React, { Component, ReactElement } from 'react';
 import './ScaleDetailsForm.scss';
 import IScaleFormItem from '../../interfaces/UI/IScaleFormItem';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
-import ScaleDetailsFormPartial from '../ScaleDetailsFormPartial/ScaleDetailsFormPartial';
+import ScaleDetailsFormPartial from './ScaleDetailsFormPartial/ScaleDetailsFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 import CardDisplay from '../CardDisplay/CardDisplay';
