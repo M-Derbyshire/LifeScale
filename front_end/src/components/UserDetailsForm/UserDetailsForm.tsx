@@ -1,7 +1,7 @@
 import React, { Component, ReactElement } from 'react';
 import './UserDetailsForm.scss';
 import IUser from '../../interfaces/IUser';
-import UserDetailsFormPartial from '../UserDetailsFormPartial/UserDetailsFormPartial';
+import UserDetailsFormPartial from './UserDetailsFormPartial/UserDetailsFormPartial';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 import LoadedContentWrapper from '../LoadedContentWrapper/LoadedContentWrapper';
