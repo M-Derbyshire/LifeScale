@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import './LoginForm.scss';
-import BadSaveMessage from '../SaveMessage/BadSaveMessage';
+import BadSaveMessage from '../../SaveMessage/BadSaveMessage';
 
 interface ILoginFormProps {
 	email:string;
