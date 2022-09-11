@@ -1,6 +1,6 @@
 import React, { FC, ReactChild, useState } from 'react';
 import './DropdownContentBar.scss';
-import { ReactComponent as ListIcon } from '../../icons/svg/list.svg';
+import { ReactComponent as ListIcon } from '../../../icons/svg/list.svg';
 
 interface IDropdownContentBarProps {
 	children?: ReactChild | ReactChild[];

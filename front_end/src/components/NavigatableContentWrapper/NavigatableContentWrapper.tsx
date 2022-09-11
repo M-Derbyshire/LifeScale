@@ -1,6 +1,6 @@
 import React, { FC, ReactChild, useState, useEffect } from 'react';
 import './NavigatableContentWrapper.scss';
-import DropdownContentBar from '../DropdownContentBar/DropdownContentBar';
+import DropdownContentBar from './DropdownContentBar/DropdownContentBar';
 
 
 interface INavigatableContentWrapperProps {
