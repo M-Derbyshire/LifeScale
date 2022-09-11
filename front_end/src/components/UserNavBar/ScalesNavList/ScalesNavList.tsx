@@ -1,7 +1,7 @@
 import React, { Component, ReactElement } from 'react';
 import { NavLink } from 'react-router-dom';
 import './ScalesNavList.scss';
-import IScaleLink from '../../interfaces/UI/IScaleLink';
+import IScaleLink from '../../../interfaces/UI/IScaleLink';
 
 interface IScalesNavListProps {
 	scaleLinks:IScaleLink[];

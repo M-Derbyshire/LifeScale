@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { NavLink } from 'react-router-dom';
 import './UserNavBar.scss';
 import IScaleLink from '../../interfaces/UI/IScaleLink';
-import ScalesNavList from '../ScalesNavList/ScalesNavList';
+import ScalesNavList from './ScalesNavList/ScalesNavList';
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 
 interface IUserNavBarProps {
