@@ -6,8 +6,8 @@ import ScaleDetailsFormPartial from './ScaleDetailsFormPartial/ScaleDetailsFormP
 import BadSaveMessage from '../SaveMessage/BadSaveMessage';
 import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
 import CardDisplay from '../CardDisplay/CardDisplay';
-import AddItemCard from '../AddItemCard/AddItemCard';
-import EditableItemCard from '../EditableItemCard/EditableItemCard';
+import AddItemCard from '../CardDisplay/AddItemCard/AddItemCard';
+import EditableItemCard from '../CardDisplay/EditableItemCard/EditableItemCard';
 
 interface IScaleDetailsFormProps {
 	scaleItem?:IScaleFormItem;
