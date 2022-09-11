@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import './ScalePrimaryDisplay.scss';
 import IScaleBalanceItem from '../../interfaces/UI/IScaleBalanceItem';
-import ScaleBalanceDisplay from '../ScaleBalanceDisplay/ScaleBalanceDisplay';
+import ScaleBalanceDisplay from './ScaleBalanceDisplay/ScaleBalanceDisplay';
 
 interface IScalePrimaryDisplayProps {
 	desiredBalanceItems:IScaleBalanceItem[];

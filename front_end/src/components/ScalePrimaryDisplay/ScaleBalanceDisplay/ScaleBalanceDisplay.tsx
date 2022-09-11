@@ -1,6 +1,6 @@
 import React, { Component, ReactElement } from 'react';
 import './ScaleBalanceDisplay.scss';
-import IScaleBalanceItem from '../../interfaces/UI/IScaleBalanceItem';
+import IScaleBalanceItem from '../../../interfaces/UI/IScaleBalanceItem';
 
 
 interface IScaleBalanceDisplayProps {
