@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CategoryDetailsForm from './CategoryDetailsForm';
-import ActionsFormLogicContainer from '../ActionsForm/ActionsFormLogicContainer';
+import ActionsFormLogicContainer from './ActionsForm/ActionsFormLogicContainer';
 import IUserService from '../../interfaces/api_access/IUserService';
 import ICategory from '../../interfaces/ICategory';
 import IScale from '../../interfaces/IScale';

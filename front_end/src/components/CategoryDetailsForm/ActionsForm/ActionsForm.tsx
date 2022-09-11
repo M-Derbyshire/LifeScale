@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './ActionsForm.scss';
-import IActionFormItem from '../../interfaces/UI/IActionFormItem';
-import SingleActionForm from '../SingleActionForm/SingleActionForm';
+import IActionFormItem from '../../../interfaces/UI/IActionFormItem';
+import SingleActionForm from './SingleActionForm/SingleActionForm';
 
 
 interface IActionsFormProps {

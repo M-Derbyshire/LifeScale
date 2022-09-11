@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import ActionsForm from './ActionsForm';
-import IUserService from '../../interfaces/api_access/IUserService';
-import IAction from '../../interfaces/IAction';
-import ICategory from '../../interfaces/ICategory';
-import IScale from '../../interfaces/IScale';
-import IActionFormItem from '../../interfaces/UI/IActionFormItem';
+import IUserService from '../../../interfaces/api_access/IUserService';
+import IAction from '../../../interfaces/IAction';
+import ICategory from '../../../interfaces/ICategory';
+import IScale from '../../../interfaces/IScale';
+import IActionFormItem from '../../../interfaces/UI/IActionFormItem';
 
 
 

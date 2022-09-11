@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import './SingleActionForm.scss';
-import BadSaveMessage from '../SaveMessage/BadSaveMessage';
-import GoodSaveMessage from '../SaveMessage/GoodSaveMessage';
+import BadSaveMessage from '../../../SaveMessage/BadSaveMessage';
+import GoodSaveMessage from '../../../SaveMessage/GoodSaveMessage';
 
 
 interface ISingleActionFormProps {

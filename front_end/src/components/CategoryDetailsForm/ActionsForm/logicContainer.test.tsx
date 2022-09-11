@@ -1,6 +1,6 @@
 import ActionsFormLogicContainer from './ActionsFormLogicContainer';
 import { render, fireEvent, waitFor, screen, within } from '@testing-library/react';
-import TestingDummyUserService from '../../userServices/TestingDummyUserService/TestingDummyUserService';
+import TestingDummyUserService from '../../../userServices/TestingDummyUserService/TestingDummyUserService';
 
 const dummyCategory = {
 	id: "testcat",
