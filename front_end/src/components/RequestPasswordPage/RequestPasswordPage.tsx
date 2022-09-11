@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import './RequestPasswordPage.scss';
-import RequestPasswordForm from '../RequestPasswordForm/RequestPasswordForm';
+import RequestPasswordForm from './RequestPasswordForm/RequestPasswordForm';
 
 interface IRequestPasswordPageProps {
 	email:string;
