@@ -4,29 +4,14 @@ import (
 	"fmt"
 	"log"
 
-	env "github.com/caarlos0/env/v6"
-	"github.com/joho/godotenv"
+	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/env"
 )
-
-type EnvVars struct {
-	DatabaseString string `env:"DATABASE_STRING,required"`
-	Host           string `env:"HOST,required"`
-	Port           string `env:"PORT,required"`
-}
 
 func main() {
 
-	//First, load and parse the .env file variables
-
-	envLoadErr := godotenv.Load()
-	if envLoadErr != nil {
-		log.Fatalf("unable to load .env file: %e", envLoadErr)
-	}
-
-	envVars := EnvVars{} //This will provide the env variables
-	envParseErr := env.Parse(&envVars)
-	if envParseErr != nil {
-		log.Fatalf("unable to parse environment variables: %e", envParseErr)
+	envVars, envErr := env.LoadEnvVars()
+	if envErr != nil {
+		log.Fatal(envErr)
 	}
 
 	fmt.Println(envVars.DatabaseString)
