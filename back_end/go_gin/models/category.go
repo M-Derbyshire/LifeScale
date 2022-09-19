@@ -8,4 +8,5 @@ type Category struct {
 	DesiredWeight uint   `gorm:"desiredWeight" json:"desiredWeight"`
 	ScaleID       uint64
 	Scale         Scale
+	Actions       []Action `json:"actions"`
 }

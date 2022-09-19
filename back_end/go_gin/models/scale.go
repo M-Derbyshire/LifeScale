@@ -8,4 +8,5 @@ type Scale struct {
 	DisplayDayCount uint   `gorm:"displayDayCount" json:"displayDayCount"`
 	UserID          uint64
 	User            User
+	Categories      []Category `json:"categories"`
 }

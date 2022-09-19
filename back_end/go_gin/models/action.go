@@ -7,4 +7,5 @@ type Action struct {
 	Weight     uint   `gorm:"weight" json:"weight"`
 	CategoryID uint64
 	Category   Category
+	Timespans  []Timespan `json:"timespans"`
 }
