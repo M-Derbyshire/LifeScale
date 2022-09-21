@@ -19,7 +19,7 @@ type User struct {
 	Scales   []Scale `json:"scales"`
 }
 
-func (u *User) Validate() error {
+func (u *User) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	emailRegex := `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`
 
@@ -32,6 +32,14 @@ func (u *User) Validate() error {
 
 	if !emailValid {
 		return errors.New("email address is invalid")
+	}
+
+	var emailUseCount int64
+	db.Model(&User{}).Where("email = ?", u.Email).Count(&emailUseCount)
+
+	//Shouldn't be any other uses of the new email address.
+	if (isCreating || u.Email != authUser.Email) && emailUseCount > 0 {
+		return errors.New("email address is already in use")
 	}
 
 	//Now do the names
