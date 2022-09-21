@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"errors"
+
+	"gorm.io/gorm"
+)
 
 type Scale struct {
 	gorm.Model
@@ -8,8 +12,17 @@ type Scale struct {
 	ID              uint64 `gorm:"id" json:"-"`
 	Name            string `gorm:"name" json:"name"`
 	UsesTimespans   bool   `gorm:"usesTimespans" json:"usesTimespans"`
-	DisplayDayCount uint   `gorm:"displayDayCount" json:"displayDayCount"`
+	DisplayDayCount uint   `gorm:"displayDayCount" json:"displayDayCount"` //This should remain unsigned, as values less than 0 are invalid
 	UserID          uint64
 	User            User
 	Categories      []Category `json:"categories"`
+}
+
+func (s *Scale) Validate() error {
+
+	if s.Name == "" {
+		return errors.New("category name is required")
+	}
+
+	return nil
 }
