@@ -21,7 +21,7 @@ type Scale struct {
 func (s *Scale) Validate() error {
 
 	if s.Name == "" {
-		return errors.New("category name is required")
+		return errors.New("scale name is required")
 	}
 
 	return nil
