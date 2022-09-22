@@ -6,6 +6,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -139,4 +140,63 @@ func (s *ActionSuite) TestActionAuthValidationChecksAuthId() {
 		})
 	}
 
+}
+
+// ID Resolver
+
+func (s *ActionSuite) TestActionIDResolveReturnsResolverErr() {
+
+	// String ID not valid number, and blank number ID
+	action := models.Action{
+		ID:        0,
+		StrID:     "jadasjhdkh",
+		Name:      "test",
+		Weight:    1,
+		Timespans: []models.Timespan{},
+	}
+
+	err := action.ResolveID()
+
+	if err == nil {
+		require.Error(s.T(), err)
+	}
+
+}
+
+func (s *ActionSuite) TestActionIDResolveSetsNumID() {
+
+	action := models.Action{
+		ID:        0,
+		StrID:     "10",
+		Name:      "test",
+		Weight:    1,
+		Timespans: []models.Timespan{},
+	}
+
+	err := action.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), uint64(10), action.ID)
+}
+
+func (s *ActionSuite) TestActionIDResolveSetsStrID() {
+
+	action := models.Action{
+		ID:        10,
+		StrID:     "",
+		Name:      "test",
+		Weight:    1,
+		Timespans: []models.Timespan{},
+	}
+
+	err := action.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), "10", action.StrID)
 }

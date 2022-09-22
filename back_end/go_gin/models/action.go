@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 
+	customutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"gorm.io/gorm"
 )
 
@@ -34,6 +35,17 @@ func (a *Action) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	if uint64(actualUserId) != authUser.ID {
 		return errors.New("user is not authorised to change this action")
+	}
+
+	return nil
+}
+
+func (a *Action) ResolveID() error {
+
+	err := customutils.IDResolver(&a.ID, &a.StrID)
+
+	if err != nil {
+		return err
 	}
 
 	return nil
