@@ -6,6 +6,7 @@ import (
 	"log"
 	"regexp"
 
+	customutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"gorm.io/gorm"
 )
 
@@ -56,6 +57,17 @@ func (c *Category) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	if uint64(actualUserId) != authUser.ID {
 		return errors.New("user is not authorised to change this category")
+	}
+
+	return nil
+}
+
+func (c *Category) ResolveID() error {
+
+	err := customutils.IDResolver(&c.ID, &c.StrID)
+
+	if err != nil {
+		return err
 	}
 
 	return nil

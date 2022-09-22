@@ -6,6 +6,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -186,4 +187,66 @@ func (s *CategorySuite) TestCategoryAuthValidationChecksAuthId() {
 		})
 	}
 
+}
+
+// ID Resolver
+
+func (s *CategorySuite) TestCategoryIDResolveReturnsResolverErr() {
+
+	// String ID not valid number, and blank number ID
+	category := models.Category{
+		ID:            0,
+		StrID:         "jadasjhdkh",
+		Name:          "test",
+		Color:         "red",
+		DesiredWeight: 1,
+		Actions:       []models.Action{},
+	}
+
+	err := category.ResolveID()
+
+	if err == nil {
+		require.Error(s.T(), err)
+	}
+
+}
+
+func (s *CategorySuite) TestCategoryIDResolveSetsNumID() {
+
+	category := models.Category{
+		ID:            0,
+		StrID:         "10",
+		Name:          "test",
+		Color:         "red",
+		DesiredWeight: 1,
+		Actions:       []models.Action{},
+	}
+
+	err := category.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), uint64(10), category.ID)
+}
+
+func (s *CategorySuite) TestCategoryIDResolveSetsStrID() {
+
+	category := models.Category{
+		ID:            10,
+		StrID:         "",
+		Name:          "test",
+		Color:         "red",
+		DesiredWeight: 1,
+		Actions:       []models.Action{},
+	}
+
+	err := category.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), "10", category.StrID)
 }
