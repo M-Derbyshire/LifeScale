@@ -317,3 +317,65 @@ func (s *UserSuite) TestUserAuthValidationChecksUserId() {
 		})
 	}
 }
+
+// ID Resolver
+
+func (s *UserSuite) TestUserIDResolveReturnsResolverErr() {
+
+	// String ID not valid number, and blank number ID
+	user := models.User{
+		ID:       0,
+		StrID:    "daksjdlajs",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	err := user.ResolveID()
+
+	if err == nil {
+		require.Error(s.T(), err)
+	}
+
+}
+
+func (s *UserSuite) TestUserIDResolveSetsNumID() {
+
+	user := models.User{
+		ID:       0,
+		StrID:    "10",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	err := user.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), uint64(10), user.ID)
+}
+
+func (s *UserSuite) TestUserIDResolveSetsStrID() {
+
+	user := models.User{
+		ID:       10,
+		StrID:    "",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	err := user.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), "10", user.StrID)
+}

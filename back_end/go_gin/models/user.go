@@ -6,6 +6,7 @@ import (
 	"log"
 	"regexp"
 
+	customutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"gorm.io/gorm"
 )
 
@@ -62,4 +63,15 @@ func (u *User) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	return nil
 
+}
+
+func (u *User) ResolveID() error {
+
+	err := customutils.IDResolver(&u.ID, &u.StrID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
