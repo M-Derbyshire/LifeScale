@@ -17,7 +17,7 @@ type Timespan struct {
 	Action      Action
 }
 
-func (t *Timespan) Validate() error {
+func (t *Timespan) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if t.MinuteCount < 0 {
 		return errors.New("timespan minute count should not be negative")
@@ -35,4 +35,18 @@ func (t *Timespan) Validate() error {
 	}
 
 	return nil
+}
+
+func (t *Timespan) ValidateAuthorisation(authUser User, db gorm.DB) error {
+
+	// We need to determine the user id that's actually stored against this
+	var actualUserId int64
+	db.Model(&Timespan{}).Select("`scales`.`user_id`").Joins("JOIN `actions` ON `actions`.`id` = `timespans`.`action_id`").Joins("JOIN `categories` ON `categories`.`id` = `actions`.`category_id`").Joins("JOIN `scales` ON `scales`.`id` = `categories`.`scale_id`").Where("timespans.id = ?", t.ID).First(&actualUserId)
+
+	if uint64(actualUserId) != authUser.ID {
+		return errors.New("user is not authorised to change this action")
+	}
+
+	return nil
+
 }
