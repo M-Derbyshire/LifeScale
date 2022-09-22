@@ -43,9 +43,11 @@ func TestSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
-func setupDbQueryExpect(s *Suite, email string, emailCount int) {
+func setupValidationDbQueryExpect(s *Suite, email string, emailCount int) {
 	s.Mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE email = ? AND `users`.`deleted_at` IS NULL")).WithArgs(email).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(emailCount))
 }
+
+// Validation
 
 func (s *Suite) TestUserValidationChecksEmail() {
 
@@ -80,7 +82,7 @@ func (s *Suite) TestUserValidationChecksEmail() {
 				Scales:   []models.Scale{},
 			}
 
-			setupDbQueryExpect(s, subtest.Email, 0)
+			setupValidationDbQueryExpect(s, subtest.Email, 0)
 
 			err := user.Validate(authUserExample, *s.DB, true)
 
@@ -161,7 +163,7 @@ func (s *Suite) TestUserValidationChecksEmailIsUnique() {
 				Scales:   user.Scales,
 			}
 
-			setupDbQueryExpect(s, subtest.NewEmail, subtest.NewEmailCount)
+			setupValidationDbQueryExpect(s, subtest.NewEmail, subtest.NewEmailCount)
 
 			err := user.Validate(authUser, *s.DB, subtest.isCreating)
 
@@ -205,7 +207,7 @@ func (s *Suite) TestUserValidationChecksForename() {
 				Scales:   []models.Scale{},
 			}
 
-			setupDbQueryExpect(s, userEmail, 0)
+			setupValidationDbQueryExpect(s, userEmail, 0)
 
 			err := user.Validate(authUserExample, *s.DB, true)
 
@@ -248,7 +250,7 @@ func (s *Suite) TestUserValidationChecksSurname() {
 				Scales:   []models.Scale{},
 			}
 
-			setupDbQueryExpect(s, userEmail, 0)
+			setupValidationDbQueryExpect(s, userEmail, 0)
 
 			err := user.Validate(authUserExample, *s.DB, true)
 
@@ -257,6 +259,61 @@ func (s *Suite) TestUserValidationChecksSurname() {
 			} else if err == nil && subtest.ExpectErr {
 				require.Error(t, err)
 			}
+		})
+	}
+}
+
+// Auth validation
+
+func (s *Suite) TestUserAuthValidationChecksUserId() {
+
+	subTests := []struct {
+		TestName   string
+		AuthUserId uint64
+		UserId     uint64
+		ExpectErr  bool
+	}{
+		{
+			TestName:   "Matching auth user",
+			AuthUserId: 1,
+			UserId:     1,
+			ExpectErr:  false,
+		},
+		{
+			TestName:   "Different auth user",
+			AuthUserId: 2,
+			UserId:     1,
+			ExpectErr:  true,
+		},
+	}
+
+	for _, subtest := range subTests {
+		s.T().Run(subtest.TestName, func(t *testing.T) {
+
+			user := models.User{
+				ID:       subtest.UserId,
+				Email:    "test@test.com",
+				Forename: "test",
+				Surname:  "test",
+				Scales:   []models.Scale{},
+			}
+
+			authUser := models.User{
+				ID:       subtest.AuthUserId,
+				Email:    "test@test.com",
+				Forename: "test",
+				Surname:  "test",
+				Scales:   []models.Scale{},
+			}
+
+			err := user.ValidateAuthorisation(authUser, *s.DB)
+
+			if err != nil && !subtest.ExpectErr {
+				require.NoError(t, err)
+			} else if err == nil && subtest.ExpectErr {
+				require.Error(t, err)
+			}
+
 		})
 	}
 }

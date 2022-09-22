@@ -53,3 +53,13 @@ func (u *User) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	return nil
 }
+
+func (u *User) ValidateAuthorisation(authUser User, db gorm.DB) error {
+
+	if authUser.ID != u.ID {
+		return errors.New("user is not authorised to make changes to this account")
+	}
+
+	return nil
+
+}

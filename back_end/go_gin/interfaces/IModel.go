@@ -7,4 +7,5 @@ import (
 
 type IModel interface {
 	Validate(authUser models.User, db gorm.DB, isCreating bool) error
+	ValidateAuthorisation(authUser models.User, db gorm.DB) error
 }
