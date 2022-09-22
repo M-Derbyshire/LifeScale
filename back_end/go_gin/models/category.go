@@ -21,7 +21,7 @@ type Category struct {
 	Actions       []Action `json:"actions"`
 }
 
-func (c *Category) Validate() error {
+func (c *Category) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if c.Name == "" {
 		return errors.New("category name is required")
@@ -43,6 +43,19 @@ func (c *Category) Validate() error {
 
 	if !colorIsValid {
 		return errors.New("provided category color is not a valid color name")
+	}
+
+	return nil
+}
+
+func (c *Category) ValidateAuthorisation(authUser User, db gorm.DB) error {
+
+	// We need to determine the user id that's actually stored against this
+	var actualUserId int64
+	db.Model(&Category{}).Select("`scales`.`user_id`").Joins("JOIN `scales` ON `scales`.`id` = `categories`.`scale_id`").Where("categories.id = ?", c.ID).First(&actualUserId)
+
+	if uint64(actualUserId) != authUser.ID {
+		return errors.New("user is not authorised to change this category")
 	}
 
 	return nil

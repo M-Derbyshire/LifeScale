@@ -31,7 +31,7 @@ func (s *ScaleSuite) SetupTest() {
 	s.DB = mockDB
 }
 
-func TestSuite(t *testing.T) {
+func TestScaleSuite(t *testing.T) {
 	suite.Run(t, new(ScaleSuite))
 }
 
@@ -91,12 +91,14 @@ func (s *ScaleSuite) TestScaleAuthValidationChecksAuthId() {
 	}{
 		{
 			TestName:    "Matching auth user",
+			ScaleId:     1,
 			AuthUserId:  1,
 			ScaleUserId: 1,
 			ExpectErr:   false,
 		},
 		{
 			TestName:    "Different auth user",
+			ScaleId:     1,
 			AuthUserId:  2,
 			ScaleUserId: 1,
 			ExpectErr:   true,
