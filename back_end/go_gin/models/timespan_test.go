@@ -7,6 +7,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -147,4 +148,60 @@ func (s *TimespanSuite) TestTimespanAuthValidationChecksAuthId() {
 		})
 	}
 
+}
+
+// ID Resolver
+
+func (s *TimespanSuite) TestTimespanIDResolveReturnsResolverErr() {
+
+	// String ID not valid number, and blank number ID
+	timespan := models.Timespan{
+		ID:          0,
+		StrID:       "jadasjhdkh",
+		Date:        time.Now(),
+		MinuteCount: 1,
+	}
+
+	err := timespan.ResolveID()
+
+	if err == nil {
+		require.Error(s.T(), err)
+	}
+
+}
+
+func (s *TimespanSuite) TestTimespanIDResolveSetsNumID() {
+
+	timespan := models.Timespan{
+		ID:          0,
+		StrID:       "10",
+		Date:        time.Now(),
+		MinuteCount: 1,
+	}
+
+	err := timespan.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), uint64(10), timespan.ID)
+}
+
+func (s *TimespanSuite) TestTimespanIDResolveSetsStrID() {
+
+	timespan := models.Timespan{
+		ID:          10,
+		StrID:       "",
+		Date:        time.Now(),
+		MinuteCount: 1,
+	}
+
+	err := timespan.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), "10", timespan.StrID)
 }

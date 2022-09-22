@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	customutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"gorm.io/gorm"
 )
 
@@ -49,4 +50,15 @@ func (t *Timespan) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	return nil
 
+}
+
+func (t *Timespan) ResolveID() error {
+
+	err := customutils.IDResolver(&t.ID, &t.StrID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
