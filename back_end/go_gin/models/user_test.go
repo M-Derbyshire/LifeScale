@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Suite struct {
+type UserSuite struct {
 	suite.Suite
 	DB   *gorm.DB
 	Mock sqlmock.Sqlmock
@@ -25,7 +25,7 @@ var authUserExample = models.User{
 	Scales:   []models.Scale{},
 }
 
-func (s *Suite) SetupTest() {
+func (s *UserSuite) SetupTest() {
 	sqlMockDb, databaseMockExpectations, _ := sqlmock.New()
 
 	var mockDialector = mysql.New(mysql.Config{
@@ -39,17 +39,17 @@ func (s *Suite) SetupTest() {
 	s.DB = mockDB
 }
 
-func TestSuite(t *testing.T) {
-	suite.Run(t, new(Suite))
+func TestUserSuite(t *testing.T) {
+	suite.Run(t, new(UserSuite))
 }
 
-func setupValidationDbQueryExpect(s *Suite, email string, emailCount int) {
+func setupUserValidationDbQueryExpect(s *UserSuite, email string, emailCount int) {
 	s.Mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE email = ? AND `users`.`deleted_at` IS NULL")).WithArgs(email).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(emailCount))
 }
 
 // Validation
 
-func (s *Suite) TestUserValidationChecksEmail() {
+func (s *UserSuite) TestUserValidationChecksEmail() {
 
 	subTests := []struct {
 		Name      string
@@ -82,7 +82,7 @@ func (s *Suite) TestUserValidationChecksEmail() {
 				Scales:   []models.Scale{},
 			}
 
-			setupValidationDbQueryExpect(s, subtest.Email, 0)
+			setupUserValidationDbQueryExpect(s, subtest.Email, 0)
 
 			err := user.Validate(authUserExample, *s.DB, true)
 
@@ -95,7 +95,7 @@ func (s *Suite) TestUserValidationChecksEmail() {
 	}
 }
 
-func (s *Suite) TestUserValidationChecksEmailIsUnique() {
+func (s *UserSuite) TestUserValidationChecksEmailIsUnique() {
 
 	subTests := []struct {
 		Name          string
@@ -163,7 +163,7 @@ func (s *Suite) TestUserValidationChecksEmailIsUnique() {
 				Scales:   user.Scales,
 			}
 
-			setupValidationDbQueryExpect(s, subtest.NewEmail, subtest.NewEmailCount)
+			setupUserValidationDbQueryExpect(s, subtest.NewEmail, subtest.NewEmailCount)
 
 			err := user.Validate(authUser, *s.DB, subtest.isCreating)
 
@@ -176,7 +176,7 @@ func (s *Suite) TestUserValidationChecksEmailIsUnique() {
 	}
 }
 
-func (s *Suite) TestUserValidationChecksForename() {
+func (s *UserSuite) TestUserValidationChecksForename() {
 
 	subTests := []struct {
 		Name      string
@@ -207,7 +207,7 @@ func (s *Suite) TestUserValidationChecksForename() {
 				Scales:   []models.Scale{},
 			}
 
-			setupValidationDbQueryExpect(s, userEmail, 0)
+			setupUserValidationDbQueryExpect(s, userEmail, 0)
 
 			err := user.Validate(authUserExample, *s.DB, true)
 
@@ -220,7 +220,7 @@ func (s *Suite) TestUserValidationChecksForename() {
 	}
 }
 
-func (s *Suite) TestUserValidationChecksSurname() {
+func (s *UserSuite) TestUserValidationChecksSurname() {
 
 	subTests := []struct {
 		Name      string
@@ -250,7 +250,7 @@ func (s *Suite) TestUserValidationChecksSurname() {
 				Scales:   []models.Scale{},
 			}
 
-			setupValidationDbQueryExpect(s, userEmail, 0)
+			setupUserValidationDbQueryExpect(s, userEmail, 0)
 
 			err := user.Validate(authUserExample, *s.DB, true)
 
@@ -265,7 +265,7 @@ func (s *Suite) TestUserValidationChecksSurname() {
 
 // Auth validation
 
-func (s *Suite) TestUserAuthValidationChecksUserId() {
+func (s *UserSuite) TestUserAuthValidationChecksUserId() {
 
 	subTests := []struct {
 		TestName   string

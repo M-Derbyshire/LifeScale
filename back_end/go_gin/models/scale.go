@@ -18,10 +18,23 @@ type Scale struct {
 	Categories      []Category `json:"categories"`
 }
 
-func (s *Scale) Validate() error {
+func (s *Scale) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if s.Name == "" {
 		return errors.New("scale name is required")
+	}
+
+	return nil
+}
+
+func (s *Scale) ValidateAuthorisation(authUser User, db gorm.DB) error {
+
+	// We need to determine the user id that's actually stored against this
+	var actualUserId int64
+	db.Model(&Scale{}).Select("user_id").Where("id = ?", s.ID).First(&actualUserId)
+
+	if uint64(actualUserId) != authUser.ID {
+		return errors.New("user is not authorised to change this scale")
 	}
 
 	return nil
