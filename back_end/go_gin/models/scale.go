@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 
+	customutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"gorm.io/gorm"
 )
 
@@ -35,6 +36,17 @@ func (s *Scale) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	if uint64(actualUserId) != authUser.ID {
 		return errors.New("user is not authorised to change this scale")
+	}
+
+	return nil
+}
+
+func (s *Scale) ResolveID() error {
+
+	err := customutils.IDResolver(&s.ID, &s.StrID)
+
+	if err != nil {
+		return err
 	}
 
 	return nil

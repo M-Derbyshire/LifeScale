@@ -6,6 +6,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -136,4 +137,66 @@ func (s *ScaleSuite) TestScaleAuthValidationChecksAuthId() {
 
 		})
 	}
+}
+
+// ID Resolver
+
+func (s *ScaleSuite) TestScaleIDResolveReturnsResolverErr() {
+
+	// String ID not valid number, and blank number ID
+	scale := models.Scale{
+		ID:              0,
+		StrID:           "jadasjhdkh",
+		Name:            "test",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+	}
+
+	err := scale.ResolveID()
+
+	if err == nil {
+		require.Error(s.T(), err)
+	}
+
+}
+
+func (s *ScaleSuite) TestScaleIDResolveSetsNumID() {
+
+	scale := models.Scale{
+		ID:              0,
+		StrID:           "10",
+		Name:            "test",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+	}
+
+	err := scale.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), uint64(10), scale.ID)
+}
+
+func (s *ScaleSuite) TestScaleIDResolveSetsStrID() {
+
+	scale := models.Scale{
+		ID:              10,
+		StrID:           "",
+		Name:            "test",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+	}
+
+	err := scale.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), "10", scale.StrID)
 }
