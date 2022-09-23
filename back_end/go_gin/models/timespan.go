@@ -62,3 +62,7 @@ func (t *Timespan) ResolveID() error {
 
 	return nil
 }
+
+func (t *Timespan) Sanitise() {
+	t.StrID = customutils.StringSanitiser(t.StrID)
+}

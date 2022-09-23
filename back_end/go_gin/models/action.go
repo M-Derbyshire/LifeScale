@@ -50,3 +50,8 @@ func (a *Action) ResolveID() error {
 
 	return nil
 }
+
+func (a *Action) Sanitise() {
+	a.StrID = customutils.StringSanitiser(a.StrID)
+	a.Name = customutils.StringSanitiser(a.Name)
+}

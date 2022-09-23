@@ -250,3 +250,35 @@ func (s *CategorySuite) TestCategoryIDResolveSetsStrID() {
 
 	require.Equal(s.T(), "10", category.StrID)
 }
+
+// Sanitiser
+
+func (s *CategorySuite) TestCategorySanitiseEscapesHTMLBraces() {
+
+	category := models.Category{
+		ID:            10,
+		StrID:         "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+		Name:          "<h1>test</h1>",
+		Color:         "<h2>test</h2>",
+		DesiredWeight: 1,
+		Actions:       []models.Action{},
+	}
+
+	expectedCategoryValues := struct {
+		StrID string
+		Name  string
+		Color string
+	}{
+		StrID: "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+		Name:  "&lt;h1&gt;test&lt;/h1&gt;",
+		Color: "&lt;h2&gt;test&lt;/h2&gt;",
+	}
+
+	category.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedCategoryValues.StrID, category.StrID)
+	require.Equal(t, expectedCategoryValues.Name, category.Name)
+	require.Equal(t, expectedCategoryValues.Color, category.Color)
+
+}

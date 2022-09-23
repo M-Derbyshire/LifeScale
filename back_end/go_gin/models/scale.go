@@ -51,3 +51,8 @@ func (s *Scale) ResolveID() error {
 
 	return nil
 }
+
+func (s *Scale) Sanitise() {
+	s.StrID = customutils.StringSanitiser(s.StrID)
+	s.Name = customutils.StringSanitiser(s.Name)
+}

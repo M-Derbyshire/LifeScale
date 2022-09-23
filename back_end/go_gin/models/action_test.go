@@ -200,3 +200,31 @@ func (s *ActionSuite) TestActionIDResolveSetsStrID() {
 
 	require.Equal(s.T(), "10", action.StrID)
 }
+
+// Sanitiser
+
+func (s *ActionSuite) TestActionSanitiseEscapesHTMLBraces() {
+
+	action := models.Action{
+		ID:        10,
+		StrID:     "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+		Name:      "<h1>test</h1>",
+		Weight:    1,
+		Timespans: []models.Timespan{},
+	}
+
+	expectedActionValues := struct {
+		StrID string
+		Name  string
+	}{
+		StrID: "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+		Name:  "&lt;h1&gt;test&lt;/h1&gt;",
+	}
+
+	action.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedActionValues.StrID, action.StrID)
+	require.Equal(t, expectedActionValues.Name, action.Name)
+
+}

@@ -72,3 +72,9 @@ func (c *Category) ResolveID() error {
 
 	return nil
 }
+
+func (c *Category) Sanitise() {
+	c.StrID = customutils.StringSanitiser(c.StrID)
+	c.Name = customutils.StringSanitiser(c.Name)
+	c.Color = customutils.StringSanitiser(c.Color)
+}

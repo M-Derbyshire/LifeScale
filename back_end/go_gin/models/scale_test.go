@@ -200,3 +200,32 @@ func (s *ScaleSuite) TestScaleIDResolveSetsStrID() {
 
 	require.Equal(s.T(), "10", scale.StrID)
 }
+
+// Sanitiser
+
+func (s *ScaleSuite) TestScaleSanitiseEscapesHTMLBraces() {
+
+	scale := models.Scale{
+		ID:              10,
+		StrID:           "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+		Name:            "<h1>test</h1>",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+	}
+
+	expectedScaleValues := struct {
+		StrID string
+		Name  string
+	}{
+		StrID: "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+		Name:  "&lt;h1&gt;test&lt;/h1&gt;",
+	}
+
+	scale.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedScaleValues.StrID, scale.StrID)
+	require.Equal(t, expectedScaleValues.Name, scale.Name)
+
+}

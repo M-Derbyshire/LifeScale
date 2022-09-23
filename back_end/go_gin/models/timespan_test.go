@@ -205,3 +205,27 @@ func (s *TimespanSuite) TestTimespanIDResolveSetsStrID() {
 
 	require.Equal(s.T(), "10", timespan.StrID)
 }
+
+// Sanitiser
+
+func (s *TimespanSuite) TestTimespanSanitiseEscapesHTMLBraces() {
+
+	timespan := models.Timespan{
+		ID:          10,
+		StrID:       "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+		Date:        time.Now(),
+		MinuteCount: 1,
+	}
+
+	expectedTimespanValues := struct {
+		StrID string
+	}{
+		StrID: "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+	}
+
+	timespan.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedTimespanValues.StrID, timespan.StrID)
+
+}

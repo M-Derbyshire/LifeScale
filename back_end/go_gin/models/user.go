@@ -75,3 +75,10 @@ func (u *User) ResolveID() error {
 
 	return nil
 }
+
+func (u *User) Sanitise() {
+	u.StrID = customutils.StringSanitiser(u.StrID)
+	u.Email = customutils.StringSanitiser(u.Email)
+	u.Forename = customutils.StringSanitiser(u.Forename)
+	u.Surname = customutils.StringSanitiser(u.Surname)
+}

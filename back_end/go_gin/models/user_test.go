@@ -379,3 +379,38 @@ func (s *UserSuite) TestUserIDResolveSetsStrID() {
 
 	require.Equal(s.T(), "10", user.StrID)
 }
+
+// Sanitiser
+
+func (s *UserSuite) TestUserSanitiseEscapesHTMLBraces() {
+
+	user := models.User{
+		ID:       10,
+		StrID:    "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+		Email:    "<h1>test</h1>@test.com",
+		Forename: "<h1>test</h1>",
+		Surname:  "<h2>test</h2>",
+		Scales:   []models.Scale{},
+	}
+
+	expectedUserValues := struct {
+		StrID    string
+		Email    string
+		Forename string
+		Surname  string
+	}{
+		StrID:    "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+		Email:    "&lt;h1&gt;test&lt;/h1&gt;@test.com",
+		Forename: "&lt;h1&gt;test&lt;/h1&gt;",
+		Surname:  "&lt;h2&gt;test&lt;/h2&gt;",
+	}
+
+	user.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedUserValues.StrID, user.StrID)
+	require.Equal(t, expectedUserValues.Email, user.Email)
+	require.Equal(t, expectedUserValues.Forename, user.Forename)
+	require.Equal(t, expectedUserValues.Surname, user.Surname)
+
+}
