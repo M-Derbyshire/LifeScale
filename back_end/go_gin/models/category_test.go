@@ -37,7 +37,12 @@ func TestCategorySuite(t *testing.T) {
 }
 
 func setupCategoryAuthValidationDbQueryExpect(s *CategorySuite, categoryID uint64, expectedUserId uint64) {
-	s.Mock.ExpectQuery(regexp.QuoteMeta("SELECT `scales`.`user_id` FROM `categories` JOIN `scales` ON `scales`.`id` = `categories`.`scale_id` WHERE categories.id = ? AND `categories`.`deleted_at` IS NULL ORDER BY `categories`.`id` LIMIT 1")).WithArgs(categoryID).WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(expectedUserId))
+	selectStr := "SELECT `scales`.`user_id` FROM `categories` "
+	scaleJoinStr := "JOIN `scales` ON `scales`.`id` = `categories`.`scale_id` "
+	whereStr := "WHERE categories.id = ? AND `categories`.`deleted_at` IS NULL "
+	extraStr := "ORDER BY `categories`.`id` LIMIT 1"
+
+	s.Mock.ExpectQuery(regexp.QuoteMeta(selectStr + scaleJoinStr + whereStr + extraStr)).WithArgs(categoryID).WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(expectedUserId))
 }
 
 // Validation

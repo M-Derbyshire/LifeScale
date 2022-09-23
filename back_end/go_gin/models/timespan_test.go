@@ -38,7 +38,14 @@ func TestTimespanSuite(t *testing.T) {
 }
 
 func setupTimespanAuthValidationDbQueryExpect(s *TimespanSuite, timespanID uint64, expectedUserId uint64) {
-	s.Mock.ExpectQuery(regexp.QuoteMeta("SELECT `scales`.`user_id` FROM `timespans` JOIN `actions` ON `actions`.`id` = `timespans`.`action_id` JOIN `categories` ON `categories`.`id` = `actions`.`category_id` JOIN `scales` ON `scales`.`id` = `categories`.`scale_id` WHERE timespans.id = ? AND `timespans`.`deleted_at` IS NULL ORDER BY `timespans`.`id` LIMIT 1")).WithArgs(timespanID).WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(expectedUserId))
+	selectStr := "SELECT `scales`.`user_id` FROM `timespans` "
+	actJoinStr := "JOIN `actions` ON `actions`.`id` = `timespans`.`action_id` "
+	catJoinStr := "JOIN `categories` ON `categories`.`id` = `actions`.`category_id` "
+	scaleJoinStr := "JOIN `scales` ON `scales`.`id` = `categories`.`scale_id` "
+	whereStr := "WHERE timespans.id = ? AND `timespans`.`deleted_at` IS NULL "
+	extraStr := "ORDER BY `timespans`.`id` LIMIT 1"
+
+	s.Mock.ExpectQuery(regexp.QuoteMeta(selectStr + actJoinStr + catJoinStr + scaleJoinStr + whereStr + extraStr)).WithArgs(timespanID).WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(expectedUserId))
 }
 
 // Validation

@@ -37,7 +37,13 @@ func TestActionSuite(t *testing.T) {
 }
 
 func setupActionAuthValidationDbQueryExpect(s *ActionSuite, actionID uint64, expectedUserId uint64) {
-	s.Mock.ExpectQuery(regexp.QuoteMeta("SELECT `scales`.`user_id` FROM `actions` JOIN `categories` ON `categories`.`id` = `actions`.`category_id` JOIN `scales` ON `scales`.`id` = `categories`.`scale_id` WHERE actions.id = ? AND `actions`.`deleted_at` IS NULL ORDER BY `actions`.`id` LIMIT 1")).WithArgs(actionID).WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(expectedUserId))
+	selectStr := "SELECT `scales`.`user_id` FROM `actions` "
+	catJoinStr := "JOIN `categories` ON `categories`.`id` = `actions`.`category_id` "
+	scaleJoinStr := "JOIN `scales` ON `scales`.`id` = `categories`.`scale_id` "
+	whereStr := "WHERE actions.id = ? AND `actions`.`deleted_at` IS NULL "
+	extraStr := "ORDER BY `actions`.`id` LIMIT 1"
+
+	s.Mock.ExpectQuery(regexp.QuoteMeta(selectStr + catJoinStr + scaleJoinStr + whereStr + extraStr)).WithArgs(actionID).WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(expectedUserId))
 }
 
 // Validation
