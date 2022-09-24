@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Get a *gorm.DB, connected to a refreshed database (all data truncated out)
 func GetFreshTestDatabase() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open("../testing.db"), &gorm.Config{})
 	if err != nil {
