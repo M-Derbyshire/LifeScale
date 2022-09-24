@@ -251,19 +251,12 @@ func (s *UserServiceSuite) TestCreateReturnsErrorFromDatabase() {
 	expectedUser.StrID = strUserId
 	expectedUser.ID = userId
 
-	authUser := models.User{
-		ID:    userId,
-		StrID: strUserId,
-	}
-
-	service.Create(authUser, newUser) //create it twice, so second fails on unique constraing of email
-	_, isUnauth, err := service.Create(authUser, newUser)
+	service.Create(newUser) //create it twice, so second fails on unique constraing of email
+	_, err := service.Create(newUser)
 
 	if err == nil {
 		require.Error(s.T(), err)
 	}
-
-	require.Equal(s.T(), false, isUnauth)
 }
 
 func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedID() {
@@ -283,18 +276,11 @@ func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedID() {
 	expectedUser.StrID = strUserId
 	expectedUser.ID = userId
 
-	authUser := models.User{
-		ID:    userId,
-		StrID: strUserId,
-	}
-
-	result, isUnauth, err := service.Create(authUser, newUser)
+	result, err := service.Create(newUser)
 
 	if err != nil {
 		require.Error(s.T(), err)
 	}
-
-	require.Equal(s.T(), false, isUnauth)
 
 	//Check equality
 	require.Equal(s.T(), expectedUser.ID, result.ID)

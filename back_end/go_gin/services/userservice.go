@@ -59,15 +59,15 @@ func (us *UserService) Get(authUser models.User, id uint64) (result models.User,
 	return user, false, nil
 }
 
-func (us *UserService) Create(authUser, user models.User) (result models.User, isUnauthorised bool, err error) {
+func (us *UserService) Create(user models.User) (result models.User, err error) {
 
 	user.Scales = []models.Scale{} //Don't want inner entities being saved through this method
 
 	createResult := us.DB.Create(&user)
 	if createResult.Error != nil {
-		return user, false, errors.New("error while creating user: " + createResult.Error.Error())
+		return user, errors.New("error while creating user: " + createResult.Error.Error())
 	}
 
 	user.ResolveID()
-	return user, false, nil
+	return user, nil
 }
