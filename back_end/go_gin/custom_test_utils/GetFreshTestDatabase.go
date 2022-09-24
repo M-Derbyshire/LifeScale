@@ -15,11 +15,15 @@ func GetFreshTestDatabase() (*gorm.DB, error) {
 		return nil, fmt.Errorf("error while connecting to database: %s", err.Error())
 	}
 
-	db.Exec("DROP TABLE IF EXISTS users;")
-	db.Exec("DROP TABLE IF EXISTS scales;")
-	db.Exec("DROP TABLE IF EXISTS categories;")
-	db.Exec("DROP TABLE IF EXISTS actions;")
-	db.Exec("DROP TABLE IF EXISTS timespans;")
+	var lastDropTableErr error
+	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS users;").Error
+	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS scales;").Error
+	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS categories;").Error
+	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS actions;").Error
+	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS timespans;").Error
+	if lastDropTableErr != nil {
+		return nil, fmt.Errorf("error while dropping tables in test database: %s", lastDropTableErr.Error())
+	}
 
 	migrateErr := db.AutoMigrate(&models.User{}, &models.Scale{}, &models.Category{}, &models.Action{}, &models.Timespan{})
 	if migrateErr != nil {
