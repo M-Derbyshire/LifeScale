@@ -31,22 +31,6 @@ func TestUserServiceSuite(t *testing.T) {
 	suite.Run(t, new(UserServiceSuite))
 }
 
-// Get all
-
-func (s *UserServiceSuite) TestGetAllReturnsError() {
-	// Get All is not permitted for users, but to meet the IService interface, it exists (should always return an error)
-
-	service := services.UserService{DB: s.DB}
-
-	_, isUnauth, err := service.GetAll()
-
-	require.Equal(s.T(), false, isUnauth)
-
-	if err == nil {
-		require.Error(s.T(), err)
-	}
-}
-
 // Get
 
 func (s *UserServiceSuite) TestGetReturnsErrorFromDatabase() {

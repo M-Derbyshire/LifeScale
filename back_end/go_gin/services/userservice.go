@@ -11,12 +11,6 @@ type UserService struct {
 	DB *gorm.DB
 }
 
-// Some of these methods aren't permitted, but we want to meet the IService interface
-
-func (us *UserService) GetAll() (result []models.User, isUnauthorised bool, err error) {
-	return []models.User{}, false, errors.New("requested operation (get all users) is not permitted")
-}
-
 func (us *UserService) Get(authUser models.User, id uint64) (result models.User, isUnauthorised bool, err error) {
 
 	user := models.User{}
