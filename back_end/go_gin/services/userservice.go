@@ -11,17 +11,12 @@ type UserService struct {
 	DB *gorm.DB
 }
 
-func (us *UserService) Get(authUser models.User, id uint64) (result models.User, isUnauthorised bool, err error) {
+func (us *UserService) Get(authUser models.User, id uint64) (result models.User, err error) {
 
 	user := models.User{}
-
-	if authUser.ID != id {
-		return user, true, errors.New("user not authorised to access this user account")
-	}
-
 	dbErr := us.DB.Preload("Scales.Categories.Actions.Timespans").First(&user, id).Error
 	if dbErr != nil {
-		return user, false, errors.New("error while getting user: " + dbErr.Error())
+		return user, errors.New("error while getting user: " + dbErr.Error())
 	}
 
 	//Now resolve all entity IDs
@@ -47,10 +42,10 @@ func (us *UserService) Get(authUser models.User, id uint64) (result models.User,
 	}
 
 	if lastResolveErr != nil {
-		return user, false, lastResolveErr
+		return user, lastResolveErr
 	}
 
-	return user, false, nil
+	return user, nil
 }
 
 func (us *UserService) Create(user models.User) (result models.User, err error) {

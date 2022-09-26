@@ -45,33 +45,11 @@ func (s *UserServiceSuite) TestGetReturnsErrorFromDatabase() {
 		ID:    userId,
 		StrID: strUserId,
 	}
-	_, isUnauth, err := service.Get(authUser, userId)
+	_, err := service.Get(authUser, userId)
 
 	if err == nil {
 		require.Error(s.T(), err)
 	}
-
-	require.Equal(s.T(), false, isUnauth)
-}
-
-func (s *UserServiceSuite) TestGetReturnsAuthErrorAndTrueIsUnauthValueWhenAccessNotPermitted() {
-
-	userId := uint64(1)
-	service := services.UserService{DB: s.DB}
-
-	// Has a different user ID
-	authUser := models.User{
-		ID:    2,
-		StrID: "2",
-	}
-
-	_, isUnauth, err := service.Get(authUser, userId)
-
-	if err == nil {
-		require.Error(s.T(), err)
-	}
-
-	require.Equal(s.T(), true, isUnauth)
 }
 
 func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs() {
@@ -159,13 +137,11 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs()
 	}
 
 	// Run the test --------------------
-	result, isUnauth, err := service.Get(expectedUser, userId)
+	result, err := service.Get(expectedUser, userId)
 
 	if err != nil {
 		require.NoError(t, err)
 	}
-
-	require.Equal(t, false, isUnauth)
 
 	//Check equality
 	require.Equal(t, userId, result.ID)
