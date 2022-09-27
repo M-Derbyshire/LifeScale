@@ -263,6 +263,37 @@ func (s *UserSuite) TestUserValidationChecksSurname() {
 	}
 }
 
+func (s *UserSuite) TestUserValidationCallsValidateOnScales() {
+
+	t := s.T()
+
+	userEmail := "email@test.com"
+
+	user := models.User{
+		Email:    userEmail,
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				ID:              1,
+				StrID:           "1",
+				Name:            "", //Empty, but is required
+				UsesTimespans:   true,
+				DisplayDayCount: 5,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	setupUserValidationDbQueryExpect(s, userEmail, 0)
+
+	err := user.Validate(authUserExample, *s.DB, true)
+
+	if err == nil {
+		require.Error(t, err)
+	}
+}
+
 // Auth validation
 
 func (s *UserSuite) TestUserAuthValidationChecksUserId() {
@@ -315,6 +346,51 @@ func (s *UserSuite) TestUserAuthValidationChecksUserId() {
 			}
 
 		})
+	}
+}
+
+func (s *UserSuite) TestUserAuthValidationCallsAuthValidateOnScales() {
+
+	t := s.T()
+
+	userEmail := "email@test.com"
+
+	user := models.User{
+		ID:       1,
+		StrID:    "1",
+		Email:    userEmail,
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				ID:              1,
+				StrID:           "1",
+				Name:            "test",
+				UsesTimespans:   true,
+				DisplayDayCount: 5,
+				UserID:          2, //different user id
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	authUser := models.User{
+		ID:       1,
+		StrID:    "1",
+		Email:    userEmail,
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	//Use the scales expected query (see the scales test file)
+	scaleSuite := ScaleSuite{DB: s.DB, Mock: s.Mock}
+	setupScaleAuthValidationDbQueryExpect(&scaleSuite, 1, 1)
+
+	err := user.ValidateAuthorisation(authUser, *s.DB)
+
+	if err == nil {
+		require.Error(t, err)
 	}
 }
 
@@ -380,6 +456,35 @@ func (s *UserSuite) TestUserIDResolveSetsStrID() {
 	require.Equal(s.T(), "10", user.StrID)
 }
 
+func (s *UserSuite) TestUserIDResolveCallsResolveOnScales() {
+
+	user := models.User{
+		ID:       10,
+		StrID:    "",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				ID:              1,
+				StrID:           "",
+				Name:            "test",
+				UsesTimespans:   true,
+				DisplayDayCount: 5,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	err := user.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), "1", user.Scales[0].StrID)
+}
+
 // Sanitiser
 
 func (s *UserSuite) TestUserSanitiseEscapesHTMLBraces() {
@@ -412,5 +517,41 @@ func (s *UserSuite) TestUserSanitiseEscapesHTMLBraces() {
 	require.Equal(t, expectedUserValues.Email, user.Email)
 	require.Equal(t, expectedUserValues.Forename, user.Forename)
 	require.Equal(t, expectedUserValues.Surname, user.Surname)
+
+}
+
+func (s *UserSuite) TestUserSanitiseCallsSanitiseOnScales() {
+
+	user := models.User{
+		ID:       10,
+		StrID:    "",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				ID:              1,
+				StrID:           "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+				Name:            "<h1>test</h1>",
+				UsesTimespans:   true,
+				DisplayDayCount: 5,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	expectedScaleValues := struct {
+		StrID string
+		Name  string
+	}{
+		StrID: "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+		Name:  "&lt;h1&gt;test&lt;/h1&gt;",
+	}
+
+	user.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedScaleValues.StrID, user.Scales[0].StrID)
+	require.Equal(t, expectedScaleValues.Name, user.Scales[0].Name)
 
 }

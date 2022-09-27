@@ -139,6 +139,38 @@ func (s *ScaleSuite) TestScaleAuthValidationChecksAuthId() {
 	}
 }
 
+func (s *ScaleSuite) TestScaleAuthValidationChecksGivenUserId() {
+
+	t := s.T()
+
+	authUser := models.User{
+		ID:       1,
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	scale := models.Scale{
+		ID:              1,
+		StrID:           "1",
+		Name:            "test",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+		UserID:          2, //Not the right user ID
+	}
+
+	setupScaleAuthValidationDbQueryExpect(s, 1, 1)
+
+	err := scale.ValidateAuthorisation(authUser, *s.DB)
+
+	if err == nil {
+		t.Errorf("expected a validation error, but recieved none")
+	}
+}
+
 // ID Resolver
 
 func (s *ScaleSuite) TestScaleIDResolveReturnsResolverErr() {

@@ -36,6 +36,10 @@ func (s *Scale) ValidateAuthorisation(authUser User, db gorm.DB) error {
 	var actualUserId int64
 	db.Model(&Scale{}).Select("user_id").Where("id = ?", s.ID).First(&actualUserId)
 
+	if s.UserID > 0 && s.UserID != uint64(actualUserId) {
+		return errors.New("this scale does not belong to the user that it has stated it belongs to")
+	}
+
 	if uint64(actualUserId) != authUser.ID {
 		return errors.New("user is not authorised to change this scale")
 	}
