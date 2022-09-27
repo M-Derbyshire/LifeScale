@@ -40,6 +40,8 @@ func setupScaleAuthValidationDbQueryExpect(s *ScaleSuite, scaleID uint64, expect
 	s.Mock.ExpectQuery(regexp.QuoteMeta("SELECT `user_id` FROM `scales` WHERE id = ? AND `scales`.`deleted_at` IS NULL")).WithArgs(scaleID).WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(expectedUserId))
 }
 
+// Validation
+
 func (s *ScaleSuite) TestScaleValidationChecksName() {
 
 	subTests := []struct {
@@ -80,6 +82,38 @@ func (s *ScaleSuite) TestScaleValidationChecksName() {
 		})
 	}
 }
+
+func (s *ScaleSuite) TestScaleValidationCallsValidateOnCategories() {
+
+	t := s.T()
+
+	scale := models.Scale{
+		ID:              1,
+		StrID:           "1",
+		Name:            "test",
+		UsesTimespans:   true,
+		DisplayDayCount: 7,
+		Categories: []models.Category{
+			{
+				ID:            1,
+				StrID:         "1",
+				Name:          "", //empty name, but is required
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions:       []models.Action{},
+			},
+		},
+	}
+
+	err := scale.Validate(authUserExample, *s.DB, true)
+
+	if err == nil {
+		t.Errorf("expected a validation error, but recieved none")
+	}
+
+}
+
+// Auth validation
 
 func (s *ScaleSuite) TestScaleAuthValidationChecksAuthId() {
 
@@ -190,7 +224,6 @@ func (s *ScaleSuite) TestScaleIDResolveReturnsResolverErr() {
 	if err == nil {
 		require.Error(s.T(), err)
 	}
-
 }
 
 func (s *ScaleSuite) TestScaleIDResolveSetsNumID() {
@@ -233,6 +266,31 @@ func (s *ScaleSuite) TestScaleIDResolveSetsStrID() {
 	require.Equal(s.T(), "10", scale.StrID)
 }
 
+func (s *ScaleSuite) TestScaleIDResolveCallsResolveOnCategories() {
+
+	scale := models.Scale{
+		ID:              1,
+		StrID:           "1",
+		Name:            "test",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories: []models.Category{
+			{
+				ID:            10,
+				StrID:         "", //Should get populated
+				Name:          "test",
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions:       []models.Action{},
+			},
+		},
+	}
+
+	scale.ResolveID()
+
+	require.Equal(s.T(), "10", scale.Categories[0].StrID)
+}
+
 // Sanitiser
 
 func (s *ScaleSuite) TestScaleSanitiseEscapesHTMLBraces() {
@@ -259,5 +317,44 @@ func (s *ScaleSuite) TestScaleSanitiseEscapesHTMLBraces() {
 	t := s.T()
 	require.Equal(t, expectedScaleValues.StrID, scale.StrID)
 	require.Equal(t, expectedScaleValues.Name, scale.Name)
+
+}
+
+func (s *ScaleSuite) TestScaleSanitiseCallsSanitiseOnCategories() {
+
+	scale := models.Scale{
+		ID:              10,
+		StrID:           "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+		Name:            "<h1>test</h1>",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories: []models.Category{
+			{
+				ID:            10,
+				StrID:         "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+				Name:          "<h1>test</h1>",
+				Color:         "<h1>test</h1>",
+				DesiredWeight: 1,
+				Actions:       []models.Action{},
+			},
+		},
+	}
+
+	expectedCategoryValues := struct {
+		StrID string
+		Name  string
+		Color string
+	}{
+		StrID: "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+		Name:  "&lt;h1&gt;test&lt;/h1&gt;",
+		Color: "&lt;h1&gt;test&lt;/h1&gt;",
+	}
+
+	scale.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedCategoryValues.StrID, scale.Categories[0].StrID)
+	require.Equal(t, expectedCategoryValues.Name, scale.Categories[0].Name)
+	require.Equal(t, expectedCategoryValues.Color, scale.Categories[0].Color)
 
 }

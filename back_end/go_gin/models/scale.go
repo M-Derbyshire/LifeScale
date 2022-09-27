@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 
 	customutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"gorm.io/gorm"
@@ -19,11 +20,18 @@ type Scale struct {
 	Categories      []Category `json:"categories"`
 }
 
-// Will return an error if any of the data in this entity is not valid (doesn't check inner-entities)
+// Will return an error if any of the data in this entity is not valid (also does inner-entities)
 func (s *Scale) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if s.Name == "" {
 		return errors.New("scale name is required")
+	}
+
+	for categoryIdx, _ := range s.Categories {
+		catErr := s.Categories[categoryIdx].Validate(authUser, db, isCreating)
+		if catErr != nil {
+			return fmt.Errorf("invalid category at index %d: %s", categoryIdx, catErr.Error())
+		}
 	}
 
 	return nil
@@ -47,7 +55,7 @@ func (s *Scale) ValidateAuthorisation(authUser User, db gorm.DB) error {
 	return nil
 }
 
-// The front-end used string IDs (so a NoSQL DB could be used). This will populate either the numeric or string ID, with the value from the other (doesn't do inner-entities)
+// The front-end used string IDs (so a NoSQL DB could be used). This will populate either the numeric or string ID, with the value from the other (also does inner-entities)
 func (s *Scale) ResolveID() error {
 
 	err := customutils.IDResolver(&s.ID, &s.StrID)
@@ -56,11 +64,22 @@ func (s *Scale) ResolveID() error {
 		return err
 	}
 
+	for categoryIdx, _ := range s.Categories {
+		catErr := s.Categories[categoryIdx].ResolveID()
+		if catErr != nil {
+			return fmt.Errorf("error while resolving ID of scale at index %d: %s", categoryIdx, catErr.Error())
+		}
+	}
+
 	return nil
 }
 
-// Sanitises the string values in this entity (doesn't do inner-entities)
+// Sanitises the string values in this entity (also does inner-entities)
 func (s *Scale) Sanitise() {
 	s.StrID = customutils.StringSanitiser(s.StrID)
 	s.Name = customutils.StringSanitiser(s.Name)
+
+	for categoryIdx, _ := range s.Categories {
+		s.Categories[categoryIdx].Sanitise()
+	}
 }
