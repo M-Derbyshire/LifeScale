@@ -20,6 +20,7 @@ type User struct {
 	Scales   []Scale `json:"scales"`
 }
 
+// Will return an error if any of the data in this entity is not valid (doesn't check inner-entities)
 func (u *User) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	emailRegex := `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`
@@ -55,6 +56,7 @@ func (u *User) Validate(authUser User, db gorm.DB, isCreating bool) error {
 	return nil
 }
 
+// Will return an error if the authorised user is not the owner of this entity (doesn't do inner-entities)
 func (u *User) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	if authUser.ID != u.ID {
@@ -65,6 +67,7 @@ func (u *User) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 }
 
+// The front-end used string IDs (so a NoSQL DB could be used). This will populate either the numeric or string ID, with the value from the other (doesn't do inner-entities)
 func (u *User) ResolveID() error {
 
 	err := customutils.IDResolver(&u.ID, &u.StrID)
@@ -76,6 +79,7 @@ func (u *User) ResolveID() error {
 	return nil
 }
 
+// Sanitises the string values in this entity (doesn't do inner-entities)
 func (u *User) Sanitise() {
 	u.StrID = customutils.StringSanitiser(u.StrID)
 	u.Email = customutils.StringSanitiser(u.Email)

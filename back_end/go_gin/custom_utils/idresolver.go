@@ -7,8 +7,8 @@ import (
 )
 
 // IDs in the front end are strings (so this can use a NoSQL DB in the future), but we're using numeric IDs for now.
-// If given a pointer to a number > 0, and an empty string, this will populate the string with the number's value.
-// Given a pointer to a string ID, and a number == 0, this will populate the number with the numeris value of the string.
+// If given pointers to a numeric ID greater than 0, and an empty string ID, this will populate the string ID with the number's value.
+// Given pointers to a string ID, and a number ID equal to 0, this will populate the number with the numeric value of the string.
 // This can return an error if a string can't be converted to a number, or if both values are blank (empty string, and 0)
 func IDResolver(numId *uint64, strId *string) error {
 

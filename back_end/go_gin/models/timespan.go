@@ -18,6 +18,7 @@ type Timespan struct {
 	Action      Action
 }
 
+// Will return an error if any of the data in this entity is not valid
 func (t *Timespan) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if t.MinuteCount < 0 {
@@ -38,6 +39,7 @@ func (t *Timespan) Validate(authUser User, db gorm.DB, isCreating bool) error {
 	return nil
 }
 
+// Will return an error if the authorised user is not the owner of this entity
 func (t *Timespan) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	// We need to determine the user id that's actually stored against this
@@ -52,6 +54,7 @@ func (t *Timespan) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 }
 
+// The front-end used string IDs (so a NoSQL DB could be used). This will populate either the numeric or string ID, with the value from the other
 func (t *Timespan) ResolveID() error {
 
 	err := customutils.IDResolver(&t.ID, &t.StrID)
@@ -63,6 +66,7 @@ func (t *Timespan) ResolveID() error {
 	return nil
 }
 
+// Sanitises the string values in this entity
 func (t *Timespan) Sanitise() {
 	t.StrID = customutils.StringSanitiser(t.StrID)
 }

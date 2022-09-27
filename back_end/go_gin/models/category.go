@@ -22,6 +22,7 @@ type Category struct {
 	Actions       []Action `json:"actions"`
 }
 
+// Will return an error if any of the data in this entity is not valid (doesn't check inner-entities)
 func (c *Category) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if c.Name == "" {
@@ -49,6 +50,7 @@ func (c *Category) Validate(authUser User, db gorm.DB, isCreating bool) error {
 	return nil
 }
 
+// Will return an error if the authorised user is not the owner of this entity (doesn't do inner-entities)
 func (c *Category) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	// We need to determine the user id that's actually stored against this
@@ -62,6 +64,7 @@ func (c *Category) ValidateAuthorisation(authUser User, db gorm.DB) error {
 	return nil
 }
 
+// The front-end used string IDs (so a NoSQL DB could be used). This will populate either the numeric or string ID, with the value from the other (doesn't do inner-entities)
 func (c *Category) ResolveID() error {
 
 	err := customutils.IDResolver(&c.ID, &c.StrID)
@@ -73,6 +76,7 @@ func (c *Category) ResolveID() error {
 	return nil
 }
 
+// Sanitises the string values in this entity (doesn't do inner-entities)
 func (c *Category) Sanitise() {
 	c.StrID = customutils.StringSanitiser(c.StrID)
 	c.Name = customutils.StringSanitiser(c.Name)

@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Represents an "action" entity in the database. Also provides specific utility methods (see interfaces/IModel)
 type Action struct {
 	gorm.Model
 	StrID      string `gorm:"-" json:"id"` //The front end uses strings for the ID (incase this needs to use a NoSQL DB in the future)
@@ -18,6 +19,7 @@ type Action struct {
 	Timespans  []Timespan `json:"timespans"`
 }
 
+// Will return an error if any of the data in this entity is not valid (doesn't check inner-entities)
 func (a *Action) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if a.Name == "" {
@@ -27,6 +29,7 @@ func (a *Action) Validate(authUser User, db gorm.DB, isCreating bool) error {
 	return nil
 }
 
+// Will return an error if the authorised user is not the owner of this entity (doesn't do inner-entities)
 func (a *Action) ValidateAuthorisation(authUser User, db gorm.DB) error {
 
 	// We need to determine the user id that's actually stored against this
@@ -40,6 +43,7 @@ func (a *Action) ValidateAuthorisation(authUser User, db gorm.DB) error {
 	return nil
 }
 
+// The front-end used string IDs (so a NoSQL DB could be used). This will populate either the numeric or string ID, with the value from the other (doesn't do inner-entities)
 func (a *Action) ResolveID() error {
 
 	err := customutils.IDResolver(&a.ID, &a.StrID)
@@ -51,6 +55,7 @@ func (a *Action) ResolveID() error {
 	return nil
 }
 
+// Sanitises the string values in this entity (doesn't do inner-entities)
 func (a *Action) Sanitise() {
 	a.StrID = customutils.StringSanitiser(a.StrID)
 	a.Name = customutils.StringSanitiser(a.Name)

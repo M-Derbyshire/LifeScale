@@ -7,11 +7,13 @@ import (
 	"gorm.io/gorm"
 )
 
+// Used to perform CRUD operations on User entities
 type UserService struct {
-	DB *gorm.DB
+	DB *gorm.DB // The gorm DB instance to user
 }
 
-func (us *UserService) Get(authUser models.User, id uint64) (result models.User, err error) {
+// Gets a user with the given ID (and all of its child entities)
+func (us *UserService) Get(id uint64) (result models.User, err error) {
 
 	user := models.User{}
 	dbErr := us.DB.Preload("Scales.Categories.Actions.Timespans").First(&user, id).Error
@@ -48,6 +50,7 @@ func (us *UserService) Get(authUser models.User, id uint64) (result models.User,
 	return user, nil
 }
 
+// Inserts a User (not including its child entities) into the database
 func (us *UserService) Create(user models.User) (result models.User, err error) {
 
 	user.Scales = []models.Scale{} //Don't want inner entities being saved through this method

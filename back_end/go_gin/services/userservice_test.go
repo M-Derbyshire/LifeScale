@@ -38,14 +38,9 @@ func (s *UserServiceSuite) TestGetReturnsErrorFromDatabase() {
 	//Getting a user that doesn't exist, to ensure we get an error
 
 	userId := uint64(1)
-	strUserId := "1"
 	service := services.UserService{DB: s.DB}
 
-	authUser := models.User{
-		ID:    userId,
-		StrID: strUserId,
-	}
-	_, err := service.Get(authUser, userId)
+	_, err := service.Get(userId)
 
 	if err == nil {
 		require.Error(s.T(), err)
@@ -137,7 +132,7 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs()
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(expectedUser, userId)
+	result, err := service.Get(userId)
 
 	if err != nil {
 		require.NoError(t, err)
