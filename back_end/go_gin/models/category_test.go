@@ -134,6 +134,33 @@ func (s *CategorySuite) TestCategoryValidationChecksColor() {
 	}
 }
 
+func (s *CategorySuite) TestCategoryValidationCallsValiateOnActions() {
+
+	t := s.T()
+
+	category := models.Category{
+		ID:            1,
+		StrID:         "1",
+		Name:          "test",
+		Color:         "red",
+		DesiredWeight: 1,
+		Actions: []models.Action{
+			{
+				ID:     1,
+				StrID:  "1",
+				Name:   "", //should be populated
+				Weight: 1,
+			},
+		},
+	}
+
+	err := category.Validate(authUserExample, *s.DB, true)
+	if err == nil {
+		t.Errorf("expected a validation error, but recieved none")
+	}
+
+}
+
 // Auth Validation
 func (s *CategorySuite) TestCategoryAuthValidationChecksAuthId() {
 
@@ -256,6 +283,33 @@ func (s *CategorySuite) TestCategoryIDResolveSetsStrID() {
 	require.Equal(s.T(), "10", category.StrID)
 }
 
+func (s *CategorySuite) TestCategoryIDResolveCallsResolveOnActions() {
+
+	category := models.Category{
+		ID:            1,
+		StrID:         "",
+		Name:          "test",
+		Color:         "red",
+		DesiredWeight: 1,
+		Actions: []models.Action{
+			{
+				ID:     10,
+				StrID:  "", //should get populated
+				Name:   "test",
+				Weight: 1,
+			},
+		},
+	}
+
+	err := category.ResolveID()
+
+	if err != nil {
+		require.NoError(s.T(), err)
+	}
+
+	require.Equal(s.T(), "10", category.Actions[0].StrID)
+}
+
 // Sanitiser
 
 func (s *CategorySuite) TestCategorySanitiseEscapesHTMLBraces() {
@@ -285,5 +339,39 @@ func (s *CategorySuite) TestCategorySanitiseEscapesHTMLBraces() {
 	require.Equal(t, expectedCategoryValues.StrID, category.StrID)
 	require.Equal(t, expectedCategoryValues.Name, category.Name)
 	require.Equal(t, expectedCategoryValues.Color, category.Color)
+
+}
+
+func (s *CategorySuite) TestCategorySanitiseCallsSanatiseOnActions() {
+
+	category := models.Category{
+		ID:            10,
+		StrID:         "10",
+		Name:          "test",
+		Color:         "red",
+		DesiredWeight: 1,
+		Actions: []models.Action{
+			{
+				ID:     10,
+				StrID:  "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>", //should get populated
+				Name:   "<h1>test</h1>",
+				Weight: 1,
+			},
+		},
+	}
+
+	expectedActionValues := struct {
+		StrID string
+		Name  string
+	}{
+		StrID: "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;",
+		Name:  "&lt;h1&gt;test&lt;/h1&gt;",
+	}
+
+	category.Sanitise()
+
+	t := s.T()
+	require.Equal(t, expectedActionValues.StrID, category.Actions[0].StrID)
+	require.Equal(t, expectedActionValues.Name, category.Actions[0].Name)
 
 }

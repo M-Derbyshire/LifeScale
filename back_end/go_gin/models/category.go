@@ -47,6 +47,13 @@ func (c *Category) Validate(authUser User, db gorm.DB, isCreating bool) error {
 		return errors.New("provided category color is not a valid color name")
 	}
 
+	for actionIdx, _ := range c.Actions {
+		actErr := c.Actions[actionIdx].Validate(authUser, db, isCreating)
+		if actErr != nil {
+			return fmt.Errorf("error while validating action at index %d: %s", actionIdx, actErr.Error())
+		}
+	}
+
 	return nil
 }
 
@@ -73,6 +80,13 @@ func (c *Category) ResolveID() error {
 		return err
 	}
 
+	for actionIdx, _ := range c.Actions {
+		actErr := c.Actions[actionIdx].ResolveID()
+		if actErr != nil {
+			return fmt.Errorf("error while resolving ID of action at index %d: %s", actionIdx, actErr.Error())
+		}
+	}
+
 	return nil
 }
 
@@ -81,4 +95,8 @@ func (c *Category) Sanitise() {
 	c.StrID = customutils.StringSanitiser(c.StrID)
 	c.Name = customutils.StringSanitiser(c.Name)
 	c.Color = customutils.StringSanitiser(c.Color)
+
+	for actionIdx, _ := range c.Actions {
+		c.Actions[actionIdx].Sanitise()
+	}
 }
