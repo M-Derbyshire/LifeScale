@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 
 	customutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"gorm.io/gorm"
@@ -24,6 +25,13 @@ func (a *Action) Validate(authUser User, db gorm.DB, isCreating bool) error {
 
 	if a.Name == "" {
 		return errors.New("action name is required")
+	}
+
+	for timespanIdx, _ := range a.Timespans {
+		tsErr := a.Timespans[timespanIdx].Validate(authUser, db, isCreating)
+		if tsErr != nil {
+			return fmt.Errorf("error while validating timespan at index %d: %s", timespanIdx, tsErr.Error())
+		}
 	}
 
 	return nil
@@ -52,6 +60,13 @@ func (a *Action) ResolveID() error {
 		return err
 	}
 
+	for timespanIdx, _ := range a.Timespans {
+		tsErr := a.Timespans[timespanIdx].ResolveID()
+		if tsErr != nil {
+			return fmt.Errorf("error while resolving ID of action at index %d: %s", timespanIdx, tsErr.Error())
+		}
+	}
+
 	return nil
 }
 
@@ -59,4 +74,8 @@ func (a *Action) ResolveID() error {
 func (a *Action) Sanitise() {
 	a.StrID = customutils.StringSanitiser(a.StrID)
 	a.Name = customutils.StringSanitiser(a.Name)
+
+	for timespanIdx, _ := range a.Timespans {
+		a.Timespans[timespanIdx].Sanitise()
+	}
 }

@@ -3,6 +3,7 @@ package models_test
 import (
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
@@ -85,6 +86,32 @@ func (s *ActionSuite) TestActionValidationChecksName() {
 			}
 
 		})
+	}
+}
+
+func (s *ActionSuite) TestActionValidateCallsValidateOnTimespans() {
+
+	t := s.T()
+
+	action := models.Action{
+		ID:     1,
+		StrID:  "1",
+		Name:   "test",
+		Weight: 1,
+		Timespans: []models.Timespan{
+			{
+				ID:          1,
+				StrID:       "1",
+				Date:        time.Now(),
+				MinuteCount: -10, //shouldn't be negative
+			},
+		},
+	}
+
+	err := action.Validate(authUserExample, *s.DB, true)
+
+	if err == nil {
+		t.Errorf("expected a validation error, but recieved none")
 	}
 }
 
@@ -207,6 +234,30 @@ func (s *ActionSuite) TestActionIDResolveSetsStrID() {
 	require.Equal(s.T(), "10", action.StrID)
 }
 
+func (s *ActionSuite) TestActionIDResolverCallsResolveOnTimespans() {
+
+	t := s.T()
+
+	action := models.Action{
+		ID:     1,
+		StrID:  "1",
+		Name:   "test",
+		Weight: 1,
+		Timespans: []models.Timespan{
+			{
+				ID:          10,
+				StrID:       "", // should get resolved
+				Date:        time.Now(),
+				MinuteCount: 10,
+			},
+		},
+	}
+
+	action.ResolveID()
+
+	require.Equal(t, "10", action.Timespans[0].StrID)
+}
+
 // Sanitiser
 
 func (s *ActionSuite) TestActionSanitiseEscapesHTMLBraces() {
@@ -233,4 +284,28 @@ func (s *ActionSuite) TestActionSanitiseEscapesHTMLBraces() {
 	require.Equal(t, expectedActionValues.StrID, action.StrID)
 	require.Equal(t, expectedActionValues.Name, action.Name)
 
+}
+
+func (s *ActionSuite) TestActionSanitiseCallsSanitiseOnTimespans() {
+
+	t := s.T()
+
+	action := models.Action{
+		ID:     1,
+		StrID:  "1",
+		Name:   "test",
+		Weight: 1,
+		Timespans: []models.Timespan{
+			{
+				ID:          10,
+				StrID:       "<h1>don't know why you'd try it here, but in case there's an attack vector</h1>",
+				Date:        time.Now(),
+				MinuteCount: 10,
+			},
+		},
+	}
+
+	action.Sanitise()
+
+	require.Equal(t, "&lt;h1&gt;don't know why you'd try it here, but in case there's an attack vector&lt;/h1&gt;", action.Timespans[0].StrID)
 }
