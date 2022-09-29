@@ -185,6 +185,38 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs()
 
 }
 
+func (s *UserServiceSuite) TestGetWillNotIncludePassword() {
+
+	t := s.T()
+	service := services.UserService{DB: s.DB}
+
+	user := models.User{
+		ID:       1,
+		StrID:    "1",
+		Email:    "test42344@test.com",
+		Password: "unhashedpassword",
+		Forename: "testaslkdaskd",
+		Surname:  "testadkdkajdj",
+		Scales:   []models.Scale{},
+	}
+
+	createResult := s.DB.Create(&user)
+	if createResult.Error != nil {
+		require.NoError(t, createResult.Error)
+	}
+
+	// Run the test --------------------
+	result, err := service.Get(1)
+
+	if err != nil {
+		require.NoError(t, err)
+	}
+
+	//Check equality
+	require.Equal(t, "", result.Password)
+
+}
+
 // Create
 
 func (s *UserServiceSuite) TestCreateReturnsErrorFromDatabase() {

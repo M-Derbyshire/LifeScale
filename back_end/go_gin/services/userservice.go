@@ -28,6 +28,8 @@ func (us *UserService) Get(id uint64) (result models.User, err error) {
 		return user, resolveErr
 	}
 
+	user.Password = ""
+
 	return user, nil
 }
 
