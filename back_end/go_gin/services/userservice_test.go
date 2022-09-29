@@ -1,6 +1,7 @@
 package services_test
 
 import (
+	"crypto/sha256"
 	"log"
 	"testing"
 	"time"
@@ -223,12 +224,13 @@ func (s *UserServiceSuite) TestCreateReturnsErrorFromDatabase() {
 
 	userId := uint64(1)
 	strUserId := "1"
-	service := services.UserService{DB: s.DB}
+	service := services.UserService{DB: s.DB, Hasher: sha256.New()}
 
 	newUser := models.User{
 		ID:       0,
 		StrID:    "",
 		Email:    "test42344@test.com",
+		Password: "test",
 		Forename: "test",
 		Surname:  "testadkdkajdj",
 		Scales:   []models.Scale{},
@@ -246,14 +248,15 @@ func (s *UserServiceSuite) TestCreateReturnsErrorFromDatabase() {
 	}
 }
 
-func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedID() {
+func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedIDAndNoPassword() {
 
 	userId := uint64(1)
 	strUserId := "1"
-	service := services.UserService{DB: s.DB}
+	service := services.UserService{DB: s.DB, Hasher: sha256.New()}
 
 	newUser := models.User{
 		Email:    "test42344@test.com",
+		Password: "test",
 		Forename: "testaslkdaskd",
 		Surname:  "testadkdkajdj",
 		Scales:   []models.Scale{},
@@ -275,4 +278,32 @@ func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedID() {
 	require.Equal(s.T(), expectedUser.Email, result.Email)
 	require.Equal(s.T(), expectedUser.Forename, result.Forename)
 	require.Equal(s.T(), expectedUser.Surname, result.Surname)
+
+	require.Equal(s.T(), "", result.Password)
+}
+
+func (s *UserServiceSuite) TestCreateCreatesHashesPassword() {
+
+	hasher := sha256.New()
+	service := services.UserService{DB: s.DB, Hasher: hasher}
+
+	newUser := models.User{
+		Email:    "test42344@test.com",
+		Password: "test123",
+		Forename: "testaslkdaskd",
+		Surname:  "testadkdkajdj",
+		Scales:   []models.Scale{},
+	}
+
+	_, err := service.Create(newUser)
+
+	if err != nil {
+		require.Error(s.T(), err)
+	}
+
+	var storedHash string
+	s.DB.Model(&models.User{}).Select("password").First(&storedHash)
+
+	//Check equality
+	require.Equal(s.T(), hasher.Sum([]byte(newUser.Password)), []byte(storedHash))
 }
