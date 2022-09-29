@@ -22,29 +22,10 @@ func (us *UserService) Get(id uint64) (result models.User, err error) {
 	}
 
 	//Now resolve all entity IDs
-	var lastResolveErr error
-	user.ResolveID()
-	for scaleIdx, _ := range user.Scales {
-		scalePtr := &user.Scales[scaleIdx]
-		lastResolveErr = scalePtr.ResolveID()
+	resolveErr := user.ResolveID()
 
-		for catIdx, _ := range scalePtr.Categories {
-			categoryPtr := &scalePtr.Categories[catIdx]
-			lastResolveErr = categoryPtr.ResolveID()
-
-			for actIdx, _ := range categoryPtr.Actions {
-				actionPtr := &categoryPtr.Actions[actIdx]
-				lastResolveErr = actionPtr.ResolveID()
-
-				for tsIdx, _ := range actionPtr.Timespans {
-					lastResolveErr = actionPtr.Timespans[tsIdx].ResolveID()
-				}
-			}
-		}
-	}
-
-	if lastResolveErr != nil {
-		return user, lastResolveErr
+	if resolveErr != nil {
+		return user, resolveErr
 	}
 
 	return user, nil
