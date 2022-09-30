@@ -3,7 +3,6 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"hash"
 	"net/http"
 	"strconv"
 	"strings"
@@ -13,13 +12,13 @@ import (
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/services"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 // Provides methods that are handlers and middleware for the auth routes
 type AuthHandlerProvider struct {
 	DB                   *gorm.DB
-	Hasher               hash.Hash
 	Service              services.UserService
 	JwtKey               string
 	JwtExpirationMinutes int //How many minutes until a JWT expires?
@@ -70,7 +69,7 @@ func (ahp *AuthHandlerProvider) SignInHandler(c *gin.Context) {
 		return
 	}
 
-	if string(ahp.Hasher.Sum([]byte(user.Password))) != dbUser.Password {
+	if err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "incorrect password provided",
 		})
@@ -164,7 +163,12 @@ func (ahp *AuthHandlerProvider) CreateAuthMiddleware() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
-		tokenStr, headerErr := getTokenStringFromHeader(c.GetHeader("Authorization"))
+		headerStr := c.GetHeader("Authorization")
+		if headerStr == "" {
+			c.AbortWithStatus(401)
+		}
+
+		tokenStr, headerErr := getTokenStringFromHeader(headerStr)
 		if headerErr != nil {
 			c.AbortWithError(http.StatusBadRequest, headerErr)
 		}
