@@ -14,11 +14,29 @@ type UserService struct {
 	Hasher hash.Hash
 }
 
-// Gets a user with the given ID (and all of its child entities)
-func (us *UserService) Get(id uint64) (result models.User, err error) {
+// Gets a user with the given ID (and all of its child entities). If no ID is provided (0 value), email will be used instead
+func (us *UserService) Get(id uint64, email string, getInnerEntites bool) (result models.User, err error) {
 
 	user := models.User{}
-	dbErr := us.DB.Preload("Scales.Categories.Actions.Timespans").First(&user, id).Error
+
+	if id == 0 && email == "" {
+		return user, errors.New("no ID or email provided")
+	}
+
+	var dbCallStart *gorm.DB //Needs to be set to either preload or not, depending on getInnerEntites
+	if getInnerEntites {
+		dbCallStart = us.DB.Preload("Scales.Categories.Actions.Timespans")
+	} else {
+		dbCallStart = us.DB
+	}
+
+	var dbErr error
+	if id > 0 {
+		dbErr = dbCallStart.First(&user, id).Error
+	} else {
+		dbErr = dbCallStart.Where("email = ?", email).First(&user).Error
+	}
+
 	if dbErr != nil {
 		return user, errors.New("error while getting user: " + dbErr.Error())
 	}

@@ -1,0 +1,196 @@
+package handlers
+
+import (
+	"errors"
+	"fmt"
+	"hash"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
+	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/services"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
+
+// Provides methods that are handlers and middleware for the auth routes
+type AuthHandlerProvider struct {
+	DB                   *gorm.DB
+	Hasher               hash.Hash
+	Service              services.UserService
+	JwtKey               string
+	JwtExpirationMinutes int //How many minutes until a JWT expires?
+}
+
+//The claims to go into a JWT
+type JwtClaims struct {
+	jwt.StandardClaims
+	ID string `json:"id"`
+}
+
+type JwtOutput struct {
+	Token   string    `json:"token"`
+	Expires time.Time `json:"expires"`
+}
+
+func getTokenExpirationTime(minutes int) time.Time {
+	return time.Now().Add(time.Duration(minutes) * time.Minute)
+}
+
+func getTokenStringFromHeader(header string) (string, error) {
+	authHeaderPrefix := "Bearer "
+
+	// If no prefix, or just the prefix
+	if !strings.HasPrefix(header, authHeaderPrefix) || len(header) == len(authHeaderPrefix) {
+		return "", errors.New("incorrectly shaped Authorization header")
+	}
+
+	return header[len(authHeaderPrefix):], nil
+}
+
+// Signin ------------------------------------------------
+func (ahp *AuthHandlerProvider) SignInHandler(c *gin.Context) {
+
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	dbUser, dbErr := ahp.Service.Get(0, user.Email, true)
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr.Error(),
+		})
+		return
+	}
+
+	if string(ahp.Hasher.Sum([]byte(user.Password))) != dbUser.Password {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "incorrect password provided",
+		})
+		return
+	}
+
+	expirationDateTime := getTokenExpirationTime(ahp.JwtExpirationMinutes)
+	claims := &JwtClaims{
+		ID: dbUser.StrID,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationDateTime.Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenStr, tokenErr := token.SignedString([]byte(ahp.JwtKey))
+	if tokenErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error while generating authentication token", //Not returning error, incase it contains the JwtKey
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, JwtOutput{
+		Token:   tokenStr,
+		Expires: expirationDateTime,
+	})
+}
+
+// Refresh token --------------------------------------
+func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
+
+	// First get the token and JWT claims
+
+	tokenValue, headerErr := getTokenStringFromHeader(c.GetHeader("Authorization"))
+	if headerErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": headerErr.Error(),
+		})
+	}
+
+	claims := &JwtClaims{}
+	token, tokenErr := jwt.ParseWithClaims(tokenValue, claims, func(tkn *jwt.Token) (interface{}, error) {
+		return []byte(ahp.JwtKey), nil
+	})
+	if tokenErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "unable to parse the given token",
+		})
+		return
+	}
+	if token == nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "invalid token provided",
+		})
+		return
+	}
+
+	// Second, setup new expiration time (if it's required)
+
+	//If greater than 30 seconds left before expiration
+	expireWindow := int64(30)
+	if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > time.Duration(expireWindow*int64(time.Second)) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("JWT token will not expire in the next %d seconds", expireWindow),
+		})
+		return
+	}
+
+	// Finally, construct new token
+
+	newExpirationDateTime := getTokenExpirationTime(ahp.JwtExpirationMinutes)
+	claims.ExpiresAt = newExpirationDateTime.Unix()
+
+	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	newTokenStr, newTokenErr := newToken.SignedString(ahp.JwtKey)
+	if newTokenErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "unable to generate new JWT token",
+		})
+	}
+
+	c.JSON(http.StatusOK, JwtOutput{
+		Expires: newExpirationDateTime,
+		Token:   newTokenStr,
+	})
+}
+
+//Auth Middleware
+func (ahp *AuthHandlerProvider) CreateAuthMiddleware() gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+
+		tokenStr, headerErr := getTokenStringFromHeader(c.GetHeader("Authorization"))
+		if headerErr != nil {
+			c.AbortWithError(http.StatusBadRequest, headerErr)
+		}
+
+		claims := &JwtClaims{}
+		token, tokenErr := jwt.ParseWithClaims(tokenStr, claims, func(tkn *jwt.Token) (interface{}, error) {
+			return []byte(ahp.JwtKey), nil
+		})
+
+		if tokenErr != nil || token == nil || !token.Valid {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+
+		numId, numErr := strconv.ParseInt(claims.ID, 0, 64)
+		if numErr != nil {
+			c.AbortWithError(http.StatusInternalServerError, errors.New("unable to parse the given authorised user ID"))
+		}
+
+		user, userErr := ahp.Service.Get(uint64(numId), "", false)
+		if userErr != nil {
+			c.AbortWithError(http.StatusBadRequest, errors.New("unable to find the user in the token"))
+		}
+
+		c.Set("auth-user", user)
+
+		c.Next()
+	}
+
+}

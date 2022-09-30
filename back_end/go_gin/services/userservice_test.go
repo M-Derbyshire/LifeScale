@@ -41,7 +41,7 @@ func (s *UserServiceSuite) TestGetReturnsErrorFromDatabase() {
 	userId := uint64(1)
 	service := services.UserService{DB: s.DB}
 
-	_, err := service.Get(userId)
+	_, err := service.Get(userId, "", true)
 
 	if err == nil {
 		require.Error(s.T(), err)
@@ -133,7 +133,7 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs()
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(userId)
+	result, err := service.Get(userId, "", true)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -186,6 +186,47 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs()
 
 }
 
+func (s *UserServiceSuite) TestGetReturnsUserWithoutRelatedEntitiesWhenSetNotTo() {
+
+	t := s.T()
+
+	userId := uint64(1)
+	strUserId := "1"
+	service := services.UserService{DB: s.DB}
+
+	expectedUser := models.User{
+		ID:       userId,
+		StrID:    strUserId,
+		Email:    "test42344@test.com",
+		Forename: "testaslkdaskd",
+		Surname:  "testadkdkajdj",
+		Scales: []models.Scale{
+			{
+				ID:              1,
+				StrID:           "1",
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	createResult := s.DB.Create(&expectedUser)
+	if createResult.Error != nil {
+		require.NoError(t, createResult.Error)
+	}
+
+	// Run the test --------------------
+	result, err := service.Get(userId, "", false)
+
+	if err != nil {
+		require.NoError(t, err)
+	}
+
+	require.Equal(t, 0, len(result.Scales))
+}
+
 func (s *UserServiceSuite) TestGetWillNotIncludePassword() {
 
 	t := s.T()
@@ -207,7 +248,7 @@ func (s *UserServiceSuite) TestGetWillNotIncludePassword() {
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(1)
+	result, err := service.Get(1, "", true)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -216,6 +257,63 @@ func (s *UserServiceSuite) TestGetWillNotIncludePassword() {
 	//Check equality
 	require.Equal(t, "", result.Password)
 
+}
+
+func (s *UserServiceSuite) TestGetWillAlsoRetrieveByEmail() {
+
+	t := s.T()
+	service := services.UserService{DB: s.DB}
+
+	user := models.User{
+		ID:       1,
+		StrID:    "1",
+		Email:    "test42344@test.com",
+		Password: "unhashedpassword",
+		Forename: "testaslkdaskd",
+		Surname:  "testadkdkajdj",
+		Scales:   []models.Scale{},
+	}
+
+	createResult := s.DB.Create(&user)
+	if createResult.Error != nil {
+		require.NoError(t, createResult.Error)
+	}
+
+	// Run the test --------------------
+	result, err := service.Get(0, user.Email, true)
+
+	if err != nil {
+		require.NoError(t, err)
+	}
+
+	//Check equality
+	require.Equal(t, user.Email, result.Email)
+}
+
+func (s *UserServiceSuite) TestGetWillErrorIfNoIdOrEmailProvided() {
+
+	t := s.T()
+	service := services.UserService{DB: s.DB}
+
+	user := models.User{
+		ID:       1,
+		StrID:    "1",
+		Email:    "test42344@test.com",
+		Password: "unhashedpassword",
+		Forename: "testaslkdaskd",
+		Surname:  "testadkdkajdj",
+		Scales:   []models.Scale{},
+	}
+
+	createResult := s.DB.Create(&user)
+	if createResult.Error != nil {
+		require.NoError(t, createResult.Error)
+	}
+
+	// Run the test --------------------
+	_, err := service.Get(0, "", true)
+
+	require.Error(t, err)
 }
 
 // Create
