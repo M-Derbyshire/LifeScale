@@ -1,7 +1,6 @@
 package services_test
 
 import (
-	"crypto/sha256"
 	"log"
 	"testing"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/services"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -227,38 +227,6 @@ func (s *UserServiceSuite) TestGetReturnsUserWithoutRelatedEntitiesWhenSetNotTo(
 	require.Equal(t, 0, len(result.Scales))
 }
 
-func (s *UserServiceSuite) TestGetWillNotIncludePassword() {
-
-	t := s.T()
-	service := services.UserService{DB: s.DB}
-
-	user := models.User{
-		ID:       1,
-		StrID:    "1",
-		Email:    "test42344@test.com",
-		Password: "unhashedpassword",
-		Forename: "testaslkdaskd",
-		Surname:  "testadkdkajdj",
-		Scales:   []models.Scale{},
-	}
-
-	createResult := s.DB.Create(&user)
-	if createResult.Error != nil {
-		require.NoError(t, createResult.Error)
-	}
-
-	// Run the test --------------------
-	result, err := service.Get(1, "", true)
-
-	if err != nil {
-		require.NoError(t, err)
-	}
-
-	//Check equality
-	require.Equal(t, "", result.Password)
-
-}
-
 func (s *UserServiceSuite) TestGetWillAlsoRetrieveByEmail() {
 
 	t := s.T()
@@ -322,7 +290,7 @@ func (s *UserServiceSuite) TestCreateReturnsErrorFromDatabase() {
 
 	userId := uint64(1)
 	strUserId := "1"
-	service := services.UserService{DB: s.DB, Hasher: sha256.New()}
+	service := services.UserService{DB: s.DB}
 
 	newUser := models.User{
 		ID:       0,
@@ -350,7 +318,7 @@ func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedIDAndNoPas
 
 	userId := uint64(1)
 	strUserId := "1"
-	service := services.UserService{DB: s.DB, Hasher: sha256.New()}
+	service := services.UserService{DB: s.DB}
 
 	newUser := models.User{
 		Email:    "test42344@test.com",
@@ -382,8 +350,7 @@ func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedIDAndNoPas
 
 func (s *UserServiceSuite) TestCreateCreatesHashesPassword() {
 
-	hasher := sha256.New()
-	service := services.UserService{DB: s.DB, Hasher: hasher}
+	service := services.UserService{DB: s.DB}
 
 	newUser := models.User{
 		Email:    "test42344@test.com",
@@ -402,6 +369,6 @@ func (s *UserServiceSuite) TestCreateCreatesHashesPassword() {
 	var storedHash string
 	s.DB.Model(&models.User{}).Select("password").First(&storedHash)
 
-	//Check equality
-	require.Equal(s.T(), hasher.Sum([]byte(newUser.Password)), []byte(storedHash))
+	//Check for hashed password (compare function returns error if incorrect)
+	require.Equal(s.T(), nil, bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(newUser.Password)))
 }

@@ -2,16 +2,15 @@ package services
 
 import (
 	"errors"
-	"hash"
 
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 // Used to perform CRUD operations on User entities
 type UserService struct {
-	DB     *gorm.DB // The gorm DB instance to user
-	Hasher hash.Hash
+	DB *gorm.DB // The gorm DB instance to user
 }
 
 // Gets a user with the given ID (and all of its child entities). If no ID is provided (0 value), email will be used instead
@@ -48,8 +47,6 @@ func (us *UserService) Get(id uint64, email string, getInnerEntites bool) (resul
 		return user, resolveErr
 	}
 
-	user.Password = ""
-
 	return user, nil
 }
 
@@ -58,14 +55,19 @@ func (us *UserService) Create(user models.User) (result models.User, err error) 
 
 	user.Scales = []models.Scale{} //Don't want inner entities being saved through this method
 
-	user.Password = string(us.Hasher.Sum([]byte(user.Password)))
+	passwordHashBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	if hashErr != nil {
+		return models.User{}, errors.New("unable to process given password")
+	}
+
+	user.Password = string(passwordHashBytes)
 
 	createResult := us.DB.Create(&user)
+	user.Password = ""
 	if createResult.Error != nil {
 		return user, errors.New("error while creating user: " + createResult.Error.Error())
 	}
 
 	user.ResolveID()
-	user.Password = ""
 	return user, nil
 }
