@@ -21,6 +21,7 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 	authGroup.Use(authHandlers.CreateAuthMiddleware())
 	{
 		authGroup.GET("/tokenrefresh", authHandlers.RefreshTokenHandler)
+		authGroup.POST("/user/changepassword", authHandlers.ChangePassword)
 	}
 
 }

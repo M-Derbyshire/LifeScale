@@ -99,6 +99,56 @@ func (ahp *AuthHandlerProvider) SignInHandler(c *gin.Context) {
 	})
 }
 
+// Password Change ------------------------------------
+func (ahp *AuthHandlerProvider) ChangePassword(c *gin.Context) {
+
+	var passChangeData models.PasswordChange
+	if err := c.ShouldBindJSON(&passChangeData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	authUserVal, authUserOk := c.Get("auth-user")
+	if !authUserOk {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "user is not authorised",
+		})
+		return
+	}
+
+	//Cast authUser to a User struct
+	authUser, castOk := authUserVal.(models.User)
+	if !castOk {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error while processing the authenticated user",
+		})
+		return
+	}
+
+	// Check the current password matches
+	if err := bcrypt.CompareHashAndPassword([]byte(authUser.Password), []byte(passChangeData.CurrentPassword)); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "provided current password is incorrect",
+		})
+		return
+	}
+
+	//Now change the password
+	authUser.Password = passChangeData.NewPassword //Will get hashed by service
+	resultUser, updateErr := ahp.Service.Update(authUser, true)
+	if updateErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error while applying password update to database",
+		})
+		return
+	}
+
+	resultUser.Password = ""
+	c.JSON(http.StatusOK, resultUser)
+}
+
 // Refresh token --------------------------------------
 func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
 
@@ -158,7 +208,7 @@ func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
 	})
 }
 
-//Auth Middleware
+//Auth Middleware -------------------------------------------------------
 func (ahp *AuthHandlerProvider) CreateAuthMiddleware() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
