@@ -13,6 +13,17 @@ type UserService struct {
 	DB *gorm.DB // The gorm DB instance to user
 }
 
+//Takes a pointer to a user, and hashes its password
+func hashUsersPassword(user *models.User) error {
+	passwordHashBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	if hashErr != nil {
+		return errors.New("unable to process given password")
+	}
+	user.Password = string(passwordHashBytes)
+
+	return nil
+}
+
 // Gets a user with the given ID (and all of its child entities). If no ID is provided (0 value), email will be used instead
 func (us *UserService) Get(id uint64, email string, getInnerEntites bool) (result models.User, err error) {
 
@@ -55,12 +66,10 @@ func (us *UserService) Create(user models.User) (result models.User, err error) 
 
 	user.Scales = []models.Scale{} //Don't want inner entities being saved through this method
 
-	passwordHashBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	hashErr := hashUsersPassword(&user)
 	if hashErr != nil {
 		return models.User{}, errors.New("unable to process given password")
 	}
-
-	user.Password = string(passwordHashBytes)
 
 	createResult := us.DB.Create(&user)
 	user.Password = ""
@@ -69,5 +78,32 @@ func (us *UserService) Create(user models.User) (result models.User, err error) 
 	}
 
 	user.ResolveID()
+	return user, nil
+}
+
+func (us *UserService) Update(user models.User, allowPasswordUpdate bool) (result models.User, err error) {
+
+	idResolveErr := user.ResolveID()
+	if idResolveErr != nil {
+		return models.User{}, idResolveErr
+	}
+
+	fieldsToOmit := []string{"Scales"} //The fields to ignore while updating
+
+	if allowPasswordUpdate {
+		hashErr := hashUsersPassword(&user)
+		if hashErr != nil {
+			return models.User{}, errors.New("unable to process given password")
+		}
+	} else {
+		fieldsToOmit = append(fieldsToOmit, "password")
+	}
+
+	updateResult := us.DB.Model(&user).Omit(fieldsToOmit...).Updates(user)
+	user.Password = ""
+	if updateResult.Error != nil {
+		return user, errors.New("error while updating user: " + updateResult.Error.Error())
+	}
+
 	return user, nil
 }

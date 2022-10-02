@@ -348,7 +348,7 @@ func (s *UserServiceSuite) TestCreateCreatesUserAndReturnsWithResolvedIDAndNoPas
 	require.Equal(s.T(), "", result.Password)
 }
 
-func (s *UserServiceSuite) TestCreateCreatesHashesPassword() {
+func (s *UserServiceSuite) TestCreateCreatesHashedPassword() {
 
 	service := services.UserService{DB: s.DB}
 
@@ -371,4 +371,173 @@ func (s *UserServiceSuite) TestCreateCreatesHashesPassword() {
 
 	//Check for hashed password (compare function returns error if incorrect)
 	require.Equal(s.T(), nil, bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(newUser.Password)))
+}
+
+// Update
+
+func (s *UserServiceSuite) TestUpdatesAndReturnsWithResolvedIdAndNoPasswordNoScales() {
+
+	t := s.T()
+
+	service := services.UserService{DB: s.DB}
+
+	userOriginal := models.User{
+		Email:    "test1@test.com",
+		Password: "test123",
+		Forename: "test1",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	userUpdates := models.User{
+		Email:    "test2@test.com",
+		Password: "test123",
+		Forename: "test3",
+		Surname:  "test4",
+		Scales:   []models.Scale{},
+	}
+
+	createdUser, _ := service.Create(userOriginal)
+	userUpdates.ID = createdUser.ID
+
+	result, resultErr := service.Update(userUpdates, false)
+	require.NoError(t, resultErr)
+
+	require.NotEqual(t, "", result.StrID)
+	require.Equal(t, "", result.Password)
+	require.Len(t, result.Scales, 0)
+
+	//Check the returned user
+	require.Equal(t, userUpdates.Email, result.Email)
+	require.Equal(t, userUpdates.Forename, result.Forename)
+	require.Equal(t, userUpdates.Surname, result.Surname)
+
+	// now check the user in the DB
+	dbUser, _ := service.Get(result.ID, "", false)
+	require.Equal(t, dbUser.Email, result.Email)
+	require.Equal(t, dbUser.Forename, result.Forename)
+	require.Equal(t, dbUser.Surname, result.Surname)
+
+}
+
+func (s *UserServiceSuite) TestUpdatesPasswordWhenUpdatePasswordIsTrue() {
+
+	t := s.T()
+
+	service := services.UserService{DB: s.DB}
+
+	userOriginal := models.User{
+		Email:    "test1@test.com",
+		Password: "test123",
+		Forename: "test1",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	userUpdates := models.User{
+		Email:    "test1@test.com",
+		Password: "test456",
+		Forename: "test1",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	createdUser, _ := service.Create(userOriginal)
+	userUpdates.ID = createdUser.ID
+
+	result, resultErr := service.Update(userUpdates, true)
+	require.NoError(t, resultErr)
+
+	// now check the user in the DB
+	dbUser, _ := service.Get(result.ID, "", false)
+	hashCheckErr := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(userUpdates.Password))
+	require.Nil(t, hashCheckErr)
+}
+
+func (s *UserServiceSuite) TestDoesntUpdatePasswordWhenUpdatePasswordIsFalse() {
+
+	t := s.T()
+
+	service := services.UserService{DB: s.DB}
+
+	userOriginal := models.User{
+		Email:    "test1@test.com",
+		Password: "test123",
+		Forename: "test1",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	userUpdates := models.User{
+		Email:    "test1@test.com",
+		Password: "test456",
+		Forename: "test1",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	createdUser, _ := service.Create(userOriginal)
+	userUpdates.ID = createdUser.ID
+
+	result, resultErr := service.Update(userUpdates, false)
+	require.NoError(t, resultErr)
+
+	// now check the user in the DB
+	dbUser, _ := service.Get(result.ID, "", false)
+	hashCheckErr := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(userOriginal.Password)) //Still original password
+	require.Nil(t, hashCheckErr)
+}
+
+func (s *UserServiceSuite) TestDoesntUpdateScales() {
+
+	t := s.T()
+
+	service := services.UserService{DB: s.DB}
+
+	userOriginal := models.User{
+		Email:    "test1@test.com",
+		Password: "test123",
+		Forename: "test1",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	scaleOriginal := models.Scale{
+		ID:              0, // Gets replaced later, when we create it in the DB
+		Name:            "test1",
+		UsesTimespans:   true,
+		DisplayDayCount: 7,
+		Categories:      []models.Category{},
+	}
+
+	userUpdates := models.User{
+		Email:    "test1@test.com",
+		Password: "test123",
+		Forename: "test1",
+		Surname:  "test2",
+		Scales: []models.Scale{
+			{
+				ID:              1,
+				Name:            "test2", //name change
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	//Add records to DB
+	createdUser, _ := service.Create(userOriginal)
+	userUpdates.ID = createdUser.ID
+	scaleOriginal.UserID = userUpdates.ID
+	scaleCreateResult := s.DB.Create(&scaleOriginal)
+	require.NoError(t, scaleCreateResult.Error)
+
+	//Attempt update
+	result, resultErr := service.Update(userUpdates, false)
+	require.NoError(t, resultErr)
+
+	// now check the user in the DB
+	dbUser, _ := service.Get(result.ID, "", true)
+	require.Equal(t, dbUser.Scales[0].Name, scaleOriginal.Name)
 }
