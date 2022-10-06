@@ -34,7 +34,7 @@ func TestUserServiceSuite(t *testing.T) {
 
 // Get
 
-func (s *UserServiceSuite) TestGetReturnsErrorFromDatabase() {
+func (s *UserServiceSuite) TestGetReturnsErrorWhenUserDoesntExist() {
 
 	//Getting a user that doesn't exist, to ensure we get an error
 

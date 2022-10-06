@@ -47,6 +47,10 @@ func (us *UserService) Get(id uint64, email string, getInnerEntites bool) (resul
 		dbErr = dbCallStart.Where("email = ?", email).First(&user).Error
 	}
 
+	if user.ID == 0 {
+		return user, errors.New("requested user does not exist")
+	}
+
 	if dbErr != nil {
 		return user, errors.New("error while getting user: " + dbErr.Error())
 	}
