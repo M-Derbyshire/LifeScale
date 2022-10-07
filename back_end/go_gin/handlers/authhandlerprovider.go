@@ -63,7 +63,7 @@ func (ahp *AuthHandlerProvider) SignInHandler(c *gin.Context) {
 
 	dbUser, dbErr := ahp.Service.Get(0, user.Email, true)
 	if dbErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": dbErr.Error(),
 		})
 		return
@@ -156,7 +156,7 @@ func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
 
 	tokenValue, headerErr := getTokenStringFromHeader(c.GetHeader("Authorization"))
 	if headerErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": headerErr.Error(),
 		})
 	}
@@ -166,8 +166,8 @@ func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
 		return []byte(ahp.JwtKey), nil
 	})
 	if tokenErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "unable to parse the given token",
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": tokenErr.Error(),
 		})
 		return
 	}
@@ -182,7 +182,7 @@ func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
 
 	//If greater than 30 seconds left before expiration
 	expireWindow := int64(30)
-	if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > time.Duration(expireWindow*int64(time.Second)) {
+	if time.Until(time.Unix(claims.ExpiresAt, 0)) > time.Duration(expireWindow*int64(time.Second)) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": fmt.Sprintf("JWT token will not expire in the next %d seconds", expireWindow),
 		})
@@ -195,11 +195,12 @@ func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
 	claims.ExpiresAt = newExpirationDateTime.Unix()
 
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	newTokenStr, newTokenErr := newToken.SignedString(ahp.JwtKey)
+	newTokenStr, newTokenErr := newToken.SignedString([]byte(ahp.JwtKey))
 	if newTokenErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "unable to generate new JWT token",
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, JwtOutput{
@@ -212,7 +213,6 @@ func (ahp *AuthHandlerProvider) RefreshTokenHandler(c *gin.Context) {
 func (ahp *AuthHandlerProvider) CreateAuthMiddleware() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-
 		headerStr := c.GetHeader("Authorization")
 		if headerStr == "" {
 			c.AbortWithStatus(401)
@@ -220,7 +220,7 @@ func (ahp *AuthHandlerProvider) CreateAuthMiddleware() gin.HandlerFunc {
 
 		tokenStr, headerErr := getTokenStringFromHeader(headerStr)
 		if headerErr != nil {
-			c.AbortWithError(http.StatusBadRequest, headerErr)
+			c.AbortWithError(http.StatusUnauthorized, headerErr)
 		}
 
 		claims := &JwtClaims{}
@@ -239,7 +239,7 @@ func (ahp *AuthHandlerProvider) CreateAuthMiddleware() gin.HandlerFunc {
 
 		user, userErr := ahp.Service.Get(uint64(numId), "", false)
 		if userErr != nil {
-			c.AbortWithError(http.StatusBadRequest, errors.New("unable to find the user in the token"))
+			c.AbortWithError(http.StatusUnauthorized, errors.New("unable to find the user in the token"))
 		}
 
 		c.Set("auth-user", user)

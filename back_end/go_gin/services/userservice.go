@@ -6,6 +6,7 @@ import (
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // Used to perform CRUD operations on User entities
@@ -15,7 +16,7 @@ type UserService struct {
 
 //Takes a pointer to a user, and hashes its password
 func hashUsersPassword(user *models.User) error {
-	passwordHashBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	passwordHashBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if hashErr != nil {
 		return errors.New("unable to process given password")
 	}
@@ -103,7 +104,7 @@ func (us *UserService) Update(user models.User, allowPasswordUpdate bool) (resul
 		fieldsToOmit = append(fieldsToOmit, "password")
 	}
 
-	updateResult := us.DB.Model(&user).Omit(fieldsToOmit...).Updates(user)
+	updateResult := us.DB.Clauses(clause.OnConflict{DoNothing: true}).Model(&user).Omit(fieldsToOmit...).Updates(user)
 	user.Password = ""
 	if updateResult.Error != nil {
 		return user, errors.New("error while updating user: " + updateResult.Error.Error())

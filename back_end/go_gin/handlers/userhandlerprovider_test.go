@@ -1,10 +1,6 @@
 package handlers_test
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -42,37 +38,7 @@ func TestUserServiceSuite(t *testing.T) {
 	suite.Run(t, new(UserHandlersSuite))
 }
 
-func getUserFromBody(res *http.Response) (models.User, error) {
-	resData, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		return models.User{}, readErr
-	}
-
-	var resBody models.User
-	jsonErr := json.Unmarshal(resData, &resBody)
-	return resBody, jsonErr
-}
-
-func getErrorMessageFromBody(res *http.Response) (string, error) {
-	resData, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		return "", readErr
-	}
-
-	resBody := struct {
-		Error string `json:"error"`
-	}{}
-	jsonErr := json.Unmarshal(resData, &resBody)
-	return resBody.Error, jsonErr
-}
-
 //Create
-
-func postUser(newUser models.User, testServer *httptest.Server) (*http.Response, error) {
-	reqJson, _ := json.Marshal(newUser)
-	reqBody := bytes.NewBuffer(reqJson)
-	return http.Post(fmt.Sprintf("%s/", testServer.URL), "application/json", reqBody)
-}
 
 func (hs *UserHandlersSuite) TestUserRegistrationWillCreateUser() {
 
