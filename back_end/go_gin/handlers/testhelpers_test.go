@@ -53,6 +53,15 @@ func postUser(newUser models.User, testServer *httptest.Server) (*http.Response,
 	return http.Post(fmt.Sprintf("%s/", testServer.URL), "application/json", reqBody)
 }
 
+func putUser(newUser models.User, testServer *httptest.Server) (*http.Response, error) {
+	client := &http.Client{}
+	reqJson, _ := json.Marshal(newUser)
+	reqBody := bytes.NewBuffer(reqJson)
+	req, _ := http.NewRequest("PUT", fmt.Sprintf("%s/", testServer.URL), reqBody)
+
+	return client.Do(req)
+}
+
 func postPasswordChange(passwordChange models.PasswordChange, testServer *httptest.Server) (*http.Response, error) {
 	reqJson, _ := json.Marshal(passwordChange)
 	reqBody := bytes.NewBuffer(reqJson)

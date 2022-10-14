@@ -48,3 +48,65 @@ func (uhp *UserHandlerProvider) RegistrationHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resultUser)
 
 }
+
+func (uhp *UserHandlerProvider) UpdateHandler(c *gin.Context) {
+
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("unable to process the given user: %s", err.Error()),
+		})
+		return
+	}
+
+	authUserVal, authIsOk := c.Get("auth-user")
+	if !authIsOk {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "unable to process the user in the authentication token",
+		})
+		return
+	}
+
+	authUser, castOk := authUserVal.(models.User)
+	if !castOk || authUser.ResolveID() != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error while processing the authenticated user",
+		})
+		return
+	}
+
+	//Validate the user
+	if err := user.ResolveID(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err := user.Validate(authUser, *uhp.DB, false); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err := user.ValidateAuthorisation(authUser, *uhp.DB); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	//Now update the user
+	user.Sanitise()
+
+	updatedUser, updateErr := uhp.Service.Update(user, false)
+	if updateErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": updateErr.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, updatedUser)
+}

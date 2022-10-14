@@ -14,7 +14,7 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 	userHandlers := handlers.UserHandlerProvider{DB: db, Service: userService}
 	authHandlers := handlers.AuthHandlerProvider{DB: db, Service: userService, JwtKey: jwtKey, JwtExpirationMinutes: jwtExpirationMins}
 
-	r.POST(pathPrefix+"/user/register", userHandlers.RegistrationHandler)
+	r.POST(pathPrefix+"/user", userHandlers.RegistrationHandler)
 	r.POST(pathPrefix+"/login", authHandlers.SignInHandler)
 
 	authGroup := r.Group(pathPrefix)
@@ -22,6 +22,7 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 	{
 		authGroup.GET("/tokenrefresh", authHandlers.RefreshTokenHandler)
 		authGroup.POST("/user/changepassword", authHandlers.ChangePassword)
+		authGroup.PUT("/user", userHandlers.UpdateHandler)
 	}
 
 }
