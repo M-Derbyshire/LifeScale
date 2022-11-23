@@ -45,7 +45,7 @@ func (uhp *UserHandlerProvider) RegistrationHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, resultUser)
+	c.JSON(http.StatusCreated, resultUser)
 
 }
 

@@ -61,7 +61,7 @@ func (hs *UserHandlersSuite) TestUserRegistrationWillCreateUser() {
 	require.NoError(t, reqErr)
 	defer res.Body.Close()
 
-	require.Equal(t, http.StatusOK, res.StatusCode)
+	require.Equal(t, http.StatusCreated, res.StatusCode)
 
 	resBody, resErr := getUserFromBody(res)
 	require.NoError(t, resErr)
@@ -97,7 +97,7 @@ func (hs *UserHandlersSuite) TestUserRegistrationHandlerWillSanitiseUserBeforeSa
 	require.NoError(t, reqErr)
 	defer res.Body.Close()
 
-	require.Equal(t, http.StatusOK, res.StatusCode)
+	require.Equal(t, http.StatusCreated, res.StatusCode)
 
 	resBody, resErr := getUserFromBody(res)
 	require.NoError(t, resErr)
