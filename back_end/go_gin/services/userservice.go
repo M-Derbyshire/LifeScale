@@ -25,8 +25,8 @@ func hashUsersPassword(user *models.User) error {
 	return nil
 }
 
-// Gets a user with the given ID (and all of its child entities). If no ID is provided (0 value), email will be used instead
-func (us *UserService) Get(id uint64, email string, getInnerEntites bool) (result models.User, err error) {
+// Gets a user with the given ID (and maybe it's scales as well). If no ID is provided (0 value), email will be used instead
+func (us *UserService) Get(id uint64, email string, getRelatedScales bool) (result models.User, err error) {
 
 	user := models.User{}
 
@@ -34,9 +34,9 @@ func (us *UserService) Get(id uint64, email string, getInnerEntites bool) (resul
 		return user, errors.New("no ID or email provided")
 	}
 
-	var dbCallStart *gorm.DB //Needs to be set to either preload or not, depending on getInnerEntites
-	if getInnerEntites {
-		dbCallStart = us.DB.Preload("Scales.Categories.Actions.Timespans")
+	var dbCallStart *gorm.DB //Needs to be set to either preload or not, depending on getRelatedScales
+	if getRelatedScales {
+		dbCallStart = us.DB.Preload("Scales")
 	} else {
 		dbCallStart = us.DB
 	}

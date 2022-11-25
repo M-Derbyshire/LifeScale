@@ -3,7 +3,6 @@ package services_test
 import (
 	"log"
 	"testing"
-	"time"
 
 	customtestutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_test_utils"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
@@ -48,7 +47,7 @@ func (s *UserServiceSuite) TestGetReturnsErrorWhenUserDoesntExist() {
 	}
 }
 
-func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs() {
+func (s *UserServiceSuite) TestGetReturnsUserWithRelatedScalesOnlyAndResolvedIDs() {
 
 	t := s.T()
 
@@ -74,42 +73,6 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs()
 						ID:            1,
 						StrID:         "1",
 						Name:          "category1",
-						Color:         "red",
-						DesiredWeight: 1,
-						Actions: []models.Action{
-							{
-								ID:     1,
-								StrID:  "1",
-								Name:   "action1",
-								Weight: 1,
-								Timespans: []models.Timespan{
-									{
-										ID:          1,
-										StrID:       "1",
-										Date:        time.Now().UTC(),
-										MinuteCount: 1,
-									},
-									{
-										ID:          2,
-										StrID:       "2",
-										Date:        time.Now().UTC(),
-										MinuteCount: 1,
-									},
-								},
-							},
-							{
-								ID:        2,
-								StrID:     "2",
-								Name:      "action2",
-								Weight:    1,
-								Timespans: []models.Timespan{},
-							},
-						},
-					},
-					{
-						ID:            2,
-						StrID:         "2",
-						Name:          "category2",
 						Color:         "red",
 						DesiredWeight: 1,
 						Actions:       []models.Action{},
@@ -155,33 +118,7 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedEntitiesAndResolvedIDs()
 		require.Equal(t, expectedScales[scaleIdx].UsesTimespans, scale.UsesTimespans)
 		require.Equal(t, expectedScales[scaleIdx].DisplayDayCount, scale.DisplayDayCount)
 
-		require.Equal(t, len(expectedScales[scaleIdx].Categories), len(scale.Categories))
-		expectedCategories := expectedScales[scaleIdx].Categories
-		for catIdx, category := range scale.Categories {
-			require.Equal(t, expectedCategories[catIdx].ID, category.ID)
-			require.Equal(t, expectedCategories[catIdx].StrID, category.StrID)
-			require.Equal(t, expectedCategories[catIdx].Name, category.Name)
-			require.Equal(t, expectedCategories[catIdx].Color, category.Color)
-			require.Equal(t, expectedCategories[catIdx].DesiredWeight, category.DesiredWeight)
-
-			require.Equal(t, len(expectedCategories[catIdx].Actions), len(category.Actions))
-			expectedActions := expectedCategories[catIdx].Actions
-			for actIdx, action := range category.Actions {
-				require.Equal(t, expectedActions[actIdx].ID, action.ID)
-				require.Equal(t, expectedActions[actIdx].StrID, action.StrID)
-				require.Equal(t, expectedActions[actIdx].Name, action.Name)
-				require.Equal(t, expectedActions[actIdx].Weight, action.Weight)
-
-				require.Equal(t, len(expectedActions[actIdx].Timespans), len(action.Timespans))
-				expectedTimespans := expectedActions[actIdx].Timespans
-				for tsIdx, timespan := range action.Timespans {
-					require.Equal(t, expectedTimespans[tsIdx].ID, timespan.ID)
-					require.Equal(t, expectedTimespans[tsIdx].StrID, timespan.StrID)
-					require.Equal(t, expectedTimespans[tsIdx].Date, timespan.Date)
-					require.Equal(t, expectedTimespans[tsIdx].MinuteCount, timespan.MinuteCount)
-				}
-			}
-		}
+		require.Equal(t, 0, len(scale.Categories))
 	}
 
 }
