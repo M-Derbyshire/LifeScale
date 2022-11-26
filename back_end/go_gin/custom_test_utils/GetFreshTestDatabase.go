@@ -16,13 +16,14 @@ func GetFreshTestDatabase() (*gorm.DB, error) {
 	}
 
 	var lastDropTableErr error
-	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS users;").Error
-	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS scales;").Error
-	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS categories;").Error
-	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS actions;").Error
-	lastDropTableErr = db.Exec("DROP TABLE IF EXISTS timespans;").Error
-	if lastDropTableErr != nil {
-		return nil, fmt.Errorf("error while dropping tables in test database: %s", lastDropTableErr.Error())
+	tablesToDrop := []string{"users", "scales", "categories", "actions", "timespans"}
+
+	for _, tableName := range tablesToDrop {
+		lastDropTableErr = db.Exec(fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName)).Error
+
+		if lastDropTableErr != nil {
+			return nil, fmt.Errorf("error while dropping tables in test database: %s", lastDropTableErr.Error())
+		}
 	}
 
 	migrateErr := db.AutoMigrate(&models.User{}, &models.Scale{}, &models.Category{}, &models.Action{}, &models.Timespan{})
