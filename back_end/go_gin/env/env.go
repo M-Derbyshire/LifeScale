@@ -18,10 +18,10 @@ type EnvVars struct {
 }
 
 // Loads the .env file variables into an EnvVars object
-func LoadEnvVars() (EnvVars, error) {
+func LoadEnvVars(customPath string) (EnvVars, error) {
 	//First, load and parse the .env file variables
 
-	envLoadErr := godotenv.Load()
+	envLoadErr := godotenv.Load(customPath)
 	if envLoadErr != nil {
 		return EnvVars{}, fmt.Errorf("unable to load .env file: %e", envLoadErr)
 	}

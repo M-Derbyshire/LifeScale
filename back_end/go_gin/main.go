@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	envVars, envErr := env.LoadEnvVars()
+	envVars, envErr := env.LoadEnvVars("./.env")
 	if envErr != nil {
 		log.Fatal(envErr)
 	}
