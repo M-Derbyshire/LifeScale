@@ -99,7 +99,7 @@ func (ahs *AuthHandlersSuite) TestSignInRespondsWithUnauthorisedIfIncorrectPassw
 	require.Equal(t, http.StatusUnauthorized, res.StatusCode)
 }
 
-func (ahs *AuthHandlersSuite) TestSignInRespondsWithJwtTokenContainingUserIdAndExpirationTimeThatMatchesTheHandlersExpirationMinutes() {
+func (ahs *AuthHandlersSuite) TestSignInRespondsWithUserAndJwtTokenContainingUserIdAndExpirationTimeThatMatchesTheHandlersExpirationMinutes() {
 
 	t := ahs.T()
 
@@ -109,11 +109,31 @@ func (ahs *AuthHandlersSuite) TestSignInRespondsWithJwtTokenContainingUserIdAndE
 	user := models.User{
 		Email:    "test@test.com",
 		Password: "password",
+		Scales: []models.Scale{
+			{
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories: []models.Category{
+					{
+						Name:          "category1",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions:       []models.Action{},
+					},
+				},
+			},
+		},
 	}
 
 	// Create the user in the DB
 	createdUser, createErr := ahs.Service.Create(user)
 	require.NoError(t, createErr)
+
+	//Create the scale in the DB
+	user.Scales[0].UserID = createdUser.ID
+	createResult := ahs.DB.Create(&user.Scales[0])
+	require.NoError(t, createResult.Error)
 
 	r := gin.Default()
 
@@ -150,6 +170,15 @@ func (ahs *AuthHandlersSuite) TestSignInRespondsWithJwtTokenContainingUserIdAndE
 	numClaimId, calimIdErr := strconv.Atoi(claims.ID)
 	require.NoError(t, calimIdErr)
 	require.Equal(t, createdUser.ID, uint64(numClaimId))
+
+	//Check the user in the response body
+	require.Equal(t, createdUser.StrID, resBody.User.StrID)
+	require.Equal(t, createdUser.Email, resBody.User.Email)
+	require.Equal(t, "", resBody.User.Password)
+
+	//Scales should be there, but not with categories
+	require.Equal(t, 1, len(resBody.User.Scales))
+	require.Equal(t, 0, len(resBody.User.Scales[0].Categories))
 }
 
 // --- Change password ---------------------------

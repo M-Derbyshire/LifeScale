@@ -31,8 +31,9 @@ type JwtClaims struct {
 }
 
 type JwtOutput struct {
-	Token   string    `json:"token"`
-	Expires time.Time `json:"expires"`
+	Token   string      `json:"token"`
+	Expires time.Time   `json:"expires"`
+	User    models.User `json:"user"`
 }
 
 func getTokenExpirationTime(minutes int) time.Time {
@@ -76,6 +77,8 @@ func (ahp *AuthHandlerProvider) SignInHandler(c *gin.Context) {
 		return
 	}
 
+	dbUser.Password = "" //We don't want to return the user password
+
 	expirationDateTime := getTokenExpirationTime(ahp.JwtExpirationMinutes)
 	claims := &JwtClaims{
 		ID: dbUser.StrID,
@@ -96,6 +99,7 @@ func (ahp *AuthHandlerProvider) SignInHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, JwtOutput{
 		Token:   tokenStr,
 		Expires: expirationDateTime,
+		User:    dbUser,
 	})
 }
 
