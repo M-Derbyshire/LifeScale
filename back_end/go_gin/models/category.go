@@ -12,6 +12,7 @@ import (
 
 type Category struct {
 	gorm.Model
+	// For security reasons, the ID/StrID setup also ensures the ID cannot be set explicitly through the request JSON
 	StrID         string `gorm:"-" json:"id"` //The front end uses strings for the ID (incase this needs to use a NoSQL DB in the future)
 	ID            uint64 `gorm:"id" json:"-"`
 	Name          string `gorm:"name" json:"name"`
