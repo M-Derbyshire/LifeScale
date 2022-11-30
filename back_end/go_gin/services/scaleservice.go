@@ -40,9 +40,23 @@ func (s *ScaleService) Get(id uint64) (models.Scale, error) {
 }
 
 func (s *ScaleService) Create(scale models.Scale) (models.Scale, error) {
+
+	scale.Categories = []models.Category{} //We don't want categories being saved through this method
+
+	createErr := s.DB.Create(&scale).Error
+	if createErr != nil {
+		return scale, errors.New("error while creating scale: " + createErr.Error())
+	}
+
+	scale.ResolveID()
+
 	return scale, nil
 }
 
 func (s *ScaleService) Update(newScaleData models.Scale) (models.Scale, error) {
-	return newScaleData, nil
+	return models.Scale{}, nil
+}
+
+func (s *ScaleService) Delete(scaleID uint64) error {
+	return nil
 }

@@ -159,4 +159,94 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 
 // Create -----------------------------------------------------------------------------------
 
+func (s *ScaleServiceSuite) TestCreateCreatesScaleAndReturnsWithResolvedID() {
+
+	//First create a user for the scale
+	userService := services.UserService{DB: s.DB}
+
+	newUser := models.User{
+		ID:       0,
+		StrID:    "",
+		Email:    "test42344@test.com",
+		Password: "test",
+		Forename: "test",
+		Surname:  "testadkdkajdj",
+		Scales:   []models.Scale{},
+	}
+
+	_, userErr := userService.Create(newUser)
+	if userErr != nil {
+		require.NoError(s.T(), userErr)
+	}
+
+	scaleId := uint64(1)
+	strScaleId := "1"
+	service := services.ScaleService{DB: s.DB}
+
+	newScale := models.Scale{
+		ID:              0,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 7,
+		Categories: []models.Category{
+			{
+				ID:            0,
+				StrID:         "",
+				Name:          "category1",
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions:       []models.Action{},
+			},
+		},
+		UserID: 1,
+	}
+
+	expectedScale := newScale
+	expectedScale.StrID = strScaleId
+	expectedScale.ID = scaleId
+
+	result, scaleErr := service.Create(newScale)
+	if scaleErr != nil {
+		require.NoError(s.T(), scaleErr)
+	}
+
+	//Check equality
+	require.Equal(s.T(), uint64(1), result.ID)
+	require.Equal(s.T(), "1", result.StrID) // IDs should be resolved
+	require.Equal(s.T(), expectedScale.Name, result.Name)
+	require.Equal(s.T(), expectedScale.UsesTimespans, result.UsesTimespans)
+	require.Equal(s.T(), expectedScale.DisplayDayCount, result.DisplayDayCount)
+
+	require.Equal(s.T(), uint64(1), result.UserID)
+	require.Equal(s.T(), 0, len(result.Categories)) //Categories should not be saved through this method
+}
+
+func (s *ScaleServiceSuite) TestCreateReturnsErrorFromDatabase() {
+
+	scaleId := uint64(1)
+	strScaleId := "1"
+	service := services.ScaleService{DB: s.DB}
+
+	// Create without FK to a user
+	newScale := models.Scale{
+		ID:              1,
+		StrID:           "1",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 7,
+		Categories:      []models.Category{},
+	}
+
+	expectedScale := newScale
+	expectedScale.StrID = strScaleId
+	expectedScale.ID = scaleId
+
+	service.Create(newScale)           //creating with explicit ID (models stop this from happening through the json)
+	_, err := service.Create(newScale) //creating again, with same ID, to cause error
+	require.Error(s.T(), err)
+}
+
 // Update -----------------------------------------------------------------------------------
+
+// Delete -----------------------------------------------------------------------------------
