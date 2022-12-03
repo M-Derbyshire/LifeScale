@@ -38,7 +38,7 @@ func (s *ScaleServiceSuite) TestGetReturnsErrorWhenScaleDoesntExist() {
 	scaleId := uint64(1)
 	service := services.ScaleService{DB: s.DB}
 
-	_, err := service.Get(scaleId)
+	_, err := service.Get(scaleId, false)
 
 	if err == nil {
 		require.Error(s.T(), err)
@@ -58,7 +58,7 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 		StrID:           strScaleId,
 		Name:            "scale1",
 		UsesTimespans:   true,
-		DisplayDayCount: 7,
+		DisplayDayCount: 1,
 		Categories: []models.Category{
 			{
 				ID:            1,
@@ -74,9 +74,10 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 						Weight: 1,
 						Timespans: []models.Timespan{
 							{
-								ID:          1,
-								StrID:       "1",
-								Date:        time.Now().UTC(),
+								ID:    1,
+								StrID: "1",
+								//Adding more days then DisplayDayCount, to make sure it's returned
+								Date:        time.Now().AddDate(0, 0, 5).UTC(),
 								MinuteCount: 1,
 							},
 							{
@@ -113,7 +114,7 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(scaleId)
+	result, err := service.Get(scaleId, false)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -155,6 +156,67 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 		}
 	}
 
+}
+
+func (s *ScaleServiceSuite) TestGetWillOnlyReturnTimespansUpToTheScaleDisplayDayCountIfSetTo() {
+	t := s.T()
+	service := services.ScaleService{DB: s.DB}
+
+	timeToReturn := time.Now().AddDate(0, 0, -1).UTC()
+	timeToIgnore := time.Now().AddDate(0, 0, -2).UTC()
+
+	scale := models.Scale{
+		ID:              1,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 2,
+		Categories: []models.Category{
+			{
+				ID:            1,
+				StrID:         "1",
+				Name:          "category1",
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions: []models.Action{
+					{
+						ID:     1,
+						StrID:  "1",
+						Name:   "action1",
+						Weight: 1,
+						Timespans: []models.Timespan{
+							{
+								ID:          1,
+								StrID:       "1",
+								Date:        timeToReturn,
+								MinuteCount: 1,
+							},
+							{
+								ID:          2,
+								StrID:       "2",
+								Date:        timeToIgnore,
+								MinuteCount: 1,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	createResult := s.DB.Create(&scale)
+	if createResult.Error != nil {
+		require.NoError(t, createResult.Error)
+	}
+
+	// Run the test --------------------
+	result, getErr := service.Get(1, true)
+	if getErr != nil {
+		require.NoError(t, getErr)
+	}
+
+	require.Equal(t, 1, len(result.Categories[0].Actions[0].Timespans))
+	require.Equal(t, timeToReturn, result.Categories[0].Actions[0].Timespans[0].Date)
 }
 
 // Create -----------------------------------------------------------------------------------
