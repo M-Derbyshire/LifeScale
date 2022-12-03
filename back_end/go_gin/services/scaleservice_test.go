@@ -290,7 +290,6 @@ func (s *ScaleServiceSuite) TestCreateReturnsErrorFromDatabase() {
 	strScaleId := "1"
 	service := services.ScaleService{DB: s.DB}
 
-	// Create without FK to a user
 	newScale := models.Scale{
 		ID:              1,
 		StrID:           "1",
@@ -304,7 +303,7 @@ func (s *ScaleServiceSuite) TestCreateReturnsErrorFromDatabase() {
 	expectedScale.StrID = strScaleId
 	expectedScale.ID = scaleId
 
-	service.Create(newScale)           //creating with explicit ID (models stop this from happening through the json)
+	service.Create(newScale, 1)        //creating with explicit ID (models stop this from happening through the json at request-time)
 	_, err := service.Create(newScale) //creating again, with same ID, to cause error
 	require.Error(s.T(), err)
 }
