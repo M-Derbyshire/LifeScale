@@ -31,17 +31,5 @@ func GetFreshTestDatabase() (*gorm.DB, error) {
 		return nil, fmt.Errorf("error while migrating database: %s", err.Error())
 	}
 
-	// db.Migrator().DropTable(&models.User{})
-	// db.Migrator().DropTable(&models.Scale{})
-	// db.Migrator().DropTable(&models.Category{})
-	// db.Migrator().DropTable(&models.Action{})
-	// db.Migrator().DropTable(&models.Timespan{})
-
-	// db.Migrator().CreateTable(&models.User{})
-	// db.Migrator().CreateTable(&models.Scale{})
-	// db.Migrator().CreateTable(&models.Category{})
-	// db.Migrator().CreateTable(&models.Action{})
-	// db.Migrator().CreateTable(&models.Timespan{})
-
 	return db, nil
 }
