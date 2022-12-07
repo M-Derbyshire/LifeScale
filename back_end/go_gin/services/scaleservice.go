@@ -94,5 +94,10 @@ func (s *ScaleService) Update(newScaleData models.Scale) (models.Scale, error) {
 }
 
 func (s *ScaleService) Delete(scaleID uint64) error {
+	delErr := s.DB.Delete(&models.Scale{}, scaleID).Error
+	if delErr != nil {
+		return errors.New("error while deleting scale: " + delErr.Error())
+	}
+
 	return nil
 }

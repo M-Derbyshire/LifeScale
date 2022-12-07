@@ -477,6 +477,43 @@ func (s *ScaleServiceSuite) TestUpdateCannotUpdateParentUserId() {
 
 // Delete -----------------------------------------------------------------------------------
 
-// TestDeleteWillDeleteAScale
+func (s *ScaleServiceSuite) TestDeleteWillDeleteAScale() {
 
-// TestDeleteWillReturnAnErrorIfTheresAnError
+	service := services.ScaleService{DB: s.DB}
+
+	origScale := models.Scale{
+		ID:              0,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+	}
+
+	createErr := s.DB.Create(&origScale).Error
+	if createErr != nil {
+		require.NoError(s.T(), createErr)
+	}
+
+	delErr := service.Delete(1)
+	if delErr != nil {
+		require.NoError(s.T(), delErr)
+	}
+
+	var scaleCount int64
+	countErr := s.DB.Model(&models.Scale{}).Count(&scaleCount).Error
+	if countErr != nil {
+		require.NoError(s.T(), countErr)
+	}
+
+	require.Equal(s.T(), int64(0), scaleCount)
+}
+
+func (s *ScaleServiceSuite) TestDeleteWillReturnAnErrorIfTheresAnError() {
+
+	service := services.ScaleService{DB: s.DB}
+
+	delErr := service.Delete(1) //non-existant scale
+
+	require.NoError(s.T(), delErr)
+}
