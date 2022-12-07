@@ -71,7 +71,26 @@ func (s *ScaleService) Create(scale models.Scale) (models.Scale, error) {
 }
 
 func (s *ScaleService) Update(newScaleData models.Scale) (models.Scale, error) {
-	return models.Scale{}, nil
+
+	// We have to use a map, as booleans (UsesTimespans) can't be updated to false with a struct
+	// https://stackoverflow.com/questions/56653423/gorm-doesnt-update-boolean-field-to-false
+	dataForUpdate := map[string]interface{}{
+		"Name":            newScaleData.Name,
+		"UsesTimespans":   newScaleData.UsesTimespans,
+		"DisplayDayCount": newScaleData.DisplayDayCount,
+	}
+
+	updateResult := s.DB.Model(&newScaleData).Updates(dataForUpdate)
+	if updateResult.Error != nil {
+		return newScaleData, errors.New("error while updating scale: " + updateResult.Error.Error())
+	}
+
+	resolveIdErr := newScaleData.ResolveID()
+	if resolveIdErr != nil {
+		return newScaleData, errors.New("error while processing scale after update has completed: " + updateResult.Error.Error())
+	}
+
+	return newScaleData, nil
 }
 
 func (s *ScaleService) Delete(scaleID uint64) error {

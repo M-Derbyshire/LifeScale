@@ -310,4 +310,173 @@ func (s *ScaleServiceSuite) TestCreateReturnsErrorFromDatabase() {
 
 // Update -----------------------------------------------------------------------------------
 
+func (s *ScaleServiceSuite) TestUpdateWillUpdateTheScaleAndReturnItWithResolvedId() {
+
+	service := services.ScaleService{DB: s.DB}
+
+	origScale := models.Scale{
+		ID:              0,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+	}
+
+	createErr := s.DB.Create(&origScale).Error
+	if createErr != nil {
+		require.NoError(s.T(), createErr)
+	}
+
+	newScaleData := models.Scale{
+		ID:              origScale.ID,
+		StrID:           "",
+		Name:            "scale2",
+		UsesTimespans:   false,
+		DisplayDayCount: 2,
+		Categories:      []models.Category{},
+	}
+
+	result, updateErr := service.Update(newScaleData)
+	if updateErr != nil {
+		require.NoError(s.T(), updateErr)
+	}
+
+	newScaleData.ResolveID()
+	require.Equal(s.T(), newScaleData.ID, result.ID)
+	require.Equal(s.T(), newScaleData.StrID, result.StrID)
+	require.Equal(s.T(), newScaleData.Name, result.Name)
+	require.Equal(s.T(), newScaleData.UsesTimespans, result.UsesTimespans)
+	require.Equal(s.T(), newScaleData.DisplayDayCount, result.DisplayDayCount)
+
+	//Also make sure the data was actually saved, not just returned
+	var dbScale models.Scale
+	dbGetErr := s.DB.First(&dbScale, result.ID).Error
+	if dbGetErr != nil {
+		require.NoError(s.T(), dbGetErr)
+	}
+
+	require.Equal(s.T(), newScaleData.Name, dbScale.Name)
+	require.Equal(s.T(), newScaleData.UsesTimespans, dbScale.UsesTimespans)
+	require.Equal(s.T(), newScaleData.DisplayDayCount, dbScale.DisplayDayCount)
+}
+
+func (s *ScaleServiceSuite) TestUpdateCannotUpdateCategories() {
+
+	service := services.ScaleService{DB: s.DB}
+
+	origScale := models.Scale{
+		ID:              0,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories: []models.Category{
+			{
+				Name:          "test1",
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions:       []models.Action{},
+			},
+		},
+	}
+
+	createErr := s.DB.Create(&origScale).Error
+	if createErr != nil {
+		require.NoError(s.T(), createErr)
+	}
+
+	newScaleData := models.Scale{
+		ID:              origScale.ID,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   false,
+		DisplayDayCount: 2,
+		Categories: []models.Category{
+			{
+				Name:          "test2",
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions:       []models.Action{},
+			},
+		},
+	}
+
+	_, updateErr := service.Update(newScaleData)
+	if updateErr != nil {
+		require.NoError(s.T(), updateErr)
+	}
+
+	var dbCategory models.Category
+	dbGetErr := s.DB.First(&dbCategory, 1).Error
+	if dbGetErr != nil {
+		require.NoError(s.T(), dbGetErr)
+	}
+
+	require.Equal(s.T(), origScale.Categories[0].Name, dbCategory.Name)
+}
+
+func (s *ScaleServiceSuite) TestUpdateCannotUpdateParentUserId() {
+	service := services.ScaleService{DB: s.DB}
+
+	origScale := models.Scale{
+		ID:              0,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+	}
+
+	user1 := models.User{
+		Email:    "test@test.com",
+		Password: "test",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{origScale},
+	}
+
+	user2 := models.User{
+		Email:    "test2@test.com",
+		Password: "test",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	//Create two new users
+	s.DB.Create(&user1)
+	createErr := s.DB.Create(&user2).Error
+	if createErr != nil {
+		require.NoError(s.T(), createErr)
+	}
+
+	newScaleData := models.Scale{
+		ID:              1,
+		StrID:           "",
+		Name:            "scale2",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories:      []models.Category{},
+		UserID:          2,
+	}
+
+	result, updateErr := service.Update(newScaleData)
+	if updateErr != nil {
+		require.NoError(s.T(), updateErr)
+	}
+
+	var dbScale models.Scale
+	dbGetErr := s.DB.First(&dbScale, result.ID).Error
+	if dbGetErr != nil {
+		require.NoError(s.T(), dbGetErr)
+	}
+
+	require.Equal(s.T(), uint64(1), dbScale.UserID)
+}
+
 // Delete -----------------------------------------------------------------------------------
+
+// TestDeleteWillDeleteAScale
+
+// TestDeleteWillReturnAnErrorIfTheresAnError
