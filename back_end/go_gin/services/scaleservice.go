@@ -42,10 +42,6 @@ func (s *ScaleService) Get(id uint64, limitTimespansToDisplayDayCount bool) (mod
 		return scale, errors.New("error while getting scale: " + dbErr.Error())
 	}
 
-	if scale.ID == 0 {
-		return scale, errors.New("requested scale does not exist")
-	}
-
 	//Now resolve all entity IDs
 	resolveErr := scale.ResolveID()
 
