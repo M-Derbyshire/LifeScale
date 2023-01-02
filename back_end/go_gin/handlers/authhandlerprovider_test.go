@@ -461,7 +461,7 @@ func (ahs *AuthHandlersSuite) TestAuthMiddlewareRespondsWithUnauthorisedIfNoAuth
 		Password: "password",
 	})
 
-	res, _ := getRequestWithAuthHeader("", testServer)
+	res, _ := getRequestWithAuthHeader("", testServer.URL+"/")
 	require.Equal(t, http.StatusUnauthorized, res.StatusCode)
 }
 
@@ -480,7 +480,7 @@ func (ahs *AuthHandlersSuite) TestAuthMiddlewareRespondsWithUnauthorisedIfNoToke
 		Password: "password",
 	})
 
-	res, _ := getRequestWithAuthHeader("Bearer ", testServer)
+	res, _ := getRequestWithAuthHeader("Bearer ", testServer.URL+"/")
 	require.Equal(t, http.StatusUnauthorized, res.StatusCode)
 }
 
@@ -499,7 +499,7 @@ func (ahs *AuthHandlersSuite) TestAuthMiddlewareRespondsWithUnauthorisedIfTokenI
 		Password: "password",
 	})
 
-	res, _ := getRequestWithAuthHeader("Bearer jdaskljdlkasjlaksj", testServer)
+	res, _ := getRequestWithAuthHeader("Bearer jdaskljdlkasjlaksj", testServer.URL+"/")
 	require.Equal(t, http.StatusUnauthorized, res.StatusCode)
 }
 
@@ -513,7 +513,7 @@ func (ahs *AuthHandlersSuite) TestAuthMiddlewareRespondsWithUnauthorisedIfUserDo
 
 	testServer := httptest.NewServer(r)
 
-	res, _ := getRequestWithAuthHeader("Bearer jdaskljdlkasjlaksj", testServer)
+	res, _ := getRequestWithAuthHeader("Bearer jdaskljdlkasjlaksj", testServer.URL+"/")
 	require.Equal(t, http.StatusUnauthorized, res.StatusCode)
 }
 
@@ -552,7 +552,7 @@ func (ahs *AuthHandlersSuite) TestAuthMiddlewareAddsUserToContext() {
 
 	testServer := httptest.NewServer(r)
 
-	res, _ := getRequestWithAuthHeader("Bearer "+tokenStr, testServer)
+	res, _ := getRequestWithAuthHeader("Bearer "+tokenStr, testServer.URL+"/")
 	require.Equal(t, http.StatusOK, res.StatusCode)
 
 	require.Equal(t, user.Email, userFromContext.Email)

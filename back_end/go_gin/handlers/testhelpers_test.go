@@ -78,11 +78,11 @@ func postTokenRefresh(token string, testServer *httptest.Server) (*http.Response
 	return client.Do(req)
 }
 
-func getRequestWithAuthHeader(authHeader string, testServer *httptest.Server) (*http.Response, error) {
+func getRequestWithAuthHeader(authHeader string, url string) (*http.Response, error) {
 	client := &http.Client{}
 
 	reqBody := bytes.NewBuffer([]byte(""))
-	req, _ := http.NewRequest("GET", fmt.Sprintf("%s/", testServer.URL), reqBody)
+	req, _ := http.NewRequest("GET", url, reqBody)
 	req.Header.Add("Authorization", authHeader)
 
 	return client.Do(req)
