@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
 	"golang.org/x/crypto/bcrypt"
@@ -25,12 +26,12 @@ func hashUsersPassword(user *models.User) error {
 	return nil
 }
 
-// Gets a user with the given ID (and maybe it's scales as well). If no ID is provided (0 value), email will be used instead
-func (us *UserService) Get(id uint64, email string, getRelatedScales bool) (result models.User, err error) {
+// Gets a user with the given ID (and maybe it's scales as well). If no ID is provided (empty string), email will be used instead
+func (us *UserService) Get(id string, email string, getRelatedScales bool) (result models.User, err error) {
 
 	user := models.User{}
 
-	if id == 0 && email == "" {
+	if id == "" && email == "" {
 		return user, errors.New("no ID or email provided")
 	}
 
@@ -42,8 +43,13 @@ func (us *UserService) Get(id uint64, email string, getRelatedScales bool) (resu
 	}
 
 	var dbErr error
-	if id > 0 {
-		dbErr = dbCallStart.First(&user, id).Error
+	if id != "" {
+		idNum, idNumErr := strconv.Atoi(id)
+		if idNumErr != nil {
+			return user, errors.New("provided ID is invalid")
+		}
+
+		dbErr = dbCallStart.First(&user, int64(idNum)).Error
 	} else {
 		dbErr = dbCallStart.Where("email = ?", email).First(&user).Error
 	}

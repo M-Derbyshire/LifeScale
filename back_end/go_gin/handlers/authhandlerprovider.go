@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -62,7 +61,7 @@ func (ahp *AuthHandlerProvider) SignInHandler(c *gin.Context) {
 		return
 	}
 
-	dbUser, dbErr := ahp.Service.Get(0, user.Email, true)
+	dbUser, dbErr := ahp.Service.Get("", user.Email, true)
 	if dbErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": dbErr.Error(),
@@ -236,12 +235,7 @@ func (ahp *AuthHandlerProvider) CreateAuthMiddleware() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
-		numId, numErr := strconv.ParseInt(claims.ID, 0, 64)
-		if numErr != nil {
-			c.AbortWithError(http.StatusInternalServerError, errors.New("unable to parse the given authorised user ID"))
-		}
-
-		user, userErr := ahp.Service.Get(uint64(numId), "", false)
+		user, userErr := ahp.Service.Get(claims.ID, "", false)
 		if userErr != nil {
 			c.AbortWithError(http.StatusUnauthorized, errors.New("unable to find the user in the token"))
 		}

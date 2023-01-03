@@ -308,7 +308,7 @@ func (hs *UserHandlersSuite) TestUserUpdateWillUpdateUserWithChangesAndReturnUse
 
 	//Make sure saved changes
 	resUser.ResolveID()
-	savedUser, _ := hs.Service.Get(resUser.ID, "", false)
+	savedUser, _ := hs.Service.Get(resUser.StrID, "", false)
 	require.Equal(t, userUpdates.Email, savedUser.Email)
 	require.Equal(t, userUpdates.Forename, savedUser.Forename)
 	require.Equal(t, userUpdates.Surname, savedUser.Surname)
@@ -354,7 +354,7 @@ func (hs *UserHandlersSuite) TestUserUpdateWillCallSanitiseOnUserUpdates() {
 	require.Equal(t, sanitisedName, resUser.Forename)
 
 	resUser.ResolveID()
-	savedUser, _ := hs.Service.Get(resUser.ID, "", false)
+	savedUser, _ := hs.Service.Get(resUser.StrID, "", false)
 	require.Equal(t, sanitisedName, savedUser.Forename)
 }
 

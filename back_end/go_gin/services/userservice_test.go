@@ -37,10 +37,9 @@ func (s *UserServiceSuite) TestGetReturnsErrorWhenUserDoesntExist() {
 
 	//Getting a user that doesn't exist, to ensure we get an error
 
-	userId := uint64(1)
 	service := services.UserService{DB: s.DB}
 
-	_, err := service.Get(userId, "", true)
+	_, err := service.Get("1", "", true)
 
 	if err == nil {
 		require.Error(s.T(), err)
@@ -96,7 +95,7 @@ func (s *UserServiceSuite) TestGetReturnsUserWithRelatedScalesOnlyAndResolvedIDs
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(userId, "", true)
+	result, err := service.Get(strUserId, "", true)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -155,7 +154,7 @@ func (s *UserServiceSuite) TestGetReturnsUserWithoutRelatedEntitiesWhenSetNotTo(
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(userId, "", false)
+	result, err := service.Get(strUserId, "", false)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -185,7 +184,7 @@ func (s *UserServiceSuite) TestGetWillAlsoRetrieveByEmail() {
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(0, user.Email, true)
+	result, err := service.Get("", user.Email, true)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -216,7 +215,7 @@ func (s *UserServiceSuite) TestGetWillErrorIfNoIdOrEmailProvided() {
 	}
 
 	// Run the test --------------------
-	_, err := service.Get(0, "", true)
+	_, err := service.Get("", "", true)
 
 	require.Error(t, err)
 }
@@ -350,7 +349,7 @@ func (s *UserServiceSuite) TestUpdatesAndReturnsWithResolvedIdAndNoPasswordNoSca
 	require.Equal(t, userUpdates.Surname, result.Surname)
 
 	// now check the user in the DB
-	dbUser, _ := service.Get(result.ID, "", false)
+	dbUser, _ := service.Get(result.StrID, "", false)
 	require.Equal(t, dbUser.Email, result.Email)
 	require.Equal(t, dbUser.Forename, result.Forename)
 	require.Equal(t, dbUser.Surname, result.Surname)
@@ -386,7 +385,7 @@ func (s *UserServiceSuite) TestUpdatesPasswordWhenUpdatePasswordIsTrue() {
 	require.NoError(t, resultErr)
 
 	// now check the user in the DB
-	dbUser, _ := service.Get(result.ID, "", false)
+	dbUser, _ := service.Get(result.StrID, "", false)
 	hashCheckErr := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(userUpdates.Password))
 	require.Nil(t, hashCheckErr)
 }
@@ -420,7 +419,7 @@ func (s *UserServiceSuite) TestDoesntUpdatePasswordWhenUpdatePasswordIsFalse() {
 	require.NoError(t, resultErr)
 
 	// now check the user in the DB
-	dbUser, _ := service.Get(result.ID, "", false)
+	dbUser, _ := service.Get(result.StrID, "", false)
 	hashCheckErr := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(userOriginal.Password)) //Still original password
 	require.Nil(t, hashCheckErr)
 }
@@ -475,6 +474,6 @@ func (s *UserServiceSuite) TestDoesntUpdateScales() {
 	require.NoError(t, resultErr)
 
 	// now check the user in the DB
-	dbUser, _ := service.Get(result.ID, "", true)
+	dbUser, _ := service.Get(result.StrID, "", true)
 	require.Equal(t, dbUser.Scales[0].Name, scaleOriginal.Name)
 }
