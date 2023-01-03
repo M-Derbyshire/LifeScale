@@ -35,7 +35,7 @@ func TestScaleServiceSuite(t *testing.T) {
 
 func (s *ScaleServiceSuite) TestGetReturnsErrorWhenScaleDoesntExist() {
 
-	scaleId := uint64(1)
+	scaleId := "1"
 	service := services.ScaleService{DB: s.DB}
 
 	_, err := service.Get(scaleId, false)
@@ -114,7 +114,7 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(scaleId, false)
+	result, err := service.Get(strScaleId, false)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -210,7 +210,7 @@ func (s *ScaleServiceSuite) TestGetWillOnlyReturnTimespansUpToTheScaleDisplayDay
 	}
 
 	// Run the test --------------------
-	result, getErr := service.Get(1, true)
+	result, getErr := service.Get("1", true)
 	if getErr != nil {
 		require.NoError(t, getErr)
 	}

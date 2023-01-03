@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
@@ -13,11 +14,13 @@ type ScaleService struct {
 	DB *gorm.DB // The gorm DB instance to use
 }
 
-func (s *ScaleService) Get(id uint64, limitTimespansToDisplayDayCount bool) (models.Scale, error) {
+func (s *ScaleService) Get(id string, limitTimespansToDisplayDayCount bool) (models.Scale, error) {
 
 	scale := models.Scale{}
 
-	if id == 0 {
+	idNum, idNumErr := strconv.Atoi(id)
+
+	if idNumErr != nil || idNum == 0 {
 		return scale, errors.New("an invalid ID was provided")
 	}
 
@@ -26,7 +29,7 @@ func (s *ScaleService) Get(id uint64, limitTimespansToDisplayDayCount bool) (mod
 
 	//Should we limit the amount of timespans to just the scale's DisplayDayCount?
 	if limitTimespansToDisplayDayCount {
-		justScaleErr := s.DB.First(&scale, id).Error
+		justScaleErr := s.DB.First(&scale, idNum).Error
 		if justScaleErr != nil {
 			return scale, errors.New("error while getting scale: " + justScaleErr.Error())
 		}
@@ -37,7 +40,7 @@ func (s *ScaleService) Get(id uint64, limitTimespansToDisplayDayCount bool) (mod
 		dbCallStart = dbCallStart.Preload(preloadString)
 	}
 
-	dbErr := dbCallStart.First(&scale, id).Error
+	dbErr := dbCallStart.First(&scale, idNum).Error
 	if dbErr != nil {
 		return scale, errors.New("error while getting scale: " + dbErr.Error())
 	}
