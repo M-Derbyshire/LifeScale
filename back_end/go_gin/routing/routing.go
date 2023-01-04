@@ -10,9 +10,11 @@ import (
 func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpirationMins int) {
 
 	userService := services.UserService{DB: db}
+	scaleService := services.ScaleService{DB: db}
 
 	userHandlers := handlers.UserHandlerProvider{DB: db, Service: userService}
 	authHandlers := handlers.AuthHandlerProvider{DB: db, Service: userService, JwtKey: jwtKey, JwtExpirationMinutes: jwtExpirationMins}
+	scaleHandlers := handlers.ScaleHandlerProvider{DB: db, Service: scaleService}
 
 	r.POST(pathPrefix+"/user", userHandlers.RegistrationHandler)
 	r.POST(pathPrefix+"/login", authHandlers.SignInHandler)
@@ -23,6 +25,8 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 		authGroup.GET("/tokenrefresh", authHandlers.RefreshTokenHandler)
 		authGroup.POST("/user/changepassword", authHandlers.ChangePassword)
 		authGroup.PUT("/user", userHandlers.UpdateHandler)
+
+		authGroup.GET("/:id", scaleHandlers.ScaleRetrievalHandler)
 	}
 
 }
