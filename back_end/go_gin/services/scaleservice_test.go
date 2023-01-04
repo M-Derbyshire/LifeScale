@@ -77,7 +77,7 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 								ID:    1,
 								StrID: "1",
 								//Adding more days then DisplayDayCount, to make sure it's returned
-								Date:        time.Now().AddDate(0, 0, 5).UTC(),
+								Date:        time.Now().AddDate(0, 0, -5).UTC(),
 								MinuteCount: 1,
 							},
 							{
