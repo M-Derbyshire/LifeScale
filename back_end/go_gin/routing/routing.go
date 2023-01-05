@@ -26,7 +26,7 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 		authGroup.POST("/user/changepassword", authHandlers.ChangePassword)
 		authGroup.PUT("/user", userHandlers.UpdateHandler)
 
-		authGroup.GET("/:id", scaleHandlers.ScaleRetrievalHandler)
+		authGroup.GET("/scale/:id", scaleHandlers.ScaleRetrievalHandler)
 	}
 
 }
