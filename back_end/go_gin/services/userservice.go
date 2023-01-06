@@ -44,12 +44,12 @@ func (us *UserService) Get(id string, email string, getRelatedScales bool) (resu
 
 	var dbErr error
 	if id != "" {
-		idNum, idNumErr := strconv.Atoi(id)
+		idNum, idNumErr := strconv.ParseInt(id, 10, 64)
 		if idNumErr != nil {
 			return user, errors.New("provided ID is invalid")
 		}
 
-		dbErr = dbCallStart.First(&user, int64(idNum)).Error
+		dbErr = dbCallStart.First(&user, idNum).Error
 	} else {
 		dbErr = dbCallStart.Where("email = ?", email).First(&user).Error
 	}

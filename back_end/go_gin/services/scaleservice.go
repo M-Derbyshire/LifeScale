@@ -18,7 +18,7 @@ func (s *ScaleService) Get(id string, limitTimespansToDisplayDayCount bool) (mod
 
 	scale := models.Scale{}
 
-	idNum, idNumErr := strconv.Atoi(id)
+	idNum, idNumErr := strconv.ParseInt(id, 10, 64)
 
 	if idNumErr != nil || idNum == 0 {
 		return scale, errors.New("an invalid ID was provided")
