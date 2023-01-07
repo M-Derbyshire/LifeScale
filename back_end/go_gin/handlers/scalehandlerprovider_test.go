@@ -122,7 +122,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillGetScaleWithAllTimespans() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", createdUser) })
-	r.GET("/:id/", hs.Handler.ScaleRetrievalHandler)
+	r.GET("/:id/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -189,7 +189,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillGetScaleWithLimitedTimespans() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", createdUser) })
-	r.GET("/:id/", hs.Handler.ScaleRetrievalHandler)
+	r.GET("/:id/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -214,7 +214,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillReturn404IfNotFound() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", createdUser) })
-	r.GET("/:id/", hs.Handler.ScaleRetrievalHandler)
+	r.GET("/:id/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -252,7 +252,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillReturn500IfError() {
 		c.Set("auth-user", struct{ BadProp string }{BadProp: "djksdjalsjd"}) //Not a valid user
 		c.Next()
 	})
-	r.GET("/:id/", hs.Handler.ScaleRetrievalHandler)
+	r.GET("/:id/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -298,7 +298,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillReturn401IfScaleDoesntBelongToUser
 		c.Set("auth-user", createdOtherUser) //Not the user that owns the scale
 		c.Next()
 	})
-	r.GET("/:id/", hs.Handler.ScaleRetrievalHandler)
+	r.GET("/:id/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 

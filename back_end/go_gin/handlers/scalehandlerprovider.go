@@ -17,7 +17,7 @@ type ScaleHandlerProvider struct {
 }
 
 //Handler for scale GET requests
-func (shp *ScaleHandlerProvider) ScaleRetrievalHandler(c *gin.Context) {
+func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 
 	// Extract ID from query
 	idStr := c.Param("id")
