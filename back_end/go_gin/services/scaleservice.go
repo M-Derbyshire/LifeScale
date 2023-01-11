@@ -71,6 +71,24 @@ func (s *ScaleService) Create(scale models.Scale) (models.Scale, error) {
 
 func (s *ScaleService) Update(newScaleData models.Scale) (models.Scale, error) {
 
+	resolveErr := newScaleData.ResolveID()
+	if resolveErr != nil {
+		return newScaleData, resolveErr
+	}
+
+	//We need to get the scale's initial DisplayDayCount, as we want to return timespans if that's changed
+	var displayDayCounts []uint
+	getResult := s.DB.Model(&models.Scale{ID: newScaleData.ID}).Pluck("DisplayDayCount", &displayDayCounts)
+	if getResult.Error != nil {
+		return newScaleData, errors.New("error while retrieving scale: " + getResult.Error.Error())
+	}
+
+	if len(displayDayCounts) == 0 {
+		return newScaleData, errors.New("the requested scale does not exist")
+	}
+
+	displayDayCountHasChanged := (displayDayCounts[0] != newScaleData.DisplayDayCount)
+
 	// We have to use a map, as booleans (UsesTimespans) can't be updated to false with a struct
 	// https://stackoverflow.com/questions/56653423/gorm-doesnt-update-boolean-field-to-false
 	dataForUpdate := map[string]interface{}{
@@ -87,6 +105,16 @@ func (s *ScaleService) Update(newScaleData models.Scale) (models.Scale, error) {
 	resolveIdErr := newScaleData.ResolveID()
 	if resolveIdErr != nil {
 		return newScaleData, errors.New("error while processing scale after update has completed: " + updateResult.Error.Error())
+	}
+
+	//If this has changed, we need to get the scale again, with all included timespans
+	if displayDayCountHasChanged {
+		updatedScaleWithTimespans, getErr := s.Get(newScaleData.StrID, true)
+		if getErr != nil {
+			return newScaleData, errors.New("error occurred after update of scale: " + getErr.Error())
+		}
+
+		return updatedScaleWithTimespans, nil
 	}
 
 	return newScaleData, nil

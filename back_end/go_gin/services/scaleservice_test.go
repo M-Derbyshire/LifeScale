@@ -333,7 +333,7 @@ func (s *ScaleServiceSuite) TestUpdateWillUpdateTheScaleAndReturnItWithResolvedI
 		StrID:           "",
 		Name:            "scale2",
 		UsesTimespans:   false,
-		DisplayDayCount: 2,
+		DisplayDayCount: 1, //not changing, as want to ensure no categories are returned
 		Categories:      []models.Category{},
 	}
 
@@ -349,6 +349,8 @@ func (s *ScaleServiceSuite) TestUpdateWillUpdateTheScaleAndReturnItWithResolvedI
 	require.Equal(s.T(), newScaleData.UsesTimespans, result.UsesTimespans)
 	require.Equal(s.T(), newScaleData.DisplayDayCount, result.DisplayDayCount)
 
+	require.Equal(s.T(), 0, len(result.Categories)) //Should be 0, as UsesTimespans hasn't changed
+
 	//Also make sure the data was actually saved, not just returned
 	var dbScale models.Scale
 	dbGetErr := s.DB.First(&dbScale, result.ID).Error
@@ -361,13 +363,82 @@ func (s *ScaleServiceSuite) TestUpdateWillUpdateTheScaleAndReturnItWithResolvedI
 	require.Equal(s.T(), newScaleData.DisplayDayCount, dbScale.DisplayDayCount)
 }
 
+func (s *ScaleServiceSuite) TestUpdateWillReturnRequiredTimespansIfDisplayDayCountIsChanged() {
+
+	service := services.ScaleService{DB: s.DB}
+
+	timeToReturn := time.Now().AddDate(0, 0, -1).UTC()
+	timeToIgnore := time.Now().AddDate(0, 0, -2).UTC()
+
+	origScale := models.Scale{
+		ID:              1,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 1,
+		Categories: []models.Category{
+			{
+				ID:            1,
+				StrID:         "1",
+				Name:          "category1",
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions: []models.Action{
+					{
+						ID:     1,
+						StrID:  "1",
+						Name:   "action1",
+						Weight: 1,
+						Timespans: []models.Timespan{
+							{
+								ID:          1,
+								StrID:       "1",
+								Date:        timeToReturn,
+								MinuteCount: 19,
+							},
+							{
+								ID:          2,
+								StrID:       "2",
+								Date:        timeToIgnore,
+								MinuteCount: 23,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	createErr := s.DB.Create(&origScale).Error
+	if createErr != nil {
+		require.NoError(s.T(), createErr)
+	}
+
+	newScaleData := models.Scale{
+		ID:              origScale.ID,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true, //not changing, as want to ensure no categories are returned
+		DisplayDayCount: 2,
+		Categories:      []models.Category{},
+	}
+
+	result, updateErr := service.Update(newScaleData)
+	if updateErr != nil {
+		require.NoError(s.T(), updateErr)
+	}
+
+	require.Equal(s.T(), 1, len(result.Categories))
+	require.Equal(s.T(), 1, len(result.Categories[0].Actions))
+	require.Equal(s.T(), 1, len(result.Categories[0].Actions[0].Timespans))
+	require.Equal(s.T(), origScale.Categories[0].Actions[0].Timespans[0].MinuteCount, result.Categories[0].Actions[0].Timespans[0].MinuteCount)
+}
+
 func (s *ScaleServiceSuite) TestUpdateCannotUpdateCategories() {
 
 	service := services.ScaleService{DB: s.DB}
 
 	origScale := models.Scale{
-		ID:              0,
-		StrID:           "",
 		Name:            "scale1",
 		UsesTimespans:   true,
 		DisplayDayCount: 1,
@@ -388,12 +459,13 @@ func (s *ScaleServiceSuite) TestUpdateCannotUpdateCategories() {
 
 	newScaleData := models.Scale{
 		ID:              origScale.ID,
-		StrID:           "",
+		StrID:           "1",
 		Name:            "scale1",
 		UsesTimespans:   false,
 		DisplayDayCount: 2,
 		Categories: []models.Category{
 			{
+				StrID:         "1",
 				Name:          "test2",
 				Color:         "red",
 				DesiredWeight: 1,
@@ -420,8 +492,8 @@ func (s *ScaleServiceSuite) TestUpdateCannotUpdateParentUserId() {
 	service := services.ScaleService{DB: s.DB}
 
 	origScale := models.Scale{
-		ID:              0,
-		StrID:           "",
+		ID:              1,
+		StrID:           "1",
 		Name:            "scale1",
 		UsesTimespans:   true,
 		DisplayDayCount: 1,
@@ -453,7 +525,7 @@ func (s *ScaleServiceSuite) TestUpdateCannotUpdateParentUserId() {
 
 	newScaleData := models.Scale{
 		ID:              1,
-		StrID:           "",
+		StrID:           "1",
 		Name:            "scale2",
 		UsesTimespans:   true,
 		DisplayDayCount: 1,
