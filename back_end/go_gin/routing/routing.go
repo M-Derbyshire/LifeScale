@@ -27,6 +27,7 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 		authGroup.PUT("/user", userHandlers.UpdateHandler)
 
 		authGroup.GET("/scale/:id", scaleHandlers.RetrievalHandler)
+		authGroup.POST("/scale", scaleHandlers.CreateHandler)
 	}
 
 }
