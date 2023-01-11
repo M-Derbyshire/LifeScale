@@ -38,7 +38,7 @@ func (s *ScaleServiceSuite) TestGetReturnsErrorWhenScaleDoesntExist() {
 	scaleId := "1"
 	service := services.ScaleService{DB: s.DB}
 
-	_, err := service.Get(scaleId, false)
+	_, err := service.Get(scaleId, services.NoTimespans)
 
 	if err == nil {
 		require.Error(s.T(), err)
@@ -114,7 +114,7 @@ func (s *ScaleServiceSuite) TestGetReturnsScaleWithDescendantsAndResolvedIDs() {
 	}
 
 	// Run the test --------------------
-	result, err := service.Get(strScaleId, false)
+	result, err := service.Get(strScaleId, services.AllTimespans)
 
 	if err != nil {
 		require.NoError(t, err)
@@ -210,13 +210,66 @@ func (s *ScaleServiceSuite) TestGetWillOnlyReturnTimespansUpToTheScaleDisplayDay
 	}
 
 	// Run the test --------------------
-	result, getErr := service.Get("1", true)
+	result, getErr := service.Get("1", services.DisplayDayCountTimespans)
 	if getErr != nil {
 		require.NoError(t, getErr)
 	}
 
 	require.Equal(t, 1, len(result.Categories[0].Actions[0].Timespans))
 	require.Equal(t, timeToReturn, result.Categories[0].Actions[0].Timespans[0].Date)
+}
+
+func (s *ScaleServiceSuite) TestGetWillReturnNoTimespansIfSetNotTo() {
+	t := s.T()
+	service := services.ScaleService{DB: s.DB}
+
+	timeToReturn := time.Now().AddDate(0, 0, -1).UTC()
+
+	scale := models.Scale{
+		ID:              1,
+		StrID:           "",
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 2,
+		Categories: []models.Category{
+			{
+				ID:            1,
+				StrID:         "1",
+				Name:          "category1",
+				Color:         "red",
+				DesiredWeight: 1,
+				Actions: []models.Action{
+					{
+						ID:     1,
+						StrID:  "1",
+						Name:   "action1",
+						Weight: 1,
+						Timespans: []models.Timespan{
+							{
+								ID:          1,
+								StrID:       "1",
+								Date:        timeToReturn,
+								MinuteCount: 1,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	createResult := s.DB.Create(&scale)
+	if createResult.Error != nil {
+		require.NoError(t, createResult.Error)
+	}
+
+	// Run the test --------------------
+	result, getErr := service.Get("1", services.NoTimespans)
+	if getErr != nil {
+		require.NoError(t, getErr)
+	}
+
+	require.Equal(t, 0, len(result.Categories))
 }
 
 // Create -----------------------------------------------------------------------------------

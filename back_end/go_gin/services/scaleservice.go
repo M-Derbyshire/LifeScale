@@ -14,7 +14,15 @@ type ScaleService struct {
 	DB *gorm.DB // The gorm DB instance to use
 }
 
-func (s *ScaleService) Get(id string, limitTimespansToDisplayDayCount bool) (models.Scale, error) {
+type ScaleRetrievalTimespanOption int
+
+const (
+	NoTimespans ScaleRetrievalTimespanOption = iota
+	AllTimespans
+	DisplayDayCountTimespans
+)
+
+func (s *ScaleService) Get(id string, timespanOption ScaleRetrievalTimespanOption) (models.Scale, error) {
 
 	scale := models.Scale{}
 
@@ -28,7 +36,7 @@ func (s *ScaleService) Get(id string, limitTimespansToDisplayDayCount bool) (mod
 	dbCallStart := s.DB
 
 	//Should we limit the amount of timespans to just the scale's DisplayDayCount?
-	if limitTimespansToDisplayDayCount {
+	if timespanOption == DisplayDayCountTimespans {
 		justScaleErr := s.DB.First(&scale, idNum).Error
 		if justScaleErr != nil {
 			return scale, errors.New("error while getting scale: " + justScaleErr.Error())
@@ -36,7 +44,7 @@ func (s *ScaleService) Get(id string, limitTimespansToDisplayDayCount bool) (mod
 
 		firstValidDay := time.Now().AddDate(0, 0, -int(scale.DisplayDayCount))
 		dbCallStart = dbCallStart.Preload(preloadString, "timespans.Date >= ?", firstValidDay)
-	} else {
+	} else if timespanOption == AllTimespans {
 		dbCallStart = dbCallStart.Preload(preloadString)
 	}
 
@@ -109,7 +117,7 @@ func (s *ScaleService) Update(newScaleData models.Scale) (models.Scale, error) {
 
 	//If this has changed, we need to get the scale again, with all included timespans
 	if displayDayCountHasChanged {
-		updatedScaleWithTimespans, getErr := s.Get(newScaleData.StrID, true)
+		updatedScaleWithTimespans, getErr := s.Get(newScaleData.StrID, DisplayDayCountTimespans)
 		if getErr != nil {
 			return newScaleData, errors.New("error occurred after update of scale: " + getErr.Error())
 		}

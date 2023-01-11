@@ -372,7 +372,7 @@ func (hs *ScaleHandlersSuite) TestCreateWillCreateAScaleUnderTheAuthUser() {
 
 	//Make sure saved changes
 	resultScale.ResolveID()
-	savedScale, _ := hs.Service.Get(resultScale.StrID, false)
+	savedScale, _ := hs.Service.Get(resultScale.StrID, services.AllTimespans)
 
 	require.Equal(t, resultScale.Name, savedScale.Name)
 	require.Equal(t, resultScale.UsesTimespans, savedScale.UsesTimespans)
@@ -444,6 +444,6 @@ func (hs *ScaleHandlersSuite) TestCreateWillCallSanitiseOnScale() {
 
 	//Make sure saved changes
 	resultScale.ResolveID()
-	savedScale, _ := hs.Service.Get(resultScale.StrID, false)
+	savedScale, _ := hs.Service.Get(resultScale.StrID, services.AllTimespans)
 	require.Equal(t, expectedName, savedScale.Name)
 }

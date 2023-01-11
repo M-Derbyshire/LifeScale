@@ -24,7 +24,12 @@ func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 
 	// Should the timespans be limited to the display day count only?
 	tsDayCountOnlyStr := c.DefaultQuery("daycounttimespansonly", "false")
-	tsDayCountOnly := (tsDayCountOnlyStr != "false")
+	var tsDayCountLimit services.ScaleRetrievalTimespanOption
+	if tsDayCountOnlyStr != "false" {
+		tsDayCountLimit = services.DisplayDayCountTimespans
+	} else {
+		tsDayCountLimit = services.AllTimespans
+	}
 
 	//Get the auth user from the auth middleware
 	authUserVal, authIsOk := c.Get("auth-user")
@@ -44,7 +49,7 @@ func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 	}
 
 	//Get the scale, and validate all is correct
-	scale, scaleErr := shp.Service.Get(idStr, tsDayCountOnly)
+	scale, scaleErr := shp.Service.Get(idStr, tsDayCountLimit)
 	if scaleErr != nil {
 		errStr := scaleErr.Error()
 
