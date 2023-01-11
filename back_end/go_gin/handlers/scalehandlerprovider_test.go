@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -45,15 +46,8 @@ func TestScaleServiceSuite(t *testing.T) {
 	suite.Run(t, new(ScaleHandlersSuite))
 }
 
-//Get a scale model from the GET endpoint. If statuscode is not 200, then the returned error will be a string of the code
-func getScale(t *testing.T, url string) (models.Scale, error) {
-	res, reqErr := http.Get(url)
-	if reqErr != nil {
-		return models.Scale{}, reqErr
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
+func handleScaleResponse(res *http.Response) (models.Scale, error) {
+	if res.StatusCode < 200 || res.StatusCode > 299 {
 		return models.Scale{}, errors.New(strconv.Itoa(res.StatusCode))
 	}
 
@@ -69,6 +63,30 @@ func getScale(t *testing.T, url string) (models.Scale, error) {
 	}
 
 	return result, nil
+}
+
+//Get a scale model from the GET endpoint. If statuscode is not 200, then the returned error will be a string of the code
+func getScale(t *testing.T, url string) (models.Scale, error) {
+	res, reqErr := http.Get(url)
+	if reqErr != nil {
+		return models.Scale{}, reqErr
+	}
+	defer res.Body.Close()
+
+	return handleScaleResponse(res)
+}
+
+func postScale(t *testing.T, url string, scale models.Scale) (models.Scale, error) {
+	reqJson, _ := json.Marshal(scale)
+	reqBody := bytes.NewBuffer(reqJson)
+	res, reqErr := http.Post(url, "application/json", reqBody)
+
+	if reqErr != nil {
+		return models.Scale{}, reqErr
+	}
+	defer res.Body.Close()
+
+	return handleScaleResponse(res)
 }
 
 // -- Get ------------------------------------------------------------------------
@@ -305,4 +323,127 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillReturn401IfScaleDoesntBelongToUser
 	_, resErr := getScale(t, testServer.URL+"/1/")
 	require.Error(t, resErr)
 	require.Equal(t, "401", resErr.Error())
+}
+
+// -- Create ------------------------------------------------------------------------
+
+func (hs *ScaleHandlersSuite) TestCreateWillCreateAScaleUnderTheAuthUser() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	otherUser := models.User{
+		StrID:    "2",
+		Email:    "test2@test.com",
+		Forename: "test2",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	hs.UserService.Create(user)
+	hs.UserService.Create(otherUser)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.POST("/", hs.Handler.CreateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newScale := models.Scale{
+		Name:            "scale1",
+		UsesTimespans:   true,
+		DisplayDayCount: 3,
+	}
+
+	resultScale, resErr := postScale(t, testServer.URL+"/", newScale)
+	require.NoError(t, resErr)
+
+	require.Equal(t, newScale.Name, resultScale.Name)
+	require.Equal(t, newScale.UsesTimespans, resultScale.UsesTimespans)
+	require.Equal(t, newScale.DisplayDayCount, resultScale.DisplayDayCount)
+	require.Equal(t, uint64(1), resultScale.UserID)
+
+	//Make sure saved changes
+	resultScale.ResolveID()
+	savedScale, _ := hs.Service.Get(resultScale.StrID, false)
+
+	require.Equal(t, resultScale.Name, savedScale.Name)
+	require.Equal(t, resultScale.UsesTimespans, savedScale.UsesTimespans)
+	require.Equal(t, resultScale.DisplayDayCount, savedScale.DisplayDayCount)
+	require.Equal(t, uint64(1), savedScale.UserID)
+}
+
+func (hs *ScaleHandlersSuite) TestCreateWillReturnScaleValidationError() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	hs.UserService.Create(user)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.POST("/", hs.Handler.CreateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newScale := models.Scale{
+		Name:            "", //empty name, so should fail validation
+		UsesTimespans:   true,
+		DisplayDayCount: 3,
+	}
+
+	_, resErr := postScale(t, testServer.URL+"/", newScale)
+	require.Error(t, resErr)
+}
+
+func (hs *ScaleHandlersSuite) TestCreateWillCallSanitiseOnScale() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	hs.UserService.Create(user)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.POST("/", hs.Handler.CreateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newScale := models.Scale{
+		Name:            "<test>", //</> braces should get replaced
+		UsesTimespans:   true,
+		DisplayDayCount: 3,
+	}
+
+	expectedName := "&lt;test&gt;"
+
+	resultScale, resErr := postScale(t, testServer.URL+"/", newScale)
+	require.NoError(t, resErr)
+	require.Equal(t, expectedName, resultScale.Name)
+
+	//Make sure saved changes
+	resultScale.ResolveID()
+	savedScale, _ := hs.Service.Get(resultScale.StrID, false)
+	require.Equal(t, expectedName, savedScale.Name)
 }

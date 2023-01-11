@@ -72,3 +72,53 @@ func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, scale)
 }
+
+// Handler for scale POST requests
+func (shp *ScaleHandlerProvider) CreateHandler(c *gin.Context) {
+
+	//Get the auth user from the auth middleware
+	authUserVal, authIsOk := c.Get("auth-user")
+	if !authIsOk {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "unable to process the user in the authentication token",
+		})
+		return
+	}
+
+	authUser, castOk := authUserVal.(models.User)
+	if !castOk || authUser.ResolveID() != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error while processing the authenticated user",
+		})
+		return
+	}
+
+	// Get the new scale from the request
+	var newScale models.Scale
+	if err := c.ShouldBindJSON(&newScale); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "error while processing the provided scale: " + err.Error(),
+		})
+	}
+
+	// Security related operations
+	newScale.UserID = authUser.ID
+
+	if err := newScale.Validate(authUser, *shp.DB, true); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "the provided scale is not valid: " + err.Error(),
+		})
+	}
+
+	newScale.Sanitise()
+
+	//Now we can create the scale
+	resultScale, createErr := shp.Service.Create(newScale)
+	if createErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": createErr.Error(),
+		})
+	}
+
+	c.JSON(http.StatusCreated, resultScale)
+}
