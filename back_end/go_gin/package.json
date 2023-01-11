@@ -1,0 +1,11 @@
+{
+  "name": "go_gin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:unit": "go clean -testcache ./... && go test -p 1 ./..."
+  },
+  "author": "",
+  "license": "ISC"
+}
