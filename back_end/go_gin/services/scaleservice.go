@@ -77,6 +77,7 @@ func (s *ScaleService) Create(scale models.Scale) (models.Scale, error) {
 	return scale, nil
 }
 
+// If updating the DisplayDayCount value, all timespans that fall inside the new date limit will also get returned with their categories/actions
 func (s *ScaleService) Update(newScaleData models.Scale) (models.Scale, error) {
 
 	resolveErr := newScaleData.ResolveID()
