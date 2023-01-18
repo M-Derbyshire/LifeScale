@@ -108,6 +108,27 @@ func putScale(t *testing.T, url string, scaleData models.Scale) (models.Scale, e
 	return handleScaleResponse(res)
 }
 
+//Run a scale DELETE request. If statuscode is not 200, then the returned error will be a string of the code
+func deleteScale(t *testing.T, url string) error {
+	req, reqErr := http.NewRequest(http.MethodDelete, url, nil)
+	if reqErr != nil {
+		return reqErr
+	}
+
+	client := &http.Client{}
+	res, resErr := client.Do(req)
+	if resErr != nil {
+		return resErr
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode < 200 || res.StatusCode > 299 {
+		return errors.New(strconv.Itoa(res.StatusCode))
+	}
+
+	return nil
+}
+
 // -- Get ------------------------------------------------------------------------
 
 func (hs *ScaleHandlersSuite) TestScaleGetWillGetScaleWithAllTimespans() {
@@ -644,3 +665,92 @@ func (hs *ScaleHandlersSuite) TestUpdateWillSanitiseTheNewScaleData() {
 }
 
 // -- Delete -------------------------------------------------------------------
+
+func (hs *ScaleHandlersSuite) TestDeleteWillDeleteTheCorrectScale() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+			{
+				Name:            "scale2",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	hs.DB.Create(&user)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.DELETE("/:id", hs.Handler.DeleteHandler)
+
+	testServer := httptest.NewServer(r)
+
+	resErr := deleteScale(t, testServer.URL+"/1") // delete the first
+	require.NoError(t, resErr)
+
+	var scales []models.Scale
+	hs.DB.Find(&scales)
+	require.Equal(t, 1, len(scales)) //Should only be the second one left
+	require.Equal(t, uint64(2), scales[0].ID)
+}
+
+func (hs *ScaleHandlersSuite) TestDeleteWillNotDeleteAScaleIfItBelongsToAnotherUser() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+			{
+				Name:            "scale2",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	otherUser := models.User{
+		StrID:    "2",
+		Email:    "test2@test.com",
+		Forename: "test2",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	hs.DB.Create(&user)
+	hs.DB.Create(&otherUser)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) //No scales belong to this user
+	r.DELETE("/:id", hs.Handler.DeleteHandler)
+
+	testServer := httptest.NewServer(r)
+
+	resErr := deleteScale(t, testServer.URL+"/1")
+	require.Error(t, resErr)
+	require.Equal(t, "401", resErr.Error())
+}

@@ -16,6 +16,22 @@ type ScaleHandlerProvider struct {
 	Service services.ScaleService
 }
 
+// Utility used to determine the correct error values to return after getting a scale with the ScaleService
+func interpretScaleRetrievalError(readErr error) (int, map[string]interface{}) {
+	errStr := readErr.Error()
+	var status int
+
+	if strings.HasSuffix(errStr, "record not found") {
+		status = http.StatusNotFound
+	} else {
+		status = http.StatusInternalServerError
+	}
+
+	return status, gin.H{
+		"error": readErr.Error(),
+	}
+}
+
 //Handler for scale GET requests
 func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 
@@ -51,18 +67,8 @@ func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 	//Get the scale, and validate all is correct
 	scale, scaleErr := shp.Service.Get(idStr, tsDayCountLimit)
 	if scaleErr != nil {
-		errStr := scaleErr.Error()
-
-		if strings.HasSuffix(errStr, "record not found") {
-			c.JSON(http.StatusNotFound, gin.H{
-				"error": scaleErr.Error(),
-			})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": scaleErr.Error(),
-			})
-		}
-
+		status, hMap := interpretScaleRetrievalError(scaleErr)
+		c.JSON(status, hMap)
 		return
 	}
 
@@ -138,18 +144,8 @@ func (shp *ScaleHandlerProvider) UpdateHandler(c *gin.Context) {
 	//Get the current scale record
 	scale, readErr := shp.Service.Get(idStr, services.NoTimespans)
 	if readErr != nil {
-		errStr := readErr.Error()
-
-		if strings.HasSuffix(errStr, "record not found") {
-			c.JSON(http.StatusNotFound, gin.H{
-				"error": readErr.Error(),
-			})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": readErr.Error(),
-			})
-		}
-
+		status, hMap := interpretScaleRetrievalError(readErr)
+		c.JSON(status, hMap)
 		return
 	}
 
@@ -189,4 +185,48 @@ func (shp *ScaleHandlerProvider) UpdateHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// Handler for DELETE requests
+func (shp *ScaleHandlerProvider) DeleteHandler(c *gin.Context) {
+
+	//Get the auth user from the auth middleware
+	authUser, authUserErr := GetAuthUserFromContext(c)
+	if authUserErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error while processing the authenticated user",
+		})
+		return
+	}
+
+	// Extract ID from query
+	idStr := c.Param("id")
+
+	//Get the current scale record
+	scale, readErr := shp.Service.Get(idStr, services.NoTimespans)
+	if readErr != nil {
+		status, hMap := interpretScaleRetrievalError(readErr)
+		c.JSON(status, hMap)
+		return
+	}
+
+	// Confirm auth
+	authErr := scale.ValidateAuthorisation(authUser, *shp.DB)
+	if authErr != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": authErr.Error(),
+		})
+
+		return
+	}
+
+	//Run the delete
+	deleteErr := shp.Service.Delete(scale.ID)
+	if deleteErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": deleteErr.Error(),
+		})
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{})
 }
