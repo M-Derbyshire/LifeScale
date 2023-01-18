@@ -76,6 +76,7 @@ func getScale(t *testing.T, url string) (models.Scale, error) {
 	return handleScaleResponse(res)
 }
 
+//Run a scale POST request. If statuscode is not 200, then the returned error will be a string of the code
 func postScale(t *testing.T, url string, scale models.Scale) (models.Scale, error) {
 	reqJson, _ := json.Marshal(scale)
 	reqBody := bytes.NewBuffer(reqJson)
@@ -83,6 +84,24 @@ func postScale(t *testing.T, url string, scale models.Scale) (models.Scale, erro
 
 	if reqErr != nil {
 		return models.Scale{}, reqErr
+	}
+	defer res.Body.Close()
+
+	return handleScaleResponse(res)
+}
+
+//Run a scale PUT request. If statuscode is not 200, then the returned error will be a string of the code
+func putScale(t *testing.T, url string, scaleData models.Scale) (models.Scale, error) {
+	reqJson, _ := json.Marshal(scaleData)
+	req, reqErr := http.NewRequest(http.MethodPut, url, bytes.NewReader(reqJson))
+	if reqErr != nil {
+		return models.Scale{}, reqErr
+	}
+
+	client := &http.Client{}
+	res, resErr := client.Do(req)
+	if resErr != nil {
+		return models.Scale{}, resErr
 	}
 	defer res.Body.Close()
 
@@ -431,7 +450,7 @@ func (hs *ScaleHandlersSuite) TestCreateWillCallSanitiseOnScale() {
 	testServer := httptest.NewServer(r)
 
 	newScale := models.Scale{
-		Name:            "<test>", //</> braces should get replaced
+		Name:            "<test>", //< and > braces should get replaced
 		UsesTimespans:   true,
 		DisplayDayCount: 3,
 	}
@@ -447,3 +466,181 @@ func (hs *ScaleHandlersSuite) TestCreateWillCallSanitiseOnScale() {
 	savedScale, _ := hs.Service.Get(resultScale.StrID, services.AllTimespans)
 	require.Equal(t, expectedName, savedScale.Name)
 }
+
+// -- Update ----------------------------------------------------------------------
+
+func (hs *ScaleHandlersSuite) TestUpdateWillUpdateTheCorrectScale() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	hs.DB.Create(&user)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.PUT("/:id", hs.Handler.UpdateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newScaleData := models.Scale{ //Purposefully using incorrect IDs, to ensure they're ignored
+		ID:              52,
+		StrID:           "52",
+		Name:            "scale2",
+		UsesTimespans:   false,
+		DisplayDayCount: 8,
+	}
+
+	resultScale, resErr := putScale(t, testServer.URL+"/1", newScaleData) // 1 should be the id
+	require.NoError(t, resErr)
+
+	require.Equal(t, newScaleData.Name, resultScale.Name)
+	require.Equal(t, newScaleData.UsesTimespans, resultScale.UsesTimespans)
+	require.Equal(t, newScaleData.DisplayDayCount, resultScale.DisplayDayCount)
+
+	//Make sure saved changes
+	resultScale.ResolveID()
+	savedScale, _ := hs.Service.Get(resultScale.StrID, services.AllTimespans)
+
+	require.Equal(t, resultScale.Name, savedScale.Name)
+	require.Equal(t, resultScale.UsesTimespans, savedScale.UsesTimespans)
+	require.Equal(t, resultScale.DisplayDayCount, savedScale.DisplayDayCount)
+}
+
+func (hs *ScaleHandlersSuite) TestUpdateWillNotUpdateTheScaleIfItBelongsToAnotherUser() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	otherUser := models.User{
+		StrID:    "2",
+		Email:    "test2@test.com",
+		Forename: "test2",
+		Surname:  "test2",
+		Scales:   []models.Scale{},
+	}
+
+	hs.DB.Create(&user)
+	hs.DB.Create(&otherUser)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) // Not the scale owner
+	r.PUT("/:id", hs.Handler.UpdateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newScaleData := models.Scale{
+		Name:            "scale2",
+		UsesTimespans:   false,
+		DisplayDayCount: 8,
+	}
+
+	_, resErr := putScale(t, testServer.URL+"/1", newScaleData) // 1 should be the id
+	require.Error(t, resErr)
+	require.Equal(t, "401", resErr.Error())
+}
+
+func (hs *ScaleHandlersSuite) TestUpdateWillReturn404IfScaleNotFound() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales:   []models.Scale{},
+	}
+
+	hs.DB.Create(&user)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.PUT("/:id", hs.Handler.UpdateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newScaleData := models.Scale{
+		Name:            "scale2",
+		UsesTimespans:   false,
+		DisplayDayCount: 8,
+	}
+
+	_, resErr := putScale(t, testServer.URL+"/1", newScaleData) // No scales exist
+	require.Error(t, resErr)
+	require.Equal(t, "404", resErr.Error())
+}
+
+func (hs *ScaleHandlersSuite) TestUpdateWillSanitiseTheNewScaleData() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories:      []models.Category{},
+			},
+		},
+	}
+
+	hs.DB.Create(&user)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.PUT("/:id", hs.Handler.UpdateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newScaleData := models.Scale{
+		Name:            "< scale2 >",
+		UsesTimespans:   false,
+		DisplayDayCount: 8,
+	}
+
+	resultScale, resErr := putScale(t, testServer.URL+"/1", newScaleData) // 1 should be the id
+	require.NoError(t, resErr)
+
+	require.Equal(t, "&lt; scale2 &gt;", resultScale.Name)
+
+	//Make sure saved changes
+	resultScale.ResolveID()
+	savedScale, _ := hs.Service.Get(resultScale.StrID, services.AllTimespans)
+
+	require.Equal(t, resultScale.Name, savedScale.Name)
+}
+
+// -- Delete -------------------------------------------------------------------

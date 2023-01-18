@@ -82,16 +82,8 @@ func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 func (shp *ScaleHandlerProvider) CreateHandler(c *gin.Context) {
 
 	//Get the auth user from the auth middleware
-	authUserVal, authIsOk := c.Get("auth-user")
-	if !authIsOk {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "unable to process the user in the authentication token",
-		})
-		return
-	}
-
-	authUser, castOk := authUserVal.(models.User)
-	if !castOk || authUser.ResolveID() != nil {
+	authUser, authUserErr := GetAuthUserFromContext(c)
+	if authUserErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "error while processing the authenticated user",
 		})
@@ -126,4 +118,75 @@ func (shp *ScaleHandlerProvider) CreateHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, resultScale)
+}
+
+// Handler for PUT requests (not suitable for PATCH -- will revert missing properties to zero value)
+func (shp *ScaleHandlerProvider) UpdateHandler(c *gin.Context) {
+
+	//Get the auth user from the auth middleware
+	authUser, authUserErr := GetAuthUserFromContext(c)
+	if authUserErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error while processing the authenticated user",
+		})
+		return
+	}
+
+	// Extract ID from query
+	idStr := c.Param("id")
+
+	//Get the current scale record
+	scale, readErr := shp.Service.Get(idStr, services.NoTimespans)
+	if readErr != nil {
+		errStr := readErr.Error()
+
+		if strings.HasSuffix(errStr, "record not found") {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": readErr.Error(),
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": readErr.Error(),
+			})
+		}
+
+		return
+	}
+
+	// Confirm auth
+	authErr := scale.ValidateAuthorisation(authUser, *shp.DB)
+	if authErr != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": authErr.Error(),
+		})
+
+		return
+	}
+
+	// Get the new scale data from the request
+	var newScaleData models.Scale
+	if err := c.ShouldBindJSON(&newScaleData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "error while processing the provided scale: " + err.Error(),
+		})
+
+		return
+	}
+
+	// Correct any bad strings
+	newScaleData.Sanitise()
+
+	// Make the changes
+	scale.Name = newScaleData.Name
+	scale.DisplayDayCount = newScaleData.DisplayDayCount
+	scale.UsesTimespans = newScaleData.UsesTimespans
+
+	result, updateErr := shp.Service.Update(scale)
+	if updateErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": updateErr.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, result)
 }
