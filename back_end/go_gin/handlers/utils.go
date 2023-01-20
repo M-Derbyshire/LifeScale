@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
+	"strings"
 
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
 	"github.com/gin-gonic/gin"
@@ -25,4 +27,20 @@ func GetAuthUserFromContext(c *gin.Context) (models.User, error) {
 	}
 
 	return authUser, nil
+}
+
+// Utility used to determine the correct error values to return after getting a scale with the ScaleService
+func interpretRetrievalError(readErr error) (int, map[string]interface{}) {
+	errStr := readErr.Error()
+	var status int
+
+	if strings.HasSuffix(errStr, "record not found") {
+		status = http.StatusNotFound
+	} else {
+		status = http.StatusInternalServerError
+	}
+
+	return status, gin.H{
+		"error": readErr.Error(),
+	}
 }

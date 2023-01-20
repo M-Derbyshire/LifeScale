@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/services"
@@ -14,22 +13,6 @@ import (
 type ScaleHandlerProvider struct {
 	DB      *gorm.DB
 	Service services.ScaleService
-}
-
-// Utility used to determine the correct error values to return after getting a scale with the ScaleService
-func interpretScaleRetrievalError(readErr error) (int, map[string]interface{}) {
-	errStr := readErr.Error()
-	var status int
-
-	if strings.HasSuffix(errStr, "record not found") {
-		status = http.StatusNotFound
-	} else {
-		status = http.StatusInternalServerError
-	}
-
-	return status, gin.H{
-		"error": readErr.Error(),
-	}
 }
 
 //Handler for scale GET requests
@@ -67,7 +50,7 @@ func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 	//Get the scale, and validate all is correct
 	scale, scaleErr := shp.Service.Get(idStr, tsDayCountLimit)
 	if scaleErr != nil {
-		status, hMap := interpretScaleRetrievalError(scaleErr)
+		status, hMap := interpretRetrievalError(scaleErr)
 		c.JSON(status, hMap)
 		return
 	}
@@ -144,7 +127,7 @@ func (shp *ScaleHandlerProvider) UpdateHandler(c *gin.Context) {
 	//Get the current scale record
 	scale, readErr := shp.Service.Get(idStr, services.NoTimespans)
 	if readErr != nil {
-		status, hMap := interpretScaleRetrievalError(readErr)
+		status, hMap := interpretRetrievalError(readErr)
 		c.JSON(status, hMap)
 		return
 	}
@@ -205,7 +188,7 @@ func (shp *ScaleHandlerProvider) DeleteHandler(c *gin.Context) {
 	//Get the current scale record
 	scale, readErr := shp.Service.Get(idStr, services.NoTimespans)
 	if readErr != nil {
-		status, hMap := interpretScaleRetrievalError(readErr)
+		status, hMap := interpretRetrievalError(readErr)
 		c.JSON(status, hMap)
 		return
 	}
