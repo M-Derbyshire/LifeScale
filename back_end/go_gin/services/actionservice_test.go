@@ -90,7 +90,7 @@ func (s *ActionServiceSuite) TestGetReturnsActionWithResolvedIDs() {
 
 func (s *ActionServiceSuite) TestCreateCreatesActionAndReturnsWithResolvedID() {
 
-	//First create a user/scale for the category
+	//First create a category for the action
 	userService := services.UserService{DB: s.DB}
 
 	newUser := models.User{
