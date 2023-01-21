@@ -92,9 +92,9 @@ func (s *CategoryServiceSuite) TestGetReturnsCategoryWithResolvedIDs() {
 
 // -- Create -------------------------------------------------------------------
 
-func (s *ScaleServiceSuite) TestCreateCreatesCategoryAndReturnsWithResolvedID() {
+func (s *CategoryServiceSuite) TestCreateCreatesCategoryAndReturnsWithResolvedID() {
 
-	//First create a user for the scale
+	//First create a user and scale for the category
 	userService := services.UserService{DB: s.DB}
 
 	newUser := models.User{
@@ -171,10 +171,6 @@ func (s *CategoryServiceSuite) TestCreateReturnsErrorFromDatabase() {
 		DesiredWeight: 1,
 		Actions:       []models.Action{},
 	}
-
-	expectedCategory := newCategory
-	expectedCategory.StrID = strCatId
-	expectedCategory.ID = catId
 
 	service.Create(newCategory)           //creating with explicit ID (models stop this from happening through the json at request-time)
 	_, err := service.Create(newCategory) //creating again, with same ID, to cause error
