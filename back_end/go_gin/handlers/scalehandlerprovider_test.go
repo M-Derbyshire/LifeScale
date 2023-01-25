@@ -699,7 +699,7 @@ func (hs *ScaleHandlersSuite) TestDeleteWillDeleteTheCorrectScale() {
 
 	testServer := httptest.NewServer(r)
 
-	resErr := deleteScale(t, testServer.URL+"/1") // delete the first
+	resErr := customtestutils.DeleteEntity(t, testServer.URL+"/1") // delete the first
 	require.NoError(t, resErr)
 
 	var scales []models.Scale
@@ -750,7 +750,7 @@ func (hs *ScaleHandlersSuite) TestDeleteWillNotDeleteAScaleIfItBelongsToAnotherU
 
 	testServer := httptest.NewServer(r)
 
-	resErr := deleteScale(t, testServer.URL+"/1")
+	resErr := customtestutils.DeleteEntity(t, testServer.URL+"/1")
 	require.Error(t, resErr)
 	require.Equal(t, "401", resErr.Error())
 }

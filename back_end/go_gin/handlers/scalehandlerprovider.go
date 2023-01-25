@@ -85,6 +85,7 @@ func (shp *ScaleHandlerProvider) CreateHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "error while processing the provided scale: " + err.Error(),
 		})
+		return
 	}
 
 	// Security related operations
@@ -94,6 +95,7 @@ func (shp *ScaleHandlerProvider) CreateHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "the provided scale is not valid: " + err.Error(),
 		})
+		return
 	}
 
 	newScale.Sanitise()
@@ -104,12 +106,13 @@ func (shp *ScaleHandlerProvider) CreateHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": createErr.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusCreated, resultScale)
 }
 
-// Handler for PUT requests (not suitable for PATCH -- will revert missing properties to zero value)
+// Handler for PUT requests (not suitable for PATCH, as will revert missing properties to zero value)
 func (shp *ScaleHandlerProvider) UpdateHandler(c *gin.Context) {
 
 	//Get the auth user from the auth middleware
@@ -165,6 +168,7 @@ func (shp *ScaleHandlerProvider) UpdateHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": updateErr.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, result)
@@ -209,6 +213,7 @@ func (shp *ScaleHandlerProvider) DeleteHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": deleteErr.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusNoContent, gin.H{})
