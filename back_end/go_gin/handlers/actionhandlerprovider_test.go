@@ -21,84 +21,84 @@ import (
 	"gorm.io/gorm"
 )
 
-type CategoryHandlersSuite struct {
+type ActionHandlersSuite struct {
 	suite.Suite
 	DB          *gorm.DB
-	Service     services.CategoryService
+	Service     services.ActionService
 	UserService services.UserService
-	Handler     handlers.CategoryHandlerProvider
+	Handler     handlers.ActionHandlerProvider
 }
 
-func (hs *CategoryHandlersSuite) SetupTest() {
+func (hs *ActionHandlersSuite) SetupTest() {
 	db, err := customtestutils.GetFreshTestDatabase()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	hs.DB = db
-	hs.Service = services.CategoryService{DB: db}
+	hs.Service = services.ActionService{DB: db}
 	hs.UserService = services.UserService{DB: db}
-	hs.Handler = handlers.CategoryHandlerProvider{DB: db, Service: hs.Service, ScaleService: services.ScaleService{DB: db}}
+	hs.Handler = handlers.ActionHandlerProvider{DB: db, Service: hs.Service, CategoryService: services.CategoryService{DB: db}}
 }
 
-func TestCategoryHandlerSuite(t *testing.T) {
-	suite.Run(t, new(CategoryHandlersSuite))
+func TestActionHandlerSuite(t *testing.T) {
+	suite.Run(t, new(ActionHandlersSuite))
 }
 
-func handleCategoryResponse(res *http.Response) (models.Category, error) {
+func handleActionResponse(res *http.Response) (models.Action, error) {
 	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return models.Category{}, errors.New(strconv.Itoa(res.StatusCode))
+		return models.Action{}, errors.New(strconv.Itoa(res.StatusCode))
 	}
 
 	resBodyBytes, readErr := io.ReadAll(res.Body)
 	if readErr != nil {
-		return models.Category{}, readErr
+		return models.Action{}, readErr
 	}
 
-	var result models.Category
+	var result models.Action
 	jsonErr := json.Unmarshal(resBodyBytes, &result)
 	if jsonErr != nil {
-		return models.Category{}, jsonErr
+		return models.Action{}, jsonErr
 	}
 
 	return result, nil
 }
 
-//Run a category POST request. If statuscode is not 200, then the returned error will be a string of the code
-func postCategory(t *testing.T, url string, category models.Category) (models.Category, error) {
-	reqJson, _ := json.Marshal(category)
+//Run an action POST request. If statuscode is not 200, then the returned error will be a string of the code
+func postAction(t *testing.T, url string, action models.Action) (models.Action, error) {
+	reqJson, _ := json.Marshal(action)
 	reqBody := bytes.NewBuffer(reqJson)
 	res, reqErr := http.Post(url, "application/json", reqBody)
 
 	if reqErr != nil {
-		return models.Category{}, reqErr
+		return models.Action{}, reqErr
 	}
 	defer res.Body.Close()
 
-	return handleCategoryResponse(res)
+	return handleActionResponse(res)
 }
 
-//Run a category PUT request. If statuscode is not 200, then the returned error will be a string of the code
-func putCategory(t *testing.T, url string, categoryData models.Category) (models.Category, error) {
-	reqJson, _ := json.Marshal(categoryData)
+//Run an action PUT request. If statuscode is not 200, then the returned error will be a string of the code
+func putAction(t *testing.T, url string, actionData models.Action) (models.Action, error) {
+	reqJson, _ := json.Marshal(actionData)
 	req, reqErr := http.NewRequest(http.MethodPut, url, bytes.NewReader(reqJson))
 	if reqErr != nil {
-		return models.Category{}, reqErr
+		return models.Action{}, reqErr
 	}
 
 	client := &http.Client{}
 	res, resErr := client.Do(req)
 	if resErr != nil {
-		return models.Category{}, resErr
+		return models.Action{}, resErr
 	}
 	defer res.Body.Close()
 
-	return handleCategoryResponse(res)
+	return handleActionResponse(res)
 }
 
 // -- Create ------------------------------------------------------------------------
 
-func (hs *CategoryHandlersSuite) TestCreateWillCreateACategoryUnderTheCorrectScale() {
+func (hs *ActionHandlersSuite) TestCreateWillCreateAnActionUnderTheCorrectCategory() {
 
 	t := hs.T()
 
@@ -112,7 +112,14 @@ func (hs *CategoryHandlersSuite) TestCreateWillCreateACategoryUnderTheCorrectSca
 				Name:            "scale1",
 				UsesTimespans:   true,
 				DisplayDayCount: 7,
-				Categories:      []models.Category{},
+				Categories: []models.Category{
+					{
+						Name:          "category1",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions:       []models.Action{},
+					},
+				},
 			},
 		},
 	}
@@ -121,35 +128,32 @@ func (hs *CategoryHandlersSuite) TestCreateWillCreateACategoryUnderTheCorrectSca
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.POST("/:scaleid/", hs.Handler.CreateHandler)
+	r.POST("/:scaleid/:categoryid/", hs.Handler.CreateHandler)
 
 	testServer := httptest.NewServer(r)
 
-	newCategory := models.Category{
-		Name:          "category1",
-		Color:         "red",
-		DesiredWeight: 1,
+	newAction := models.Action{
+		Name:   "action1",
+		Weight: 1,
 	}
 
-	resultCat, resErr := postCategory(t, testServer.URL+"/1/", newCategory)
+	resultAct, resErr := postAction(t, testServer.URL+"/1/1/", newAction)
 	require.NoError(t, resErr)
 
-	require.Equal(t, newCategory.Name, resultCat.Name)
-	require.Equal(t, newCategory.Color, resultCat.Color)
-	require.Equal(t, newCategory.DesiredWeight, resultCat.DesiredWeight)
-	require.Equal(t, uint64(1), resultCat.ScaleID)
+	require.Equal(t, newAction.Name, resultAct.Name)
+	require.Equal(t, newAction.Weight, resultAct.Weight)
+	require.Equal(t, uint64(1), resultAct.CategoryID)
 
 	//Make sure saved changes
-	resultCat.ResolveID()
-	savedCat, _ := hs.Service.Get(resultCat.StrID)
+	resultAct.ResolveID()
+	savedAct, _ := hs.Service.Get(resultAct.StrID)
 
-	require.Equal(t, resultCat.Name, savedCat.Name)
-	require.Equal(t, resultCat.Color, savedCat.Color)
-	require.Equal(t, resultCat.DesiredWeight, savedCat.DesiredWeight)
-	require.Equal(t, uint64(1), savedCat.ScaleID)
+	require.Equal(t, resultAct.Name, savedAct.Name)
+	require.Equal(t, resultAct.Weight, savedAct.Weight)
+	require.Equal(t, uint64(1), savedAct.CategoryID)
 }
 
-func (hs *CategoryHandlersSuite) TestCreateWillReturnCategoryValidationError() {
+func (hs *ActionHandlersSuite) TestCreateWillReturnActionValidationError() {
 
 	t := hs.T()
 
@@ -163,7 +167,14 @@ func (hs *CategoryHandlersSuite) TestCreateWillReturnCategoryValidationError() {
 				Name:            "scale1",
 				UsesTimespans:   true,
 				DisplayDayCount: 7,
-				Categories:      []models.Category{},
+				Categories: []models.Category{
+					{
+						Name:          "category1",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions:       []models.Action{},
+					},
+				},
 			},
 		},
 	}
@@ -172,21 +183,20 @@ func (hs *CategoryHandlersSuite) TestCreateWillReturnCategoryValidationError() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.POST("/:scaleid/", hs.Handler.CreateHandler)
+	r.POST("/:scaleid/:categoryid/", hs.Handler.CreateHandler)
 
 	testServer := httptest.NewServer(r)
 
-	newCategory := models.Category{
-		Name:          "", //empty name, so should fail validation
-		Color:         "red",
-		DesiredWeight: 1,
+	newAction := models.Action{
+		Name:   "", //empty name, so should fail validation
+		Weight: 1,
 	}
 
-	_, resErr := postCategory(t, testServer.URL+"/1/", newCategory)
+	_, resErr := postAction(t, testServer.URL+"/1/1/", newAction)
 	require.Error(t, resErr)
 }
 
-func (hs *CategoryHandlersSuite) TestCreateWillCallSanitiseOnCategory() {
+func (hs *ActionHandlersSuite) TestCreateWillCallSanitiseOnAction() {
 
 	t := hs.T()
 
@@ -200,7 +210,14 @@ func (hs *CategoryHandlersSuite) TestCreateWillCallSanitiseOnCategory() {
 				Name:            "scale1",
 				UsesTimespans:   true,
 				DisplayDayCount: 7,
-				Categories:      []models.Category{},
+				Categories: []models.Category{
+					{
+						Name:          "category1",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions:       []models.Action{},
+					},
+				},
 			},
 		},
 	}
@@ -209,29 +226,28 @@ func (hs *CategoryHandlersSuite) TestCreateWillCallSanitiseOnCategory() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.POST("/:scaleid/", hs.Handler.CreateHandler)
+	r.POST("/:scaleid/:categoryid/", hs.Handler.CreateHandler)
 
 	testServer := httptest.NewServer(r)
 
-	newCategory := models.Category{
-		Name:          "<test>", //< and > braces should get replaced
-		Color:         "red",
-		DesiredWeight: 1,
+	newAction := models.Action{
+		Name:   "<test>", //< and > braces should get replaced
+		Weight: 1,
 	}
 
 	expectedName := "&lt;test&gt;"
 
-	resultCat, resErr := postCategory(t, testServer.URL+"/1/", newCategory)
+	resultAct, resErr := postAction(t, testServer.URL+"/1/1/", newAction)
 	require.NoError(t, resErr)
-	require.Equal(t, expectedName, resultCat.Name)
+	require.Equal(t, expectedName, resultAct.Name)
 
 	//Make sure saved changes
-	resultCat.ResolveID()
-	savedCat, _ := hs.Service.Get(resultCat.StrID)
-	require.Equal(t, expectedName, savedCat.Name)
+	resultAct.ResolveID()
+	savedAct, _ := hs.Service.Get(resultAct.StrID)
+	require.Equal(t, expectedName, savedAct.Name)
 }
 
-func (hs *CategoryHandlersSuite) TestCreateWillReturn401IfScaleDoesntBelongToAuthUser() {
+func (hs *ActionHandlersSuite) TestCreateWillReturn401IfCategoryDoesntBelongToAuthUser() {
 
 	t := hs.T()
 
@@ -245,7 +261,14 @@ func (hs *CategoryHandlersSuite) TestCreateWillReturn401IfScaleDoesntBelongToAut
 				Name:            "scale1",
 				UsesTimespans:   true,
 				DisplayDayCount: 7,
-				Categories:      []models.Category{},
+				Categories: []models.Category{
+					{
+						Name:          "category1",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions:       []models.Action{},
+					},
+				},
 			},
 		},
 	}
@@ -260,7 +283,14 @@ func (hs *CategoryHandlersSuite) TestCreateWillReturn401IfScaleDoesntBelongToAut
 				Name:            "scale2",
 				UsesTimespans:   true,
 				DisplayDayCount: 7,
-				Categories:      []models.Category{},
+				Categories: []models.Category{
+					{
+						Name:          "category2",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions:       []models.Action{},
+					},
+				},
 			},
 		},
 	}
@@ -270,24 +300,23 @@ func (hs *CategoryHandlersSuite) TestCreateWillReturn401IfScaleDoesntBelongToAut
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.POST("/:scaleid/", hs.Handler.CreateHandler)
+	r.POST("/:scaleid/:categoryid/", hs.Handler.CreateHandler)
 
 	testServer := httptest.NewServer(r)
 
-	newCategory := models.Category{
-		Name:          "test",
-		Color:         "red",
-		DesiredWeight: 1,
+	newAction := models.Action{
+		Name:   "test",
+		Weight: 1,
 	}
 
-	_, resErr := postCategory(t, testServer.URL+"/2/", newCategory) //not the auth user's scale
+	_, resErr := postAction(t, testServer.URL+"/2/2/", newAction) //not the auth user's scale/category
 	require.Error(t, resErr)
 	require.Equal(t, "401", resErr.Error())
 }
 
 // -- Update ----------------------------------------------------------------------
 
-func (hs *CategoryHandlersSuite) TestUpdateWillUpdateTheCorrectCategory() {
+func (hs *ActionHandlersSuite) TestUpdateWillUpdateTheCorrectAction() {
 
 	t := hs.T()
 
@@ -306,6 +335,16 @@ func (hs *CategoryHandlersSuite) TestUpdateWillUpdateTheCorrectCategory() {
 						Name:          "test1",
 						Color:         "red",
 						DesiredWeight: 1,
+						Actions: []models.Action{
+							{
+								Name:   "test1",
+								Weight: 1,
+							},
+							{
+								Name:   "test",
+								Weight: 5,
+							},
+						},
 					},
 				},
 			},
@@ -316,35 +355,32 @@ func (hs *CategoryHandlersSuite) TestUpdateWillUpdateTheCorrectCategory() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
-	newCategoryData := models.Category{ //Purposefully using incorrect IDs, to ensure they're ignored
-		ID:            52,
-		StrID:         "52",
-		Name:          "category2",
-		Color:         "blue",
-		DesiredWeight: 2,
+	newActionData := models.Action{ //Purposefully using incorrect IDs, to ensure they're ignored
+		ID:     52,
+		StrID:  "52",
+		Name:   "test2",
+		Weight: 2,
 	}
 
-	resultCat, resErr := putCategory(t, testServer.URL+"/1/1/", newCategoryData) // 1 should be the id
+	resultAct, resErr := putAction(t, testServer.URL+"/1/1/1", newActionData) // 1 should be the id
 	require.NoError(t, resErr)
 
-	require.Equal(t, newCategoryData.Name, resultCat.Name)
-	require.Equal(t, newCategoryData.Color, resultCat.Color)
-	require.Equal(t, newCategoryData.DesiredWeight, resultCat.DesiredWeight)
+	require.Equal(t, newActionData.Name, resultAct.Name)
+	require.Equal(t, newActionData.Weight, resultAct.Weight)
 
 	//Make sure saved changes
-	resultCat.ResolveID()
-	savedCat, _ := hs.Service.Get(resultCat.StrID)
+	resultAct.ResolveID()
+	savedAct, _ := hs.Service.Get(resultAct.StrID)
 
-	require.Equal(t, resultCat.Name, savedCat.Name)
-	require.Equal(t, resultCat.Color, savedCat.Color)
-	require.Equal(t, resultCat.DesiredWeight, savedCat.DesiredWeight)
+	require.Equal(t, resultAct.Name, savedAct.Name)
+	require.Equal(t, resultAct.Weight, savedAct.Weight)
 }
 
-func (hs *CategoryHandlersSuite) TestUpdateWillNotUpdateTheCategoryIfItBelongsToAnotherUser() {
+func (hs *ActionHandlersSuite) TestUpdateWillNotUpdateTheActionIfItBelongsToAnotherUser() {
 
 	t := hs.T()
 
@@ -363,6 +399,12 @@ func (hs *CategoryHandlersSuite) TestUpdateWillNotUpdateTheCategoryIfItBelongsTo
 						Name:          "test1",
 						Color:         "red",
 						DesiredWeight: 1,
+						Actions: []models.Action{
+							{
+								Name:   "test1",
+								Weight: 1,
+							},
+						},
 					},
 				},
 			},
@@ -379,7 +421,14 @@ func (hs *CategoryHandlersSuite) TestUpdateWillNotUpdateTheCategoryIfItBelongsTo
 				Name:            "scale2",
 				UsesTimespans:   true,
 				DisplayDayCount: 7,
-				Categories:      []models.Category{},
+				Categories: []models.Category{
+					{
+						Name:          "test2",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions:       []models.Action{},
+					},
+				},
 			},
 		},
 	}
@@ -388,61 +437,22 @@ func (hs *CategoryHandlersSuite) TestUpdateWillNotUpdateTheCategoryIfItBelongsTo
 	hs.DB.Create(&otherUser)
 
 	r := gin.Default()
-	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) // Not the category owner
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) // Not the action owner
+	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
-	newCatData := models.Category{
-		Name:          "test2",
-		Color:         "blue",
-		DesiredWeight: 2,
+	newActData := models.Action{
+		Name:   "test2",
+		Weight: 2,
 	}
 
-	_, resErr := putCategory(t, testServer.URL+"/1/1", newCatData) // 1 should be the id
+	_, resErr := putAction(t, testServer.URL+"/1/1/1", newActData) // 1 should be the id
 	require.Error(t, resErr)
 	require.Equal(t, "401", resErr.Error())
 }
 
-func (hs *CategoryHandlersSuite) TestUpdateWillReturn404IfCategoryNotFound() {
-
-	t := hs.T()
-
-	user := models.User{
-		StrID:    "1",
-		Email:    "test@test.com",
-		Forename: "test",
-		Surname:  "test",
-		Scales: []models.Scale{
-			{
-				Name:            "scale1",
-				UsesTimespans:   true,
-				DisplayDayCount: 7,
-				Categories:      []models.Category{},
-			},
-		},
-	}
-
-	hs.DB.Create(&user)
-
-	r := gin.Default()
-	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
-
-	testServer := httptest.NewServer(r)
-
-	newCatData := models.Category{
-		Name:          "test2",
-		Color:         "blue",
-		DesiredWeight: 2,
-	}
-
-	_, resErr := putCategory(t, testServer.URL+"/1/1", newCatData) // No categories exist
-	require.Error(t, resErr)
-	require.Equal(t, "404", resErr.Error())
-}
-
-func (hs *CategoryHandlersSuite) TestUpdateWillSanitiseTheNewCategoryData() {
+func (hs *ActionHandlersSuite) TestUpdateWillReturn404IfActionNotFound() {
 
 	t := hs.T()
 
@@ -461,6 +471,7 @@ func (hs *CategoryHandlersSuite) TestUpdateWillSanitiseTheNewCategoryData() {
 						Name:          "test1",
 						Color:         "red",
 						DesiredWeight: 1,
+						Actions:       []models.Action{},
 					},
 				},
 			},
@@ -471,31 +482,79 @@ func (hs *CategoryHandlersSuite) TestUpdateWillSanitiseTheNewCategoryData() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
-	newCatData := models.Category{
-		Name:          "< category2 >",
-		Color:         "blue",
-		DesiredWeight: 2,
+	newActData := models.Action{
+		Name:   "test2",
+		Weight: 2,
 	}
 
-	resultCat, resErr := putCategory(t, testServer.URL+"/1/1", newCatData) // 1 should be the id
+	_, resErr := putAction(t, testServer.URL+"/1/1/1", newActData) // No actions exist
+	require.Error(t, resErr)
+	require.Equal(t, "404", resErr.Error())
+}
+
+func (hs *ActionHandlersSuite) TestUpdateWillSanitiseTheNewActionData() {
+
+	t := hs.T()
+
+	user := models.User{
+		StrID:    "1",
+		Email:    "test@test.com",
+		Forename: "test",
+		Surname:  "test",
+		Scales: []models.Scale{
+			{
+				Name:            "scale1",
+				UsesTimespans:   true,
+				DisplayDayCount: 7,
+				Categories: []models.Category{
+					{
+						Name:          "test1",
+						Color:         "red",
+						DesiredWeight: 1,
+						Actions: []models.Action{
+							{
+								Name:   "test1",
+								Weight: 1,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	hs.DB.Create(&user)
+
+	r := gin.Default()
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
+	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
+
+	testServer := httptest.NewServer(r)
+
+	newActData := models.Action{
+		Name:   "< action2 >",
+		Weight: 2,
+	}
+
+	resultAct, resErr := putAction(t, testServer.URL+"/1/1/1", newActData) // 1 should be the id
 	require.NoError(t, resErr)
 
-	require.Equal(t, "&lt; category2 &gt;", resultCat.Name)
+	require.Equal(t, "&lt; action2 &gt;", resultAct.Name)
 
 	//Make sure saved changes
-	resultCat.ResolveID()
-	savedCat, _ := hs.Service.Get(resultCat.StrID)
+	resultAct.ResolveID()
+	savedAct, _ := hs.Service.Get(resultAct.StrID)
 
-	require.Equal(t, resultCat.Name, savedCat.Name)
+	require.Equal(t, resultAct.Name, savedAct.Name)
 }
 
 // -- Delete --------------------------------------------------------
 
-func (hs *CategoryHandlersSuite) TestDeleteWillDeleteTheCorrectCategory() {
+func (hs *ActionHandlersSuite) TestDeleteWillDeleteTheCorrectAction() {
 
 	t := hs.T()
 
@@ -514,11 +573,16 @@ func (hs *CategoryHandlersSuite) TestDeleteWillDeleteTheCorrectCategory() {
 						Name:          "test1",
 						Color:         "blue",
 						DesiredWeight: 2,
-					},
-					{
-						Name:          "test2",
-						Color:         "blue",
-						DesiredWeight: 2,
+						Actions: []models.Action{
+							{
+								Name:   "test1",
+								Weight: 1,
+							},
+							{
+								Name:   "test2",
+								Weight: 2,
+							},
+						},
 					},
 				},
 			},
@@ -529,20 +593,20 @@ func (hs *CategoryHandlersSuite) TestDeleteWillDeleteTheCorrectCategory() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.DELETE("/:scaleid/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid/:categoryid/:id", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 
-	resErr := customtestutils.DeleteEntity(t, testServer.URL+"/1/1") // delete the first
+	resErr := customtestutils.DeleteEntity(t, testServer.URL+"/1/1/1") // delete the first
 	require.NoError(t, resErr)
 
-	var categories []models.Category
-	hs.DB.Find(&categories)
-	require.Equal(t, 1, len(categories)) //Should only be the second one left
-	require.Equal(t, uint64(2), categories[0].ID)
+	var actions []models.Action
+	hs.DB.Find(&actions)
+	require.Equal(t, 1, len(actions)) //Should only be the second one left
+	require.Equal(t, uint64(2), actions[0].ID)
 }
 
-func (hs *CategoryHandlersSuite) TestDeleteWillNotDeleteACategoryIfItBelongsToAnotherUser() {
+func (hs *ActionHandlersSuite) TestDeleteWillNotDeleteAnActionIfItBelongsToAnotherUser() {
 
 	t := hs.T()
 
@@ -561,6 +625,12 @@ func (hs *CategoryHandlersSuite) TestDeleteWillNotDeleteACategoryIfItBelongsToAn
 						Name:          "test1",
 						Color:         "blue",
 						DesiredWeight: 2,
+						Actions: []models.Action{
+							{
+								Name:   "test1",
+								Weight: 1,
+							},
+						},
 					},
 				},
 			},
@@ -579,12 +649,12 @@ func (hs *CategoryHandlersSuite) TestDeleteWillNotDeleteACategoryIfItBelongsToAn
 	hs.DB.Create(&otherUser)
 
 	r := gin.Default()
-	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) //No categories belong to this user
-	r.DELETE("/:scaleid/:id", hs.Handler.DeleteHandler)
+	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) //No actions belong to this user
+	r.DELETE("/:scaleid/:categoryid/:id", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 
-	resErr := customtestutils.DeleteEntity(t, testServer.URL+"/1/1")
+	resErr := customtestutils.DeleteEntity(t, testServer.URL+"/1/1/1")
 	require.Error(t, resErr)
 	require.Equal(t, "401", resErr.Error())
 }

@@ -34,7 +34,7 @@ func (hs *UserHandlersSuite) SetupTest() {
 	hs.Handler = handlers.UserHandlerProvider{DB: db, Service: hs.Service}
 }
 
-func TestUserServiceSuite(t *testing.T) {
+func TestUserHandlerSuite(t *testing.T) {
 	suite.Run(t, new(UserHandlersSuite))
 }
 

@@ -9,15 +9,15 @@ import (
 	"gorm.io/gorm"
 )
 
-//Provides methods handlers for the category-related routes
-type CategoryHandlerProvider struct {
-	DB           *gorm.DB
-	Service      services.CategoryService
-	ScaleService services.ScaleService
+//Provides methods handlers for the action-related routes
+type ActionHandlerProvider struct {
+	DB              *gorm.DB
+	Service         services.ActionService
+	CategoryService services.CategoryService
 }
 
-// Handler for category POST requests
-func (chp *CategoryHandlerProvider) CreateHandler(c *gin.Context) {
+// Handler for action POST requests
+func (ahp *ActionHandlerProvider) CreateHandler(c *gin.Context) {
 
 	//Get the auth user from the auth middleware
 	authUser, authUserErr := GetAuthUserFromContext(c)
@@ -28,45 +28,45 @@ func (chp *CategoryHandlerProvider) CreateHandler(c *gin.Context) {
 		return
 	}
 
-	// Get the new category from the request
-	var newCategory models.Category
-	if err := c.ShouldBindJSON(&newCategory); err != nil {
+	// Get the new action from the request
+	var newAction models.Action
+	if err := c.ShouldBindJSON(&newAction); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "error while processing the provided category: " + err.Error(),
+			"error": "error while processing the provided action: " + err.Error(),
 		})
 	}
 
 	// Security related operations
-	scaleIdStr := c.Param("scaleid")
-	parentScale, scaleErr := chp.ScaleService.Get(scaleIdStr, services.NoTimespans)
-	if scaleErr != nil {
+	categoryIdStr := c.Param("categoryid")
+	parentCategory, categoryErr := ahp.CategoryService.Get(categoryIdStr)
+	if categoryErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "error while retrieving scale: " + scaleErr.Error(),
+			"error": "error while retrieving category: " + categoryErr.Error(),
 		})
 		return
 	}
 
-	scaleAuthErr := parentScale.ValidateAuthorisation(authUser, *chp.DB)
-	if scaleAuthErr != nil {
+	categoryAuthErr := parentCategory.ValidateAuthorisation(authUser, *ahp.DB)
+	if categoryAuthErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": scaleAuthErr.Error(),
+			"error": categoryAuthErr.Error(),
 		})
 		return
 	}
 
-	newCategory.ScaleID = parentScale.ID
+	newAction.CategoryID = parentCategory.ID
 
-	if err := newCategory.Validate(authUser, *chp.DB, true); err != nil {
+	if err := newAction.Validate(authUser, *ahp.DB, true); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "the provided category is not valid: " + err.Error(),
+			"error": "the provided action is not valid: " + err.Error(),
 		})
 		return
 	}
 
-	newCategory.Sanitise()
+	newAction.Sanitise()
 
-	//Now we can create the category
-	resultCategory, createErr := chp.Service.Create(newCategory)
+	//Now we can create the action
+	resultAction, createErr := ahp.Service.Create(newAction)
 	if createErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": createErr.Error(),
@@ -74,11 +74,11 @@ func (chp *CategoryHandlerProvider) CreateHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, resultCategory)
+	c.JSON(http.StatusCreated, resultAction)
 }
 
 // Handler for PUT requests (not suitable for PATCH, as will revert missing properties to zero value)
-func (chp *CategoryHandlerProvider) UpdateHandler(c *gin.Context) {
+func (ahp *ActionHandlerProvider) UpdateHandler(c *gin.Context) {
 
 	//Get the auth user from the auth middleware
 	authUser, authUserErr := GetAuthUserFromContext(c)
@@ -93,7 +93,7 @@ func (chp *CategoryHandlerProvider) UpdateHandler(c *gin.Context) {
 	idStr := c.Param("id")
 
 	//Get the current category record
-	category, readErr := chp.Service.Get(idStr)
+	action, readErr := ahp.Service.Get(idStr)
 	if readErr != nil {
 		status, hMap := interpretRetrievalError(readErr)
 		c.JSON(status, hMap)
@@ -101,7 +101,7 @@ func (chp *CategoryHandlerProvider) UpdateHandler(c *gin.Context) {
 	}
 
 	// Confirm auth
-	authErr := category.ValidateAuthorisation(authUser, *chp.DB)
+	authErr := action.ValidateAuthorisation(authUser, *ahp.DB)
 	if authErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": authErr.Error(),
@@ -110,25 +110,24 @@ func (chp *CategoryHandlerProvider) UpdateHandler(c *gin.Context) {
 		return
 	}
 
-	// Get the new category data from the request
-	var newCategoryData models.Category
-	if err := c.ShouldBindJSON(&newCategoryData); err != nil {
+	// Get the new action data from the request
+	var newActionData models.Action
+	if err := c.ShouldBindJSON(&newActionData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "error while processing the provided category: " + err.Error(),
+			"error": "error while processing the provided action: " + err.Error(),
 		})
 
 		return
 	}
 
 	// Correct any bad strings
-	newCategoryData.Sanitise()
+	newActionData.Sanitise()
 
 	// Make the changes
-	category.Name = newCategoryData.Name
-	category.Color = newCategoryData.Color
-	category.DesiredWeight = newCategoryData.DesiredWeight
+	action.Name = newActionData.Name
+	action.Weight = newActionData.Weight
 
-	result, updateErr := chp.Service.Update(category)
+	result, updateErr := ahp.Service.Update(action)
 	if updateErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": updateErr.Error(),
@@ -140,7 +139,7 @@ func (chp *CategoryHandlerProvider) UpdateHandler(c *gin.Context) {
 }
 
 // Handler for DELETE requests
-func (chp *CategoryHandlerProvider) DeleteHandler(c *gin.Context) {
+func (ahp *ActionHandlerProvider) DeleteHandler(c *gin.Context) {
 
 	//Get the auth user from the auth middleware
 	authUser, authUserErr := GetAuthUserFromContext(c)
@@ -154,8 +153,8 @@ func (chp *CategoryHandlerProvider) DeleteHandler(c *gin.Context) {
 	// Extract ID from query
 	idStr := c.Param("id")
 
-	//Get the current category record
-	category, readErr := chp.Service.Get(idStr)
+	//Get the current action record
+	action, readErr := ahp.Service.Get(idStr)
 	if readErr != nil {
 		status, hMap := interpretRetrievalError(readErr)
 		c.JSON(status, hMap)
@@ -163,7 +162,7 @@ func (chp *CategoryHandlerProvider) DeleteHandler(c *gin.Context) {
 	}
 
 	// Confirm auth
-	authErr := category.ValidateAuthorisation(authUser, *chp.DB)
+	authErr := action.ValidateAuthorisation(authUser, *ahp.DB)
 	if authErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": authErr.Error(),
@@ -173,7 +172,7 @@ func (chp *CategoryHandlerProvider) DeleteHandler(c *gin.Context) {
 	}
 
 	//Run the delete
-	deleteErr := chp.Service.Delete(category.ID)
+	deleteErr := ahp.Service.Delete(action.ID)
 	if deleteErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": deleteErr.Error(),

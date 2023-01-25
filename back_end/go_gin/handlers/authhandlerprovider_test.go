@@ -45,7 +45,7 @@ func (hs *AuthHandlersSuite) SetupTest() {
 	}
 }
 
-func TestAuthServiceSuite(t *testing.T) {
+func TestAuthHandlerSuite(t *testing.T) {
 	suite.Run(t, new(AuthHandlersSuite))
 }
 

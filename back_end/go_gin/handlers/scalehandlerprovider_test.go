@@ -42,7 +42,7 @@ func (hs *ScaleHandlersSuite) SetupTest() {
 	hs.Handler = handlers.ScaleHandlerProvider{DB: db, Service: hs.Service}
 }
 
-func TestScaleServiceSuite(t *testing.T) {
+func TestScaleHandlerSuite(t *testing.T) {
 	suite.Run(t, new(ScaleHandlersSuite))
 }
 

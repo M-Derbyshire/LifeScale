@@ -12,11 +12,13 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 	userService := services.UserService{DB: db}
 	scaleService := services.ScaleService{DB: db}
 	categoryService := services.CategoryService{DB: db}
+	actionService := services.ActionService{DB: db}
 
 	userHandlers := handlers.UserHandlerProvider{DB: db, Service: userService}
 	authHandlers := handlers.AuthHandlerProvider{DB: db, Service: userService, JwtKey: jwtKey, JwtExpirationMinutes: jwtExpirationMins}
 	scaleHandlers := handlers.ScaleHandlerProvider{DB: db, Service: scaleService}
 	categoryHandlers := handlers.CategoryHandlerProvider{DB: db, Service: categoryService, ScaleService: scaleService}
+	actionHandlers := handlers.ActionHandlerProvider{DB: db, Service: actionService, CategoryService: categoryService}
 
 	r.POST(pathPrefix+"/user", userHandlers.RegistrationHandler)
 	r.POST(pathPrefix+"/login", authHandlers.SignInHandler)
@@ -36,6 +38,10 @@ func Setup(r *gin.Engine, db *gorm.DB, pathPrefix string, jwtKey string, jwtExpi
 		authGroup.POST("/scale/:scaleid/category", categoryHandlers.CreateHandler)
 		authGroup.PUT("/scale/:scaleid/category/:id", categoryHandlers.UpdateHandler)
 		authGroup.DELETE("/scale/:scaleid/category/:id", categoryHandlers.DeleteHandler)
+
+		authGroup.POST("/scale/:scaleid/category/:categoryid/action", actionHandlers.CreateHandler)
+		authGroup.PUT("/scale/:scaleid/category/:categoryid/action/:id", actionHandlers.UpdateHandler)
+		authGroup.DELETE("/scale/:scaleid/category/:categoryid/action/:id", actionHandlers.DeleteHandler)
 	}
 
 }

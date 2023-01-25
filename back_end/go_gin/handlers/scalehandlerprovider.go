@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-//Provides methods handlers for the user-related routes
+//Provides methods handlers for the scale-related routes
 type ScaleHandlerProvider struct {
 	DB      *gorm.DB
 	Service services.ScaleService
