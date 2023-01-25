@@ -38,11 +38,11 @@ func (hs *CategoryHandlersSuite) SetupTest() {
 	hs.DB = db
 	hs.Service = services.CategoryService{DB: db}
 	hs.UserService = services.UserService{DB: db}
-	hs.Handler = handlers.CategoryHandlerProvider{DB: db, Service: hs.Service}
+	hs.Handler = handlers.CategoryHandlerProvider{DB: db, Service: hs.Service, ScaleService: services.ScaleService{DB: db}}
 }
 
-func TestCategoryServiceSuite(t *testing.T) {
-	suite.Run(t, new(ScaleHandlersSuite))
+func TestCategoryHandlerSuite(t *testing.T) {
+	suite.Run(t, new(CategoryHandlersSuite))
 }
 
 func handleCategoryResponse(res *http.Response) (models.Category, error) {
@@ -131,7 +131,7 @@ func (hs *CategoryHandlersSuite) TestCreateWillCreateACategoryUnderTheCorrectSca
 		DesiredWeight: 1,
 	}
 
-	resultCat, resErr := postCategory(t, testServer.URL+"/", newCategory)
+	resultCat, resErr := postCategory(t, testServer.URL+"/1/", newCategory)
 	require.NoError(t, resErr)
 
 	require.Equal(t, newCategory.Name, resultCat.Name)
@@ -182,7 +182,7 @@ func (hs *CategoryHandlersSuite) TestCreateWillReturnCategoryValidationError() {
 		DesiredWeight: 1,
 	}
 
-	_, resErr := postCategory(t, testServer.URL+"/", newCategory)
+	_, resErr := postCategory(t, testServer.URL+"/1/", newCategory)
 	require.Error(t, resErr)
 }
 
@@ -221,7 +221,7 @@ func (hs *CategoryHandlersSuite) TestCreateWillCallSanitiseOnCategory() {
 
 	expectedName := "&lt;test&gt;"
 
-	resultCat, resErr := postCategory(t, testServer.URL+"/", newCategory)
+	resultCat, resErr := postCategory(t, testServer.URL+"/1/", newCategory)
 	require.NoError(t, resErr)
 	require.Equal(t, expectedName, resultCat.Name)
 

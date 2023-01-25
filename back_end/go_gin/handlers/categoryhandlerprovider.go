@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-//Provides methods handlers for the user-related routes
+//Provides methods handlers for the category-related routes
 type CategoryHandlerProvider struct {
 	DB           *gorm.DB
 	Service      services.CategoryService
@@ -65,7 +65,7 @@ func (chp *CategoryHandlerProvider) CreateHandler(c *gin.Context) {
 
 	newCategory.Sanitise()
 
-	//Now we can create the scale
+	//Now we can create the category
 	resultCategory, createErr := chp.Service.Create(newCategory)
 	if createErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
