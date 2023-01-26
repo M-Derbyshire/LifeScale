@@ -1,14 +1,8 @@
 package handlers_test
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"io"
 	"log"
-	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 	"time"
 
@@ -44,57 +38,6 @@ func (hs *TimespanHandlersSuite) SetupTest() {
 
 func TestTimespanHandlerSuite(t *testing.T) {
 	suite.Run(t, new(TimespanHandlersSuite))
-}
-
-func handleTimespanResponse(res *http.Response) (models.Timespan, error) {
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return models.Timespan{}, errors.New(strconv.Itoa(res.StatusCode))
-	}
-
-	resBodyBytes, readErr := io.ReadAll(res.Body)
-	if readErr != nil {
-		return models.Timespan{}, readErr
-	}
-
-	var result models.Timespan
-	jsonErr := json.Unmarshal(resBodyBytes, &result)
-	if jsonErr != nil {
-		return models.Timespan{}, jsonErr
-	}
-
-	return result, nil
-}
-
-//Run a timespan POST request. If statuscode is not 200, then the returned error will be a string of the code
-func postTimespan(t *testing.T, url string, timespan models.Timespan) (models.Timespan, error) {
-	reqJson, _ := json.Marshal(timespan)
-	reqBody := bytes.NewBuffer(reqJson)
-	res, reqErr := http.Post(url, "application/json", reqBody)
-
-	if reqErr != nil {
-		return models.Timespan{}, reqErr
-	}
-	defer res.Body.Close()
-
-	return handleTimespanResponse(res)
-}
-
-//Run a timespan PUT request. If statuscode is not 200, then the returned error will be a string of the code
-func putTimespan(t *testing.T, url string, timespanData models.Timespan) (models.Timespan, error) {
-	reqJson, _ := json.Marshal(timespanData)
-	req, reqErr := http.NewRequest(http.MethodPut, url, bytes.NewReader(reqJson))
-	if reqErr != nil {
-		return models.Timespan{}, reqErr
-	}
-
-	client := &http.Client{}
-	res, resErr := client.Do(req)
-	if resErr != nil {
-		return models.Timespan{}, resErr
-	}
-	defer res.Body.Close()
-
-	return handleTimespanResponse(res)
 }
 
 // -- Create ------------------------------------------------------------------------

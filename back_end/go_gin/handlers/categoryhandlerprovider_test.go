@@ -1,14 +1,8 @@
 package handlers_test
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"io"
 	"log"
-	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 
 	customtestutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_test_utils"
@@ -43,57 +37,6 @@ func (hs *CategoryHandlersSuite) SetupTest() {
 
 func TestCategoryHandlerSuite(t *testing.T) {
 	suite.Run(t, new(CategoryHandlersSuite))
-}
-
-func handleCategoryResponse(res *http.Response) (models.Category, error) {
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return models.Category{}, errors.New(strconv.Itoa(res.StatusCode))
-	}
-
-	resBodyBytes, readErr := io.ReadAll(res.Body)
-	if readErr != nil {
-		return models.Category{}, readErr
-	}
-
-	var result models.Category
-	jsonErr := json.Unmarshal(resBodyBytes, &result)
-	if jsonErr != nil {
-		return models.Category{}, jsonErr
-	}
-
-	return result, nil
-}
-
-//Run a category POST request. If statuscode is not 200, then the returned error will be a string of the code
-func postCategory(t *testing.T, url string, category models.Category) (models.Category, error) {
-	reqJson, _ := json.Marshal(category)
-	reqBody := bytes.NewBuffer(reqJson)
-	res, reqErr := http.Post(url, "application/json", reqBody)
-
-	if reqErr != nil {
-		return models.Category{}, reqErr
-	}
-	defer res.Body.Close()
-
-	return handleCategoryResponse(res)
-}
-
-//Run a category PUT request. If statuscode is not 200, then the returned error will be a string of the code
-func putCategory(t *testing.T, url string, categoryData models.Category) (models.Category, error) {
-	reqJson, _ := json.Marshal(categoryData)
-	req, reqErr := http.NewRequest(http.MethodPut, url, bytes.NewReader(reqJson))
-	if reqErr != nil {
-		return models.Category{}, reqErr
-	}
-
-	client := &http.Client{}
-	res, resErr := client.Do(req)
-	if resErr != nil {
-		return models.Category{}, resErr
-	}
-	defer res.Body.Close()
-
-	return handleCategoryResponse(res)
 }
 
 // -- Create ------------------------------------------------------------------------

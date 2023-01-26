@@ -1,14 +1,8 @@
 package handlers_test
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"io"
 	"log"
-	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 
 	customtestutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_test_utils"
@@ -43,57 +37,6 @@ func (hs *ActionHandlersSuite) SetupTest() {
 
 func TestActionHandlerSuite(t *testing.T) {
 	suite.Run(t, new(ActionHandlersSuite))
-}
-
-func handleActionResponse(res *http.Response) (models.Action, error) {
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return models.Action{}, errors.New(strconv.Itoa(res.StatusCode))
-	}
-
-	resBodyBytes, readErr := io.ReadAll(res.Body)
-	if readErr != nil {
-		return models.Action{}, readErr
-	}
-
-	var result models.Action
-	jsonErr := json.Unmarshal(resBodyBytes, &result)
-	if jsonErr != nil {
-		return models.Action{}, jsonErr
-	}
-
-	return result, nil
-}
-
-//Run an action POST request. If statuscode is not 200, then the returned error will be a string of the code
-func postAction(t *testing.T, url string, action models.Action) (models.Action, error) {
-	reqJson, _ := json.Marshal(action)
-	reqBody := bytes.NewBuffer(reqJson)
-	res, reqErr := http.Post(url, "application/json", reqBody)
-
-	if reqErr != nil {
-		return models.Action{}, reqErr
-	}
-	defer res.Body.Close()
-
-	return handleActionResponse(res)
-}
-
-//Run an action PUT request. If statuscode is not 200, then the returned error will be a string of the code
-func putAction(t *testing.T, url string, actionData models.Action) (models.Action, error) {
-	reqJson, _ := json.Marshal(actionData)
-	req, reqErr := http.NewRequest(http.MethodPut, url, bytes.NewReader(reqJson))
-	if reqErr != nil {
-		return models.Action{}, reqErr
-	}
-
-	client := &http.Client{}
-	res, resErr := client.Do(req)
-	if resErr != nil {
-		return models.Action{}, resErr
-	}
-	defer res.Body.Close()
-
-	return handleActionResponse(res)
 }
 
 // -- Create ------------------------------------------------------------------------

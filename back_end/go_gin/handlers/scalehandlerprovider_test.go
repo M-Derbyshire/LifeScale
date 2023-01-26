@@ -1,14 +1,8 @@
 package handlers_test
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"io"
 	"log"
-	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 	"time"
 
@@ -44,89 +38,6 @@ func (hs *ScaleHandlersSuite) SetupTest() {
 
 func TestScaleHandlerSuite(t *testing.T) {
 	suite.Run(t, new(ScaleHandlersSuite))
-}
-
-func handleScaleResponse(res *http.Response) (models.Scale, error) {
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return models.Scale{}, errors.New(strconv.Itoa(res.StatusCode))
-	}
-
-	resBodyBytes, readErr := io.ReadAll(res.Body)
-	if readErr != nil {
-		return models.Scale{}, readErr
-	}
-
-	var result models.Scale
-	jsonErr := json.Unmarshal(resBodyBytes, &result)
-	if jsonErr != nil {
-		return models.Scale{}, jsonErr
-	}
-
-	return result, nil
-}
-
-//Get a scale model from the GET endpoint. If statuscode is not 200, then the returned error will be a string of the code
-func getScale(t *testing.T, url string) (models.Scale, error) {
-	res, reqErr := http.Get(url)
-	if reqErr != nil {
-		return models.Scale{}, reqErr
-	}
-	defer res.Body.Close()
-
-	return handleScaleResponse(res)
-}
-
-//Run a scale POST request. If statuscode is not 200, then the returned error will be a string of the code
-func postScale(t *testing.T, url string, scale models.Scale) (models.Scale, error) {
-	reqJson, _ := json.Marshal(scale)
-	reqBody := bytes.NewBuffer(reqJson)
-	res, reqErr := http.Post(url, "application/json", reqBody)
-
-	if reqErr != nil {
-		return models.Scale{}, reqErr
-	}
-	defer res.Body.Close()
-
-	return handleScaleResponse(res)
-}
-
-//Run a scale PUT request. If statuscode is not 200, then the returned error will be a string of the code
-func putScale(t *testing.T, url string, scaleData models.Scale) (models.Scale, error) {
-	reqJson, _ := json.Marshal(scaleData)
-	req, reqErr := http.NewRequest(http.MethodPut, url, bytes.NewReader(reqJson))
-	if reqErr != nil {
-		return models.Scale{}, reqErr
-	}
-
-	client := &http.Client{}
-	res, resErr := client.Do(req)
-	if resErr != nil {
-		return models.Scale{}, resErr
-	}
-	defer res.Body.Close()
-
-	return handleScaleResponse(res)
-}
-
-//Run a scale DELETE request. If statuscode is not 200, then the returned error will be a string of the code
-func deleteScale(t *testing.T, url string) error {
-	req, reqErr := http.NewRequest(http.MethodDelete, url, nil)
-	if reqErr != nil {
-		return reqErr
-	}
-
-	client := &http.Client{}
-	res, resErr := client.Do(req)
-	if resErr != nil {
-		return resErr
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return errors.New(strconv.Itoa(res.StatusCode))
-	}
-
-	return nil
 }
 
 // -- Get ------------------------------------------------------------------------
