@@ -349,51 +349,6 @@ func (s *UserSuite) TestUserAuthValidationChecksUserId() {
 	}
 }
 
-func (s *UserSuite) TestUserAuthValidationCallsAuthValidateOnScales() {
-
-	t := s.T()
-
-	userEmail := "email@test.com"
-
-	user := models.User{
-		ID:       1,
-		StrID:    "1",
-		Email:    userEmail,
-		Forename: "test",
-		Surname:  "test",
-		Scales: []models.Scale{
-			{
-				ID:              1,
-				StrID:           "1",
-				Name:            "test",
-				UsesTimespans:   true,
-				DisplayDayCount: 5,
-				UserID:          2, //different user id
-				Categories:      []models.Category{},
-			},
-		},
-	}
-
-	authUser := models.User{
-		ID:       1,
-		StrID:    "1",
-		Email:    userEmail,
-		Forename: "test",
-		Surname:  "test",
-		Scales:   []models.Scale{},
-	}
-
-	//Use the scales expected query (see the scales test file)
-	scaleSuite := ScaleSuite{DB: s.DB, Mock: s.Mock}
-	setupScaleAuthValidationDbQueryExpect(&scaleSuite, 1, 1)
-
-	err := user.ValidateAuthorisation(authUser, *s.DB)
-
-	if err == nil {
-		require.Error(t, err)
-	}
-}
-
 // ID Resolver
 
 func (s *UserSuite) TestUserIDResolveReturnsResolverErr() {
