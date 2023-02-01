@@ -1,6 +1,6 @@
 # LifeScale
 
-This is a front-end for a concept web application. It was created with ReactJS, TypeScript and Sass (As this is a front-end project, the back-end has been mocked with JSON-Server.).
+This web application was created with ReactJS, TypeScript, Sass and Golang (with the Gin framework).
 
 LifeScale is a web application that allows users to get certain parts of their lives in better balance.
 
