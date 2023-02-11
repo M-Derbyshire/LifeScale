@@ -72,6 +72,12 @@ func postPasswordChange(passwordChange models.PasswordChange, testServer *httpte
 	return http.Post(fmt.Sprintf("%s/", testServer.URL), "application/json", reqBody)
 }
 
+func postPasswordReset(passwordReset models.PasswordRequest, testServer *httptest.Server) (*http.Response, error) {
+	reqJson, _ := json.Marshal(passwordReset)
+	reqBody := bytes.NewBuffer(reqJson)
+	return http.Post(fmt.Sprintf("%s/", testServer.URL), "application/json", reqBody)
+}
+
 func postTokenRefresh(token string, testServer *httptest.Server) (*http.Response, error) {
 	client := &http.Client{}
 

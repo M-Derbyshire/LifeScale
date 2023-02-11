@@ -278,7 +278,7 @@ func (hs *TimespanHandlersSuite) TestDeleteWillDeleteTheCorrectTimespan() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.DELETE("/:scaleid/:categoryid/:actionid/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid/:categoryid/:actionid/:timespanid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -341,7 +341,7 @@ func (hs *TimespanHandlersSuite) TestDeleteWillNotDeleteATimespanIfItBelongsToAn
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) //No timespans belong to this user
-	r.DELETE("/:scaleid/:categoryid/:actionid/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid/:categoryid/:actionid/:timespanid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 

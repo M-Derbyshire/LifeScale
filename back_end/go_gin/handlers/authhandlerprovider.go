@@ -7,8 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/services"
+	"github.com/dchest/uniuri"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -21,6 +23,7 @@ type AuthHandlerProvider struct {
 	Service              services.UserService
 	JwtKey               string
 	JwtExpirationMinutes int //How many minutes until a JWT expires?
+	Emailer              custom_utils.Emailer
 }
 
 //The claims to go into a JWT
@@ -150,6 +153,63 @@ func (ahp *AuthHandlerProvider) ChangePassword(c *gin.Context) {
 
 	resultUser.Password = ""
 	c.JSON(http.StatusOK, resultUser)
+}
+
+// Password reset request -------------------------------
+func (ahp *AuthHandlerProvider) PasswordResetRequestHandler(c *gin.Context) {
+
+	// If this feature isn't available, just return an error without changing anything
+	if !ahp.Emailer.IsValid {
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"error": "this feature is not available at this time",
+		})
+		return
+	}
+
+	// First, get the user (service errors if the email address doesn't exist)
+	var requestDetails models.PasswordRequest
+	if err := c.ShouldBindJSON(&requestDetails); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	user, findErr := ahp.Service.Get("", requestDetails.Email, false)
+	if findErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": findErr.Error(),
+		})
+		return
+	}
+
+	// Next, generate a new password and set it on the account
+	newPassword := uniuri.New() // Default length is 16
+	user.Password = newPassword //The service will do the hashing
+
+	_, updateErr := ahp.Service.Update(user, true)
+	if updateErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": updateErr.Error(),
+		})
+		return
+	}
+
+	// Now send the email
+	emailBody := "<h1>LifeScale - Password Reset</h1>"
+	emailBody += fmt.Sprintf("<p>Hi %s</p>", user.Forename)
+	emailBody += "<p>Here's your new password:</p>"
+	emailBody = fmt.Sprintf("<p><strong>%s</strong></p>", newPassword)
+	emailBody += "<p>Have a great day!</p>"
+
+	emailErr := ahp.Emailer.SendMail(requestDetails.Email, emailBody)
+	if emailErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": emailErr.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // Refresh token --------------------------------------

@@ -1,4 +1,4 @@
-package customutils_test
+package custom_utils_test
 
 import (
 	"testing"

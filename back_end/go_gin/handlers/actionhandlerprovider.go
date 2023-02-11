@@ -90,7 +90,7 @@ func (ahp *ActionHandlerProvider) UpdateHandler(c *gin.Context) {
 	}
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("actionid")
 
 	//Get the current category record
 	action, readErr := ahp.Service.Get(idStr)
@@ -151,7 +151,7 @@ func (ahp *ActionHandlerProvider) DeleteHandler(c *gin.Context) {
 	}
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("actionid")
 
 	//Get the current action record
 	action, readErr := ahp.Service.Get(idStr)

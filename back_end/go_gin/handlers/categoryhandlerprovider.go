@@ -90,7 +90,7 @@ func (chp *CategoryHandlerProvider) UpdateHandler(c *gin.Context) {
 	}
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("categoryid")
 
 	//Get the current category record
 	category, readErr := chp.Service.Get(idStr)
@@ -152,7 +152,7 @@ func (chp *CategoryHandlerProvider) DeleteHandler(c *gin.Context) {
 	}
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("categoryid")
 
 	//Get the current category record
 	category, readErr := chp.Service.Get(idStr)

@@ -19,7 +19,7 @@ type ScaleHandlerProvider struct {
 func (shp *ScaleHandlerProvider) RetrievalHandler(c *gin.Context) {
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("scaleid")
 
 	// Should the timespans be limited to the display day count only?
 	tsDayCountOnlyStr := c.DefaultQuery("daycounttimespansonly", "false")
@@ -125,7 +125,7 @@ func (shp *ScaleHandlerProvider) UpdateHandler(c *gin.Context) {
 	}
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("scaleid")
 
 	//Get the current scale record
 	scale, readErr := shp.Service.Get(idStr, services.NoTimespans)
@@ -187,7 +187,7 @@ func (shp *ScaleHandlerProvider) DeleteHandler(c *gin.Context) {
 	}
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("scaleid")
 
 	//Get the current scale record
 	scale, readErr := shp.Service.Get(idStr, services.NoTimespans)

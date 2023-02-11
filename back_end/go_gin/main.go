@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(dbErr)
 	}
 
-	routing.Setup(router, db, envVars.PathPrefix, envVars.JwtKey, envVars.JwtExpirationMins)
+	routing.Setup(router, db, envVars)
 
 	router.Run(envVars.Host + ":" + envVars.Port)
 }

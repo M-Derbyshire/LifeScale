@@ -1,4 +1,4 @@
-package customutils
+package custom_utils
 
 import "strings"
 

@@ -91,7 +91,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillGetScaleWithAllTimespans() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", createdUser) })
-	r.GET("/:id/", hs.Handler.RetrievalHandler)
+	r.GET("/:scaleid/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -158,7 +158,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillGetScaleWithLimitedTimespans() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", createdUser) })
-	r.GET("/:id/", hs.Handler.RetrievalHandler)
+	r.GET("/:scaleid/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -183,7 +183,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillReturn404IfNotFound() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", createdUser) })
-	r.GET("/:id/", hs.Handler.RetrievalHandler)
+	r.GET("/:scaleid/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -221,7 +221,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillReturn500IfError() {
 		c.Set("auth-user", struct{ BadProp string }{BadProp: "djksdjalsjd"}) //Not a valid user
 		c.Next()
 	})
-	r.GET("/:id/", hs.Handler.RetrievalHandler)
+	r.GET("/:scaleid/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -267,7 +267,7 @@ func (hs *ScaleHandlersSuite) TestScaleGetWillReturn401IfScaleDoesntBelongToUser
 		c.Set("auth-user", createdOtherUser) //Not the user that owns the scale
 		c.Next()
 	})
-	r.GET("/:id/", hs.Handler.RetrievalHandler)
+	r.GET("/:scaleid/", hs.Handler.RetrievalHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -424,7 +424,7 @@ func (hs *ScaleHandlersSuite) TestUpdateWillUpdateTheCorrectScale() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -484,7 +484,7 @@ func (hs *ScaleHandlersSuite) TestUpdateWillNotUpdateTheScaleIfItBelongsToAnothe
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) // Not the scale owner
-	r.PUT("/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -515,7 +515,7 @@ func (hs *ScaleHandlersSuite) TestUpdateWillReturn404IfScaleNotFound() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -553,7 +553,7 @@ func (hs *ScaleHandlersSuite) TestUpdateWillSanitiseTheNewScaleData() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -606,7 +606,7 @@ func (hs *ScaleHandlersSuite) TestDeleteWillDeleteTheCorrectScale() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.DELETE("/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -657,7 +657,7 @@ func (hs *ScaleHandlersSuite) TestDeleteWillNotDeleteAScaleIfItBelongsToAnotherU
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) //No scales belong to this user
-	r.DELETE("/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	customtestutils "github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_test_utils"
+	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/custom_utils"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/handlers"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/models"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/services"
@@ -42,6 +43,7 @@ func (hs *AuthHandlersSuite) SetupTest() {
 		Service:              hs.Service,
 		JwtKey:               "secret",
 		JwtExpirationMinutes: 10,
+		Emailer:              custom_utils.MakeEmailer("test@test.com", "test", "test", "test", 25),
 	}
 }
 
@@ -325,6 +327,73 @@ func (ahs *AuthHandlersSuite) TestChangePasswordChangesPasswordIfCurrentCorrectA
 	ahs.DB.First(dbUser)
 
 	require.Nil(t, bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(passwordChange.NewPassword)))
+}
+
+// --- Password Reset Request ---------------------
+func (ahs *AuthHandlersSuite) TestResetChangesTheUserPassword() {
+	t := ahs.T()
+
+	passwordReset := models.PasswordRequest{
+		Email: "testemail@test.com",
+	}
+
+	initialPasswordHash, _ := bcrypt.GenerateFromPassword([]byte("testPass123"), bcrypt.DefaultCost)
+
+	user := models.User{
+		Email:    passwordReset.Email,
+		Password: string(initialPasswordHash),
+	}
+
+	ahs.DB.Create(&user)
+
+	r := gin.Default()
+	r.POST("/", ahs.Handler.PasswordResetRequestHandler)
+
+	testServer := httptest.NewServer(r)
+
+	res, _ := postPasswordReset(passwordReset, testServer)
+	defer res.Body.Close()
+
+	var storedUser models.User
+	ahs.DB.Where("email = ?", passwordReset.Email).First(&storedUser)
+
+	require.NotEqual(t, storedUser.Password, string(initialPasswordHash))
+}
+
+func (ahs *AuthHandlersSuite) TestResetChangesThePasswordForThisUserOnly() {
+	t := ahs.T()
+
+	initialPasswordHash, _ := bcrypt.GenerateFromPassword([]byte("testPass123"), bcrypt.DefaultCost)
+
+	user1 := models.User{
+		Email:    "testemail_1@test.com",
+		Password: string(initialPasswordHash),
+	}
+
+	user2 := models.User{
+		Email:    "testemail_2@test.com",
+		Password: string(initialPasswordHash),
+	}
+
+	passwordReset := models.PasswordRequest{
+		Email: user2.Email,
+	}
+
+	ahs.DB.Create(&user1)
+	ahs.DB.Create(&user2)
+
+	r := gin.Default()
+	r.POST("/", ahs.Handler.PasswordResetRequestHandler)
+
+	testServer := httptest.NewServer(r)
+
+	res, _ := postPasswordReset(passwordReset, testServer)
+	defer res.Body.Close()
+
+	var storedUser1 models.User
+	ahs.DB.Where("email = ?", user1.Email).First(&storedUser1) // Shouldn't have been changed
+
+	require.Equal(t, string(initialPasswordHash), storedUser1.Password)
 }
 
 // --- Refresh Token ----------------------------

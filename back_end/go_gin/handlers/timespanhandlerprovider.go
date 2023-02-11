@@ -90,7 +90,7 @@ func (thp *TimespanHandlerProvider) DeleteHandler(c *gin.Context) {
 	}
 
 	// Extract ID from query
-	idStr := c.Param("id")
+	idStr := c.Param("timespanid")
 
 	//Get the current timespan record
 	timespan, readErr := thp.Service.Get(idStr)

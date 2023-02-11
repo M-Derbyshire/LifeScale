@@ -298,7 +298,7 @@ func (hs *ActionHandlersSuite) TestUpdateWillUpdateTheCorrectAction() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid/:actionid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -381,7 +381,7 @@ func (hs *ActionHandlersSuite) TestUpdateWillNotUpdateTheActionIfItBelongsToAnot
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) // Not the action owner
-	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid/:actionid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -425,7 +425,7 @@ func (hs *ActionHandlersSuite) TestUpdateWillReturn404IfActionNotFound() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid/:actionid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -474,7 +474,7 @@ func (hs *ActionHandlersSuite) TestUpdateWillSanitiseTheNewActionData() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:categoryid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid/:actionid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -536,7 +536,7 @@ func (hs *ActionHandlersSuite) TestDeleteWillDeleteTheCorrectAction() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.DELETE("/:scaleid/:categoryid/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid/:categoryid/:actionid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -593,7 +593,7 @@ func (hs *ActionHandlersSuite) TestDeleteWillNotDeleteAnActionIfItBelongsToAnoth
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) //No actions belong to this user
-	r.DELETE("/:scaleid/:categoryid/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid/:categoryid/:actionid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 

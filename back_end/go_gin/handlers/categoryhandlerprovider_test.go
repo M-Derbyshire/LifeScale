@@ -259,7 +259,7 @@ func (hs *CategoryHandlersSuite) TestUpdateWillUpdateTheCorrectCategory() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -332,7 +332,7 @@ func (hs *CategoryHandlersSuite) TestUpdateWillNotUpdateTheCategoryIfItBelongsTo
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) // Not the category owner
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -370,7 +370,7 @@ func (hs *CategoryHandlersSuite) TestUpdateWillReturn404IfCategoryNotFound() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -414,7 +414,7 @@ func (hs *CategoryHandlersSuite) TestUpdateWillSanitiseTheNewCategoryData() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.PUT("/:scaleid/:id", hs.Handler.UpdateHandler)
+	r.PUT("/:scaleid/:categoryid", hs.Handler.UpdateHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -472,7 +472,7 @@ func (hs *CategoryHandlersSuite) TestDeleteWillDeleteTheCorrectCategory() {
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", user) })
-	r.DELETE("/:scaleid/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid/:categoryid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 
@@ -523,7 +523,7 @@ func (hs *CategoryHandlersSuite) TestDeleteWillNotDeleteACategoryIfItBelongsToAn
 
 	r := gin.Default()
 	r.Use(func(ctx *gin.Context) { ctx.Set("auth-user", otherUser) }) //No categories belong to this user
-	r.DELETE("/:scaleid/:id", hs.Handler.DeleteHandler)
+	r.DELETE("/:scaleid/:categoryid", hs.Handler.DeleteHandler)
 
 	testServer := httptest.NewServer(r)
 
