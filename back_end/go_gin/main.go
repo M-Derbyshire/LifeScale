@@ -26,5 +26,11 @@ func main() {
 
 	routing.Setup(router, db, envVars)
 
-	router.Run(envVars.Host + ":" + envVars.Port)
+	hostAddress := envVars.Host + ":" + envVars.Port
+
+	if envVars.TlsCertPath == "" || envVars.TlsKeyPath == "" {
+		router.Run(hostAddress) // Run unsecure
+	} else {
+		router.RunTLS(hostAddress, envVars.TlsCertPath, envVars.TlsKeyPath) // Run with SSL
+	}
 }

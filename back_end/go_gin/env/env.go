@@ -20,6 +20,8 @@ type EnvVars struct {
 	EmailPassword     string `env:"EMAIL_PASSWORD"`                   // The password for the SMTP email host
 	EmailHost         string `env:"EMAIL_HOST"`                       // The SMTP email host
 	EmailPort         int    `env:"EMAIL_PORT"`                       // The port to use for SMTP connections
+	TlsCertPath       string `env:"TLS_CERT_PATH"`                    // The SSL certificate for secure connections
+	TlsKeyPath        string `env:"TLS_KEY_PATH"`                     // The SSL key for secure connections
 }
 
 // Loads the .env file variables into an EnvVars object
