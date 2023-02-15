@@ -22,6 +22,7 @@ type EnvVars struct {
 	EmailPort         int    `env:"EMAIL_PORT"`                       // The port to use for SMTP connections
 	TlsCertPath       string `env:"TLS_CERT_PATH"`                    // The SSL certificate for secure connections
 	TlsKeyPath        string `env:"TLS_KEY_PATH"`                     // The SSL key for secure connections
+	CorsOrigin        string `env:"CORS_ORIGIN"`                      // The origin URL of the front-end (if this is not provided, all origins are allowed)
 }
 
 // Loads the .env file variables into an EnvVars object

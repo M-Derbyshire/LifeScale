@@ -5,6 +5,7 @@ import (
 
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/env"
 	"github.com/M-Derbyshire/LifeScale/tree/main/back_end/go_gin/routing"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,6 +19,15 @@ func main() {
 	}
 
 	router := gin.Default()
+
+	corsConfig := cors.DefaultConfig()
+	if envVars.CorsOrigin == "" {
+		corsConfig.AllowAllOrigins = true
+	} else {
+		corsConfig.AllowOrigins = []string{envVars.CorsOrigin}
+	}
+
+	router.Use(cors.New(corsConfig))
 
 	db, dbErr := gorm.Open(mysql.Open(envVars.DatabaseString), &gorm.Config{})
 	if dbErr != nil {
